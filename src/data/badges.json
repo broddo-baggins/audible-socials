@@ -1,0 +1,91 @@
+[
+  {
+    "id": "early-bird",
+    "name": "Early Bird",
+    "description": "Finished a book club selection before the deadline",
+    "icon": "trophy",
+    "rarity": "common",
+    "criteria": {
+      "type": "complete_book_early",
+      "daysBeforeDeadline": 3
+    }
+  },
+  {
+    "id": "speed-listener",
+    "name": "Speed Listener",
+    "description": "Listened at 2x speed for an entire book",
+    "icon": "zap",
+    "rarity": "uncommon",
+    "criteria": {
+      "type": "speed_listening",
+      "minSpeed": 2.0
+    }
+  },
+  {
+    "id": "social-butterfly",
+    "name": "Social Butterfly",
+    "description": "Connected with 10 friends",
+    "icon": "users",
+    "rarity": "common",
+    "criteria": {
+      "type": "friend_count",
+      "minFriends": 10
+    }
+  },
+  {
+    "id": "club-leader",
+    "name": "Club Leader",
+    "description": "Joined 3 book clubs simultaneously",
+    "icon": "crown",
+    "rarity": "rare",
+    "criteria": {
+      "type": "club_count",
+      "minClubs": 3
+    }
+  },
+  {
+    "id": "influencer",
+    "name": "Influencer",
+    "description": "5 friends listened to a book based on your recommendation",
+    "icon": "star",
+    "rarity": "epic",
+    "criteria": {
+      "type": "influenced_friends",
+      "minInfluenced": 5
+    }
+  },
+  {
+    "id": "perfect-attendance",
+    "name": "Perfect Attendance",
+    "description": "Attended all events for a book club",
+    "icon": "calendar",
+    "rarity": "uncommon",
+    "criteria": {
+      "type": "event_attendance",
+      "attendanceRate": 100
+    }
+  },
+  {
+    "id": "five-star-reviewer",
+    "name": "Five Star Reviewer",
+    "description": "Rated 50 books",
+    "icon": "star",
+    "rarity": "rare",
+    "criteria": {
+      "type": "rating_count",
+      "minRatings": 50
+    }
+  },
+  {
+    "id": "night-owl",
+    "name": "Night Owl",
+    "description": "Listened for 3 hours between midnight and 6am",
+    "icon": "moon",
+    "rarity": "uncommon",
+    "criteria": {
+      "type": "late_night_listening",
+      "hours": 3
+    }
+  }
+]
+

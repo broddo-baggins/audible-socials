@@ -1,0 +1,104 @@
+[
+  {
+    "userId": "user-me",
+    "clubProgress": {
+      "1": {
+        "clubId": "1",
+        "bookId": "1",
+        "progress": 45,
+        "completedBooks": [],
+        "eventsAttended": ["e1"],
+        "rsvpedEvents": ["e1", "e3"],
+        "badges": ["early-bird"],
+        "perksUnlocked": ["2-for-1-discount"],
+        "joinedAt": "2025-10-15T10:00:00",
+        "lastActivity": "2025-11-11T14:30:00"
+      }
+    },
+    "listeningStats": {
+      "totalHours": 156,
+      "booksCompleted": 12,
+      "averageSpeed": 1.2,
+      "streakDays": 7,
+      "longestStreak": 23,
+      "favoriteGenres": ["Science Fiction", "Mystery", "Biography"],
+      "listeningTimes": {
+        "morning": 23,
+        "afternoon": 45,
+        "evening": 78,
+        "night": 10
+      }
+    },
+    "earnedBadges": [
+      {
+        "badgeId": "early-bird",
+        "earnedAt": "2025-11-07T22:30:00",
+        "clubId": "1"
+      },
+      {
+        "badgeId": "social-butterfly",
+        "earnedAt": "2025-10-20T15:00:00"
+      }
+    ]
+  },
+  {
+    "userId": "1",
+    "clubProgress": {
+      "1": {
+        "clubId": "1",
+        "bookId": "1",
+        "progress": 78,
+        "completedBooks": ["26", "7"],
+        "eventsAttended": ["e1"],
+        "rsvpedEvents": ["e1", "e6"],
+        "badges": ["early-bird", "perfect-attendance"],
+        "perksUnlocked": ["2-for-1-discount", "early-access"],
+        "joinedAt": "2025-09-01T10:00:00",
+        "lastActivity": "2025-11-11T19:45:00"
+      },
+      "3": {
+        "clubId": "3",
+        "bookId": "7",
+        "progress": 62,
+        "completedBooks": ["5"],
+        "eventsAttended": [],
+        "rsvpedEvents": ["e6"],
+        "badges": [],
+        "perksUnlocked": [],
+        "joinedAt": "2025-10-01T14:00:00",
+        "lastActivity": "2025-11-11T16:20:00"
+      }
+    },
+    "listeningStats": {
+      "totalHours": 342,
+      "booksCompleted": 28,
+      "averageSpeed": 1.5,
+      "streakDays": 15,
+      "longestStreak": 45,
+      "favoriteGenres": ["Literary Fiction", "Memoir", "Self-Help"],
+      "listeningTimes": {
+        "morning": 120,
+        "afternoon": 98,
+        "evening": 88,
+        "night": 36
+      }
+    },
+    "earnedBadges": [
+      {
+        "badgeId": "early-bird",
+        "earnedAt": "2025-10-15T20:00:00",
+        "clubId": "1"
+      },
+      {
+        "badgeId": "perfect-attendance",
+        "earnedAt": "2025-10-30T12:00:00",
+        "clubId": "1"
+      },
+      {
+        "badgeId": "club-leader",
+        "earnedAt": "2025-10-01T14:00:00"
+      }
+    ]
+  }
+]
+

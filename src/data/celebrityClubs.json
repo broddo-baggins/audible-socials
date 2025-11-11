@@ -1,0 +1,206 @@
+[
+  {
+    "id": "1",
+    "name": "Reese's Book Club",
+    "host": "Reese Witherspoon",
+    "hostType": "celebrity",
+    "description": "Reese's Book Club picks spotlight stories by and about women. Every month, Reese personally selects a fiction or nonfiction book that features a strong female lead. Join millions of readers in discovering compelling, page-turning stories.",
+    "coverQuery": "Where the Crawdads Sing",
+    "currentBook": "4",
+    "previousBooks": ["2", "6", "9", "19", "24", "30"],
+    "memberCount": 42156,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 18,
+    "meetingsPerMonth": 2,
+    "nextMeeting": "2025-11-25T19:00:00",
+    "events": [
+      {
+        "id": "e1",
+        "title": "Live with Reese: Where the Crawdads Sing",
+        "date": "2025-11-25T19:00:00",
+        "type": "celebrity_chat",
+        "description": "Join Reese Witherspoon for an intimate discussion about this month's pick and what drew her to this powerful story."
+      },
+      {
+        "id": "e2",
+        "title": "Author Interview: Delia Owens",
+        "date": "2025-12-02T18:00:00",
+        "type": "author_chat",
+        "description": "Exclusive conversation with author Delia Owens about the inspiration behind Where the Crawdads Sing."
+      }
+    ],
+    "perks": [
+      "2-for-1 discount on featured book",
+      "Exclusive Reese interviews",
+      "Early access to next month's pick",
+      "Member-only discussion questions"
+    ]
+  },
+  {
+    "id": "2",
+    "name": "Oprah's Book Club",
+    "host": "Oprah Winfrey",
+    "hostType": "celebrity",
+    "description": "Oprah's Book Club selections are transformative reads that spark meaningful conversations. For over 25 years, Oprah has connected millions of readers with powerful stories that inspire, educate, and enlighten. Each pick is a journey of discovery.",
+    "coverQuery": "Educated Tara Westover",
+    "currentBook": "5",
+    "previousBooks": ["7", "21", "22", "26"],
+    "memberCount": 38764,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 22,
+    "meetingsPerMonth": 3,
+    "nextMeeting": "2025-11-20T20:00:00",
+    "events": [
+      {
+        "id": "e3",
+        "title": "Oprah's Book Club Discussion",
+        "date": "2025-11-20T20:00:00",
+        "type": "celebrity_chat",
+        "description": "Join Oprah for an in-depth discussion about Educated and the power of education to transform lives."
+      },
+      {
+        "id": "e4",
+        "title": "Author Conversation: Tara Westover",
+        "date": "2025-11-27T19:00:00",
+        "type": "author_chat",
+        "description": "Exclusive interview with Tara Westover about her remarkable journey from survivalist family to Cambridge PhD."
+      },
+      {
+        "id": "e5",
+        "title": "Community Reflection Circle",
+        "date": "2025-12-04T18:00:00",
+        "type": "discussion",
+        "description": "Share your own stories of transformation and discuss the themes of family, education, and self-discovery."
+      }
+    ],
+    "perks": [
+      "2-for-1 discount on featured book",
+      "Exclusive Oprah SuperSoul conversations",
+      "Access to full OBC archive",
+      "Monthly reflection prompts"
+    ]
+  },
+  {
+    "id": "3",
+    "name": "Our Shared Shelf",
+    "host": "Emma Watson",
+    "hostType": "celebrity",
+    "description": "Our Shared Shelf is Emma Watson's feminist book club. Each month we explore books that celebrate equality, challenge stereotypes, and amplify marginalized voices. Join a global community of readers committed to learning, growing, and taking action.",
+    "coverQuery": "Becoming Michelle Obama",
+    "currentBook": "7",
+    "previousBooks": ["5", "12", "26"],
+    "memberCount": 28932,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 15,
+    "meetingsPerMonth": 2,
+    "nextMeeting": "2025-11-22T18:00:00",
+    "events": [
+      {
+        "id": "e6",
+        "title": "Feminist Friday with Emma",
+        "date": "2025-11-22T18:00:00",
+        "type": "celebrity_chat",
+        "description": "Emma Watson discusses Becoming and Michelle Obama's journey as a role model for women worldwide."
+      },
+      {
+        "id": "e7",
+        "title": "Activism Workshop",
+        "date": "2025-11-29T19:00:00",
+        "type": "workshop",
+        "description": "Turn reading into action: practical steps for gender equality inspired by this month's book."
+      }
+    ],
+    "perks": [
+      "2-for-1 discount on featured book",
+      "Exclusive Emma Watson conversations",
+      "Activism resource library",
+      "Global community connections"
+    ]
+  },
+  {
+    "id": "4",
+    "name": "Read with Jenna",
+    "host": "Jenna Bush Hager",
+    "hostType": "celebrity",
+    "description": "Read with Jenna brings you the best in fiction and nonfiction, featuring heartfelt stories that resonate. As part of the TODAY Show, Jenna's picks become instant bestsellers and conversation starters across America.",
+    "coverQuery": "The Four Winds Kristin Hannah",
+    "currentBook": "30",
+    "previousBooks": ["19", "11", "13", "18"],
+    "memberCount": 31845,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 20,
+    "meetingsPerMonth": 2,
+    "nextMeeting": "2025-11-24T10:00:00",
+    "events": [
+      {
+        "id": "e8",
+        "title": "TODAY Show Book Club Hour",
+        "date": "2025-11-24T10:00:00",
+        "type": "celebrity_chat",
+        "description": "Watch Jenna discuss The Four Winds live on TODAY and join the conversation on social media."
+      },
+      {
+        "id": "e9",
+        "title": "Author Spotlight: Kristin Hannah",
+        "date": "2025-12-01T19:00:00",
+        "type": "author_chat",
+        "description": "Kristin Hannah joins Read with Jenna to discuss her research and writing process for The Four Winds."
+      }
+    ],
+    "perks": [
+      "2-for-1 discount on featured book",
+      "TODAY Show exclusives",
+      "Behind-the-scenes content",
+      "Early announcements"
+    ]
+  },
+  {
+    "id": "5",
+    "name": "Book Club Central",
+    "host": "Sarah Jessica Parker",
+    "hostType": "celebrity",
+    "description": "Sarah Jessica Parker's Book Club Central celebrates literary fiction and independent voices. SJP personally curates a diverse selection of beautifully written stories that challenge perspectives and spark imagination. Discover your next favorite author.",
+    "coverQuery": "Invisible Life Addie LaRue",
+    "currentBook": "13",
+    "previousBooks": ["14", "16", "18", "23"],
+    "memberCount": 19845,
+    "isPremium": true,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 25,
+    "meetingsPerMonth": 2,
+    "nextMeeting": "2025-11-28T20:00:00",
+    "events": [
+      {
+        "id": "e10",
+        "title": "Literary Salon with SJP",
+        "date": "2025-11-28T20:00:00",
+        "type": "celebrity_chat",
+        "description": "An intimate evening with Sarah Jessica Parker discussing The Invisible Life of Addie LaRue and the art of storytelling."
+      },
+      {
+        "id": "e11",
+        "title": "Author Deep Dive: V.E. Schwab",
+        "date": "2025-12-05T19:00:00",
+        "type": "author_chat",
+        "description": "V.E. Schwab discusses the inspiration behind Addie LaRue and the craft of writing fantasy."
+      }
+    ],
+    "perks": [
+      "2-for-1 discount on featured book",
+      "Premium literary discussions",
+      "Indie author spotlights",
+      "Signed editions available",
+      "SJP's personal reading notes"
+    ]
+  }
+]
+

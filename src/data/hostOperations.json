@@ -1,0 +1,289 @@
+{
+  "hostTools": {
+    "clubManagement": {
+      "createClub": {
+        "requiredFields": ["name", "hostType", "description", "timeframe", "isPremium"],
+        "optionalFields": ["coverQuery", "maxMembers", "autoApprove"],
+        "permissions": ["premium_host", "celebrity", "author", "narrator"],
+        "workflow": [
+          "Host submits club application",
+          "Admin reviews and approves",
+          "Club goes live with first book selection",
+          "Notifications sent to eligible users"
+        ]
+      },
+      "selectBook": {
+        "requiredFields": ["bookId", "duration", "startDate"],
+        "workflow": [
+          "Host selects book from Audible catalog",
+          "System checks licensing and availability",
+          "Preview period scheduled (7 days before official start)",
+          "Members notified of new selection"
+        ],
+        "rules": {
+          "advanceNotice": "7 days minimum",
+          "maxDuration": "60 days",
+          "minDuration": "14 days"
+        }
+      },
+      "scheduleEvent": {
+        "types": ["celebrity_chat", "author_chat", "discussion", "workshop"],
+        "requiredFields": ["title", "date", "type", "description", "maxCapacity"],
+        "workflow": [
+          "Host creates event",
+          "System reserves virtual meeting capacity",
+          "RSVP opens to members",
+          "Reminder notifications sent (24h, 1h, 15min before)",
+          "Event completion triggers attendance badges"
+        ],
+        "rules": {
+          "maxCapacity": 10000,
+          "minNotice": "48 hours",
+          "cancellationWindow": "24 hours"
+        }
+      }
+    },
+    "memberManagement": {
+      "approveMembers": {
+        "applicableWhen": "autoApprove is false",
+        "workflow": [
+          "User requests to join",
+          "Host reviews request",
+          "Host approves/rejects",
+          "User notified of decision"
+        ]
+      },
+      "moderateContent": {
+        "actions": ["warn", "mute", "remove", "ban"],
+        "reportTypes": ["spam", "harassment", "inappropriate"],
+        "workflow": [
+          "Member reports issue",
+          "Host reviews report",
+          "Host takes action",
+          "System logs action for audit"
+        ]
+      }
+    },
+    "analytics": {
+      "metrics": [
+        "totalMembers",
+        "activeMembers",
+        "completionRate",
+        "eventAttendance",
+        "rsvpRate",
+        "engagementScore",
+        "retention30d",
+        "retention90d"
+      ],
+      "reportingPeriods": ["weekly", "monthly", "lifetime"],
+      "exports": ["csv", "pdf"]
+    }
+  },
+  "perkFulfillment": {
+    "twoForOneDiscount": {
+      "id": "2-for-1-discount",
+      "name": "2-for-1 Book Credit",
+      "criteria": {
+        "type": "completion_and_review",
+        "minProgress": 100,
+        "minRating": 1,
+        "withinTimeframe": true
+      },
+      "value": "1 credit",
+      "expirationDays": 30,
+      "workflow": [
+        "User completes book before deadline",
+        "User submits rating (1-5 stars)",
+        "System validates completion timestamp",
+        "Credit issued to user account",
+        "Notification sent with expiration date"
+      ]
+    },
+    "earlyAccess": {
+      "id": "early-access",
+      "name": "Early Access to Next Pick",
+      "criteria": {
+        "type": "participation",
+        "minProgress": 75,
+        "attendedEvents": 1
+      },
+      "accessWindow": "7 days before public announcement",
+      "workflow": [
+        "System checks eligibility weekly",
+        "Early access granted to qualified members",
+        "Exclusive email sent with book details",
+        "Discussion forum opens early"
+      ]
+    },
+    "exclusiveContent": {
+      "id": "exclusive-content",
+      "name": "Exclusive Content Access",
+      "types": ["author_interviews", "behind_scenes", "bonus_chapters"],
+      "criteria": {
+        "type": "membership_duration",
+        "minMonths": 3,
+        "completedBooks": 3
+      },
+      "workflow": [
+        "Content becomes available monthly",
+        "Eligible members receive notification",
+        "Content streamed through app",
+        "Access tracked for metrics"
+      ]
+    },
+    "signedEditions": {
+      "id": "signed-editions",
+      "name": "Signed Edition Giveaway",
+      "criteria": {
+        "type": "raffle",
+        "eligibilityRequires": ["completed_book", "submitted_review", "attended_event"],
+        "winnersCount": 10
+      },
+      "workflow": [
+        "Eligible members automatically entered",
+        "Random selection at month end",
+        "Winners notified via email and in-app",
+        "Shipping information collected",
+        "Physical books mailed within 2 weeks"
+      ]
+    }
+  },
+  "gatingRules": {
+    "clubAccess": {
+      "premiumOnly": {
+        "requirement": "isPremium === true",
+        "message": "This club is available to Premium members only",
+        "ctaText": "Upgrade to Premium",
+        "ctaUrl": "/premium/upgrade"
+      },
+      "maxClubs": {
+        "free": 2,
+        "premium": 3,
+        "enforcement": "preventJoin",
+        "message": "You've reached your club limit. Leave a club to join another.",
+        "upgrade": "Premium members can join up to 3 clubs"
+      },
+      "inviteOnly": {
+        "requirement": "hasInviteCode === true",
+        "message": "This is an invite-only club",
+        "workflow": [
+          "User enters invite code",
+          "System validates code",
+          "If valid, user gains access",
+          "If invalid, error shown"
+        ]
+      }
+    },
+    "eventAccess": {
+      "membershipRequired": {
+        "requirement": "isClubMember === true",
+        "message": "Join the club to RSVP for events"
+      },
+      "capacityLimit": {
+        "enforcement": "firstComeFirstServed",
+        "waitlist": true,
+        "waitlistNotifications": true,
+        "message": "This event is at capacity. Join the waitlist?"
+      },
+      "rsvpDeadline": {
+        "window": "30 minutes before event",
+        "lateJoinAllowed": false,
+        "message": "RSVP deadline has passed"
+      }
+    },
+    "perkEligibility": {
+      "bookOwnership": {
+        "requirement": "ownsCurrentBook === true",
+        "message": "Purchase or use a credit to join this club",
+        "exemptions": ["trialPeriod", "earlyAccessMember"]
+      },
+      "progressTracking": {
+        "minimumProgress": 0,
+        "checkpointValidation": true,
+        "antiCheatMeasures": ["playbackSpeedCap", "progressThrottling"]
+      },
+      "timeframeEnforcement": {
+        "strictDeadlines": true,
+        "gracePeriod": "24 hours",
+        "extenuatingCircumstances": {
+          "allowed": true,
+          "requiresApproval": true,
+          "maxExtensions": 1
+        }
+      }
+    }
+  },
+  "notificationFlows": {
+    "clubJoined": {
+      "triggers": ["userJoinsClub"],
+      "recipients": ["newMember"],
+      "channels": ["inApp", "email", "push"],
+      "content": {
+        "title": "Welcome to {clubName}",
+        "message": "You've joined {clubName}. Start listening to {currentBook}",
+        "actions": ["startListening", "viewEvents", "inviteFriends"]
+      }
+    },
+    "newBookAnnouncement": {
+      "triggers": ["hostSelectsNewBook"],
+      "recipients": ["allClubMembers"],
+      "timing": "immediately",
+      "channels": ["inApp", "email", "push"],
+      "content": {
+        "title": "New Book Club Selection",
+        "message": "{clubName} is reading {bookTitle}. {daysRemaining} days to complete.",
+        "actions": ["purchaseBook", "viewDetails", "setReminder"]
+      }
+    },
+    "eventReminder": {
+      "triggers": ["24hBefore", "1hBefore", "15minBefore"],
+      "recipients": ["rsvpedMembers"],
+      "channels": ["inApp", "email", "push"],
+      "content": {
+        "title": "Event Starting Soon",
+        "message": "{eventTitle} starts in {timeUntil}",
+        "actions": ["joinEvent", "cancel"]
+      }
+    },
+    "completionMilestone": {
+      "triggers": ["userCompletesBook"],
+      "recipients": ["completingMember", "friendsOfMember"],
+      "channels": ["inApp"],
+      "content": {
+        "toMember": {
+          "title": "Congratulations",
+          "message": "You finished {bookTitle}! Rate it to unlock your 2-for-1 credit.",
+          "actions": ["rateBook", "viewNext"]
+        },
+        "toFriends": {
+          "title": "Friend Milestone",
+          "message": "{friendName} just finished {bookTitle}",
+          "actions": ["viewBook", "sendCongrats"]
+        }
+      }
+    },
+    "perkUnlocked": {
+      "triggers": ["perkCriteriamet"],
+      "recipients": ["earningMember"],
+      "channels": ["inApp", "email"],
+      "content": {
+        "title": "Perk Unlocked",
+        "message": "You've earned: {perkName}. Expires in {daysUntilExpiration} days.",
+        "actions": ["usePerk", "viewPerks"]
+      }
+    },
+    "friendActivity": {
+      "triggers": ["friendRatesBook", "friendJoinsClub", "friendCompletes"],
+      "recipients": ["usersFriends"],
+      "channels": ["inApp"],
+      "frequency": "batched",
+      "batchWindow": "3 hours",
+      "content": {
+        "title": "Friend Activity",
+        "message": "{friendCount} friends have new activity",
+        "actions": ["viewActivity"]
+      }
+    }
+  }
+}
+

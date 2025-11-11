@@ -1,0 +1,10 @@
+[
+  {
+    "id": "block-1",
+    "userId": "user-me",
+    "blockedUserId": "15",
+    "timestamp": "2025-10-28T11:45:00",
+    "reason": "spam"
+  }
+]
+

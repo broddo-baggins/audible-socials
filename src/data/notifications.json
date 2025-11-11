@@ -1,0 +1,128 @@
+[
+  {
+    "id": "notif-1",
+    "userId": "user-me",
+    "type": "friend_request",
+    "title": "New Friend Request",
+    "message": "Olivia Thompson wants to connect with you",
+    "timestamp": "2025-11-09T14:30:00",
+    "read": false,
+    "actionUrl": "/clubs/friends",
+    "actionData": {
+      "requestId": "fr-1",
+      "fromUserId": "5"
+    }
+  },
+  {
+    "id": "notif-2",
+    "userId": "user-me",
+    "type": "friend_request",
+    "title": "New Friend Request",
+    "message": "Noah Anderson wants to connect with you",
+    "timestamp": "2025-11-10T09:15:00",
+    "read": false,
+    "actionUrl": "/clubs/friends",
+    "actionData": {
+      "requestId": "fr-2",
+      "fromUserId": "8"
+    }
+  },
+  {
+    "id": "notif-3",
+    "userId": "user-me",
+    "type": "friend_accepted",
+    "title": "Friend Request Accepted",
+    "message": "Sofia Martinez accepted your friend request",
+    "timestamp": "2025-11-06T10:00:00",
+    "read": true,
+    "actionUrl": "/clubs/friends"
+  },
+  {
+    "id": "notif-4",
+    "userId": "user-me",
+    "type": "friend_recommendation",
+    "title": "Your Friend Recommends a Book",
+    "message": "Emma Richardson rated 'Becoming' 5 stars",
+    "timestamp": "2025-11-10T16:30:00",
+    "read": false,
+    "actionUrl": "/book/7",
+    "actionData": {
+      "bookId": "7",
+      "friendId": "1",
+      "rating": 5
+    }
+  },
+  {
+    "id": "notif-5",
+    "userId": "user-me",
+    "type": "club_event_reminder",
+    "title": "Event Starting Soon",
+    "message": "Live with Reese: Where the Crawdads Sing starts in 15 minutes",
+    "timestamp": "2025-11-25T18:45:00",
+    "read": false,
+    "actionUrl": "/club/1",
+    "actionData": {
+      "clubId": "1",
+      "eventId": "e1"
+    }
+  },
+  {
+    "id": "notif-6",
+    "userId": "user-me",
+    "type": "club_new_book",
+    "title": "New Book Club Selection",
+    "message": "Reese's Book Club has announced next month's pick",
+    "timestamp": "2025-11-08T12:00:00",
+    "read": true,
+    "actionUrl": "/club/1"
+  },
+  {
+    "id": "notif-7",
+    "userId": "user-me",
+    "type": "friend_milestone",
+    "title": "Friend Milestone",
+    "message": "Emma Richardson just finished 'Project Hail Mary'",
+    "timestamp": "2025-11-09T20:15:00",
+    "read": true,
+    "actionUrl": "/book/1",
+    "actionData": {
+      "friendId": "1",
+      "bookId": "1"
+    }
+  },
+  {
+    "id": "notif-8",
+    "userId": "user-me",
+    "type": "credit_expiring",
+    "title": "Credits Expiring Soon",
+    "message": "You have 2 credits expiring in 7 days",
+    "timestamp": "2025-11-11T09:00:00",
+    "read": false,
+    "actionUrl": "/discover"
+  },
+  {
+    "id": "notif-9",
+    "userId": "user-me",
+    "type": "trending_among_friends",
+    "title": "Trending with Friends",
+    "message": "3 of your friends are listening to 'Project Hail Mary'",
+    "timestamp": "2025-11-10T14:20:00",
+    "read": false,
+    "actionUrl": "/book/1"
+  },
+  {
+    "id": "notif-10",
+    "userId": "user-me",
+    "type": "badge_earned",
+    "title": "Badge Unlocked",
+    "message": "You earned the 'Early Bird' badge for finishing before the club deadline",
+    "timestamp": "2025-11-07T22:30:00",
+    "read": true,
+    "actionUrl": "/profile",
+    "actionData": {
+      "badgeId": "early-bird",
+      "clubId": "1"
+    }
+  }
+]
+

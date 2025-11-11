@@ -1,0 +1,27 @@
+[
+  {
+    "id": "fr-1",
+    "fromUserId": "5",
+    "toUserId": "user-me",
+    "status": "pending",
+    "timestamp": "2025-11-09T14:30:00",
+    "message": "Hey! I saw you're reading Project Hail Mary. Would love to connect!"
+  },
+  {
+    "id": "fr-2",
+    "fromUserId": "8",
+    "toUserId": "user-me",
+    "status": "pending",
+    "timestamp": "2025-11-10T09:15:00",
+    "message": "Let's share our reading lists!"
+  },
+  {
+    "id": "fr-3",
+    "fromUserId": "user-me",
+    "toUserId": "3",
+    "status": "accepted",
+    "timestamp": "2025-11-05T16:20:00",
+    "acceptedAt": "2025-11-06T10:00:00"
+  }
+]
+

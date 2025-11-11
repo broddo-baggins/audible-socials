@@ -1,0 +1,343 @@
+[
+  {
+    "id": "user-me",
+    "name": "You",
+    "isPremium": false,
+    "credits": 2,
+    "joinedClubs": [],
+    "library": ["1", "3", "7", "10", "19", "26"],
+    "currentlyReading": "1",
+    "currentProgress": 45,
+    "listeningSpeed": 1.2,
+    "ratings": {
+      "26": 5,
+      "3": 4,
+      "10": 5
+    },
+    "privacySettings": {
+      "shareLibrary": true,
+      "shareProgress": true,
+      "shareRatings": true,
+      "shareClubs": true
+    },
+    "rsvpEvents": ["e1", "e3"],
+    "recommendedBooks": ["2", "4", "6"]
+  },
+  {
+    "id": "1",
+    "name": "Emma Richardson",
+    "isPremium": true,
+    "credits": 3,
+    "joinedClubs": ["1", "3"],
+    "library": ["1", "2", "7", "10", "12", "14", "19", "23", "26", "38"],
+    "currentlyReading": "1",
+    "currentProgress": 78,
+    "listeningSpeed": 1.5,
+    "ratings": {
+      "1": 5,
+      "26": 5,
+      "7": 4,
+      "10": 5,
+      "23": 5
+    },
+    "privacySettings": {
+      "shareLibrary": true,
+      "shareProgress": true,
+      "shareRatings": true,
+      "shareClubs": true
+    },
+    "rsvpEvents": ["e1", "e6"],
+    "recommendedBooks": ["6", "9", "12"]
+  },
+  {
+    "id": "2",
+    "name": "Marcus Chen",
+    "isPremium": false,
+    "credits": 1,
+    "joinedClubs": ["8"],
+    "library": ["3", "15", "19", "20", "28", "32", "39", "45"],
+    "currentlyReading": "3",
+    "currentProgress": 34,
+    "listeningSpeed": 1.0,
+    "ratings": {
+      "3": 5,
+      "20": 4,
+      "19": 5
+    },
+    "privacySettings": {
+      "shareLibrary": true,
+      "shareProgress": false,
+      "shareRatings": true,
+      "shareClubs": true
+    },
+    "rsvpEvents": ["e14"],
+    "recommendedBooks": ["15", "20", "28"]
+  },
+  {
+    "id": "3",
+    "name": "Sofia Martinez",
+    "isPremium": true,
+    "credits": 5,
+    "joinedClubs": ["5", "7"],
+    "library": ["2", "5", "6", "7", "10", "13", "17", "24", "30", "42", "44", "47"],
+    "currentlyReading": "7",
+    "currentProgress": 62,
+    "listeningSpeed": 1.75,
+    "ratings": {
+      "2": 5,
+      "10": 5,
+      "13": 4,
+      "6": 5
+    },
+    "privacySettings": {
+      "shareLibrary": true,
+      "shareProgress": true,
+      "shareRatings": true,
+      "shareClubs": true
+    },
+    "rsvpEvents": ["e10", "e11"],
+    "recommendedBooks": ["13", "16", "18"]
+  },
+  {
+    "id": "4",
+    "name": "Jamal Washington",
+    "isPremium": false,
+    "credits": 0,
+    "joinedClubs": ["2"],
+    "library": ["4", "9", "21", "22", "35", "36", "40"],
+    "currentlyReading": "4",
+    "ratings": {
+      "4": 4,
+      "9": 5,
+      "21": 5
+    }
+  },
+  {
+    "id": "5",
+    "name": "Olivia Thompson",
+    "isPremium": true,
+    "credits": 2,
+    "joinedClubs": ["6"],
+    "library": ["11", "12", "14", "16", "23", "31", "38"],
+    "currentlyReading": "12",
+    "ratings": {
+      "11": 5,
+      "23": 5,
+      "16": 4
+    }
+  },
+  {
+    "id": "6",
+    "name": "Liam O'Connor",
+    "isPremium": false,
+    "credits": 1,
+    "joinedClubs": ["1"],
+    "library": ["1", "8", "21", "26", "34", "40", "46"],
+    "currentlyReading": "26",
+    "ratings": {
+      "1": 5,
+      "8": 4,
+      "46": 5
+    }
+  },
+  {
+    "id": "7",
+    "name": "Aisha Patel",
+    "isPremium": true,
+    "credits": 4,
+    "joinedClubs": ["4", "8"],
+    "library": ["3", "6", "10", "13", "15", "19", "25", "39", "43", "45"],
+    "currentlyReading": "19",
+    "ratings": {
+      "19": 5,
+      "6": 5,
+      "43": 5,
+      "3": 4
+    }
+  },
+  {
+    "id": "8",
+    "name": "Noah Anderson",
+    "isPremium": false,
+    "credits": 2,
+    "joinedClubs": [],
+    "library": ["1", "5", "17", "27", "30", "37", "41", "44"],
+    "currentlyReading": "44",
+    "ratings": {
+      "5": 4,
+      "30": 5,
+      "17": 4
+    }
+  },
+  {
+    "id": "9",
+    "name": "Isabella Santos",
+    "isPremium": true,
+    "credits": 3,
+    "joinedClubs": ["2", "5"],
+    "library": ["2", "4", "5", "7", "9", "22", "24", "35", "42", "44", "48"],
+    "currentlyReading": "4",
+    "ratings": {
+      "2": 5,
+      "7": 5,
+      "24": 5,
+      "48": 5
+    }
+  },
+  {
+    "id": "10",
+    "name": "Ethan Brooks",
+    "isPremium": false,
+    "credits": 1,
+    "joinedClubs": ["3"],
+    "library": ["1", "8", "18", "21", "23", "31", "34", "36", "40", "46"],
+    "currentlyReading": "8",
+    "ratings": {
+      "23": 5,
+      "34": 4,
+      "21": 5
+    }
+  },
+  {
+    "id": "11",
+    "name": "Mia Johnson",
+    "isPremium": true,
+    "credits": 6,
+    "joinedClubs": ["6"],
+    "library": ["11", "12", "14", "16", "23", "31", "33", "38", "48"],
+    "currentlyReading": "12",
+    "ratings": {
+      "11": 5,
+      "12": 5,
+      "33": 5
+    }
+  },
+  {
+    "id": "12",
+    "name": "Lucas Kim",
+    "isPremium": false,
+    "credits": 0,
+    "joinedClubs": ["8"],
+    "library": ["3", "15", "20", "28", "32", "39", "45", "50"],
+    "currentlyReading": "3",
+    "ratings": {
+      "3": 5,
+      "15": 4,
+      "45": 5
+    }
+  },
+  {
+    "id": "13",
+    "name": "Charlotte Williams",
+    "isPremium": true,
+    "credits": 2,
+    "joinedClubs": ["5", "7"],
+    "library": ["2", "6", "7", "10", "13", "24", "29", "33", "42", "47", "48"],
+    "currentlyReading": "6",
+    "ratings": {
+      "10": 5,
+      "13": 5,
+      "6": 4,
+      "47": 5
+    }
+  },
+  {
+    "id": "14",
+    "name": "Benjamin Taylor",
+    "isPremium": false,
+    "credits": 1,
+    "joinedClubs": ["1"],
+    "library": ["1", "8", "19", "21", "26", "34", "46"],
+    "currentlyReading": "46",
+    "ratings": {
+      "1": 4,
+      "26": 5,
+      "46": 5
+    }
+  },
+  {
+    "id": "15",
+    "name": "Amelia Davis",
+    "isPremium": true,
+    "credits": 4,
+    "joinedClubs": ["2"],
+    "library": ["4", "9", "22", "24", "35", "36", "42", "44", "48", "49"],
+    "currentlyReading": "4",
+    "ratings": {
+      "4": 5,
+      "9": 4,
+      "48": 5
+    }
+  },
+  {
+    "id": "16",
+    "name": "James Rodriguez",
+    "isPremium": false,
+    "credits": 2,
+    "joinedClubs": [],
+    "library": ["5", "17", "18", "27", "30", "37", "41"],
+    "currentlyReading": "30",
+    "ratings": {
+      "30": 5,
+      "18": 4
+    }
+  },
+  {
+    "id": "17",
+    "name": "Ava Nguyen",
+    "isPremium": true,
+    "credits": 3,
+    "joinedClubs": ["4"],
+    "library": ["19", "25", "29", "33", "39", "43", "45", "50"],
+    "currentlyReading": "19",
+    "ratings": {
+      "19": 5,
+      "43": 5,
+      "45": 4
+    }
+  },
+  {
+    "id": "18",
+    "name": "Alexander Moore",
+    "isPremium": false,
+    "credits": 1,
+    "joinedClubs": ["3"],
+    "library": ["1", "8", "16", "23", "31", "38", "40"],
+    "currentlyReading": "1",
+    "ratings": {
+      "1": 4,
+      "23": 5,
+      "38": 5
+    }
+  },
+  {
+    "id": "19",
+    "name": "Harper Wilson",
+    "isPremium": true,
+    "credits": 5,
+    "joinedClubs": ["5", "6"],
+    "library": ["2", "7", "11", "12", "14", "24", "38", "42", "44"],
+    "currentlyReading": "7",
+    "ratings": {
+      "2": 5,
+      "7": 5,
+      "11": 5,
+      "12": 4
+    }
+  },
+  {
+    "id": "20",
+    "name": "Daniel Garcia",
+    "isPremium": false,
+    "credits": 0,
+    "joinedClubs": ["8"],
+    "library": ["3", "15", "20", "28", "32", "39"],
+    "currentlyReading": "15",
+    "ratings": {
+      "3": 5,
+      "20": 3,
+      "39": 4
+    }
+  }
+]
+
