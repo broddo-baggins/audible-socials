@@ -1,8 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Literata:wght@400;600;700&display=swap');
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+  --color-audible-orange: #F86800;
+  --color-audible-orange-dark: #E05D00;
+  --color-audible-navy: #1F2937;
+  --color-audible-navy-light: #374151;
+  --color-audible-cream: #F9FAFB;
+  --color-audible-gold: #F59E0B;
+  
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-serif: Literata, Georgia, serif;
+}
 
 :root {
   font-family: 'Inter', system-ui, sans-serif;
