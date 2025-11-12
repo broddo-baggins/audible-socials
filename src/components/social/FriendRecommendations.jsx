@@ -62,9 +62,9 @@ export default function FriendRecommendations() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 border border-purple-200">
+    <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
       <div className="flex items-center space-x-2 mb-4">
-        <ThumbsUp className="w-5 h-5 text-purple-600" />
+        <ThumbsUp className="w-5 h-5 text-audible-orange" />
         <h3 className="text-lg font-bold text-gray-900">Recommended by Friends</h3>
       </div>
       
@@ -77,7 +77,7 @@ export default function FriendRecommendations() {
           <Link
             key={rec.book.id}
             to={`/book/${rec.book.id}`}
-            className="block bg-white rounded-lg p-4 hover:shadow-md transition-shadow border border-gray-200"
+            className="block bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-all border border-gray-200 hover:border-audible-orange"
           >
             <div className="flex space-x-3">
               <img
@@ -94,13 +94,13 @@ export default function FriendRecommendations() {
                 </p>
                 
                 <div className="flex items-center space-x-3 text-xs">
-                  <div className="flex items-center space-x-1 text-purple-600">
+                  <div className="flex items-center space-x-1 text-audible-orange">
                     <Users className="w-3 h-3" />
                     <span className="font-semibold">
                       {rec.friendCount} friend{rec.friendCount > 1 ? 's' : ''}
                     </span>
                   </div>
-                  <div className="flex items-center space-x-1 text-yellow-600">
+                  <div className="flex items-center space-x-1 text-yellow-500">
                     <Star className="w-3 h-3 fill-yellow-400" />
                     <span className="font-semibold">{rec.avgFriendRating}</span>
                   </div>
@@ -110,14 +110,14 @@ export default function FriendRecommendations() {
                   {rec.friends.slice(0, 3).map((friend, idx) => (
                     <div
                       key={friend.id}
-                      className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full"
+                      className="text-xs bg-orange-100 text-audible-orange px-2 py-0.5 rounded-full border border-audible-orange/30"
                       style={{ marginLeft: idx > 0 ? '-4px' : '0' }}
                     >
                       {friend.name.split(' ')[0]}
                     </div>
                   ))}
                   {rec.friends.length > 3 && (
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-600">
                       +{rec.friends.length - 3} more
                     </span>
                   )}
@@ -130,7 +130,7 @@ export default function FriendRecommendations() {
 
       <Link
         to="/clubs/friends"
-        className="mt-4 block text-center text-sm font-semibold text-purple-600 hover:text-purple-700"
+        className="mt-4 block text-center text-sm font-semibold text-audible-orange hover:text-audible-orange-light"
       >
         See all friend recommendations
       </Link>

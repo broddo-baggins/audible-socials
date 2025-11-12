@@ -36,9 +36,9 @@ export default function Profile() {
   const maxClubs = userData.isPremium ? 3 : 2;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-audible-cream">
       {/* Profile Header */}
-      <section className="bg-white border-b border-gray-200">
+      <section className="bg-gray-50 border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="flex items-start space-x-6">
             {/* Avatar */}
@@ -81,7 +81,7 @@ export default function Profile() {
               </div>
 
               {/* Credits */}
-              <div className="bg-audible-cream rounded-lg px-4 py-3 inline-flex items-center space-x-3">
+              <div className="bg-gray-100 rounded-lg px-4 py-3 inline-flex items-center space-x-3 border border-gray-200">
                 <CreditCard className="w-5 h-5 text-audible-orange" />
                 <div>
                   <p className="text-sm text-gray-600">Available Credits</p>
@@ -99,7 +99,7 @@ export default function Profile() {
       </section>
 
       {/* Tabs */}
-      <section className="bg-white border-b border-gray-200 sticky top-16 z-40">
+      <section className="bg-white border-b border-gray-200 shadow-sm sticky top-16 z-40">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex space-x-8">
             <button
@@ -154,7 +154,7 @@ export default function Profile() {
         {activeTab === 'overview' && (
           <div className="space-y-6">
         {/* Membership Section */}
-        <section className="bg-white rounded-xl shadow-md p-6 mb-6">
+        <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Membership</h2>
           
           {userData.isPremium ? (
@@ -204,12 +204,12 @@ export default function Profile() {
         </section>
 
         {/* Book Clubs Section */}
-        <section className="bg-white rounded-xl shadow-md p-6 mb-6">
+        <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">My Book Clubs</h2>
             <Link
               to="/clubs"
-              className="text-audible-orange font-semibold hover:text-audible-orange-dark transition-colors text-sm"
+              className="text-audible-orange font-semibold hover:text-audible-orange-light transition-colors text-sm"
             >
               View All
             </Link>
@@ -232,7 +232,7 @@ export default function Profile() {
                 <Link
                   key={club.id}
                   to={`/club/${club.id}`}
-                  className="block p-4 border border-gray-200 rounded-lg hover:border-audible-orange hover:shadow-md transition-all"
+                  className="block p-4 border border-gray-200 rounded-lg hover:border-audible-orange hover:bg-gray-50 transition-all"
                 >
                   <div className="flex items-center justify-between">
                     <div>
@@ -259,12 +259,12 @@ export default function Profile() {
         </section>
 
         {/* Friends Section */}
-        <section className="bg-white rounded-xl shadow-md p-6 mb-6">
+        <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-900">Friends</h2>
             <Link
               to="/clubs/friends"
-              className="text-audible-orange font-semibold hover:text-audible-orange-dark transition-colors text-sm"
+              className="text-audible-orange font-semibold hover:text-audible-orange-light transition-colors text-sm"
             >
               View All
             </Link>
@@ -289,7 +289,7 @@ export default function Profile() {
                   className="text-center p-3 border border-gray-200 rounded-lg hover:border-audible-orange transition-colors"
                 >
                   <div className="relative inline-block mb-2">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-audible-orange to-audible-orange-dark rounded-full flex items-center justify-center">
                       <User className="w-6 h-6 text-white" />
                     </div>
                     {friend.isPremium && (
@@ -325,7 +325,7 @@ export default function Profile() {
           <div className="space-y-6">
             <PrivacySettings />
             
-            <button className="w-full bg-white rounded-xl shadow-md p-4 text-red-600 font-semibold hover:bg-red-50 transition-colors flex items-center justify-center space-x-2">
+            <button className="w-full bg-white rounded-xl border border-gray-200 shadow-sm p-4 text-red-500 font-semibold hover:bg-red-50 transition-colors flex items-center justify-center space-x-2">
               <LogOut className="w-5 h-5" />
               <span>Sign Out</span>
             </button>

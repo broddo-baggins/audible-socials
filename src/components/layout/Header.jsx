@@ -89,22 +89,22 @@ export default function Header() {
               </button>
               
               {showClubsDropdown && (
-                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2">
                   <Link
                     to="/clubs"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-audible-orange"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-audible-orange"
                   >
                     Book Clubs
                   </Link>
                   <Link
                     to="/clubs/friends"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-audible-orange"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-audible-orange"
                   >
                     Friends
                   </Link>
                   <Link
                     to="/clubs/activity"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-audible-orange"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-audible-orange"
                   >
                     Activity
                   </Link>
@@ -127,14 +127,14 @@ export default function Header() {
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
             {/* Search Icon */}
-            <button className="p-2 text-gray-600 hover:text-audible-orange transition-colors">
+            <button className="p-2 text-gray-700 hover:text-audible-orange transition-colors">
               <Search className="w-5 h-5" />
             </button>
 
             {/* Credits Display */}
             {userData && (
-              <div className="hidden sm:flex items-center space-x-2 px-3 py-1 bg-audible-cream rounded-full">
-                <span className="text-sm font-semibold text-audible-orange">
+              <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-gray-100 rounded-full">
+                <span className="text-sm font-bold text-audible-orange">
                   {userData.credits}
                 </span>
                 <span className="text-xs text-gray-600">
@@ -146,12 +146,12 @@ export default function Header() {
             {/* Notifications */}
             <button
               onClick={() => setIsNotificationsOpen(true)}
-              className="relative p-2 text-gray-600 hover:text-audible-orange transition-colors"
+              className="relative p-2 text-gray-700 hover:text-audible-orange transition-colors"
             >
               <Bell className="w-5 h-5" />
               {unreadCount > 0 && (
                 <>
-                  <span className="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  <span className="absolute top-0 right-0 w-5 h-5 bg-audible-orange text-white text-xs font-bold rounded-full flex items-center justify-center">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 </>
@@ -161,7 +161,7 @@ export default function Header() {
             {/* Profile */}
             <Link
               to="/profile"
-              className="p-2 text-gray-600 hover:text-audible-orange transition-colors"
+              className="p-2 text-gray-700 hover:text-audible-orange transition-colors"
             >
               <User className="w-5 h-5" />
             </Link>

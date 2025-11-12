@@ -81,9 +81,9 @@ export default function BookDetailPage() {
   const clubDiscount = relatedClubs.length > 0 && userData?.joinedClubs.some(id => relatedClubs.map(c => c.id).includes(id));
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-audible-cream">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-audible-navy to-audible-navy-light text-white">
+      <section className="bg-gradient-to-br from-gray-50 to-white text-gray-900 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid md:grid-cols-2 gap-8 items-start">
             {/* Book Cover */}
@@ -115,33 +115,33 @@ export default function BookDetailPage() {
             >
               <div>
                 <span className="text-audible-orange font-semibold text-sm">{book.genre}</span>
-                <h1 className="text-4xl md:text-5xl font-bold mt-2 mb-3 font-serif">{book.title}</h1>
-                <p className="text-xl text-white/90">By {book.author}</p>
-                <p className="text-white/80">Narrated by {book.narrator}</p>
+                <h1 className="text-4xl md:text-5xl font-bold mt-2 mb-3 font-serif text-gray-900">{book.title}</h1>
+                <p className="text-xl text-gray-700">By {book.author}</p>
+                <p className="text-gray-600">Narrated by {book.narrator}</p>
               </div>
 
               {/* Rating */}
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
                   <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
-                  <span className="text-2xl font-bold">{book.rating}</span>
-                  <span className="text-white/70">({book.ratingsCount.toLocaleString()} ratings)</span>
+                  <span className="text-2xl font-bold text-gray-900">{book.rating}</span>
+                  <span className="text-gray-600">({book.ratingsCount.toLocaleString()} ratings)</span>
                 </div>
               </div>
 
               {/* Duration */}
-              <div className="flex items-center space-x-2 text-white/80">
+              <div className="flex items-center space-x-2 text-gray-600">
                 <Clock className="w-5 h-5" />
                 <span>{book.duration}</span>
               </div>
 
               {/* Credits Info */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <div className="bg-gray-100 rounded-lg p-4 border border-gray-200">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-white/90">Price:</span>
+                  <span className="text-gray-700">Price:</span>
                   <div className="flex items-center space-x-2">
                     {clubDiscount && (
-                      <span className="text-white/60 line-through">${book.price}</span>
+                      <span className="text-gray-500 line-through">${book.price}</span>
                     )}
                     <span className="text-2xl font-bold text-audible-orange">
                       1 Credit{clubDiscount && ' (2-for-1)'}
@@ -149,8 +149,8 @@ export default function BookDetailPage() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-white/70">Your credits:</span>
-                  <span className="font-semibold">{userData?.credits} available</span>
+                  <span className="text-gray-600">Your credits:</span>
+                  <span className="font-semibold text-gray-900">{userData?.credits} available</span>
                 </div>
               </div>
 
@@ -165,7 +165,7 @@ export default function BookDetailPage() {
                       <Play className="w-6 h-6" />
                       <span>{isCurrentlyReading ? 'Continue' : 'Start'} Listening</span>
                     </button>
-                    <button className="px-6 py-4 bg-white/10 backdrop-blur-sm text-white rounded-full font-semibold hover:bg-white/20 transition-colors">
+                    <button className="px-6 py-4 bg-gray-200 text-gray-700 rounded-full font-semibold hover:bg-gray-300 transition-colors">
                       <Share2 className="w-5 h-5" />
                     </button>
                   </>
@@ -179,7 +179,7 @@ export default function BookDetailPage() {
                       <Plus className="w-6 h-6" />
                       <span>Add to Library (1 Credit)</span>
                     </button>
-                    <button className="px-6 py-4 bg-white/10 backdrop-blur-sm text-white rounded-full font-semibold hover:bg-white/20 transition-colors">
+                    <button className="px-6 py-4 bg-gray-200 text-gray-700 rounded-full font-semibold hover:bg-gray-300 transition-colors">
                       <Heart className="w-5 h-5" />
                     </button>
                   </>
@@ -188,12 +188,12 @@ export default function BookDetailPage() {
 
               {/* Extended Preview for Club Members */}
               {relatedClubs.length > 0 && userData?.joinedClubs.some(id => relatedClubs.map(c => c.id).includes(id)) && (
-                <div className="bg-purple-600/30 backdrop-blur-sm rounded-lg p-4 border border-purple-400/30">
-                  <p className="text-sm font-semibold mb-2 flex items-center">
-                    <Crown className="w-4 h-4 mr-2" />
+                <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                  <p className="text-sm font-semibold mb-2 flex items-center text-purple-700">
+                    <Crown className="w-4 h-4 mr-2 text-audible-gold" />
                     Book Club Member Benefit
                   </p>
-                  <p className="text-sm text-white/80">
+                  <p className="text-sm text-gray-700">
                     Get 30 minutes of extended preview (vs 5 minutes)
                   </p>
                 </div>
@@ -209,7 +209,7 @@ export default function BookDetailPage() {
           {/* Left Column - Description */}
           <div className="md:col-span-2 space-y-8">
             {/* Publisher's Summary */}
-            <section className="bg-white rounded-xl shadow-md p-6">
+            <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Publisher's Summary</h2>
               <p className="text-gray-700 leading-relaxed">{book.description}</p>
             </section>
@@ -219,19 +219,19 @@ export default function BookDetailPage() {
 
             {/* Related Book Clubs */}
             {relatedClubs.length > 0 && (
-              <section className="bg-white rounded-xl shadow-md p-6">
+              <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Book Clubs Reading This</h2>
                 <div className="space-y-4">
                   {relatedClubs.map((club) => (
                     <Link
                       key={club.id}
                       to={`/club/${club.id}`}
-                      className="block p-4 border-2 border-gray-200 rounded-lg hover:border-audible-orange hover:shadow-md transition-all"
+                      className="block p-4 border-2 border-audible-gray rounded-lg hover:border-audible-orange hover:bg-audible-dark-light transition-all"
                     >
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="flex items-center space-x-2 mb-1">
-                            <h3 className="font-bold text-gray-900">{club.name}</h3>
+                            <h3 className="font-bold text-white">{club.name}</h3>
                             {club.isPremium && (
                               <span className="bg-audible-gold text-white text-xs font-semibold px-2 py-0.5 rounded-full flex items-center">
                                 <Crown className="w-3 h-3 mr-1" />
@@ -239,7 +239,7 @@ export default function BookDetailPage() {
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-600">Hosted by {club.host}</p>
+                          <p className="text-sm text-gray-400">Hosted by {club.host}</p>
                         </div>
                         <div className="text-right">
                           <p className="text-audible-orange font-semibold text-sm">
@@ -256,7 +256,7 @@ export default function BookDetailPage() {
 
             {/* User Rating */}
             {inLibrary && (
-              <section className="bg-white rounded-xl shadow-md p-6">
+              <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Rating</h2>
                 {userRating ? (
                   <div className="flex items-center space-x-4">
@@ -311,7 +311,7 @@ export default function BookDetailPage() {
           <div className="space-y-6">
             {/* Friends Reading This */}
             {friendsReading.length > 0 && (
-              <section className="bg-white rounded-xl shadow-md p-6">
+              <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h3 className="font-bold text-gray-900 mb-4 flex items-center">
                   <Users className="w-5 h-5 mr-2 text-audible-orange" />
                   Friends Reading This
@@ -320,7 +320,7 @@ export default function BookDetailPage() {
                   {friendsReading.map((friend) => (
                     <div key={friend.id} className="flex items-center space-x-3">
                       <div className="relative">
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 bg-gradient-to-br from-audible-orange to-audible-orange-dark rounded-full flex items-center justify-center">
                           <span className="text-white font-semibold text-sm">
                             {friend.name.split(' ').map(n => n[0]).join('')}
                           </span>
@@ -347,7 +347,7 @@ export default function BookDetailPage() {
             )}
 
             {/* Book Details */}
-            <section className="bg-white rounded-xl shadow-md p-6">
+            <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
               <h3 className="font-bold text-gray-900 mb-4">Details</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">

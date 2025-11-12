@@ -64,10 +64,10 @@ export default function SocialNudges() {
           <Link
             key={`listening-${nudge.friend.id}-${nudge.book.id}`}
             to={`/book/${nudge.book.id}`}
-            className="block bg-white rounded-lg p-4 hover:shadow-md transition-shadow border border-gray-200"
+            className="block bg-white rounded-lg p-4 hover:bg-gray-50 transition-all border border-gray-200 hover:border-green-500 shadow-sm"
           >
             <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0 p-2 bg-green-100 rounded-lg">
+              <div className="flex-shrink-0 p-2 bg-green-50 rounded-lg">
                 <Users className="w-5 h-5 text-green-600" />
               </div>
               <div className="flex-1 min-w-0">
@@ -96,16 +96,16 @@ export default function SocialNudges() {
           <Link
             key={`trending-${nudge.book.id}`}
             to={`/book/${nudge.book.id}`}
-            className="block bg-gradient-to-r from-orange-50 to-pink-50 rounded-lg p-4 hover:shadow-md transition-shadow border border-orange-200"
+            className="block bg-orange-50 rounded-lg p-4 hover:bg-orange-100 transition-all border border-audible-orange/50 shadow-sm"
           >
             <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0 p-2 bg-orange-100 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-orange-600" />
+              <div className="flex-shrink-0 p-2 bg-white rounded-lg">
+                <TrendingUp className="w-5 h-5 text-audible-orange" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-2 mb-1">
-                  <Zap className="w-4 h-4 text-orange-500" />
-                  <span className="text-xs font-bold text-orange-600 uppercase">Trending</span>
+                  <Zap className="w-4 h-4 text-audible-orange" />
+                  <span className="text-xs font-bold text-audible-orange uppercase">Trending</span>
                 </div>
                 <p className="text-sm text-gray-900">
                   <span className="font-semibold">{nudge.count} of your friends</span>
@@ -116,7 +116,7 @@ export default function SocialNudges() {
                   {nudge.friends.slice(0, 3).map((friend) => (
                     <div
                       key={friend.id}
-                      className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full"
+                      className="text-xs bg-white text-audible-orange px-2 py-0.5 rounded-full border border-audible-orange/30"
                     >
                       {friend.name.split(' ')[0]}
                     </div>
@@ -139,7 +139,7 @@ export default function SocialNudges() {
   return (
     <div className="space-y-3">
       <h3 className="text-lg font-bold text-gray-900 flex items-center space-x-2">
-        <Users className="w-5 h-5 text-purple-600" />
+        <Users className="w-5 h-5 text-audible-orange" />
         <span>What Friends Are Listening To</span>
       </h3>
       {nudges.map(nudge => renderNudge(nudge))}

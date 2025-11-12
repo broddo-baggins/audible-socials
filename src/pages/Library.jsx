@@ -49,9 +49,9 @@ export default function Library() {
     : libraryBooks.filter(book => userData?.ratings[book.id]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-audible-cream">
       {/* Header */}
-      <section className="bg-white border-b border-gray-200 py-8 px-4">
+      <section className="bg-gray-50 border-b border-gray-200 py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 flex items-center">
             <BookOpen className="w-10 h-10 mr-3 text-audible-orange" />
@@ -64,7 +64,7 @@ export default function Library() {
       </section>
 
       {/* Tabs */}
-      <section className="bg-white border-b border-gray-200">
+      <section className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex space-x-8">
             <button

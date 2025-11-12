@@ -53,7 +53,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-audible-cream">
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-audible-orange to-audible-orange-dark text-white py-16 px-4">
         <div className="max-w-7xl mx-auto">
@@ -92,7 +92,7 @@ export default function Home() {
           </h2>
           <Link
             to="/clubs"
-            className="text-audible-orange font-semibold hover:text-audible-orange-dark transition-colors"
+            className="text-audible-orange font-semibold hover:text-audible-orange-light transition-colors"
           >
             View All
           </Link>
@@ -107,7 +107,7 @@ export default function Home() {
           {featuredClubs.map((club) => (
             <motion.div key={club.id} variants={item}>
               <Link to={`/club/${club.id}`}>
-                <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all p-6 border-2 border-transparent hover:border-audible-orange">
+                <div className="bg-white rounded-xl hover:bg-gray-50 transition-all p-6 border-2 border-gray-200 hover:border-audible-orange shadow-sm">
                   <div className="flex items-start justify-between mb-4">
                     <h3 className="text-xl font-bold text-gray-900">{club.name}</h3>
                     {club.isPremium && (
@@ -117,13 +117,13 @@ export default function Home() {
                     )}
                   </div>
                   
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                  <p className="text-gray-700 text-sm mb-4 line-clamp-2">
                     {club.description}
                   </p>
                   
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">
-                      Hosted by <span className="font-semibold text-gray-700">{club.host}</span>
+                    <span className="text-gray-600">
+                      Hosted by <span className="font-semibold text-gray-900">{club.host}</span>
                     </span>
                     <span className="text-audible-orange font-semibold">
                       {club.memberCount.toLocaleString()} members
@@ -131,7 +131,7 @@ export default function Home() {
                   </div>
                   
                   <div className="mt-4 pt-4 border-t border-gray-200">
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-600">
                       {club.daysRemaining} days left • {club.meetingsPerMonth} meetings/month
                     </span>
                   </div>
@@ -151,7 +151,7 @@ export default function Home() {
       </section>
 
       {/* Trending Books */}
-      <section className="max-w-7xl mx-auto px-4 py-12 bg-white rounded-xl my-8">
+      <section className="max-w-7xl mx-auto px-4 py-12 bg-gray-50 rounded-xl my-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center">
             <TrendingUp className="w-8 h-8 mr-2 text-audible-orange" />
@@ -159,7 +159,7 @@ export default function Home() {
           </h2>
           <Link
             to="/discover"
-            className="text-audible-orange font-semibold hover:text-audible-orange-dark transition-colors"
+            className="text-audible-orange font-semibold hover:text-audible-orange-light transition-colors"
           >
             Explore More
           </Link>
@@ -201,7 +201,7 @@ export default function Home() {
           Because You Listened To...
         </h2>
         
-        <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-8 text-white">
+        <div className="bg-gradient-to-r from-audible-orange to-audible-orange-dark rounded-xl p-8 text-white">
           <h3 className="text-2xl font-bold mb-4">
             Discover Your Next Favorite
           </h3>
@@ -210,7 +210,7 @@ export default function Home() {
           </p>
           <Link
             to="/clubs"
-            className="inline-block bg-white text-purple-600 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+            className="inline-block bg-white text-audible-orange px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
           >
             Explore Book Clubs
           </Link>

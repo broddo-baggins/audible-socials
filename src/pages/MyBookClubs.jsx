@@ -30,9 +30,9 @@ export default function MyBookClubs() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-audible-cream">
       {/* Header */}
-      <section className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-12 px-4">
+      <section className="bg-gradient-to-r from-audible-orange to-audible-orange-dark text-white py-12 px-4">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl md:text-5xl font-bold mb-3 font-serif">
             My Book Clubs
@@ -44,14 +44,14 @@ export default function MyBookClubs() {
       </section>
 
       {/* Tabs */}
-      <section className="bg-white border-b border-gray-200 sticky top-16 z-40">
+      <section className="bg-white border-b border-gray-200 shadow-sm sticky top-16 z-40">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex space-x-8">
             <button
               onClick={() => handleTabChange('clubs')}
               className={`py-4 border-b-2 font-semibold transition-colors ${
                 activeTab === 'clubs'
-                  ? 'border-purple-600 text-purple-600'
+                  ? 'border-audible-orange text-audible-orange'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -61,7 +61,7 @@ export default function MyBookClubs() {
               onClick={() => handleTabChange('friends')}
               className={`py-4 border-b-2 font-semibold transition-colors ${
                 activeTab === 'friends'
-                  ? 'border-purple-600 text-purple-600'
+                  ? 'border-audible-orange text-audible-orange'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -71,7 +71,7 @@ export default function MyBookClubs() {
               onClick={() => handleTabChange('activity')}
               className={`py-4 border-b-2 font-semibold transition-colors ${
                 activeTab === 'activity'
-                  ? 'border-purple-600 text-purple-600'
+                  ? 'border-audible-orange text-audible-orange'
                   : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
             >

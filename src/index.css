@@ -4,9 +4,10 @@
 @theme {
   --color-audible-orange: #F86800;
   --color-audible-orange-dark: #E05D00;
-  --color-audible-navy: #1F2937;
-  --color-audible-navy-light: #374151;
-  --color-audible-cream: #F9FAFB;
+  --color-audible-cream: #FAF8F5;
+  --color-audible-white: #FFFFFF;
+  --color-audible-gray: #E6E6E6;
+  --color-audible-dark-gray: #333333;
   --color-audible-gold: #F59E0B;
   
   --font-sans: Inter, system-ui, sans-serif;
@@ -17,11 +18,11 @@
   font-family: 'Inter', system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  
+
   color-scheme: light;
-  color: #1F2937;
-  background-color: #ffffff;
-  
+  color: #333333;
+  background-color: #FAF8F5;
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -32,6 +33,8 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #FAF8F5;
+  color: #333333;
 }
 
 * {
@@ -44,21 +47,21 @@ body {
   }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Light theme */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #F5F5F5;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
+  background: #CCCCCC;
+  border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #999999;
 }

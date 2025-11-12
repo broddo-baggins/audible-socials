@@ -46,7 +46,7 @@ export default function Discover() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-audible-cream">
       {/* Header */}
       <section className="bg-gradient-to-r from-audible-orange to-audible-orange-dark text-white py-12 px-4">
         <div className="max-w-7xl mx-auto">
@@ -65,14 +65,14 @@ export default function Discover() {
               placeholder="Search by title or author..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 rounded-full text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full pl-12 pr-4 py-4 rounded-full bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
         </div>
       </section>
 
       {/* Genre Filter */}
-      <section className="bg-white border-b border-gray-200 sticky top-16 z-40">
+      <section className="bg-white border-b border-gray-200 shadow-sm sticky top-16 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center space-x-2 overflow-x-auto pb-2">
             <Filter className="w-5 h-5 text-gray-600 flex-shrink-0" />
@@ -83,7 +83,7 @@ export default function Discover() {
                 className={`px-4 py-2 rounded-full font-semibold whitespace-nowrap transition-colors ${
                   selectedGenre === genre
                     ? 'bg-audible-orange text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300 hover:text-gray-900'
                 }`}
               >
                 {genre === 'all' ? 'All Genres' : genre}
@@ -144,7 +144,7 @@ export default function Discover() {
                     </div>
 
                     {/* Genre Badge */}
-                    <div className="absolute bottom-2 left-2 bg-white/90 text-gray-900 px-2 py-1 rounded text-xs font-semibold">
+                    <div className="absolute bottom-2 left-2 bg-audible-orange/90 text-white px-2 py-1 rounded text-xs font-semibold">
                       {book.genre}
                     </div>
 
