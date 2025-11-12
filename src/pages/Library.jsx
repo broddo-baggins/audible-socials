@@ -1,181 +1,207 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { BookOpen, Clock, Star } from 'lucide-react';
-import booksData from '../data/books.json';
-import { getUserData } from '../utils/localStorage';
-import { fetchGoogleImagesCover } from '../utils/googleImages';
+import { getImageUrl } from '../utils/imageCache';
+import BookGrid from '../components/books/BookGrid';
+import { BookCardSkeleton } from '../components/ui/Skeleton';
 
-export default function Library() {
-  const [userData, setUserData] = useState(null);
-  const [libraryBooks, setLibraryBooks] = useState([]);
-  const [bookCovers, setBookCovers] = useState({});
+const Library = () => {
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
-
+  const [viewMode, setViewMode] = useState('grid');
+  
+  const tabs = [
+    { id: 'all', label: 'All' },
+    { id: 'audiobooks', label: 'Audiobooks' },
+    { id: 'podcasts', label: 'Podcasts' },
+    { id: 'wishlist', label: 'Wishlist' },
+  ];
+  
   useEffect(() => {
-    const user = getUserData();
-    setUserData(user);
+    const loadLibrary = async () => {
+      try {
+        // Load user's library from localStorage
+        const library = JSON.parse(localStorage.getItem('echoread_library') || '[]');
+        
+        // For demo, load some books
+        const response = await fetch('/src/data/books.json');
+        const booksData = await response.json();
+        
+        const booksWithCovers = await Promise.all(
+          booksData.slice(0, 20).map(async (book) => ({
+            ...book,
+            cover: await getImageUrl(book.coverQuery || `${book.title} ${book.author} book cover`),
+            // Get progress from localStorage
+            progress: getBookProgress(book.id),
+            status: getBookStatus(book.id),
+            lastListened: getLastListened(book.id),
+          }))
+        );
+        
+        setBooks(booksWithCovers);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading library:', error);
+        setLoading(false);
+      }
+    };
     
-    // Get user's library books
-    const books = booksData.filter(book => user.library.includes(book.id));
-    setLibraryBooks(books);
-
-    // Load book covers
-    books.forEach(async (book) => {
-      const cover = await fetchGoogleImagesCover(book.id, book.coverQuery, book.genre);
-      setBookCovers(prev => ({ ...prev, [book.id]: cover }));
-    });
+    loadLibrary();
   }, []);
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05
+  
+  const getBookProgress = (bookId) => {
+    const progressKey = `echoread_progress_${bookId}`;
+    const saved = localStorage.getItem(progressKey);
+    if (saved) {
+      try {
+        const progress = JSON.parse(saved);
+        return progress.progress || 0;
+      } catch (e) {
+        return 0;
       }
     }
+    return Math.floor(Math.random() * 100); // Demo progress
   };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
+  
+  const getBookStatus = (bookId) => {
+    const progress = getBookProgress(bookId);
+    if (progress === 0) return 'Not started';
+    if (progress === 100) return 'Finished';
+    return 'In progress';
   };
-
-  const filteredBooks = activeTab === 'all'
-    ? libraryBooks
-    : activeTab === 'reading'
-    ? libraryBooks.filter(book => book.id === userData?.currentlyReading)
-    : libraryBooks.filter(book => userData?.ratings[book.id]);
-
+  
+  const getLastListened = (bookId) => {
+    const progressKey = `echoread_progress_${bookId}`;
+    const saved = localStorage.getItem(progressKey);
+    if (saved) {
+      try {
+        const progress = JSON.parse(saved);
+        return progress.lastListened;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  };
+  
+  const filterBooksByTab = (books) => {
+    switch (activeTab) {
+      case 'audiobooks':
+        return books.filter(b => b.contentType === 'audiobook');
+      case 'podcasts':
+        return books.filter(b => b.contentType === 'podcast');
+      case 'wishlist':
+        // In a real app, this would filter by wishlist status
+        return books.filter((_, i) => i % 3 === 0);
+      default:
+        return books;
+    }
+  };
+  
+  const continueListening = books.filter(b => b.progress > 0 && b.progress < 100).slice(0, 6);
+  const filteredBooks = filterBooksByTab(books);
+  
   return (
-    <div className="min-h-screen bg-audible-cream">
-      {/* Header */}
-      <section className="bg-gray-50 border-b border-gray-200 py-8 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2 flex items-center">
-            <BookOpen className="w-10 h-10 mr-3 text-audible-orange" />
+    <div className="min-h-screen bg-echo-cream">
+      <div className="max-w-9xl mx-auto px-4 sm:px-6 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-echo-text-primary mb-2">
             My Library
           </h1>
-          <p className="text-gray-600">
-            {libraryBooks.length} {libraryBooks.length === 1 ? 'audiobook' : 'audiobooks'} in your collection
+          <p className="text-echo-text-secondary">
+            {filteredBooks.length} {activeTab === 'all' ? 'items' : activeTab}
           </p>
         </div>
-      </section>
-
-      {/* Tabs */}
-      <section className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex space-x-8">
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`py-4 border-b-2 font-semibold transition-colors ${
-                activeTab === 'all'
-                  ? 'border-audible-orange text-audible-orange'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              All Audiobooks
-            </button>
-            <button
-              onClick={() => setActiveTab('reading')}
-              className={`py-4 border-b-2 font-semibold transition-colors ${
-                activeTab === 'reading'
-                  ? 'border-audible-orange text-audible-orange'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Currently Reading
-            </button>
-            <button
-              onClick={() => setActiveTab('finished')}
-              className={`py-4 border-b-2 font-semibold transition-colors ${
-                activeTab === 'finished'
-                  ? 'border-audible-orange text-audible-orange'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Finished
-            </button>
+        
+        {/* Tabs */}
+        <div className="mb-8 border-b border-echo-divider">
+          <div className="flex gap-8 overflow-x-auto scrollbar-hide">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`pb-4 font-medium whitespace-nowrap transition-colors relative ${
+                  activeTab === tab.id
+                    ? 'text-echo-orange'
+                    : 'text-echo-text-secondary hover:text-echo-text-primary'
+                }`}
+              >
+                {tab.label}
+                {activeTab === tab.id && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-echo-orange" />
+                )}
+              </button>
+            ))}
           </div>
         </div>
-      </section>
-
-      {/* Books Grid */}
-      <section className="max-w-7xl mx-auto px-4 py-8">
-        {filteredBooks.length === 0 ? (
-          <div className="text-center py-16">
-            <BookOpen className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No books found
-            </h3>
-            <p className="text-gray-600 mb-6">
-              {activeTab === 'reading' ? "You're not currently reading any books." : "You haven't finished any books yet."}
-            </p>
-            <Link
-              to="/discover"
-              className="inline-block bg-audible-orange text-white px-6 py-3 rounded-full font-semibold hover:bg-audible-orange-dark transition-colors"
-            >
-              Discover Books
-            </Link>
-          </div>
-        ) : (
-          <motion.div
-            variants={container}
-            initial="hidden"
-            animate="show"
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
-          >
-            {filteredBooks.map((book) => (
-              <motion.div key={book.id} variants={item}>
-                <Link to={`/book/${book.id}`} className="group">
-                  <div className="relative overflow-hidden rounded-lg shadow-md group-hover:shadow-xl transition-all">
-                    <img
-                      src={bookCovers[book.id] || 'https://via.placeholder.com/300x450'}
-                      alt={book.title}
-                      className="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    
-                    {/* Reading Badge */}
-                    {book.id === userData?.currentlyReading && (
-                      <div className="absolute top-2 left-2 bg-audible-orange text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
-                        <Clock className="w-3 h-3 mr-1" />
-                        Reading
-                      </div>
-                    )}
-                    
-                    {/* Rating */}
-                    {userData?.ratings[book.id] && (
-                      <div className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded-full text-xs flex items-center">
-                        <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
-                        {userData.ratings[book.id]}
-                      </div>
-                    )}
-
-                    {/* Play Overlay */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <div className="bg-white rounded-full p-4">
-                        <svg className="w-8 h-8 text-audible-orange" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
+        
+        {/* Continue Listening Section */}
+        {activeTab === 'all' && continueListening.length > 0 && (
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold text-echo-text-primary mb-6">
+              Continue Listening
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+              {loading ? (
+                <>
+                  {Array.from({ length: 6 }, (_, i) => (
+                    <BookCardSkeleton key={i} />
+                  ))}
+                </>
+              ) : (
+                continueListening.map((book) => (
+                  <div key={book.id} className="space-y-2">
+                    <div className="relative aspect-book rounded-lg overflow-hidden bg-echo-beige shadow-card">
+                      <img
+                        src={book.cover}
+                        alt={`${book.title} cover`}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/60 to-transparent">
+                        <div className="h-1 bg-echo-player-border rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-echo-orange"
+                            style={{ width: `${book.progress}%` }}
+                          />
+                        </div>
+                        <p className="text-xs text-white mt-1">{Math.round(book.progress)}%</p>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="mt-3">
-                    <h3 className="font-semibold text-gray-900 line-clamp-2 mb-1">
+                    <h3 className="font-serif font-semibold text-sm line-clamp-2">
                       {book.title}
                     </h3>
-                    <p className="text-sm text-gray-600">{book.author}</p>
-                    <p className="text-xs text-gray-500 mt-1">{book.duration}</p>
+                    <p className="text-xs text-echo-text-secondary">
+                      {book.status}
+                    </p>
                   </div>
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
+                ))
+              )}
+            </div>
+          </section>
         )}
-      </section>
+        
+        {/* All Books Grid */}
+        <section>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-echo-text-primary">
+              {activeTab === 'all' ? 'All Books' : tabs.find(t => t.id === activeTab)?.label}
+            </h2>
+          </div>
+          
+          <BookGrid
+            books={filteredBooks}
+            loading={loading}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+            showViewToggle={true}
+            emptyMessage={`No ${activeTab === 'all' ? 'books' : activeTab} in your library`}
+            emptyAction={() => window.location.href = '/browse'}
+            emptyActionLabel="Browse books"
+          />
+        </section>
+      </div>
     </div>
   );
-}
+};
 
+export default Library;

@@ -1,68 +1,197 @@
+import { Play, Plus, Heart, MoreVertical } from 'lucide-react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, Clock, Users } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { fetchGoogleImagesCover } from '../../utils/googleImages';
+import PropTypes from 'prop-types';
+import { Rating, Badge, ProgressBar } from '../ui';
 
-export default function BookCard({ book, showClubs = false, isReading = false, userRating = null }) {
-  const [coverUrl, setCoverUrl] = useState(null);
-
-  useEffect(() => {
-    const loadCover = async () => {
-      const cover = await fetchGoogleImagesCover(book.id, book.coverQuery, book.genre);
-      setCoverUrl(cover);
-    };
-    loadCover();
-  }, [book]);
-
+const BookCard = ({ 
+  book, 
+  showProgress = false,
+  size = 'md',
+  className = '' 
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  
+  const {
+    id,
+    title,
+    author,
+    narrator,
+    rating,
+    ratingsCount,
+    duration,
+    cover,
+    contentType,
+    progress = 0
+  } = book;
+  
+  const sizes = {
+    sm: {
+      container: 'w-32',
+      title: 'text-sm',
+      subtitle: 'text-xs',
+    },
+    md: {
+      container: 'w-40',
+      title: 'text-base',
+      subtitle: 'text-sm',
+    },
+    lg: {
+      container: 'w-48',
+      title: 'text-lg',
+      subtitle: 'text-base',
+    },
+  };
+  
+  const getBadgeVariant = (type) => {
+    switch (type) {
+      case 'original':
+        return 'original';
+      case 'podcast':
+        return 'podcast';
+      default:
+        return null;
+    }
+  };
+  
+  const badgeVariant = getBadgeVariant(contentType);
+  
   return (
-    <Link to={`/book/${book.id}`} className="group">
-      <div className="relative overflow-hidden rounded-lg shadow-md group-hover:shadow-xl transition-all">
-        <img
-          src={coverUrl || 'https://via.placeholder.com/300x450'}
-          alt={book.title}
-          className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-        
-        {/* Reading Badge */}
-        {isReading && (
-          <div className="absolute top-2 left-2 bg-audible-orange text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
-            <Clock className="w-3 h-3 mr-1" />
-            Reading
+    <div 
+      className={`${sizes[size].container} flex-shrink-0 ${className}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Cover Image */}
+      <Link to={`/book/${id}`} className="block relative group">
+        <div className="relative aspect-book rounded-lg overflow-hidden bg-echo-beige shadow-card hover:shadow-card-hover transition-all duration-250">
+          {!imageLoaded && (
+            <div className="absolute inset-0 shimmer" />
+          )}
+          
+          <img
+            src={cover}
+            alt={`${title} cover`}
+            className={`w-full h-full object-cover transition-all duration-250 ${isHovered ? 'scale-105' : 'scale-100'} ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            loading="lazy"
+            onLoad={() => setImageLoaded(true)}
+          />
+          
+          {/* Content Type Badge */}
+          {badgeVariant && (
+            <div className="absolute top-2 left-2">
+              <Badge variant={badgeVariant} size="sm">
+                {contentType === 'original' ? 'Original' : 'Podcast'}
+              </Badge>
+            </div>
+          )}
+          
+          {/* Progress Bar Overlay */}
+          {showProgress && progress > 0 && (
+            <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/60 to-transparent">
+              <ProgressBar 
+                value={progress} 
+                max={100} 
+                size="sm"
+                variant="player"
+              />
+            </div>
+          )}
+          
+          {/* Hover Overlay with Actions */}
+          <div 
+            className={`absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center gap-2 transition-opacity duration-250 ${isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          >
+            <button
+              className="w-12 h-12 flex items-center justify-center rounded-full bg-echo-orange text-white hover:bg-echo-orange-dark transition-colors shadow-lg"
+              aria-label={`Play sample of ${title}`}
+              onClick={(e) => {
+                e.preventDefault();
+                // Play sample functionality
+              }}
+            >
+              <Play className="w-6 h-6 ml-0.5" fill="currentColor" />
+            </button>
+            
+            <button
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition-colors backdrop-blur-sm"
+              aria-label={`Add ${title} to library`}
+              onClick={(e) => {
+                e.preventDefault();
+                // Add to library functionality
+              }}
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+            
+            <button
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 transition-colors backdrop-blur-sm"
+              aria-label={`Add ${title} to wishlist`}
+              onClick={(e) => {
+                e.preventDefault();
+                // Add to wishlist functionality
+              }}
+            >
+              <Heart className="w-5 h-5" />
+            </button>
           </div>
-        )}
-        
-        {/* Rating */}
-        <div className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded-full text-xs flex items-center">
-          <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
-          {userRating || book.rating}
         </div>
-
-        {/* Club Badge */}
-        {showClubs && book.clubs && book.clubs.length > 0 && (
-          <div className="absolute bottom-2 left-2 bg-purple-600 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
-            <Users className="w-3 h-3 mr-1" />
-            {book.clubs.length} {book.clubs.length === 1 ? 'Club' : 'Clubs'}
-          </div>
-        )}
-
-        {/* Play Overlay */}
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <div className="bg-white rounded-full p-4">
-            <svg className="w-8 h-8 text-audible-orange" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </div>
-        </div>
-      </div>
+      </Link>
       
-      <div className="mt-3">
-        <h3 className="font-semibold text-gray-900 line-clamp-2 mb-1">
-          {book.title}
-        </h3>
-        <p className="text-sm text-gray-600">{book.author}</p>
-        <p className="text-xs text-gray-500 mt-1">{book.duration}</p>
+      {/* Book Info */}
+      <div className="mt-3 space-y-1">
+        <Link to={`/book/${id}`}>
+          <h3 className={`${sizes[size].title} font-serif font-semibold text-echo-text-primary line-clamp-2 hover:text-echo-orange transition-colors`}>
+            {title}
+          </h3>
+        </Link>
+        
+        <p className={`${sizes[size].subtitle} text-echo-text-secondary line-clamp-1`}>
+          {author}
+        </p>
+        
+        {narrator && (
+          <p className={`${sizes[size].subtitle} text-echo-text-tertiary line-clamp-1`}>
+            {narrator}
+          </p>
+        )}
+        
+        <div className="flex items-center justify-between pt-1">
+          <Rating 
+            value={rating} 
+            showValue={false}
+            showCount={false}
+            size="sm"
+          />
+          
+          {duration && (
+            <span className="text-xs text-echo-text-tertiary">
+              {duration}
+            </span>
+          )}
+        </div>
       </div>
-    </Link>
+    </div>
   );
-}
+};
 
+BookCard.propTypes = {
+  book: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired,
+    narrator: PropTypes.string,
+    rating: PropTypes.number,
+    ratingsCount: PropTypes.number,
+    duration: PropTypes.string,
+    cover: PropTypes.string,
+    contentType: PropTypes.string,
+    progress: PropTypes.number,
+  }).isRequired,
+  showProgress: PropTypes.bool,
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  className: PropTypes.string,
+};
+
+export default BookCard;

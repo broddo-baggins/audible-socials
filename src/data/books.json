@@ -5,14 +5,26 @@
     "author": "Andy Weir",
     "narrator": "Ray Porter",
     "genre": "Science Fiction",
+    "contentType": "audiobook",
     "duration": "16h 10m",
+    "durationMinutes": 970,
     "rating": 4.8,
     "ratingsCount": 124523,
     "description": "A lone astronaut must save the earth from disaster in this incredible new science-based thriller from the author of The Martian.",
     "releaseDate": "2021-05-04",
+    "language": "English",
+    "publisher": "Audible Studios",
     "coverQuery": "Project Hail Mary Andy Weir book cover",
+    "sampleAudioUrl": "/audio/samples/project-hail-mary.mp3",
     "price": 14.95,
-    "clubs": ["1", "3"]
+    "clubs": ["1", "3"],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1", "duration": "32:15"},
+      {"id": 2, "title": "Chapter 2", "duration": "28:42"},
+      {"id": 3, "title": "Chapter 3", "duration": "35:18"},
+      {"id": 4, "title": "Chapter 4", "duration": "29:51"},
+      {"id": 5, "title": "Chapter 5", "duration": "31:24"}
+    ]
   },
   {
     "id": "2",
@@ -20,14 +32,24 @@
     "author": "Taylor Jenkins Reid",
     "narrator": "Alma Cuervo, Julia Whelan",
     "genre": "Fiction",
+    "contentType": "audiobook",
     "duration": "12h 10m",
+    "durationMinutes": 730,
     "rating": 4.7,
     "ratingsCount": 98234,
     "description": "Aging and reclusive Hollywood movie icon Evelyn Hugo is finally ready to tell the truth about her glamorous and scandalous life.",
     "releaseDate": "2017-06-13",
+    "language": "English",
+    "publisher": "Simon & Schuster Audio",
     "coverQuery": "The Seven Husbands of Evelyn Hugo book cover",
+    "sampleAudioUrl": "/audio/samples/seven-husbands.mp3",
     "price": 14.95,
-    "clubs": ["5"]
+    "clubs": ["5"],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1", "duration": "24:12"},
+      {"id": 2, "title": "Chapter 2", "duration": "26:45"},
+      {"id": 3, "title": "Chapter 3", "duration": "29:18"}
+    ]
   },
   {
     "id": "3",
@@ -35,14 +57,24 @@
     "author": "James Clear",
     "narrator": "James Clear",
     "genre": "Self Development",
+    "contentType": "audiobook",
     "duration": "5h 35m",
+    "durationMinutes": 335,
     "rating": 4.8,
     "ratingsCount": 156789,
     "description": "The #1 New York Times bestseller. Tiny Changes, Remarkable Results. No matter your goals, Atomic Habits offers a proven framework.",
     "releaseDate": "2018-10-16",
+    "language": "English",
+    "publisher": "Penguin Audio",
     "coverQuery": "Atomic Habits James Clear book cover",
+    "sampleAudioUrl": "/audio/samples/atomic-habits.mp3",
     "price": 14.95,
-    "clubs": ["8"]
+    "clubs": ["8"],
+    "chapters": [
+      {"id": 1, "title": "Introduction", "duration": "18:24"},
+      {"id": 2, "title": "The Fundamentals", "duration": "42:15"},
+      {"id": 3, "title": "The 1st Law", "duration": "38:52"}
+    ]
   },
   {
     "id": "4",
@@ -50,14 +82,24 @@
     "author": "Alex Michaelides",
     "narrator": "Jack Hawkins, Louise Brealey",
     "genre": "Mystery & Thriller",
+    "contentType": "audiobook",
     "duration": "8h 43m",
+    "durationMinutes": 523,
     "rating": 4.5,
     "ratingsCount": 87432,
     "description": "The record-breaking, multimillion copy Sunday Times bestselling thriller and Richard & Judy book club pick.",
     "releaseDate": "2019-02-05",
+    "language": "English",
+    "publisher": "Macmillan Audio",
     "coverQuery": "The Silent Patient Alex Michaelides book cover",
+    "sampleAudioUrl": "/audio/samples/silent-patient.mp3",
     "price": 14.95,
-    "clubs": ["2"]
+    "clubs": ["2"],
+    "chapters": [
+      {"id": 1, "title": "Part One - Chapter 1", "duration": "22:34"},
+      {"id": 2, "title": "Part One - Chapter 2", "duration": "25:18"},
+      {"id": 3, "title": "Part One - Chapter 3", "duration": "19:42"}
+    ]
   },
   {
     "id": "5",
@@ -65,14 +107,24 @@
     "author": "Delia Owens",
     "narrator": "Cassandra Campbell",
     "genre": "Fiction",
+    "contentType": "audiobook",
     "duration": "12h 12m",
+    "durationMinutes": 732,
     "rating": 4.6,
     "ratingsCount": 145623,
     "description": "For years, rumors of the 'Marsh Girl' have haunted Barkley Cove, a quiet town on the North Carolina coast.",
     "releaseDate": "2018-08-14",
+    "language": "English",
+    "publisher": "Penguin Audio",
     "coverQuery": "Where the Crawdads Sing Delia Owens book cover",
+    "sampleAudioUrl": "/audio/samples/crawdads.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Prologue", "duration": "8:12"},
+      {"id": 2, "title": "Part 1 - Chapter 1", "duration": "26:45"},
+      {"id": 3, "title": "Part 1 - Chapter 2", "duration": "31:18"}
+    ]
   },
   {
     "id": "6",
@@ -80,14 +132,24 @@
     "author": "Tara Westover",
     "narrator": "Julia Whelan",
     "genre": "Memoir & Biography",
+    "contentType": "audiobook",
     "duration": "12h 10m",
+    "durationMinutes": 730,
     "rating": 4.7,
     "ratingsCount": 112345,
     "description": "A memoir about a young girl who, kept out of school, leaves her survivalist family and goes on to earn a PhD from Cambridge.",
     "releaseDate": "2018-02-20",
+    "language": "English",
+    "publisher": "Random House Audio",
     "coverQuery": "Educated Tara Westover book cover",
+    "sampleAudioUrl": "/audio/samples/educated.mp3",
     "price": 14.95,
-    "clubs": ["7"]
+    "clubs": ["7"],
+    "chapters": [
+      {"id": 1, "title": "Part One - Chapter 1", "duration": "28:15"},
+      {"id": 2, "title": "Part One - Chapter 2", "duration": "24:42"},
+      {"id": 3, "title": "Part One - Chapter 3", "duration": "32:18"}
+    ]
   },
   {
     "id": "7",
@@ -95,14 +157,24 @@
     "author": "Matt Haig",
     "narrator": "Carey Mulligan",
     "genre": "Fiction",
+    "contentType": "audiobook",
     "duration": "8h 50m",
+    "durationMinutes": 530,
     "rating": 4.6,
     "ratingsCount": 93421,
     "description": "Between life and death there is a library. When Nora Seed finds herself in the Midnight Library, she has a chance to make things right.",
     "releaseDate": "2020-08-13",
+    "language": "English",
+    "publisher": "Penguin Random House Audio",
     "coverQuery": "The Midnight Library Matt Haig book cover",
+    "sampleAudioUrl": "/audio/samples/midnight-library.mp3",
     "price": 14.95,
-    "clubs": ["5"]
+    "clubs": ["5"],
+    "chapters": [
+      {"id": 1, "title": "Nineteen Years Before She Decides to Die", "duration": "15:24"},
+      {"id": 2, "title": "The Library", "duration": "18:42"},
+      {"id": 3, "title": "The Librarian", "duration": "21:15"}
+    ]
   },
   {
     "id": "8",
@@ -110,14 +182,26 @@
     "author": "Frank Herbert",
     "narrator": "Scott Brick",
     "genre": "Science Fiction",
+    "contentType": "audiobook",
     "duration": "21h 2m",
+    "durationMinutes": 1262,
     "rating": 4.7,
     "ratingsCount": 78934,
+    "series": "Dune Chronicles",
+    "seriesNumber": 1,
     "description": "Set on the desert planet Arrakis, Dune is the story of the boy Paul Atreides, heir to a noble family tasked with ruling an inhospitable world.",
     "releaseDate": "2007-06-15",
+    "language": "English",
+    "publisher": "Macmillan Audio",
     "coverQuery": "Dune Frank Herbert book cover",
+    "sampleAudioUrl": "/audio/samples/dune.mp3",
     "price": 14.95,
-    "clubs": ["3"]
+    "clubs": ["3"],
+    "chapters": [
+      {"id": 1, "title": "Book I - Chapter 1", "duration": "45:12"},
+      {"id": 2, "title": "Book I - Chapter 2", "duration": "38:45"},
+      {"id": 3, "title": "Book I - Chapter 3", "duration": "41:18"}
+    ]
   },
   {
     "id": "9",
@@ -125,14 +209,26 @@
     "author": "Richard Osman",
     "narrator": "Lesley Manville",
     "genre": "Mystery & Thriller",
+    "contentType": "audiobook",
     "duration": "11h 19m",
+    "durationMinutes": 679,
     "rating": 4.5,
     "ratingsCount": 67821,
+    "series": "Thursday Murder Club",
+    "seriesNumber": 1,
     "description": "Four unlikely friends meet each week to investigate unsolved murders. But when a local developer is found dead, they're thrust into a real case.",
     "releaseDate": "2020-09-03",
+    "language": "English",
+    "publisher": "Penguin Audio",
     "coverQuery": "The Thursday Murder Club Richard Osman book cover",
+    "sampleAudioUrl": "/audio/samples/thursday-murder.mp3",
     "price": 14.95,
-    "clubs": ["2"]
+    "clubs": ["2"],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1", "duration": "27:15"},
+      {"id": 2, "title": "Chapter 2", "duration": "24:42"},
+      {"id": 3, "title": "Chapter 3", "duration": "29:18"}
+    ]
   },
   {
     "id": "10",
@@ -140,14 +236,24 @@
     "author": "Michelle Obama",
     "narrator": "Michelle Obama",
     "genre": "Memoir & Biography",
+    "contentType": "audiobook",
     "duration": "19h 3m",
+    "durationMinutes": 1143,
     "rating": 4.9,
     "ratingsCount": 189234,
     "description": "In her memoir, a work of deep reflection and mesmerizing storytelling, Michelle Obama invites readers into her world.",
     "releaseDate": "2018-11-13",
+    "language": "English",
+    "publisher": "Random House Audio",
     "coverQuery": "Becoming Michelle Obama book cover",
+    "sampleAudioUrl": "/audio/samples/becoming.mp3",
     "price": 14.95,
-    "clubs": ["7"]
+    "clubs": ["7"],
+    "chapters": [
+      {"id": 1, "title": "Becoming Me - Chapter 1", "duration": "35:24"},
+      {"id": 2, "title": "Becoming Me - Chapter 2", "duration": "38:12"},
+      {"id": 3, "title": "Becoming Me - Chapter 3", "duration": "42:45"}
+    ]
   },
   {
     "id": "11",
@@ -155,14 +261,24 @@
     "author": "Madeline Miller",
     "narrator": "Frazer Douglas",
     "genre": "Fantasy",
+    "contentType": "audiobook",
     "duration": "11h 19m",
+    "durationMinutes": 679,
     "rating": 4.7,
     "ratingsCount": 91234,
     "description": "A tale of gods, kings, immortal fame and the human heart, The Song of Achilles is a dazzling literary feat.",
     "releaseDate": "2012-03-06",
+    "language": "English",
+    "publisher": "Hachette Audio",
     "coverQuery": "The Song of Achilles Madeline Miller book cover",
+    "sampleAudioUrl": "/audio/samples/song-achilles.mp3",
     "price": 14.95,
-    "clubs": ["6"]
+    "clubs": ["6"],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1", "duration": "28:15"},
+      {"id": 2, "title": "Chapter 2", "duration": "31:42"},
+      {"id": 3, "title": "Chapter 3", "duration": "26:18"}
+    ]
   },
   {
     "id": "12",
@@ -170,14 +286,24 @@
     "author": "Madeline Miller",
     "narrator": "Perdita Weeks",
     "genre": "Fantasy",
+    "contentType": "audiobook",
     "duration": "12h 8m",
+    "durationMinutes": 728,
     "rating": 4.6,
     "ratingsCount": 84321,
     "description": "The daring, dazzling and highly anticipated follow-up to The Song of Achilles, Circe is the story of the sorceress of Aeaea.",
     "releaseDate": "2018-04-10",
+    "language": "English",
+    "publisher": "Hachette Audio",
     "coverQuery": "Circe Madeline Miller book cover",
+    "sampleAudioUrl": "/audio/samples/circe.mp3",
     "price": 14.95,
-    "clubs": ["6"]
+    "clubs": ["6"],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1", "duration": "32:24"},
+      {"id": 2, "title": "Chapter 2", "duration": "29:12"},
+      {"id": 3, "title": "Chapter 3", "duration": "35:45"}
+    ]
   },
   {
     "id": "13",
@@ -185,14 +311,24 @@
     "author": "Trevor Noah",
     "narrator": "Trevor Noah",
     "genre": "Memoir & Biography",
+    "contentType": "audiobook",
     "duration": "8h 44m",
+    "durationMinutes": 524,
     "rating": 4.8,
     "ratingsCount": 134567,
     "description": "The compelling, inspiring, and comically sublime story of one man's coming-of-age, set during the twilight of apartheid.",
     "releaseDate": "2016-11-15",
+    "language": "English",
+    "publisher": "Audible Studios",
     "coverQuery": "Born a Crime Trevor Noah book cover",
+    "sampleAudioUrl": "/audio/samples/born-crime.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1: Run", "duration": "24:15"},
+      {"id": 2, "title": "Chapter 2: Trevor, Pray", "duration": "28:42"},
+      {"id": 3, "title": "Chapter 3: The Mulberry Tree", "duration": "22:18"}
+    ]
   },
   {
     "id": "14",
@@ -200,14 +336,24 @@
     "author": "V.E. Schwab",
     "narrator": "Julia Whelan",
     "genre": "Fantasy",
+    "contentType": "audiobook",
     "duration": "17h 10m",
+    "durationMinutes": 1030,
     "rating": 4.5,
     "ratingsCount": 76543,
     "description": "A life no one will remember. A story you will never forget. France, 1714: in a moment of desperation, a young woman makes a Faustian bargain.",
     "releaseDate": "2020-10-06",
+    "language": "English",
+    "publisher": "Macmillan Audio",
     "coverQuery": "The Invisible Life of Addie LaRue book cover",
+    "sampleAudioUrl": "/audio/samples/addie-larue.mp3",
     "price": 14.95,
-    "clubs": ["6"]
+    "clubs": ["6"],
+    "chapters": [
+      {"id": 1, "title": "Part One - New York City - March 10, 2014", "duration": "18:24"},
+      {"id": 2, "title": "Villon-sur-Sarthe, France - July 29, 1714", "duration": "22:12"},
+      {"id": 3, "title": "New York City - March 10, 2014", "duration": "25:45"}
+    ]
   },
   {
     "id": "15",
@@ -215,14 +361,24 @@
     "author": "Bessel van der Kolk",
     "narrator": "Sean Pratt",
     "genre": "Self Development",
+    "contentType": "audiobook",
     "duration": "16h 17m",
+    "durationMinutes": 977,
     "rating": 4.7,
     "ratingsCount": 98765,
     "description": "An essential exploration of why and how trauma happens, and what we can do to help ourselves and others heal.",
     "releaseDate": "2014-09-25",
+    "language": "English",
+    "publisher": "Tantor Audio",
     "coverQuery": "The Body Keeps the Score book cover",
+    "sampleAudioUrl": "/audio/samples/body-score.mp3",
     "price": 14.95,
-    "clubs": ["8"]
+    "clubs": ["8"],
+    "chapters": [
+      {"id": 1, "title": "Part One - Chapter 1: Lessons from Vietnam Veterans", "duration": "42:15"},
+      {"id": 2, "title": "Part One - Chapter 2: Revolutions in Understanding Mind and Brain", "duration": "38:42"},
+      {"id": 3, "title": "Part One - Chapter 3: Looking into the Brain", "duration": "45:18"}
+    ]
   },
   {
     "id": "16",
@@ -230,14 +386,24 @@
     "author": "TJ Klune",
     "narrator": "Daniel Henning",
     "genre": "Fantasy",
+    "contentType": "audiobook",
     "duration": "15h 5m",
+    "durationMinutes": 905,
     "rating": 4.7,
     "ratingsCount": 89432,
     "description": "A magical island. A dangerous task. A burning secret. Linus Baker leads a quiet life. At forty, he lives in a tiny house.",
     "releaseDate": "2020-03-17",
+    "language": "English",
+    "publisher": "Macmillan Audio",
     "coverQuery": "The House in the Cerulean Sea book cover",
+    "sampleAudioUrl": "/audio/samples/cerulean-sea.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter One", "duration": "28:24"},
+      {"id": 2, "title": "Chapter Two", "duration": "32:12"},
+      {"id": 3, "title": "Chapter Three", "duration": "29:45"}
+    ]
   },
   {
     "id": "17",
@@ -245,14 +411,24 @@
     "author": "Taylor Jenkins Reid",
     "narrator": "Jennifer Beals, Benjamin Bratt, Judy Greer",
     "genre": "Fiction",
+    "contentType": "audiobook",
     "duration": "9h 3m",
+    "durationMinutes": 543,
     "rating": 4.5,
     "ratingsCount": 72345,
     "description": "A gripping novel about the whirlwind rise of an iconic 1970s rock group and their beautiful lead singer.",
     "releaseDate": "2019-03-05",
+    "language": "English",
+    "publisher": "Random House Audio",
     "coverQuery": "Daisy Jones and The Six book cover",
+    "sampleAudioUrl": "/audio/samples/daisy-jones.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Part One - 1965-1972", "duration": "35:24"},
+      {"id": 2, "title": "Part Two - 1972-1973", "duration": "42:12"},
+      {"id": 3, "title": "Part Three - 1973-1976", "duration": "48:45"}
+    ]
   },
   {
     "id": "18",
@@ -260,14 +436,24 @@
     "author": "Paulo Coelho",
     "narrator": "Jeremy Irons",
     "genre": "Fiction",
+    "contentType": "audiobook",
     "duration": "4h 0m",
+    "durationMinutes": 240,
     "rating": 4.6,
     "ratingsCount": 143210,
     "description": "A fable about following your dream and listening to your heart from the author of The Witch of Portobello.",
     "releaseDate": "2005-08-02",
+    "language": "English",
+    "publisher": "HarperAudio",
     "coverQuery": "The Alchemist Paulo Coelho book cover",
+    "sampleAudioUrl": "/audio/samples/alchemist.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Prologue", "duration": "12:24"},
+      {"id": 2, "title": "Part One", "duration": "58:12"},
+      {"id": 3, "title": "Part Two", "duration": "125:45"}
+    ]
   },
   {
     "id": "19",
@@ -275,14 +461,24 @@
     "author": "Yuval Noah Harari",
     "narrator": "Derek Perkins",
     "genre": "History",
+    "contentType": "audiobook",
     "duration": "15h 17m",
+    "durationMinutes": 917,
     "rating": 4.6,
     "ratingsCount": 125432,
     "description": "From a renowned historian comes a groundbreaking narrative of humanity's creation and evolution.",
     "releaseDate": "2015-04-30",
+    "language": "English",
+    "publisher": "Audible Studios",
     "coverQuery": "Sapiens Yuval Noah Harari book cover",
+    "sampleAudioUrl": "/audio/samples/sapiens.mp3",
     "price": 14.95,
-    "clubs": ["4"]
+    "clubs": ["4"],
+    "chapters": [
+      {"id": 1, "title": "Part One: The Cognitive Revolution - Chapter 1", "duration": "48:24"},
+      {"id": 2, "title": "Part One: The Cognitive Revolution - Chapter 2", "duration": "42:12"},
+      {"id": 3, "title": "Part One: The Cognitive Revolution - Chapter 3", "duration": "38:45"}
+    ]
   },
   {
     "id": "20",
@@ -290,14 +486,24 @@
     "author": "Mark Manson",
     "narrator": "Roger Wayne",
     "genre": "Self Development",
+    "contentType": "audiobook",
     "duration": "5h 17m",
+    "durationMinutes": 317,
     "rating": 4.4,
     "ratingsCount": 167890,
     "description": "A counterintuitive approach to living a good life that has become a cultural phenomenon.",
     "releaseDate": "2016-09-13",
+    "language": "English",
+    "publisher": "HarperAudio",
     "coverQuery": "The Subtle Art of Not Giving a Fuck Mark Manson book cover",
+    "sampleAudioUrl": "/audio/samples/subtle-art.mp3",
     "price": 14.95,
-    "clubs": ["8"]
+    "clubs": ["8"],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1: Don't Try", "duration": "28:24"},
+      {"id": 2, "title": "Chapter 2: Happiness Is a Problem", "duration": "32:12"},
+      {"id": 3, "title": "Chapter 3: You Are Not Special", "duration": "29:45"}
+    ]
   },
   {
     "id": "21",
@@ -305,14 +511,24 @@
     "author": "George Orwell",
     "narrator": "Simon Prebble",
     "genre": "Science Fiction",
+    "contentType": "audiobook",
     "duration": "11h 22m",
+    "durationMinutes": 682,
     "rating": 4.7,
     "ratingsCount": 134567,
     "description": "Among the seminal texts of the 20th century, Nineteen Eighty-Four is a rare work that grows more haunting as its futuristic purgatory becomes more real.",
     "releaseDate": "2008-05-01",
+    "language": "English",
+    "publisher": "Blackstone Audio",
     "coverQuery": "1984 George Orwell book cover",
+    "sampleAudioUrl": "/audio/samples/1984.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Part 1 - Chapter 1", "duration": "32:24"},
+      {"id": 2, "title": "Part 1 - Chapter 2", "duration": "28:12"},
+      {"id": 3, "title": "Part 1 - Chapter 3", "duration": "35:45"}
+    ]
   },
   {
     "id": "22",
@@ -320,14 +536,24 @@
     "author": "Lucy Foley",
     "narrator": "Jot Davies, Chloe Massey, Olivia Dowd",
     "genre": "Mystery & Thriller",
+    "contentType": "audiobook",
     "duration": "10h 8m",
+    "durationMinutes": 608,
     "rating": 4.3,
     "ratingsCount": 54321,
     "description": "The wedding guests arrive - the fixed smiles, the air kisses, the glittering dresses, the party of the century... Until someone turns up dead.",
     "releaseDate": "2020-02-20",
+    "language": "English",
+    "publisher": "HarperAudio",
     "coverQuery": "The Guest List Lucy Foley book cover",
+    "sampleAudioUrl": "/audio/samples/guest-list.mp3",
     "price": 14.95,
-    "clubs": ["2"]
+    "clubs": ["2"],
+    "chapters": [
+      {"id": 1, "title": "The Wedding Night", "duration": "8:24"},
+      {"id": 2, "title": "The Day Before - The Plus One", "duration": "15:12"},
+      {"id": 3, "title": "The Day Before - The Bride", "duration": "18:45"}
+    ]
   },
   {
     "id": "23",
@@ -335,14 +561,26 @@
     "author": "J.K. Rowling",
     "narrator": "Jim Dale",
     "genre": "Fantasy",
+    "contentType": "audiobook",
     "duration": "8h 18m",
+    "durationMinutes": 498,
     "rating": 4.9,
     "ratingsCount": 256789,
+    "series": "Harry Potter",
+    "seriesNumber": 1,
     "description": "Turning the envelope over, his hand trembling, Harry saw a purple wax seal bearing a coat of arms.",
     "releaseDate": "1999-11-01",
+    "language": "English",
+    "publisher": "Listening Library",
     "coverQuery": "Harry Potter Sorcerers Stone book cover",
+    "sampleAudioUrl": "/audio/samples/hp-sorcerers.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1: The Boy Who Lived", "duration": "18:24"},
+      {"id": 2, "title": "Chapter 2: The Vanishing Glass", "duration": "22:12"},
+      {"id": 3, "title": "Chapter 3: The Letters from No One", "duration": "25:45"}
+    ]
   },
   {
     "id": "24",
@@ -350,14 +588,24 @@
     "author": "Kristin Hannah",
     "narrator": "Polly Stone",
     "genre": "Historical Fiction",
+    "contentType": "audiobook",
     "duration": "17h 19m",
+    "durationMinutes": 1039,
     "rating": 4.8,
     "ratingsCount": 142345,
     "description": "In love we find out who we want to be. In war we find out who we are. FRANCE, 1939.",
     "releaseDate": "2015-02-03",
+    "language": "English",
+    "publisher": "Macmillan Audio",
     "coverQuery": "The Nightingale Kristin Hannah book cover",
+    "sampleAudioUrl": "/audio/samples/nightingale.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Prologue", "duration": "12:24"},
+      {"id": 2, "title": "Chapter 1", "duration": "35:12"},
+      {"id": 3, "title": "Chapter 2", "duration": "38:45"}
+    ]
   },
   {
     "id": "25",
@@ -365,14 +613,24 @@
     "author": "Yuval Noah Harari",
     "narrator": "Derek Perkins",
     "genre": "History",
+    "contentType": "audiobook",
     "duration": "14h 54m",
+    "durationMinutes": 894,
     "rating": 4.5,
     "ratingsCount": 87654,
     "description": "Yuval Noah Harari envisions a near future in which we face a new set of challenges.",
     "releaseDate": "2017-02-21",
+    "language": "English",
+    "publisher": "Audible Studios",
     "coverQuery": "Homo Deus Yuval Noah Harari book cover",
+    "sampleAudioUrl": "/audio/samples/homo-deus.mp3",
     "price": 14.95,
-    "clubs": ["4"]
+    "clubs": ["4"],
+    "chapters": [
+      {"id": 1, "title": "Part I: Homo Sapiens Conquers the World", "duration": "45:24"},
+      {"id": 2, "title": "Chapter 1: The New Human Agenda", "duration": "52:12"},
+      {"id": 3, "title": "Chapter 2: The Anthropocene", "duration": "48:45"}
+    ]
   },
   {
     "id": "26",
@@ -380,14 +638,24 @@
     "author": "Andy Weir",
     "narrator": "R.C. Bray",
     "genre": "Science Fiction",
+    "contentType": "audiobook",
     "duration": "10h 53m",
+    "durationMinutes": 653,
     "rating": 4.8,
     "ratingsCount": 178234,
     "description": "Six days ago, astronaut Mark Watney became one of the first people to walk on Mars. Now, he's sure he'll be the first person to die there.",
     "releaseDate": "2013-10-28",
+    "language": "English",
+    "publisher": "Audible Studios",
     "coverQuery": "The Martian Andy Weir book cover",
+    "sampleAudioUrl": "/audio/samples/martian.mp3",
     "price": 14.95,
-    "clubs": ["1"]
+    "clubs": ["1"],
+    "chapters": [
+      {"id": 1, "title": "Log Entry: Sol 6", "duration": "28:24"},
+      {"id": 2, "title": "Log Entry: Sol 7", "duration": "22:12"},
+      {"id": 3, "title": "Log Entry: Sol 10", "duration": "25:45"}
+    ]
   },
   {
     "id": "27",
@@ -395,14 +663,24 @@
     "author": "Sally Rooney",
     "narrator": "Aoife McMahon",
     "genre": "Fiction",
+    "contentType": "audiobook",
     "duration": "7h 38m",
+    "durationMinutes": 458,
     "rating": 4.4,
     "ratingsCount": 63421,
     "description": "At school Connell and Marianne pretend not to know each other. He's popular and well-adjusted, star of the school soccer team while she is lonely, proud, and intensely private.",
     "releaseDate": "2018-08-28",
+    "language": "English",
+    "publisher": "Random House Audio",
     "coverQuery": "Normal People Sally Rooney book cover",
+    "sampleAudioUrl": "/audio/samples/normal-people.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "January 2011", "duration": "18:24"},
+      {"id": 2, "title": "Three Months Later", "duration": "22:12"},
+      {"id": 3, "title": "One Week Later", "duration": "19:45"}
+    ]
   },
   {
     "id": "28",
@@ -410,14 +688,24 @@
     "author": "Eckhart Tolle",
     "narrator": "Eckhart Tolle",
     "genre": "Self Development",
+    "contentType": "audiobook",
     "duration": "7h 37m",
+    "durationMinutes": 457,
     "rating": 4.6,
     "ratingsCount": 98765,
     "description": "To make the journey into the Now we will need to leave our analytical mind and its false created self, the ego, behind.",
     "releaseDate": "2000-10-06",
+    "language": "English",
+    "publisher": "New World Library",
     "coverQuery": "The Power of Now Eckhart Tolle book cover",
+    "sampleAudioUrl": "/audio/samples/power-now.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1: You Are Not Your Mind", "duration": "45:24"},
+      {"id": 2, "title": "Chapter 2: Consciousness", "duration": "38:12"},
+      {"id": 3, "title": "Chapter 3: Moving Deeply into the Now", "duration": "42:45"}
+    ]
   },
   {
     "id": "29",
@@ -425,14 +713,24 @@
     "author": "Amor Towles",
     "narrator": "Edoardo Ballerini",
     "genre": "Historical Fiction",
+    "contentType": "audiobook",
     "duration": "18h 16m",
+    "durationMinutes": 1096,
     "rating": 4.6,
     "ratingsCount": 74321,
     "description": "In June, 1954, eighteen-year-old Emmett Watson is driven home to Nebraska by the warden of the juvenile work farm where he has just served fifteen months.",
     "releaseDate": "2021-10-05",
+    "language": "English",
+    "publisher": "Penguin Random House Audio",
     "coverQuery": "The Lincoln Highway Amor Towles book cover",
+    "sampleAudioUrl": "/audio/samples/lincoln-highway.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "One", "duration": "42:24"},
+      {"id": 2, "title": "Two", "duration": "38:12"},
+      {"id": 3, "title": "Three", "duration": "45:45"}
+    ]
   },
   {
     "id": "30",
@@ -440,14 +738,24 @@
     "author": "Colleen Hoover",
     "narrator": "Olivia Song",
     "genre": "Romance",
+    "contentType": "audiobook",
     "duration": "11h 5m",
+    "durationMinutes": 665,
     "rating": 4.6,
     "ratingsCount": 134567,
     "description": "Sometimes it is the one who loves you who hurts you the most. Lily hasn't always had it easy.",
     "releaseDate": "2016-08-02",
+    "language": "English",
+    "publisher": "Simon & Schuster Audio",
     "coverQuery": "It Ends with Us Colleen Hoover book cover",
+    "sampleAudioUrl": "/audio/samples/it-ends.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter One", "duration": "28:24"},
+      {"id": 2, "title": "Chapter Two", "duration": "25:12"},
+      {"id": 3, "title": "Chapter Three", "duration": "32:45"}
+    ]
   },
   {
     "id": "31",
@@ -455,14 +763,24 @@
     "author": "Neil Gaiman, Terry Pratchett",
     "narrator": "Martin Jarvis",
     "genre": "Fantasy",
+    "contentType": "audiobook",
     "duration": "12h 32m",
+    "durationMinutes": 752,
     "rating": 4.6,
     "ratingsCount": 87654,
     "description": "According to The Nice and Accurate Prophecies of Agnes Nutter, Witch, the world will end on a Saturday. Next Saturday, in fact.",
     "releaseDate": "2006-11-01",
+    "language": "English",
+    "publisher": "Random House Audio",
     "coverQuery": "Good Omens Neil Gaiman Terry Pratchett book cover",
+    "sampleAudioUrl": "/audio/samples/good-omens.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Part One: Eleven Years Ago", "duration": "38:24"},
+      {"id": 2, "title": "Part Two: Eight Days Before The End", "duration": "42:12"},
+      {"id": 3, "title": "Part Three: Wednesday", "duration": "45:45"}
+    ]
   },
   {
     "id": "32",
@@ -470,14 +788,24 @@
     "author": "Don Miguel Ruiz",
     "narrator": "Peter Coyote",
     "genre": "Self Development",
+    "contentType": "audiobook",
     "duration": "2h 31m",
+    "durationMinutes": 151,
     "rating": 4.7,
     "ratingsCount": 112345,
     "description": "In The Four Agreements, don Miguel Ruiz reveals the source of self-limiting beliefs that rob us of joy.",
     "releaseDate": "2001-04-01",
+    "language": "English",
+    "publisher": "Amber-Allen Publishing",
     "coverQuery": "The Four Agreements Don Miguel Ruiz book cover",
+    "sampleAudioUrl": "/audio/samples/four-agreements.mp3",
     "price": 14.95,
-    "clubs": ["8"]
+    "clubs": ["8"],
+    "chapters": [
+      {"id": 1, "title": "Introduction", "duration": "18:24"},
+      {"id": 2, "title": "Agreement 1: Be Impeccable With Your Word", "duration": "22:12"},
+      {"id": 3, "title": "Agreement 2: Don't Take Anything Personally", "duration": "25:45"}
+    ]
   },
   {
     "id": "33",
@@ -485,14 +813,24 @@
     "author": "Amor Towles",
     "narrator": "Nicholas Guy Smith",
     "genre": "Historical Fiction",
+    "contentType": "audiobook",
     "duration": "17h 52m",
+    "durationMinutes": 1072,
     "rating": 4.7,
     "ratingsCount": 98765,
     "description": "In 1922, Count Alexander Rostov is deemed an unrepentant aristocrat by a Bolshevik tribunal.",
     "releaseDate": "2016-09-06",
+    "language": "English",
+    "publisher": "Penguin Random House Audio",
     "coverQuery": "A Gentleman in Moscow Amor Towles book cover",
+    "sampleAudioUrl": "/audio/samples/gentleman-moscow.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Book One: 1922 - An Ambassador", "duration": "42:24"},
+      {"id": 2, "title": "Book One: 1922 - An Arrival", "duration": "38:12"},
+      {"id": 3, "title": "Book One: 1922 - An Assembly", "duration": "45:45"}
+    ]
   },
   {
     "id": "34",
@@ -500,14 +838,26 @@
     "author": "Suzanne Collins",
     "narrator": "Carolyn McCormick",
     "genre": "Science Fiction",
+    "contentType": "audiobook",
     "duration": "11h 26m",
+    "durationMinutes": 686,
     "rating": 4.7,
     "ratingsCount": 187654,
+    "series": "The Hunger Games",
+    "seriesNumber": 1,
     "description": "In the ruins of a place once known as North America lies the nation of Panem, a shining Capitol surrounded by twelve outlying districts.",
     "releaseDate": "2008-09-18",
+    "language": "English",
+    "publisher": "Scholastic Audio",
     "coverQuery": "The Hunger Games Suzanne Collins book cover",
+    "sampleAudioUrl": "/audio/samples/hunger-games.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1", "duration": "28:24"},
+      {"id": 2, "title": "Chapter 2", "duration": "25:12"},
+      {"id": 3, "title": "Chapter 3", "duration": "32:45"}
+    ]
   },
   {
     "id": "35",
@@ -515,14 +865,24 @@
     "author": "Liane Moriarty",
     "narrator": "Caroline Lee",
     "genre": "Mystery & Thriller",
+    "contentType": "audiobook",
     "duration": "15h 55m",
+    "durationMinutes": 955,
     "rating": 4.5,
     "ratingsCount": 92341,
     "description": "Sometimes it's the little lies that turn out to be the most lethal.",
     "releaseDate": "2014-07-29",
+    "language": "English",
+    "publisher": "Penguin Audio",
     "coverQuery": "Big Little Lies Liane Moriarty book cover",
+    "sampleAudioUrl": "/audio/samples/big-little-lies.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1", "duration": "32:24"},
+      {"id": 2, "title": "Chapter 2", "duration": "28:12"},
+      {"id": 3, "title": "Chapter 3", "duration": "35:45"}
+    ]
   },
   {
     "id": "36",
@@ -530,14 +890,24 @@
     "author": "Stephen King",
     "narrator": "Grover Gardner",
     "genre": "Horror",
+    "contentType": "audiobook",
     "duration": "47h 47m",
+    "durationMinutes": 2867,
     "rating": 4.6,
     "ratingsCount": 123456,
     "description": "A patient escapes from a biological testing facility, unknowingly carrying a deadly weapon: a mutated strain of super-flu.",
     "releaseDate": "2008-05-13",
+    "language": "English",
+    "publisher": "Random House Audio",
     "coverQuery": "The Stand Stephen King book cover",
+    "sampleAudioUrl": "/audio/samples/the-stand.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Book I: Captain Trips - Chapter 1", "duration": "65:24"},
+      {"id": 2, "title": "Book I: Captain Trips - Chapter 2", "duration": "58:12"},
+      {"id": 3, "title": "Book I: Captain Trips - Chapter 3", "duration": "72:45"}
+    ]
   },
   {
     "id": "37",
@@ -545,14 +915,24 @@
     "author": "Fredrik Backman",
     "narrator": "Marin Ireland",
     "genre": "Fiction",
+    "contentType": "audiobook",
     "duration": "9h 49m",
+    "durationMinutes": 589,
     "rating": 4.5,
     "ratingsCount": 67890,
     "description": "A failed bank robber locks himself in with an over-enthusiastic estate agent, two bitter IKEA-addicts, a pregnant woman, and a suicidal multimillionaire.",
     "releaseDate": "2020-09-08",
+    "language": "English",
+    "publisher": "Simon & Schuster Audio",
     "coverQuery": "Anxious People Fredrik Backman book cover",
+    "sampleAudioUrl": "/audio/samples/anxious-people.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1", "duration": "24:24"},
+      {"id": 2, "title": "Chapter 2", "duration": "22:12"},
+      {"id": 3, "title": "Chapter 3", "duration": "28:45"}
+    ]
   },
   {
     "id": "38",
@@ -560,14 +940,26 @@
     "author": "Patrick Rothfuss",
     "narrator": "Nick Podehl",
     "genre": "Fantasy",
+    "contentType": "audiobook",
     "duration": "27h 55m",
+    "durationMinutes": 1675,
     "rating": 4.7,
     "ratingsCount": 145678,
+    "series": "The Kingkiller Chronicle",
+    "seriesNumber": 1,
     "description": "My name is Kvothe. I have stolen princesses back from sleeping barrow kings. I burned down the town of Trebon.",
     "releaseDate": "2009-04-27",
+    "language": "English",
+    "publisher": "Brilliance Audio",
     "coverQuery": "The Name of the Wind Patrick Rothfuss book cover",
+    "sampleAudioUrl": "/audio/samples/name-wind.mp3",
     "price": 14.95,
-    "clubs": ["6"]
+    "clubs": ["6"],
+    "chapters": [
+      {"id": 1, "title": "Prologue: A Silence of Three Parts", "duration": "12:24"},
+      {"id": 2, "title": "Chapter 1: A Place for Demons", "duration": "35:12"},
+      {"id": 3, "title": "Chapter 2: A Beautiful Day", "duration": "42:45"}
+    ]
   },
   {
     "id": "39",
@@ -575,14 +967,24 @@
     "author": "Daniel Kahneman",
     "narrator": "Patrick Egan",
     "genre": "Self Development",
+    "contentType": "audiobook",
     "duration": "20h 2m",
+    "durationMinutes": 1202,
     "rating": 4.5,
     "ratingsCount": 87654,
     "description": "In the highly anticipated Thinking, Fast and Slow, Kahneman takes us on a groundbreaking tour of the mind.",
     "releaseDate": "2011-10-25",
+    "language": "English",
+    "publisher": "Brilliance Audio",
     "coverQuery": "Thinking Fast and Slow Daniel Kahneman book cover",
+    "sampleAudioUrl": "/audio/samples/thinking-fast.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Part I: Two Systems - Introduction", "duration": "45:24"},
+      {"id": 2, "title": "Part I: Two Systems - Chapter 1", "duration": "52:12"},
+      {"id": 3, "title": "Part I: Two Systems - Chapter 2", "duration": "48:45"}
+    ]
   },
   {
     "id": "40",
@@ -590,14 +992,24 @@
     "author": "Margaret Atwood",
     "narrator": "Claire Danes",
     "genre": "Science Fiction",
+    "contentType": "audiobook",
     "duration": "11h 54m",
+    "durationMinutes": 714,
     "rating": 4.4,
     "ratingsCount": 98765,
     "description": "In the world of the near future, who will control women's bodies?",
     "releaseDate": "2012-04-19",
+    "language": "English",
+    "publisher": "Audible Studios",
     "coverQuery": "The Handmaids Tale Margaret Atwood book cover",
+    "sampleAudioUrl": "/audio/samples/handmaids-tale.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "I: Night - Chapter 1", "duration": "18:24"},
+      {"id": 2, "title": "II: Shopping - Chapter 2", "duration": "25:12"},
+      {"id": 3, "title": "II: Shopping - Chapter 3", "duration": "22:45"}
+    ]
   },
   {
     "id": "41",
@@ -605,14 +1017,24 @@
     "author": "Elena Armas",
     "narrator": "Stacy Gonzalez",
     "genre": "Romance",
+    "contentType": "audiobook",
     "duration": "15h 57m",
+    "durationMinutes": 957,
     "rating": 4.3,
     "ratingsCount": 54321,
     "description": "A TikTok sensation! Catalina Martín desperately needs a date to her sister's wedding.",
     "releaseDate": "2021-02-09",
+    "language": "English",
+    "publisher": "Simon & Schuster Audio",
     "coverQuery": "The Spanish Love Deception Elena Armas book cover",
+    "sampleAudioUrl": "/audio/samples/spanish-love.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1", "duration": "38:24"},
+      {"id": 2, "title": "Chapter 2", "duration": "32:12"},
+      {"id": 3, "title": "Chapter 3", "duration": "35:45"}
+    ]
   },
   {
     "id": "42",
@@ -620,14 +1042,24 @@
     "author": "Brit Bennett",
     "narrator": "Shayna Small",
     "genre": "Fiction",
+    "contentType": "audiobook",
     "duration": "11h 3m",
+    "durationMinutes": 663,
     "rating": 4.5,
     "ratingsCount": 76543,
     "description": "The Vignes twin sisters will always be identical. But after growing up together, they choose to live in two different worlds.",
     "releaseDate": "2020-06-02",
+    "language": "English",
+    "publisher": "Penguin Random House Audio",
     "coverQuery": "The Vanishing Half Brit Bennett book cover",
+    "sampleAudioUrl": "/audio/samples/vanishing-half.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Part I: 1968 - Chapter 1", "duration": "32:24"},
+      {"id": 2, "title": "Part I: 1968 - Chapter 2", "duration": "28:12"},
+      {"id": 3, "title": "Part I: 1968 - Chapter 3", "duration": "35:45"}
+    ]
   },
   {
     "id": "43",
@@ -635,14 +1067,24 @@
     "author": "David Goggins",
     "narrator": "David Goggins, Adam Skolnick",
     "genre": "Memoir & Biography",
+    "contentType": "audiobook",
     "duration": "13h 37m",
+    "durationMinutes": 817,
     "rating": 4.8,
     "ratingsCount": 156789,
     "description": "For David Goggins, childhood was a nightmare - poverty, prejudice, and physical abuse colored his days.",
     "releaseDate": "2018-12-04",
+    "language": "English",
+    "publisher": "Lioncrest Publishing",
     "coverQuery": "Cant Hurt Me David Goggins book cover",
+    "sampleAudioUrl": "/audio/samples/cant-hurt-me.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1: I Should Have Been a Statistic", "duration": "45:24"},
+      {"id": 2, "title": "Chapter 2: Truth Hurts", "duration": "42:12"},
+      {"id": 3, "title": "Chapter 3: The Impossible Task", "duration": "48:45"}
+    ]
   },
   {
     "id": "44",
@@ -650,14 +1092,24 @@
     "author": "Celeste Ng",
     "narrator": "Jennifer Lim",
     "genre": "Fiction",
+    "contentType": "audiobook",
     "duration": "11h 27m",
+    "durationMinutes": 687,
     "rating": 4.5,
     "ratingsCount": 98765,
     "description": "In Shaker Heights, a placid, progressive suburb of Cleveland, everything is planned.",
     "releaseDate": "2017-09-12",
+    "language": "English",
+    "publisher": "Penguin Random House Audio",
     "coverQuery": "Little Fires Everywhere Celeste Ng book cover",
+    "sampleAudioUrl": "/audio/samples/little-fires.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1", "duration": "28:24"},
+      {"id": 2, "title": "Chapter 2", "duration": "32:12"},
+      {"id": 3, "title": "Chapter 3", "duration": "29:45"}
+    ]
   },
   {
     "id": "45",
@@ -665,14 +1117,24 @@
     "author": "Morgan Housel",
     "narrator": "Chris Hill",
     "genre": "Self Development",
+    "contentType": "audiobook",
     "duration": "5h 48m",
+    "durationMinutes": 348,
     "rating": 4.7,
     "ratingsCount": 134567,
     "description": "Doing well with money isn't necessarily about what you know. It's about how you behave.",
     "releaseDate": "2020-09-08",
+    "language": "English",
+    "publisher": "Harriman House",
     "coverQuery": "The Psychology of Money Morgan Housel book cover",
+    "sampleAudioUrl": "/audio/samples/psychology-money.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1: No One's Crazy", "duration": "18:24"},
+      {"id": 2, "title": "Chapter 2: Luck & Risk", "duration": "22:12"},
+      {"id": 3, "title": "Chapter 3: Never Enough", "duration": "25:45"}
+    ]
   },
   {
     "id": "46",
@@ -680,14 +1142,26 @@
     "author": "Ernest Cline",
     "narrator": "Wil Wheaton",
     "genre": "Science Fiction",
+    "contentType": "audiobook",
     "duration": "15h 40m",
+    "durationMinutes": 940,
     "rating": 4.6,
     "ratingsCount": 145678,
+    "series": "Ready Player One",
+    "seriesNumber": 1,
     "description": "In the year 2045, reality is an ugly place. The only time Wade Watts really feels alive is when he's jacked into the OASIS.",
     "releaseDate": "2011-08-16",
+    "language": "English",
+    "publisher": "Random House Audio",
     "coverQuery": "Ready Player One Ernest Cline book cover",
+    "sampleAudioUrl": "/audio/samples/ready-player-one.mp3",
     "price": 14.95,
-    "clubs": ["1"]
+    "clubs": ["1"],
+    "chapters": [
+      {"id": 1, "title": "Chapter 0001", "duration": "38:24"},
+      {"id": 2, "title": "Chapter 0002", "duration": "35:12"},
+      {"id": 3, "title": "Chapter 0003", "duration": "42:45"}
+    ]
   },
   {
     "id": "47",
@@ -695,14 +1169,24 @@
     "author": "Glennon Doyle",
     "narrator": "Glennon Doyle",
     "genre": "Memoir & Biography",
+    "contentType": "audiobook",
     "duration": "8h 9m",
+    "durationMinutes": 489,
     "rating": 4.6,
     "ratingsCount": 112345,
     "description": "There is a voice of longing inside each woman. We strive so mightily to be good: good partners, daughters, mothers, employees, and friends.",
     "releaseDate": "2020-03-10",
+    "language": "English",
+    "publisher": "Random House Audio",
     "coverQuery": "Untamed Glennon Doyle book cover",
+    "sampleAudioUrl": "/audio/samples/untamed.mp3",
     "price": 14.95,
-    "clubs": ["7"]
+    "clubs": ["7"],
+    "chapters": [
+      {"id": 1, "title": "Part One: Caged - Chapter 1", "duration": "25:24"},
+      {"id": 2, "title": "Part One: Caged - Chapter 2", "duration": "22:12"},
+      {"id": 3, "title": "Part One: Caged - Chapter 3", "duration": "28:45"}
+    ]
   },
   {
     "id": "48",
@@ -710,14 +1194,24 @@
     "author": "Markus Zusak",
     "narrator": "Allan Corduner",
     "genre": "Historical Fiction",
+    "contentType": "audiobook",
     "duration": "13h 56m",
+    "durationMinutes": 836,
     "rating": 4.7,
     "ratingsCount": 167890,
     "description": "It is 1939. Nazi Germany. The country is holding its breath. Death has never been busier, and will become busier still.",
     "releaseDate": "2006-11-21",
+    "language": "English",
+    "publisher": "Listening Library",
     "coverQuery": "The Book Thief Markus Zusak book cover",
+    "sampleAudioUrl": "/audio/samples/book-thief.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Prologue: Death and Chocolate", "duration": "15:24"},
+      {"id": 2, "title": "Part One: The Grave Digger's Handbook", "duration": "42:12"},
+      {"id": 3, "title": "Part Two: The Shoulder Shrug", "duration": "38:45"}
+    ]
   },
   {
     "id": "49",
@@ -725,14 +1219,24 @@
     "author": "Nita Prose",
     "narrator": "Lauren Ambrose",
     "genre": "Mystery & Thriller",
+    "contentType": "audiobook",
     "duration": "9h 40m",
+    "durationMinutes": 580,
     "rating": 4.4,
     "ratingsCount": 67890,
     "description": "Molly Gray is not like everyone else. She struggles with social skills and misreads the intentions of others.",
     "releaseDate": "2022-01-04",
+    "language": "English",
+    "publisher": "Random House Audio",
     "coverQuery": "The Maid Nita Prose book cover",
+    "sampleAudioUrl": "/audio/samples/the-maid.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1", "duration": "24:24"},
+      {"id": 2, "title": "Chapter 2", "duration": "26:12"},
+      {"id": 3, "title": "Chapter 3", "duration": "22:45"}
+    ]
   },
   {
     "id": "50",
@@ -740,14 +1244,415 @@
     "author": "Stephen R. Covey",
     "narrator": "Stephen R. Covey",
     "genre": "Self Development",
+    "contentType": "audiobook",
     "duration": "15h 45m",
+    "durationMinutes": 945,
     "rating": 4.6,
     "ratingsCount": 198765,
     "description": "One of the most inspiring and impactful books ever written, The 7 Habits of Highly Effective People has captivated readers for 25 years.",
     "releaseDate": "2004-11-09",
+    "language": "English",
+    "publisher": "Simon & Schuster Audio",
     "coverQuery": "The 7 Habits of Highly Effective People book cover",
+    "sampleAudioUrl": "/audio/samples/7-habits.mp3",
     "price": 14.95,
-    "clubs": []
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Introduction", "duration": "35:24"},
+      {"id": 2, "title": "Habit 1: Be Proactive", "duration": "52:12"},
+      {"id": 3, "title": "Habit 2: Begin with the End in Mind", "duration": "48:45"}
+    ]
+  },
+  {
+    "id": "51",
+    "title": "The Daily Stoic",
+    "author": "Ryan Holiday",
+    "narrator": "Brian Holsopple",
+    "genre": "Self Development",
+    "contentType": "original",
+    "duration": "10h 24m",
+    "durationMinutes": 624,
+    "rating": 4.7,
+    "ratingsCount": 92341,
+    "description": "An EchoRead Original. 366 days of Stoic wisdom and practical philosophy for your daily life.",
+    "releaseDate": "2024-01-15",
+    "language": "English",
+    "publisher": "EchoRead Originals",
+    "coverQuery": "The Daily Stoic Ryan Holiday book cover",
+    "sampleAudioUrl": "/audio/samples/daily-stoic.mp3",
+    "price": 14.95,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "January: Clarity", "duration": "48:24"},
+      {"id": 2, "title": "February: Passions and Emotions", "duration": "52:12"},
+      {"id": 3, "title": "March: Awareness", "duration": "55:45"}
+    ]
+  },
+  {
+    "id": "52",
+    "title": "Outliers",
+    "author": "Malcolm Gladwell",
+    "narrator": "Malcolm Gladwell",
+    "genre": "Self Development",
+    "contentType": "audiobook",
+    "duration": "7h 18m",
+    "durationMinutes": 438,
+    "rating": 4.6,
+    "ratingsCount": 154321,
+    "description": "In this stunning new book, Malcolm Gladwell takes us on an intellectual journey through the world of outliers.",
+    "releaseDate": "2008-11-18",
+    "language": "English",
+    "publisher": "Hachette Audio",
+    "coverQuery": "Outliers Malcolm Gladwell book cover",
+    "sampleAudioUrl": "/audio/samples/outliers.mp3",
+    "price": 14.95,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Introduction: The Roseto Mystery", "duration": "28:24"},
+      {"id": 2, "title": "Part One - Chapter 1: The Matthew Effect", "duration": "32:12"},
+      {"id": 3, "title": "Part One - Chapter 2: The 10,000-Hour Rule", "duration": "35:45"}
+    ]
+  },
+  {
+    "id": "53",
+    "title": "The Way of Kings",
+    "author": "Brandon Sanderson",
+    "narrator": "Kate Reading, Michael Kramer",
+    "genre": "Fantasy",
+    "contentType": "audiobook",
+    "duration": "45h 35m",
+    "durationMinutes": 2735,
+    "rating": 4.8,
+    "ratingsCount": 187654,
+    "series": "The Stormlight Archive",
+    "seriesNumber": 1,
+    "description": "Roshar is a world of stone and storms. Uncanny tempests of incredible power sweep across the rocky terrain.",
+    "releaseDate": "2010-08-31",
+    "language": "English",
+    "publisher": "Macmillan Audio",
+    "coverQuery": "The Way of Kings Brandon Sanderson book cover",
+    "sampleAudioUrl": "/audio/samples/way-kings.mp3",
+    "price": 14.95,
+    "clubs": ["6"],
+    "chapters": [
+      {"id": 1, "title": "Prelude to the Stormlight Archive", "duration": "55:24"},
+      {"id": 2, "title": "Prologue: To Kill", "duration": "48:12"},
+      {"id": 3, "title": "Part One - Chapter 1: Cenn", "duration": "52:45"}
+    ]
+  },
+  {
+    "id": "54",
+    "title": "The Art of War",
+    "author": "Sun Tzu",
+    "narrator": "Aidan Gillen",
+    "genre": "Self Development",
+    "contentType": "audiobook",
+    "duration": "1h 7m",
+    "durationMinutes": 67,
+    "rating": 4.5,
+    "ratingsCount": 76543,
+    "description": "The Art of War is an ancient Chinese military treatise dating from the 5th century BC.",
+    "releaseDate": "2009-03-15",
+    "language": "English",
+    "publisher": "Audible Studios",
+    "coverQuery": "The Art of War Sun Tzu book cover",
+    "sampleAudioUrl": "/audio/samples/art-war.mp3",
+    "price": 9.95,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1: Laying Plans", "duration": "8:24"},
+      {"id": 2, "title": "Chapter 2: Waging War", "duration": "6:12"},
+      {"id": 3, "title": "Chapter 3: Attack by Stratagem", "duration": "7:45"}
+    ]
+  },
+  {
+    "id": "55",
+    "title": "Behind the Tech",
+    "author": "Various",
+    "narrator": "Kevin Scott",
+    "genre": "Technology",
+    "contentType": "podcast",
+    "duration": "45m per episode",
+    "durationMinutes": 45,
+    "episodeCount": 156,
+    "frequency": "Weekly",
+    "rating": 4.6,
+    "ratingsCount": 23456,
+    "description": "Microsoft CTO Kevin Scott explores the intersection of technology and humanity with thought leaders, innovators, and industry pioneers.",
+    "releaseDate": "2024-11-01",
+    "language": "English",
+    "publisher": "EchoRead Podcasts",
+    "coverQuery": "Behind the Tech podcast cover",
+    "sampleAudioUrl": "/audio/samples/behind-tech.mp3",
+    "price": 0,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Episode 1: The Future of AI", "duration": "45:24"},
+      {"id": 2, "title": "Episode 2: Building for Billions", "duration": "42:12"},
+      {"id": 3, "title": "Episode 3: The Ethics of Innovation", "duration": "48:45"}
+    ]
+  },
+  {
+    "id": "56",
+    "title": "How I Built This",
+    "author": "NPR",
+    "narrator": "Guy Raz",
+    "genre": "Business",
+    "contentType": "podcast",
+    "duration": "50m per episode",
+    "durationMinutes": 50,
+    "episodeCount": 423,
+    "frequency": "Weekly",
+    "rating": 4.8,
+    "ratingsCount": 98765,
+    "description": "Guy Raz dives into the stories behind some of the world's best known companies and the founders who built them.",
+    "releaseDate": "2024-10-15",
+    "language": "English",
+    "publisher": "NPR",
+    "coverQuery": "How I Built This podcast cover",
+    "sampleAudioUrl": "/audio/samples/how-built-this.mp3",
+    "price": 0,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Spanx: Sara Blakely", "duration": "52:24"},
+      {"id": 2, "title": "Instagram: Kevin Systrom and Mike Krieger", "duration": "48:12"},
+      {"id": 3, "title": "Airbnb: Joe Gebbia", "duration": "55:45"}
+    ]
+  },
+  {
+    "id": "57",
+    "title": "The Tim Ferriss Show",
+    "author": "Tim Ferriss",
+    "narrator": "Tim Ferriss",
+    "genre": "Self Development",
+    "contentType": "podcast",
+    "duration": "120m per episode",
+    "durationMinutes": 120,
+    "episodeCount": 712,
+    "frequency": "Twice Weekly",
+    "rating": 4.7,
+    "ratingsCount": 145678,
+    "description": "Tim Ferriss deconstructs world-class performers from eclectic areas to extract the tactics, tools, and routines you can use.",
+    "releaseDate": "2024-11-05",
+    "language": "English",
+    "publisher": "Tim Ferriss",
+    "coverQuery": "The Tim Ferriss Show podcast cover",
+    "sampleAudioUrl": "/audio/samples/tim-ferriss.mp3",
+    "price": 0,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Episode 1: Arnold Schwarzenegger", "duration": "125:24"},
+      {"id": 2, "title": "Episode 2: Jamie Foxx", "duration": "115:12"},
+      {"id": 3, "title": "Episode 3: Maria Popova", "duration": "118:45"}
+    ]
+  },
+  {
+    "id": "58",
+    "title": "The Midnight Murders",
+    "author": "EchoRead Originals",
+    "narrator": "David Tennant",
+    "genre": "Mystery & Thriller",
+    "contentType": "original",
+    "duration": "8h 24m",
+    "durationMinutes": 504,
+    "episodeCount": 8,
+    "rating": 4.8,
+    "ratingsCount": 54321,
+    "description": "An EchoRead Original thriller series. A detective investigates a series of murders that only happen at midnight.",
+    "releaseDate": "2024-10-31",
+    "language": "English",
+    "publisher": "EchoRead Originals",
+    "coverQuery": "The Midnight Murders audiobook cover",
+    "sampleAudioUrl": "/audio/samples/midnight-murders.mp3",
+    "price": 14.95,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Episode 1: The First Strike", "duration": "62:24"},
+      {"id": 2, "title": "Episode 2: The Pattern Emerges", "duration": "58:12"},
+      {"id": 3, "title": "Episode 3: Following the Clock", "duration": "65:45"}
+    ]
+  },
+  {
+    "id": "59",
+    "title": "Stuff You Should Know",
+    "author": "iHeartPodcasts",
+    "narrator": "Josh Clark, Chuck Bryant",
+    "genre": "Education",
+    "contentType": "podcast",
+    "duration": "55m per episode",
+    "durationMinutes": 55,
+    "episodeCount": 1834,
+    "frequency": "Three times weekly",
+    "rating": 4.7,
+    "ratingsCount": 187654,
+    "description": "If you've ever wanted to know about champagne, satanism, the Stonewall Uprising, chaos theory, LSD, El Nino, true crime and Rosa Parks then look no further.",
+    "releaseDate": "2024-11-08",
+    "language": "English",
+    "publisher": "iHeartPodcasts",
+    "coverQuery": "Stuff You Should Know podcast cover",
+    "sampleAudioUrl": "/audio/samples/stuff-know.mp3",
+    "price": 0,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "How Coffee Works", "duration": "52:24"},
+      {"id": 2, "title": "The Great Molasses Flood", "duration": "58:12"},
+      {"id": 3, "title": "How the Panama Canal Works", "duration": "55:45"}
+    ]
+  },
+  {
+    "id": "60",
+    "title": "Shadows of Empire",
+    "author": "EchoRead Originals",
+    "narrator": "Gillian Anderson",
+    "genre": "Historical Fiction",
+    "contentType": "original",
+    "duration": "14h 32m",
+    "durationMinutes": 872,
+    "rating": 4.7,
+    "ratingsCount": 43210,
+    "description": "An EchoRead Original epic. A sweeping tale of power, betrayal, and rebellion in a fictional empire inspired by ancient Rome.",
+    "releaseDate": "2024-09-15",
+    "language": "English",
+    "publisher": "EchoRead Originals",
+    "coverQuery": "Shadows of Empire audiobook cover",
+    "sampleAudioUrl": "/audio/samples/shadows-empire.mp3",
+    "price": 14.95,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1: The Senator's Daughter", "duration": "52:24"},
+      {"id": 2, "title": "Chapter 2: Whispers in the Forum", "duration": "48:12"},
+      {"id": 3, "title": "Chapter 3: The First Betrayal", "duration": "55:45"}
+    ]
+  },
+  {
+    "id": "61",
+    "title": "Radiolab",
+    "author": "WNYC Studios",
+    "narrator": "Jad Abumrad, Robert Krulwich",
+    "genre": "Science",
+    "contentType": "podcast",
+    "duration": "60m per episode",
+    "durationMinutes": 60,
+    "episodeCount": 456,
+    "frequency": "Weekly",
+    "rating": 4.8,
+    "ratingsCount": 123456,
+    "description": "Radiolab is on a curiosity bender. We ask deep questions and use investigative journalism to get the answers.",
+    "releaseDate": "2024-11-10",
+    "language": "English",
+    "publisher": "WNYC Studios",
+    "coverQuery": "Radiolab podcast cover",
+    "sampleAudioUrl": "/audio/samples/radiolab.mp3",
+    "price": 0,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Space", "duration": "58:24"},
+      {"id": 2, "title": "Colors", "duration": "62:12"},
+      {"id": 3, "title": "Time", "duration": "65:45"}
+    ]
+  },
+  {
+    "id": "62",
+    "title": "The Future Chronicles",
+    "author": "EchoRead Originals",
+    "narrator": "Michael B. Jordan",
+    "genre": "Science Fiction",
+    "contentType": "original",
+    "duration": "12h 15m",
+    "durationMinutes": 735,
+    "rating": 4.6,
+    "ratingsCount": 34567,
+    "description": "An EchoRead Original sci-fi anthology. Ten standalone stories set in different possible futures of humanity.",
+    "releaseDate": "2024-08-22",
+    "language": "English",
+    "publisher": "EchoRead Originals",
+    "coverQuery": "The Future Chronicles audiobook cover",
+    "sampleAudioUrl": "/audio/samples/future-chronicles.mp3",
+    "price": 14.95,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Story 1: The Last Upload", "duration": "72:24"},
+      {"id": 2, "title": "Story 2: Mars Colony 7", "duration": "68:12"},
+      {"id": 3, "title": "Story 3: The Memory Market", "duration": "75:45"}
+    ]
+  },
+  {
+    "id": "63",
+    "title": "The Moth",
+    "author": "The Moth",
+    "narrator": "Various",
+    "genre": "Entertainment",
+    "contentType": "podcast",
+    "duration": "25m per episode",
+    "durationMinutes": 25,
+    "episodeCount": 789,
+    "frequency": "Weekly",
+    "rating": 4.7,
+    "ratingsCount": 76543,
+    "description": "The Moth is an acclaimed not-for-profit organization dedicated to the art & craft of storytelling.",
+    "releaseDate": "2024-11-06",
+    "language": "English",
+    "publisher": "The Moth",
+    "coverQuery": "The Moth podcast cover",
+    "sampleAudioUrl": "/audio/samples/the-moth.mp3",
+    "price": 0,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "True Stories Told Live", "duration": "22:24"},
+      {"id": 2, "title": "Leap of Faith", "duration": "28:12"},
+      {"id": 3, "title": "Coming Home", "duration": "25:45"}
+    ]
+  },
+  {
+    "id": "64",
+    "title": "Decoded",
+    "author": "EchoRead Originals",
+    "narrator": "Benedict Cumberbatch",
+    "genre": "Mystery & Thriller",
+    "contentType": "original",
+    "duration": "10h 48m",
+    "durationMinutes": 648,
+    "rating": 4.7,
+    "ratingsCount": 45678,
+    "description": "An EchoRead Original mystery. A cryptographer races to decode ancient messages that predict modern crimes.",
+    "releaseDate": "2024-07-10",
+    "language": "English",
+    "publisher": "EchoRead Originals",
+    "coverQuery": "Decoded audiobook cover",
+    "sampleAudioUrl": "/audio/samples/decoded.mp3",
+    "price": 14.95,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Chapter 1: The First Message", "duration": "62:24"},
+      {"id": 2, "title": "Chapter 2: Breaking the Code", "duration": "58:12"},
+      {"id": 3, "title": "Chapter 3: Hidden Patterns", "duration": "65:45"}
+    ]
+  },
+  {
+    "id": "65",
+    "title": "This American Life",
+    "author": "WBEZ Chicago",
+    "narrator": "Ira Glass",
+    "genre": "Entertainment",
+    "contentType": "podcast",
+    "duration": "60m per episode",
+    "durationMinutes": 60,
+    "episodeCount": 823,
+    "frequency": "Weekly",
+    "rating": 4.8,
+    "ratingsCount": 198765,
+    "description": "This American Life is a weekly public radio program and podcast. Each week we choose a theme and put together different kinds of stories on that theme.",
+    "releaseDate": "2024-11-09",
+    "language": "English",
+    "publisher": "WBEZ Chicago",
+    "coverQuery": "This American Life podcast cover",
+    "sampleAudioUrl": "/audio/samples/this-american-life.mp3",
+    "price": 0,
+    "clubs": [],
+    "chapters": [
+      {"id": 1, "title": "Episode 1: Fiasco!", "duration": "58:24"},
+      {"id": 2, "title": "Episode 2: 81 Words", "duration": "62:12"},
+      {"id": 3, "title": "Episode 3: In Defense of Marriage", "duration": "59:45"}
+    ]
   }
 ]
-

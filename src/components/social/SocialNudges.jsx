@@ -1,149 +1,165 @@
 import { useState, useEffect } from 'react';
+import { Users, Star, TrendingUp, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Users, TrendingUp, Zap, Clock, Gauge } from 'lucide-react';
-import { getFriends } from '../../utils/localStorage';
-import usersData from '../../data/users.json';
-import booksData from '../../data/books.json';
+import { Card, Badge, Button } from '../ui';
+import PropTypes from 'prop-types';
 
-export default function SocialNudges() {
+const SocialNudges = ({ limit = 3 }) => {
   const [nudges, setNudges] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  
   useEffect(() => {
-    generateNudges();
-  }, []);
-
-  const generateNudges = () => {
-    const friendIds = getFriends();
-    const friends = usersData.filter(u => friendIds.includes(u.id));
-    const nudgesList = [];
-
-    friends.forEach(friend => {
-      if (friend.currentlyReading && friend.privacySettings?.shareProgress) {
-        const book = booksData.find(b => b.id === friend.currentlyReading);
-        if (book) {
-          nudgesList.push({
-            type: 'currently_listening',
-            friend,
-            book,
-            progress: friend.currentProgress || 0,
-            speed: friend.listeningSpeed || 1.0
-          });
-        }
+    const loadNudges = async () => {
+      try {
+        // Load mock users and books
+        const usersResponse = await fetch('/src/data/mockUsers.json');
+        const users = await usersResponse.json();
+        
+        const booksResponse = await fetch('/src/data/books.json');
+        const books = await booksResponse.json();
+        
+        // Generate social nudges
+        const generatedNudges = [];
+        
+        // Type 1: Friends also listening
+        const friendsListening = users.slice(0, 3).map(user => ({
+          type: 'friends_listening',
+          icon: Users,
+          message: `${user.name} just started listening to`,
+          book: books[Math.floor(Math.random() * Math.min(10, books.length))],
+          user,
+          action: 'Listen now',
+          color: 'text-echo-info',
+          bgColor: 'bg-echo-info/10',
+        }));
+        
+        // Type 2: Popular in your genre
+        const popularInGenre = {
+          type: 'trending',
+          icon: TrendingUp,
+          message: 'Trending now in Science Fiction',
+          book: books.find(b => b.genre === 'Science Fiction') || books[0],
+          stat: '234 listeners this week',
+          action: 'Check it out',
+          color: 'text-echo-orange',
+          bgColor: 'bg-echo-orange/10',
+        };
+        
+        // Type 3: Friend milestone
+        const friendMilestone = {
+          type: 'milestone',
+          icon: Award,
+          message: `${users[5]?.name || 'A friend'} just earned the "Completionist" badge`,
+          user: users[5],
+          action: 'Congratulate',
+          color: 'text-echo-success',
+          bgColor: 'bg-echo-success/10',
+        };
+        
+        generatedNudges.push(...friendsListening, popularInGenre, friendMilestone);
+        
+        // Shuffle and limit
+        const shuffled = generatedNudges.sort(() => Math.random() - 0.5);
+        setNudges(shuffled.slice(0, limit));
+      } catch (error) {
+        console.error('Failed to load social nudges:', error);
+        setNudges([]);
+      } finally {
+        setLoading(false);
       }
-    });
-
-    const bookCounts = {};
-    friends.forEach(friend => {
-      if (friend.currentlyReading) {
-        bookCounts[friend.currentlyReading] = (bookCounts[friend.currentlyReading] || 0) + 1;
-      }
-    });
-
-    Object.entries(bookCounts).forEach(([bookId, count]) => {
-      if (count >= 2) {
-        const book = booksData.find(b => b.id === bookId);
-        const listeningFriends = friends.filter(f => f.currentlyReading === bookId);
-        if (book) {
-          nudgesList.push({
-            type: 'trending',
-            book,
-            count,
-            friends: listeningFriends
-          });
-        }
-      }
-    });
-
-    setNudges(nudgesList.slice(0, 5));
-  };
-
-  const renderNudge = (nudge) => {
-    switch (nudge.type) {
-      case 'currently_listening':
-        return (
-          <Link
-            key={`listening-${nudge.friend.id}-${nudge.book.id}`}
-            to={`/book/${nudge.book.id}`}
-            className="block bg-white rounded-lg p-4 hover:bg-gray-50 transition-all border border-gray-200 hover:border-green-500 shadow-sm"
-          >
-            <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0 p-2 bg-green-50 rounded-lg">
-                <Users className="w-5 h-5 text-green-600" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-900">
-                  <span className="font-semibold">{nudge.friend.name}</span>
-                  {' is currently listening to '}
-                  <span className="font-semibold text-audible-orange">{nudge.book.title}</span>
-                </p>
-                <div className="mt-2 flex items-center space-x-4 text-xs text-gray-600">
-                  <div className="flex items-center space-x-1">
-                    <Clock className="w-3 h-3" />
-                    <span>{nudge.progress}% complete</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Gauge className="w-3 h-3" />
-                    <span>{nudge.speed}x speed</span>
-                  </div>
-                </div>
+    };
+    
+    loadNudges();
+  }, [limit]);
+  
+  if (loading) {
+    return (
+      <div className="space-y-3">
+        {[1, 2, 3].map(i => (
+          <Card key={i} className="p-4">
+            <div className="animate-pulse flex gap-3">
+              <div className="w-12 h-12 bg-echo-beige rounded" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-echo-beige rounded w-3/4" />
+                <div className="h-3 bg-echo-beige rounded w-1/2" />
               </div>
             </div>
-          </Link>
-        );
-
-      case 'trending':
-        return (
-          <Link
-            key={`trending-${nudge.book.id}`}
-            to={`/book/${nudge.book.id}`}
-            className="block bg-orange-50 rounded-lg p-4 hover:bg-orange-100 transition-all border border-audible-orange/50 shadow-sm"
-          >
-            <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0 p-2 bg-white rounded-lg">
-                <TrendingUp className="w-5 h-5 text-audible-orange" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-2 mb-1">
-                  <Zap className="w-4 h-4 text-audible-orange" />
-                  <span className="text-xs font-bold text-audible-orange uppercase">Trending</span>
-                </div>
-                <p className="text-sm text-gray-900">
-                  <span className="font-semibold">{nudge.count} of your friends</span>
-                  {' are listening to '}
-                  <span className="font-semibold text-audible-orange">{nudge.book.title}</span>
-                </p>
-                <div className="mt-2 flex items-center space-x-1">
-                  {nudge.friends.slice(0, 3).map((friend) => (
-                    <div
-                      key={friend.id}
-                      className="text-xs bg-white text-audible-orange px-2 py-0.5 rounded-full border border-audible-orange/30"
-                    >
-                      {friend.name.split(' ')[0]}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </Link>
-        );
-
-      default:
-        return null;
-    }
-  };
-
+          </Card>
+        ))}
+      </div>
+    );
+  }
+  
   if (nudges.length === 0) {
     return null;
   }
-
+  
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-bold text-gray-900 flex items-center space-x-2">
-        <Users className="w-5 h-5 text-audible-orange" />
-        <span>What Friends Are Listening To</span>
-      </h3>
-      {nudges.map(nudge => renderNudge(nudge))}
+      {nudges.map((nudge, index) => {
+        const Icon = nudge.icon;
+        
+        return (
+          <Card key={index} className="p-4 hover:shadow-md transition-shadow">
+            <div className="flex gap-3">
+              {/* Icon */}
+              <div className={`w-10 h-10 rounded-lg ${nudge.bgColor} flex items-center justify-center flex-shrink-0`}>
+                <Icon className={`w-5 h-5 ${nudge.color}`} />
+              </div>
+              
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-echo-text-secondary mb-1">
+                  {nudge.message}
+                </p>
+                
+                {nudge.book && (
+                  <Link
+                    to={`/book/${nudge.book.id}`}
+                    className="text-base font-semibold text-echo-text-primary hover:text-echo-orange transition-colors block mb-1"
+                  >
+                    {nudge.book.title}
+                  </Link>
+                )}
+                
+                {nudge.stat && (
+                  <p className="text-xs text-echo-text-tertiary mb-2">
+                    {nudge.stat}
+                  </p>
+                )}
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                >
+                  {nudge.action}
+                </Button>
+              </div>
+              
+              {/* Book Cover (if applicable) */}
+              {nudge.book && (
+                <Link
+                  to={`/book/${nudge.book.id}`}
+                  className="flex-shrink-0"
+                >
+                  <img
+                    src={nudge.book.cover}
+                    alt={nudge.book.title}
+                    className="w-16 h-24 object-cover rounded shadow-sm hover:shadow-md transition-shadow"
+                  />
+                </Link>
+              )}
+            </div>
+          </Card>
+        );
+      })}
     </div>
   );
-}
+};
 
+SocialNudges.propTypes = {
+  limit: PropTypes.number,
+};
+
+export default SocialNudges;

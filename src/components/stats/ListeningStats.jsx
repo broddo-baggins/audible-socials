@@ -1,149 +1,201 @@
-import { Clock, Book, Gauge, Flame, TrendingUp, Sun, Sunset, Moon, Coffee } from 'lucide-react';
-import { getUserProgress } from '../../utils/badgeSystem';
+import { Clock, BookOpen, TrendingUp, Award, Calendar, Flame } from 'lucide-react';
+import { Card, Badge } from '../ui';
+import PropTypes from 'prop-types';
 
-export default function ListeningStats({ userId = 'user-me' }) {
-  const progress = getUserProgress(userId);
-  const stats = progress?.listeningStats || {
-    totalHours: 0,
-    booksCompleted: 0,
-    averageSpeed: 1.0,
-    streakDays: 0,
-    longestStreak: 0,
-    favoriteGenres: [],
-    listeningTimes: { morning: 0, afternoon: 0, evening: 0, night: 0 }
-  };
-
-  const getPreferredTime = () => {
-    const times = stats.listeningTimes;
-    const max = Math.max(times.morning, times.afternoon, times.evening, times.night);
-    
-    if (times.morning === max) return { label: 'Morning', icon: Coffee, color: 'yellow' };
-    if (times.afternoon === max) return { label: 'Afternoon', icon: Sun, color: 'orange' };
-    if (times.evening === max) return { label: 'Evening', icon: Sunset, color: 'pink' };
-    return { label: 'Night', icon: Moon, color: 'indigo' };
-  };
-
-  const preferredTime = getPreferredTime();
-  const PreferredIcon = preferredTime.icon;
-
+const ListeningStats = ({ stats }) => {
+  const {
+    hoursListened = 0,
+    booksFinished = 0,
+    currentStreak = 0,
+    longestStreak = 0,
+    favoriteGenre = 'Not set',
+    averageRating = 0,
+    thisMonthHours = 0,
+    thisYearBooks = 0,
+  } = stats || {};
+  
+  const statCards = [
+    {
+      icon: Clock,
+      label: 'Hours Listened',
+      value: hoursListened.toLocaleString(),
+      subtext: `${thisMonthHours}h this month`,
+      color: 'text-echo-orange',
+      bgColor: 'bg-echo-orange/10',
+    },
+    {
+      icon: BookOpen,
+      label: 'Books Finished',
+      value: booksFinished.toLocaleString(),
+      subtext: `${thisYearBooks} this year`,
+      color: 'text-echo-success',
+      bgColor: 'bg-echo-success/10',
+    },
+    {
+      icon: Flame,
+      label: 'Current Streak',
+      value: `${currentStreak} days`,
+      subtext: `Longest: ${longestStreak} days`,
+      color: 'text-echo-error',
+      bgColor: 'bg-echo-error/10',
+    },
+    {
+      icon: TrendingUp,
+      label: 'Average Rating',
+      value: averageRating.toFixed(1),
+      subtext: 'Your ratings',
+      color: 'text-echo-info',
+      bgColor: 'bg-echo-info/10',
+    },
+  ];
+  
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">Listening Overview</h3>
+      {/* Main Stats Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {statCards.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <Card key={index} className="p-4 hover:shadow-md transition-shadow">
+              <div className="flex flex-col items-start">
+                <div className={`w-10 h-10 rounded-lg ${stat.bgColor} flex items-center justify-center mb-3`}>
+                  <Icon className={`w-5 h-5 ${stat.color}`} />
+                </div>
+                <div className="text-2xl font-bold text-echo-text-primary mb-1">
+                  {stat.value}
+                </div>
+                <div className="text-sm font-medium text-echo-text-secondary mb-1">
+                  {stat.label}
+                </div>
+                <div className="text-xs text-echo-text-tertiary">
+                  {stat.subtext}
+                </div>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+      
+      {/* Listening Activity Chart Placeholder */}
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-echo-text-primary">
+            Listening Activity
+          </h3>
+          <div className="flex gap-2">
+            <button className="px-3 py-1 text-sm rounded-lg bg-echo-orange text-white">
+              Week
+            </button>
+            <button className="px-3 py-1 text-sm rounded-lg text-echo-text-secondary hover:bg-echo-beige">
+              Month
+            </button>
+            <button className="px-3 py-1 text-sm rounded-lg text-echo-text-secondary hover:bg-echo-beige">
+              Year
+            </button>
+          </div>
+        </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
-            <div className="flex items-center space-x-2 mb-2">
-              <Clock className="w-5 h-5 text-blue-600" />
-              <span className="text-sm text-blue-700 font-semibold">Total Hours</span>
-            </div>
-            <p className="text-3xl font-bold text-blue-900">{stats.totalHours}</p>
-          </div>
-
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
-            <div className="flex items-center space-x-2 mb-2">
-              <Book className="w-5 h-5 text-green-600" />
-              <span className="text-sm text-green-700 font-semibold">Completed</span>
-            </div>
-            <p className="text-3xl font-bold text-green-900">{stats.booksCompleted}</p>
-          </div>
-
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
-            <div className="flex items-center space-x-2 mb-2">
-              <Gauge className="w-5 h-5 text-purple-600" />
-              <span className="text-sm text-purple-700 font-semibold">Avg Speed</span>
-            </div>
-            <p className="text-3xl font-bold text-purple-900">{stats.averageSpeed}x</p>
-          </div>
-
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4 border border-orange-200">
-            <div className="flex items-center space-x-2 mb-2">
-              <Flame className="w-5 h-5 text-orange-600" />
-              <span className="text-sm text-orange-700 font-semibold">Streak</span>
-            </div>
-            <p className="text-3xl font-bold text-orange-900">{stats.streakDays}</p>
-            <p className="text-xs text-orange-700 mt-1">Best: {stats.longestStreak} days</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-md p-6">
-          <h4 className="font-bold text-gray-900 mb-4 flex items-center">
-            <PreferredIcon className={`w-5 h-5 mr-2 text-${preferredTime.color}-600`} />
-            Listening Patterns
-          </h4>
-          
-          <div className="space-y-3">
-            {[
-              { label: 'Morning', value: stats.listeningTimes.morning, icon: Coffee, color: 'yellow' },
-              { label: 'Afternoon', value: stats.listeningTimes.afternoon, icon: Sun, color: 'orange' },
-              { label: 'Evening', value: stats.listeningTimes.evening, icon: Sunset, color: 'pink' },
-              { label: 'Night', value: stats.listeningTimes.night, icon: Moon, color: 'indigo' }
-            ].map((time) => {
-              const TimeIcon = time.icon;
-              const total = Object.values(stats.listeningTimes).reduce((a, b) => a + b, 0);
-              const percentage = total > 0 ? (time.value / total) * 100 : 0;
-              
-              return (
-                <div key={time.label}>
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center space-x-2">
-                      <TimeIcon className={`w-4 h-4 text-${time.color}-600`} />
-                      <span className="text-sm text-gray-700">{time.label}</span>
-                    </div>
-                    <span className="text-sm font-semibold text-gray-900">
-                      {time.value}h ({percentage.toFixed(0)}%)
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className={`bg-${time.color}-500 h-2 rounded-full transition-all`}
-                      style={{ width: `${percentage}%` }}
-                    />
-                  </div>
+        {/* Simple bar chart visualization */}
+        <div className="h-48 flex items-end justify-between gap-2">
+          {[3.2, 4.5, 2.8, 5.1, 4.2, 6.3, 5.8].map((hours, index) => {
+            const height = (hours / 7) * 100;
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            return (
+              <div key={index} className="flex-1 flex flex-col items-center gap-2">
+                <div className="w-full bg-echo-beige rounded-t-lg relative" style={{ height: `${height}%`, minHeight: '20px' }}>
+                  <div 
+                    className="absolute inset-0 bg-echo-orange rounded-t-lg transition-all hover:bg-echo-orange-dark"
+                    title={`${hours}h`}
+                  />
                 </div>
-              );
-            })}
-          </div>
-
-          <div className={`mt-4 p-3 bg-${preferredTime.color}-50 rounded-lg border border-${preferredTime.color}-200`}>
-            <p className="text-sm text-gray-700">
-              <span className="font-semibold">You listen most in the {preferredTime.label.toLowerCase()}</span>
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-md p-6">
-          <h4 className="font-bold text-gray-900 mb-4 flex items-center">
-            <TrendingUp className="w-5 h-5 mr-2 text-purple-600" />
-            Favorite Genres
-          </h4>
-          
-          {stats.favoriteGenres.length > 0 ? (
-            <div className="space-y-2">
-              {stats.favoriteGenres.map((genre, index) => (
-                <div
-                  key={genre}
-                  className="flex items-center justify-between p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200"
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
-                      {index + 1}
-                    </div>
-                    <span className="font-semibold text-gray-900">{genre}</span>
-                  </div>
+                <div className="text-xs text-echo-text-tertiary">
+                  {days[index]}
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-600 text-center py-8">
-              Listen to more books to discover your favorite genres
-            </p>
-          )}
+              </div>
+            );
+          })}
         </div>
-      </div>
+      </Card>
+      
+      {/* Genre Breakdown */}
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold text-echo-text-primary mb-4">
+          Top Genres
+        </h3>
+        <div className="space-y-3">
+          {[
+            { genre: 'Science Fiction', count: 23, percentage: 35 },
+            { genre: 'Fantasy', count: 18, percentage: 28 },
+            { genre: 'Mystery', count: 12, percentage: 18 },
+            { genre: 'Self Development', count: 8, percentage: 12 },
+            { genre: 'Other', count: 4, percentage: 7 },
+          ].map((item, index) => (
+            <div key={index}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-sm font-medium text-echo-text-primary">
+                  {item.genre}
+                </span>
+                <span className="text-sm text-echo-text-tertiary">
+                  {item.count} books ({item.percentage}%)
+                </span>
+              </div>
+              <div className="h-2 bg-echo-beige rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-echo-orange rounded-full transition-all"
+                  style={{ width: `${item.percentage}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+      
+      {/* Reading Goals */}
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-echo-text-primary">
+            2025 Reading Goal
+          </h3>
+          <Badge variant="success">On Track</Badge>
+        </div>
+        <div className="space-y-3">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-echo-text-secondary">
+                Books Goal: {thisYearBooks} / 50
+              </span>
+              <span className="text-sm font-medium text-echo-orange">
+                {Math.round((thisYearBooks / 50) * 100)}%
+              </span>
+            </div>
+            <div className="h-3 bg-echo-beige rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-echo-orange rounded-full transition-all"
+                style={{ width: `${Math.min((thisYearBooks / 50) * 100, 100)}%` }}
+              />
+            </div>
+          </div>
+          <p className="text-xs text-echo-text-tertiary">
+            You're {thisYearBooks >= 50 / 12 * (new Date().getMonth() + 1) ? 'ahead of' : 'behind'} schedule. 
+            Keep it up!
+          </p>
+        </div>
+      </Card>
     </div>
   );
-}
+};
 
+ListeningStats.propTypes = {
+  stats: PropTypes.shape({
+    hoursListened: PropTypes.number,
+    booksFinished: PropTypes.number,
+    currentStreak: PropTypes.number,
+    longestStreak: PropTypes.number,
+    favoriteGenre: PropTypes.string,
+    averageRating: PropTypes.number,
+    thisMonthHours: PropTypes.number,
+    thisYearBooks: PropTypes.number,
+  }),
+};
+
+export default ListeningStats;

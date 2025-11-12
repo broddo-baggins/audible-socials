@@ -1,222 +1,248 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Play, TrendingUp, Users, Star } from 'lucide-react';
-import booksData from '../data/books.json';
-import clubsData from '../data/clubs.json';
-import { getUserData } from '../utils/localStorage';
-import { fetchGoogleImagesCover } from '../utils/googleImages';
-import FriendRecommendations from '../components/social/FriendRecommendations';
+import HeroBanner from '../components/home/HeroBanner';
+import BookCarousel from '../components/books/BookCarousel';
 import SocialNudges from '../components/social/SocialNudges';
+import { HeroSkeleton, CarouselSkeleton } from '../components/ui/Skeleton';
+import { Card } from '../components/ui';
+import { getImageUrl } from '../utils/imageCache';
 
-export default function Home() {
-  const [userData, setUserData] = useState(null);
-  const [featuredBooks, setFeaturedBooks] = useState([]);
-  const [featuredClubs, setFeaturedClubs] = useState([]);
-  const [bookCovers, setBookCovers] = useState({});
-
+const Home = () => {
+  const [books, setBooks] = useState([]);
+  const [featuredBook, setFeaturedBook] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
   useEffect(() => {
-    setUserData(getUserData());
-    
-    // Featured books - top rated
-    const featured = booksData
-      .sort((a, b) => b.rating - a.rating)
-      .slice(0, 6);
-    setFeaturedBooks(featured);
-
-    // Featured clubs - most popular
-    const topClubs = clubsData
-      .sort((a, b) => b.memberCount - a.memberCount)
-      .slice(0, 3);
-    setFeaturedClubs(topClubs);
-
-    // Load book covers
-    featured.forEach(async (book) => {
-      const cover = await fetchGoogleImagesCover(book.id, book.coverQuery, book.genre);
-      setBookCovers(prev => ({ ...prev, [book.id]: cover }));
-    });
-  }, []);
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
-
-  return (
-    <div className="min-h-screen bg-audible-cream">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-audible-orange to-audible-orange-dark text-white py-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 font-serif">
-              Welcome back{userData?.name !== 'You' ? `, ${userData?.name}` : ''}!
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 text-white/90">
-              Continue your journey or discover something new
-            </p>
-            
-            {userData?.currentlyReading && (
-              <Link
-                to={`/book/${userData.currentlyReading}`}
-                className="inline-flex items-center space-x-2 bg-white text-audible-orange px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-              >
-                <Play className="w-5 h-5" />
-                <span>Continue Listening</span>
-              </Link>
-            )}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Featured Clubs */}
-      <section className="max-w-7xl mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center">
-            <Users className="w-8 h-8 mr-2 text-audible-orange" />
-            Featured Book Clubs
-          </h2>
-          <Link
-            to="/clubs"
-            className="text-audible-orange font-semibold hover:text-audible-orange-light transition-colors"
-          >
-            View All
-          </Link>
-        </div>
-
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
-        >
-          {featuredClubs.map((club) => (
-            <motion.div key={club.id} variants={item}>
-              <Link to={`/club/${club.id}`}>
-                <div className="bg-white rounded-xl hover:bg-gray-50 transition-all p-6 border-2 border-gray-200 hover:border-audible-orange shadow-sm">
-                  <div className="flex items-start justify-between mb-4">
-                    <h3 className="text-xl font-bold text-gray-900">{club.name}</h3>
-                    {club.isPremium && (
-                      <span className="bg-audible-gold text-white text-xs font-semibold px-2 py-1 rounded-full">
-                        Premium
-                      </span>
-                    )}
-                  </div>
-                  
-                  <p className="text-gray-700 text-sm mb-4 line-clamp-2">
-                    {club.description}
-                  </p>
-                  
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">
-                      Hosted by <span className="font-semibold text-gray-900">{club.host}</span>
-                    </span>
-                    <span className="text-audible-orange font-semibold">
-                      {club.memberCount.toLocaleString()} members
-                    </span>
-                  </div>
-                  
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <span className="text-xs text-gray-600">
-                      {club.daysRemaining} days left • {club.meetingsPerMonth} meetings/month
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
-
-      {/* Social Features */}
-      <section className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <SocialNudges />
-          <FriendRecommendations />
-        </div>
-      </section>
-
-      {/* Trending Books */}
-      <section className="max-w-7xl mx-auto px-4 py-12 bg-gray-50 rounded-xl my-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center">
-            <TrendingUp className="w-8 h-8 mr-2 text-audible-orange" />
-            Trending Now
-          </h2>
-          <Link
-            to="/discover"
-            className="text-audible-orange font-semibold hover:text-audible-orange-light transition-colors"
-          >
-            Explore More
-          </Link>
-        </div>
-
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4"
-        >
-          {featuredBooks.map((book) => (
-            <motion.div key={book.id} variants={item}>
-              <Link to={`/book/${book.id}`} className="group">
-                <div className="relative overflow-hidden rounded-lg shadow-md group-hover:shadow-xl transition-all">
-                  <img
-                    src={bookCovers[book.id] || 'https://via.placeholder.com/300x450'}
-                    alt={book.title}
-                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-2 right-2 bg-black/70 text-white px-2 py-1 rounded-full text-xs flex items-center">
-                    <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
-                    {book.rating}
-                  </div>
-                </div>
-                <h3 className="mt-2 text-sm font-semibold text-gray-900 line-clamp-2">
-                  {book.title}
-                </h3>
-                <p className="text-xs text-gray-600">{book.author}</p>
-              </Link>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
-
-      {/* Personalized Recommendations */}
-      <section className="max-w-7xl mx-auto px-4 py-12">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
-          Because You Listened To...
-        </h2>
+    const loadBooks = async () => {
+      try {
+        const response = await fetch('/src/data/books.json');
+        const booksData = await response.json();
         
-        <div className="bg-gradient-to-r from-audible-orange to-audible-orange-dark rounded-xl p-8 text-white">
-          <h3 className="text-2xl font-bold mb-4">
-            Discover Your Next Favorite
-          </h3>
-          <p className="mb-6 text-white/90">
-            Join a book club and never wonder what to listen to next. Connect with readers who share your taste.
-          </p>
-          <Link
-            to="/clubs"
-            className="inline-block bg-white text-audible-orange px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-          >
-            Explore Book Clubs
-          </Link>
+        // Add cover images to books
+        const booksWithCovers = await Promise.all(
+          booksData.map(async (book) => ({
+            ...book,
+            cover: await getImageUrl(book.coverQuery || `${book.title} ${book.author} book cover`),
+          }))
+        );
+        
+        setBooks(booksWithCovers);
+        // Set first audiobook as featured
+        setFeaturedBook(booksWithCovers.find(b => b.contentType === 'audiobook') || booksWithCovers[0]);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading books:', error);
+        setLoading(false);
+      }
+    };
+    
+    loadBooks();
+  }, []);
+  
+  // Categorize books
+  const audiobooks = books.filter(b => b.contentType === 'audiobook');
+  const originals = books.filter(b => b.contentType === 'original');
+  const podcasts = books.filter(b => b.contentType === 'podcast');
+  
+  // Continue listening - simulate with progress
+  const continueListening = audiobooks.slice(0, 8).map((book, index) => ({
+    ...book,
+    progress: 15 + (index * 8), // Simulate progress
+  }));
+  
+  // Personalized recommendations
+  const recommendations = audiobooks.slice(8, 18);
+  
+  // New releases - recent books
+  const newReleases = audiobooks
+    .sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate))
+    .slice(0, 12);
+  
+  // Best sellers - highest rated with most ratings
+  const bestSellers = [...audiobooks]
+    .sort((a, b) => {
+      const scoreA = a.rating * Math.log(a.ratingsCount + 1);
+      const scoreB = b.rating * Math.log(b.ratingsCount + 1);
+      return scoreB - scoreA;
+    })
+    .slice(0, 12);
+  
+  // Popular by genre
+  const sciFiBooks = audiobooks.filter(b => b.genre === 'Science Fiction').slice(0, 10);
+  const mysteryBooks = audiobooks.filter(b => b.genre === 'Mystery & Thriller').slice(0, 10);
+  const fantasyBooks = audiobooks.filter(b => b.genre === 'Fantasy').slice(0, 10);
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-echo-cream">
+        <div className="max-w-9xl mx-auto px-4 sm:px-6 py-8 space-y-12">
+          <HeroSkeleton />
+          <CarouselSkeleton />
+          <CarouselSkeleton />
+          <CarouselSkeleton />
         </div>
-      </section>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="min-h-screen bg-echo-cream">
+      <div className="max-w-9xl mx-auto px-4 sm:px-6 py-8 space-y-12">
+        {/* Hero Banner */}
+        <section>
+          <HeroBanner book={featuredBook} />
+        </section>
+        
+        {/* Continue Listening */}
+        {continueListening.length > 0 && (
+          <section>
+            <BookCarousel 
+              title="Continue Listening"
+              books={continueListening}
+              showProgress={true}
+              cardSize="md"
+              seeAllLink="/library"
+            />
+          </section>
+        )}
+        
+        {/* Personalized Recommendations */}
+        {recommendations.length > 0 && (
+          <section>
+            <BookCarousel 
+              title="Because you listened to Project Hail Mary"
+              books={recommendations}
+              cardSize="md"
+            />
+          </section>
+        )}
+        
+        {/* Social Nudges */}
+        <section>
+          <h2 className="text-2xl font-bold text-echo-text-primary mb-6">
+            What Your Friends Are Up To
+          </h2>
+          <SocialNudges limit={3} />
+        </section>
+        
+        {/* Friend Activity - Social Integration */}
+        {/* This would integrate with FriendRecommendations component */}
+        <section>
+          <BookCarousel 
+            title="Friends are listening to"
+            books={audiobooks.slice(20, 30)}
+            cardSize="md"
+          />
+        </section>
+        
+        {/* New Releases */}
+        {newReleases.length > 0 && (
+          <section>
+            <BookCarousel 
+              title="New Releases"
+              books={newReleases}
+              cardSize="md"
+              seeAllLink="/browse?sort=newest"
+            />
+          </section>
+        )}
+        
+        {/* Best Sellers */}
+        {bestSellers.length > 0 && (
+          <section>
+            <BookCarousel 
+              title="Best Sellers"
+              books={bestSellers}
+              cardSize="md"
+              seeAllLink="/browse?sort=popular"
+            />
+          </section>
+        )}
+        
+        {/* EchoRead Originals */}
+        {originals.length > 0 && (
+          <section>
+            <BookCarousel 
+              title="EchoRead Originals"
+              books={originals}
+              cardSize="md"
+              seeAllLink="/originals"
+            />
+          </section>
+        )}
+        
+        {/* Popular Podcasts */}
+        {podcasts.length > 0 && (
+          <section>
+            <BookCarousel 
+              title="Popular Podcasts"
+              books={podcasts}
+              cardSize="md"
+              seeAllLink="/podcasts"
+            />
+          </section>
+        )}
+        
+        {/* Genre-based Recommendations */}
+        {sciFiBooks.length > 0 && (
+          <section>
+            <BookCarousel 
+              title="Sci-Fi Adventures"
+              books={sciFiBooks}
+              cardSize="md"
+              seeAllLink="/browse?genre=science-fiction"
+            />
+          </section>
+        )}
+        
+        {mysteryBooks.length > 0 && (
+          <section>
+            <BookCarousel 
+              title="Mystery & Thrillers"
+              books={mysteryBooks}
+              cardSize="md"
+              seeAllLink="/browse?genre=mystery"
+            />
+          </section>
+        )}
+        
+        {fantasyBooks.length > 0 && (
+          <section>
+            <BookCarousel 
+              title="Fantasy Worlds"
+              books={fantasyBooks}
+              cardSize="md"
+              seeAllLink="/browse?genre=fantasy"
+            />
+          </section>
+        )}
+        
+        {/* Book Clubs You Might Like - Social Integration */}
+        {/* This would integrate with clubs data */}
+        <section>
+          <div className="px-4 sm:px-6">
+            <h2 className="text-2xl md:text-3xl font-bold text-echo-text-primary mb-4">
+              Book Clubs You Might Like
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Club cards would go here */}
+              <div className="p-6 bg-white rounded-xl border border-echo-border hover:shadow-card transition-shadow">
+                <h3 className="font-semibold text-lg mb-2">Discover book clubs</h3>
+                <p className="text-echo-text-secondary mb-4">
+                  Join communities of readers listening to the same books
+                </p>
+                <a 
+                  href="/clubs" 
+                  className="text-echo-orange hover:text-echo-orange-dark font-medium"
+                >
+                  Explore clubs →
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
-}
+};
 
+export default Home;

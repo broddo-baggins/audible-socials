@@ -1,147 +1,178 @@
-import { Trophy, Zap, Users, Crown, Star, Calendar, Moon } from 'lucide-react';
-import { getUserBadges, getAllBadges } from '../../utils/badgeSystem';
+import { Award, Lock } from 'lucide-react';
+import { Card, Badge as BadgeUI } from '../ui';
+import PropTypes from 'prop-types';
 
-export default function BadgeDisplay({ userId = 'user-me', compact = false }) {
-  const earnedBadges = getUserBadges(userId);
-  const allBadges = getAllBadges();
+const BADGE_DEFINITIONS = {
+  completionist: {
+    name: 'Completionist',
+    description: 'Finished 50 books',
+    icon: '📚',
+    color: 'bg-gradient-to-br from-yellow-400 to-orange-500',
+  },
+  speed_reader: {
+    name: 'Speed Reader',
+    description: 'Listened at 2x speed for 100+ hours',
+    icon: '⚡',
+    color: 'bg-gradient-to-br from-blue-400 to-purple-500',
+  },
+  genre_explorer: {
+    name: 'Genre Explorer',
+    description: 'Completed books in 10+ genres',
+    icon: '🗺️',
+    color: 'bg-gradient-to-br from-green-400 to-teal-500',
+  },
+  space_cadet: {
+    name: 'Space Cadet',
+    description: '25+ science fiction books',
+    icon: '🚀',
+    color: 'bg-gradient-to-br from-indigo-400 to-blue-500',
+  },
+  science_master: {
+    name: 'Science Master',
+    description: 'Finished 15+ hard SF books',
+    icon: '🔬',
+    color: 'bg-gradient-to-br from-cyan-400 to-blue-500',
+  },
+  veteran_listener: {
+    name: 'Veteran Listener',
+    description: '500+ hours listened',
+    icon: '🎧',
+    color: 'bg-gradient-to-br from-purple-400 to-pink-500',
+  },
+  legendary_reader: {
+    name: 'Legendary Reader',
+    description: '200+ books completed',
+    icon: '👑',
+    color: 'bg-gradient-to-br from-yellow-500 to-red-500',
+  },
+  fantasy_master: {
+    name: 'Fantasy Master',
+    description: '30+ fantasy books',
+    icon: '🐉',
+    color: 'bg-gradient-to-br from-purple-500 to-pink-500',
+  },
+  marathon_listener: {
+    name: 'Marathon Listener',
+    description: '1000+ hours listened',
+    icon: '🏃',
+    color: 'bg-gradient-to-br from-orange-400 to-red-500',
+  },
+  night_owl: {
+    name: 'Night Owl',
+    description: '100+ hours between 10 PM - 6 AM',
+    icon: '🦉',
+    color: 'bg-gradient-to-br from-indigo-500 to-purple-600',
+  },
+  horror_fan: {
+    name: 'Horror Fan',
+    description: '15+ horror books',
+    icon: '😱',
+    color: 'bg-gradient-to-br from-gray-700 to-red-600',
+  },
+  brave_soul: {
+    name: 'Brave Soul',
+    description: 'Completed 5 horror books in one month',
+    icon: '💀',
+    color: 'bg-gradient-to-br from-gray-800 to-black',
+  },
+  detective: {
+    name: 'Detective',
+    description: '25+ mystery books',
+    icon: '🔍',
+    color: 'bg-gradient-to-br from-amber-500 to-orange-600',
+  },
+  plot_master: {
+    name: 'Plot Master',
+    description: 'Solved 10 mysteries before the reveal',
+    icon: '🧩',
+    color: 'bg-gradient-to-br from-teal-400 to-green-500',
+  },
+  clue_hunter: {
+    name: 'Clue Hunter',
+    description: 'Finished 50+ detective novels',
+    icon: '🕵️',
+    color: 'bg-gradient-to-br from-gray-600 to-blue-600',
+  },
+};
 
-  const getIconComponent = (iconName) => {
-    const iconClass = compact ? "w-4 h-4" : "w-6 h-6";
-    switch (iconName) {
-      case 'trophy':
-        return <Trophy className={iconClass} />;
-      case 'zap':
-        return <Zap className={iconClass} />;
-      case 'users':
-        return <Users className={iconClass} />;
-      case 'crown':
-        return <Crown className={iconClass} />;
-      case 'star':
-        return <Star className={iconClass} />;
-      case 'calendar':
-        return <Calendar className={iconClass} />;
-      case 'moon':
-        return <Moon className={iconClass} />;
-      default:
-        return <Trophy className={iconClass} />;
-    }
+const BadgeCard = ({ badgeId, earned = true, size = 'md' }) => {
+  const badge = BADGE_DEFINITIONS[badgeId];
+  
+  if (!badge) return null;
+  
+  const sizes = {
+    sm: 'w-16 h-16 text-2xl',
+    md: 'w-20 h-20 text-3xl',
+    lg: 'w-24 h-24 text-4xl',
   };
-
-  const getRarityColor = (rarity) => {
-    switch (rarity) {
-      case 'common':
-        return 'from-gray-400 to-gray-500';
-      case 'uncommon':
-        return 'from-green-400 to-green-500';
-      case 'rare':
-        return 'from-blue-400 to-blue-500';
-      case 'epic':
-        return 'from-purple-400 to-purple-500';
-      case 'legendary':
-        return 'from-yellow-400 to-yellow-500';
-      default:
-        return 'from-gray-400 to-gray-500';
-    }
-  };
-
-  const getRarityLabel = (rarity) => {
-    return rarity.charAt(0).toUpperCase() + rarity.slice(1);
-  };
-
-  const getEarnedDate = (badgeId) => {
-    const earned = earnedBadges.find(b => b.id === badgeId);
-    if (earned?.earnedAt) {
-      return new Date(earned.earnedAt).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      });
-    }
-    return null;
-  };
-
-  if (compact) {
-    return (
-      <div className="flex flex-wrap gap-2">
-        {earnedBadges.slice(0, 5).map((badge) => (
-          <div
-            key={badge.id}
-            className={`p-2 rounded-lg bg-gradient-to-br ${getRarityColor(badge.rarity)} text-white`}
-            title={`${badge.name} - ${badge.description}`}
-          >
-            {getIconComponent(badge.icon)}
-          </div>
-        ))}
-        {earnedBadges.length > 5 && (
-          <div className="p-2 rounded-lg bg-gray-200 text-gray-700 text-sm font-semibold flex items-center">
-            +{earnedBadges.length - 5}
+  
+  return (
+    <div className={`relative group ${earned ? '' : 'opacity-50'}`}>
+      {/* Badge Icon */}
+      <div className={`${sizes[size]} rounded-full ${earned ? badge.color : 'bg-gray-300'} flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 ${!earned && 'grayscale'}`}>
+        <span className="text-white">{badge.icon}</span>
+        {!earned && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
+            <Lock className="w-6 h-6 text-white" />
           </div>
         )}
       </div>
-    );
-  }
-
-  return (
-    <div className="space-y-6">
-      {earnedBadges.length > 0 && (
-        <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Earned Badges ({earnedBadges.length})</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {earnedBadges.map((badge) => (
-              <div
-                key={badge.id}
-                className="bg-white rounded-xl shadow-md p-4 border-2 border-gray-200 hover:border-purple-400 transition-all"
-              >
-                <div className={`w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br ${getRarityColor(badge.rarity)} text-white flex items-center justify-center`}>
-                  {getIconComponent(badge.icon)}
-                </div>
-                <h4 className="font-bold text-gray-900 text-center mb-1">{badge.name}</h4>
-                <p className="text-xs text-gray-600 text-center mb-2">{badge.description}</p>
-                <div className="flex items-center justify-between text-xs">
-                  <span className={`px-2 py-0.5 rounded-full font-semibold ${
-                    badge.rarity === 'common' ? 'bg-gray-100 text-gray-700' :
-                    badge.rarity === 'uncommon' ? 'bg-green-100 text-green-700' :
-                    badge.rarity === 'rare' ? 'bg-blue-100 text-blue-700' :
-                    badge.rarity === 'epic' ? 'bg-purple-100 text-purple-700' :
-                    'bg-yellow-100 text-yellow-700'
-                  }`}>
-                    {getRarityLabel(badge.rarity)}
-                  </span>
-                  <span className="text-gray-500">{getEarnedDate(badge.id)}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div>
-        <h3 className="text-xl font-bold text-gray-900 mb-4">
-          Available Badges ({allBadges.length - earnedBadges.length})
-        </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {allBadges
-            .filter(badge => !earnedBadges.find(e => e.id === badge.id))
-            .map((badge) => (
-              <div
-                key={badge.id}
-                className="bg-gray-50 rounded-xl shadow-sm p-4 border-2 border-gray-200 opacity-60"
-              >
-                <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-gray-300 text-gray-500 flex items-center justify-center">
-                  {getIconComponent(badge.icon)}
-                </div>
-                <h4 className="font-bold text-gray-700 text-center mb-1">{badge.name}</h4>
-                <p className="text-xs text-gray-500 text-center mb-2">{badge.description}</p>
-                <div className="text-center">
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-600 font-semibold">
-                    Locked
-                  </span>
-                </div>
-              </div>
-            ))}
-        </div>
+      
+      {/* Badge Info Tooltip */}
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-echo-charcoal rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+        <h4 className="text-white font-semibold text-sm mb-1">
+          {badge.name}
+        </h4>
+        <p className="text-echo-player-subtitle text-xs">
+          {badge.description}
+        </p>
+        <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-8 border-transparent border-t-echo-charcoal" />
       </div>
     </div>
   );
-}
+};
 
+BadgeCard.propTypes = {
+  badgeId: PropTypes.string.isRequired,
+  earned: PropTypes.bool,
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+};
+
+const BadgeDisplay = ({ earnedBadges = [], allBadges = false, size = 'md' }) => {
+  const badgesToShow = allBadges 
+    ? Object.keys(BADGE_DEFINITIONS)
+    : earnedBadges.filter(id => BADGE_DEFINITIONS[id]);
+  
+  if (badgesToShow.length === 0) {
+    return (
+      <Card className="p-6 text-center">
+        <Award className="w-12 h-12 text-echo-text-tertiary mx-auto mb-3" />
+        <p className="text-echo-text-secondary">
+          No badges earned yet. Start listening to unlock achievements!
+        </p>
+      </Card>
+    );
+  }
+  
+  return (
+    <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+      {badgesToShow.map((badgeId) => (
+        <BadgeCard 
+          key={badgeId}
+          badgeId={badgeId}
+          earned={earnedBadges.includes(badgeId)}
+          size={size}
+        />
+      ))}
+    </div>
+  );
+};
+
+BadgeDisplay.propTypes = {
+  earnedBadges: PropTypes.arrayOf(PropTypes.string),
+  allBadges: PropTypes.bool,
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+};
+
+export default BadgeDisplay;
+export { BADGE_DEFINITIONS, BadgeCard };
