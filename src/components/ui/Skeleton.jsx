@@ -7,7 +7,7 @@ const Skeleton = ({
   count = 1,
   className = '' 
 }) => {
-  const baseStyles = 'bg-echo-beige rounded animate-pulse';
+  const baseStyles = 'bg-audible-gray-200 rounded animate-pulse';
   
   const variants = {
     text: 'h-4',
@@ -72,7 +72,7 @@ export const BookCardSkeleton = () => (
 );
 
 export const HeroSkeleton = () => (
-  <div className="w-full h-96 bg-echo-beige rounded-2xl animate-pulse" />
+  <div className="w-full h-96 bg-audible-gray-100 rounded-lg animate-pulse" />
 );
 
 export const CarouselSkeleton = () => (

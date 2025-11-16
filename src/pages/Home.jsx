@@ -73,8 +73,8 @@ const Home = () => {
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-echo-cream">
-        <div className="max-w-9xl mx-auto px-4 sm:px-6 py-8 space-y-12">
+      <div className="min-h-screen bg-audible-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
           <HeroSkeleton />
           <CarouselSkeleton />
           <CarouselSkeleton />
@@ -85,8 +85,8 @@ const Home = () => {
   }
   
   return (
-    <div className="min-h-screen bg-echo-cream">
-      <div className="max-w-9xl mx-auto px-4 sm:px-6 py-8 space-y-12">
+    <div className="min-h-screen bg-audible-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
         {/* Hero Banner */}
         <section>
           <HeroBanner book={featuredBook} />
@@ -108,36 +108,227 @@ const Home = () => {
         {/* Personalized Recommendations */}
         {recommendations.length > 0 && (
           <section>
-            <BookCarousel 
-              title="Because you listened to Project Hail Mary"
+            <BookCarousel
+              title="Recommended for You"
               books={recommendations}
               cardSize="md"
             />
           </section>
         )}
-        
-        {/* Social Nudges */}
-        <section>
-          <h2 className="text-2xl font-bold text-echo-text-primary mb-6">
-            What Your Friends Are Up To
-          </h2>
-          <SocialNudges limit={3} />
+
+        {/* Social Features - Enhanced */}
+        <section className="bg-audible-gray-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-12 mb-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-audible-text-primary mb-3">
+                Connect & Discover with Friends
+              </h2>
+              <p className="text-lg text-audible-text-secondary max-w-2xl mx-auto">
+                See what your friends are listening to, join book clubs, and discover new stories together
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              {/* Social Activity Feed */}
+              <div>
+                <h3 className="text-xl font-semibold text-audible-text-primary mb-4 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-audible-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  Friend Activity
+                </h3>
+                <SocialNudges limit={4} />
+              </div>
+
+              {/* Book Clubs Showcase */}
+              <div>
+                <h3 className="text-xl font-semibold text-audible-text-primary mb-4 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-audible-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zm0 0V9a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
+                  </svg>
+                  Popular Book Clubs
+                </h3>
+                <div className="space-y-4">
+                  <div className="bg-white p-4 rounded-lg border border-audible-gray-200 hover:shadow-md transition-shadow">
+                    <div className="flex items-start gap-3">
+                      <div className="w-12 h-12 bg-audible-orange rounded-full flex items-center justify-center text-white font-bold text-sm">
+                        R
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-audible-text-primary">Reese's Book Club</h4>
+                        <p className="text-sm text-audible-text-secondary">42K members • Monthly picks</p>
+                        <p className="text-xs text-audible-text-tertiary mt-1">Currently reading: Where the Crawdads Sing</p>
+                      </div>
+                      <button className="px-3 py-1 bg-audible-orange text-white text-sm rounded hover:bg-audible-orange-dark transition-colors">
+                        Join
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-4 rounded-lg border border-audible-gray-200 hover:shadow-md transition-shadow">
+                    <div className="flex items-start gap-3">
+                      <div className="w-12 h-12 bg-audible-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                        S
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-audible-text-primary">Sci-Fi Sundays</h4>
+                        <p className="text-sm text-audible-text-secondary">19K members • Bi-weekly</p>
+                        <p className="text-xs text-audible-text-tertiary mt-1">Exploring the Three-Body Problem</p>
+                      </div>
+                      <button className="px-3 py-1 bg-audible-blue-500 text-white text-sm rounded hover:bg-audible-blue-600 transition-colors">
+                        Join
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Call to Action */}
+            <div className="text-center">
+              <button className="inline-flex items-center gap-2 px-6 py-3 bg-audible-orange text-white font-medium rounded-lg hover:bg-audible-orange-dark transition-colors">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Find Friends & Join Clubs
+              </button>
+            </div>
+          </div>
         </section>
         
-        {/* Friend Activity - Social Integration */}
-        {/* This would integrate with FriendRecommendations component */}
-        <section>
-          <BookCarousel 
-            title="Friends are listening to"
-            books={audiobooks.slice(20, 30)}
-            cardSize="md"
-          />
+        {/* Time To Next Book - Discovery Section */}
+        <section className="bg-gradient-to-r from-blue-50 to-purple-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-12 mb-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-audible-text-primary mb-3">
+                Your Next Great Read Awaits
+              </h2>
+              <p className="text-lg text-audible-text-secondary max-w-2xl mx-auto">
+                Discover your next book with personalized recommendations based on what you've loved
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              {/* Recently Completed */}
+              <div>
+                <h3 className="text-xl font-semibold text-audible-text-primary mb-4 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Recently Completed
+                </h3>
+                <div className="space-y-4">
+                  {audiobooks.slice(0, 3).map((book) => (
+                    <div key={book.id} className="bg-white p-4 rounded-lg border border-audible-gray-200 hover:shadow-md transition-shadow">
+                      <div className="flex items-start gap-3">
+                        <img
+                          src={book.cover}
+                          alt={book.title}
+                          className="w-12 h-16 object-cover rounded shadow-sm flex-shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <Link to={`/book/${book.id}`} className="block">
+                            <h4 className="font-semibold text-audible-text-primary hover:text-audible-orange transition-colors line-clamp-1">
+                              {book.title}
+                            </h4>
+                          </Link>
+                          <p className="text-sm text-audible-text-secondary mb-2">{book.author}</p>
+                          <div className="flex items-center gap-2 text-xs text-audible-text-tertiary">
+                            <span>Completed 3 days ago</span>
+                            <span>•</span>
+                            <span>{book.duration}</span>
+                          </div>
+                          <div className="flex items-center gap-1 mt-2">
+                            <Rating value={book.rating} size="sm" showValue={false} />
+                            <span className="text-sm text-audible-text-secondary ml-1">
+                              You rated {book.rating}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recommended Next Reads */}
+              <div>
+                <h3 className="text-xl font-semibold text-audible-text-primary mb-4 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                  Recommended for You
+                </h3>
+                <div className="space-y-4">
+                  {audiobooks.slice(3, 6).map((book) => (
+                    <div key={book.id} className="bg-white p-4 rounded-lg border border-audible-gray-200 hover:shadow-md transition-shadow group">
+                      <div className="flex items-start gap-3">
+                        <Link to={`/book/${book.id}`}>
+                          <img
+                            src={book.cover}
+                            alt={book.title}
+                            className="w-12 h-16 object-cover rounded shadow-sm flex-shrink-0 group-hover:shadow-lg transition-shadow"
+                          />
+                        </Link>
+                        <div className="flex-1 min-w-0">
+                          <Link to={`/book/${book.id}`}>
+                            <h4 className="font-semibold text-audible-text-primary hover:text-audible-orange transition-colors line-clamp-1">
+                              {book.title}
+                            </h4>
+                          </Link>
+                          <p className="text-sm text-audible-text-secondary mb-2">{book.author}</p>
+                          <div className="flex items-center gap-2 text-xs text-audible-text-tertiary mb-2">
+                            <span>{book.duration}</span>
+                            <span>•</span>
+                            <span>{book.genre}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Rating value={book.rating} size="sm" showValue={false} />
+                            <span className="text-sm text-audible-text-secondary ml-1">
+                              {book.rating} ({book.ratingsCount.toLocaleString()})
+                            </span>
+                          </div>
+                        </div>
+                        <Link
+                          to={`/book/${book.id}`}
+                          className="px-3 py-1 bg-audible-orange text-white text-sm rounded hover:bg-audible-orange-dark transition-colors flex-shrink-0"
+                        >
+                          Get Book
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Discovery Actions */}
+            <div className="text-center">
+              <div className="flex flex-wrap justify-center gap-4">
+                <button className="inline-flex items-center gap-2 px-6 py-3 bg-audible-orange text-white font-medium rounded-lg hover:bg-audible-orange-dark transition-colors">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  Quick Quiz: Find Your Next Read
+                </button>
+                <Link
+                  to="/browse?sort=trending"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-audible-gray-300 text-audible-text-primary font-medium rounded-lg hover:bg-audible-gray-50 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                  Browse Trending Books
+                </Link>
+              </div>
+            </div>
+          </div>
         </section>
-        
+
         {/* New Releases */}
         {newReleases.length > 0 && (
           <section>
-            <BookCarousel 
+            <BookCarousel
               title="New Releases"
               books={newReleases}
               cardSize="md"
@@ -161,8 +352,8 @@ const Home = () => {
         {/* EchoRead Originals */}
         {originals.length > 0 && (
           <section>
-            <BookCarousel 
-              title="EchoRead Originals"
+            <BookCarousel
+              title="Audible Originals"
               books={originals}
               cardSize="md"
               seeAllLink="/originals"
@@ -185,30 +376,30 @@ const Home = () => {
         {/* Genre-based Recommendations */}
         {sciFiBooks.length > 0 && (
           <section>
-            <BookCarousel 
-              title="Sci-Fi Adventures"
+            <BookCarousel
+              title="Science Fiction"
               books={sciFiBooks}
               cardSize="md"
               seeAllLink="/browse?genre=science-fiction"
             />
           </section>
         )}
-        
+
         {mysteryBooks.length > 0 && (
           <section>
-            <BookCarousel 
-              title="Mystery & Thrillers"
+            <BookCarousel
+              title="Mystery & Thriller"
               books={mysteryBooks}
               cardSize="md"
               seeAllLink="/browse?genre=mystery"
             />
           </section>
         )}
-        
+
         {fantasyBooks.length > 0 && (
           <section>
-            <BookCarousel 
-              title="Fantasy Worlds"
+            <BookCarousel
+              title="Fantasy"
               books={fantasyBooks}
               cardSize="md"
               seeAllLink="/browse?genre=fantasy"
@@ -216,27 +407,28 @@ const Home = () => {
           </section>
         )}
         
-        {/* Book Clubs You Might Like - Social Integration */}
-        {/* This would integrate with clubs data */}
+        {/* Book Clubs Section */}
         <section>
-          <div className="px-4 sm:px-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-echo-text-primary mb-4">
-              Book Clubs You Might Like
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Club cards would go here */}
-              <div className="p-6 bg-white rounded-xl border border-echo-border hover:shadow-card transition-shadow">
-                <h3 className="font-semibold text-lg mb-2">Discover book clubs</h3>
-                <p className="text-echo-text-secondary mb-4">
-                  Join communities of readers listening to the same books
-                </p>
-                <a 
-                  href="/clubs" 
-                  className="text-echo-orange hover:text-echo-orange-dark font-medium"
-                >
-                  Explore clubs →
-                </a>
+          <h2 className="text-2xl font-bold text-audible-text-primary mb-6">
+            Book Clubs
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="p-6 bg-audible-gray-50 rounded-lg border border-audible-gray-200 hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 bg-audible-orange rounded-full flex items-center justify-center mb-4">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
               </div>
+              <h3 className="font-semibold text-lg mb-2 text-audible-text-primary">Join a Book Club</h3>
+              <p className="text-audible-text-secondary text-sm mb-4">
+                Connect with fellow listeners and discuss your favorite audiobooks
+              </p>
+              <a
+                href="/clubs"
+                className="text-audible-orange hover:text-audible-orange-dark font-medium text-sm"
+              >
+                Explore clubs →
+              </a>
             </div>
           </div>
         </section>

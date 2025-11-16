@@ -65,133 +65,97 @@ const DesktopHeader = () => {
   const isActive = (path) => location.pathname === path;
   
   return (
-    <header 
-      className={`sticky top-0 z-50 bg-echo-cream transition-all duration-250 ${
-        scrolled ? 'shadow-header' : ''
-      }`}
-    >
-      <nav className="max-w-9xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between gap-6">
+    <header className="bg-white border-b border-audible-gray-200 sticky top-0 z-50">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link 
-            to="/" 
-            className="flex-shrink-0 text-2xl font-bold text-echo-text-primary hover:text-echo-orange transition-colors"
-          >
-            EchoRead
+          <Link to="/" className="flex items-center">
+            <div className="text-2xl font-bold text-audible-text-primary">
+              audible
+            </div>
           </Link>
-          
+
           {/* Main Navigation */}
-          <div className="flex items-center gap-8">
+          <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`font-medium transition-colors relative ${
+                className={`text-sm font-medium transition-colors ${
                   isActive(item.path)
-                    ? 'text-echo-orange'
-                    : 'text-echo-text-primary hover:text-echo-orange'
+                    ? 'text-audible-orange'
+                    : 'text-audible-text-primary hover:text-audible-orange'
                 }`}
               >
                 {item.label}
-                {isActive(item.path) && (
-                  <span className="absolute -bottom-4 left-0 right-0 h-0.5 bg-echo-orange" />
-                )}
               </Link>
             ))}
           </div>
-          
+
           {/* Right Section */}
-          <div className="flex items-center gap-4 flex-shrink-0">
+          <div className="flex items-center space-x-4">
             {/* Search Bar */}
-            <form onSubmit={handleSearch} className="w-64">
-              <Input
-                type="search"
-                placeholder="Search books..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                leftIcon={<Search className="w-5 h-5" />}
-                className="text-sm"
-              />
+            <form onSubmit={handleSearch} className="hidden md:block">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-audible-gray-400" />
+                <input
+                  type="search"
+                  placeholder="Search Audible"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-64 pl-10 pr-4 py-2 border border-audible-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-audible-orange focus:border-audible-orange bg-white"
+                />
+              </div>
             </form>
-            
-            {/* Credits Badge */}
-            <div className="px-3 py-1.5 bg-echo-orange/10 text-echo-orange rounded-lg font-medium text-sm">
-              {user.credits} {user.credits === 1 ? 'Credit' : 'Credits'}
+
+            {/* Credits */}
+            <div className="hidden md:flex items-center px-3 py-1 bg-audible-orange/10 text-audible-orange rounded text-sm font-medium">
+              {user.credits} Credit{user.credits !== 1 ? 's' : ''}
             </div>
-            
-            {/* Language Selector */}
-            <button
-              className="p-2 text-echo-text-secondary hover:text-echo-orange hover:bg-echo-beige rounded-lg transition-colors"
-              aria-label="Language selector"
-            >
-              <Globe className="w-5 h-5" />
+
+            {/* Mobile Search Button */}
+            <button className="md:hidden p-2 text-audible-gray-600 hover:text-audible-orange">
+              <Search className="w-5 h-5" />
             </button>
-            
-            {/* Notifications */}
-            <Link
-              to="/notifications"
-              className="relative p-2 text-echo-text-secondary hover:text-echo-orange hover:bg-echo-beige rounded-lg transition-colors"
-              aria-label={`Notifications${hasNotifications ? ' (unread)' : ''}`}
-            >
-              <Bell className="w-5 h-5" />
-              {hasNotifications && (
-                <span className="absolute top-1 right-1 w-2 h-2 bg-echo-error rounded-full" />
-              )}
-            </Link>
-            
-            {/* User Menu */}
+
+            {/* Account Menu */}
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 p-2 hover:bg-echo-beige rounded-lg transition-colors"
-                aria-label="User menu"
-                aria-expanded={showUserMenu}
+                className="flex items-center space-x-1 p-2 rounded-md hover:bg-audible-gray-50 transition-colors"
               >
-                <div className="w-8 h-8 rounded-full bg-echo-orange flex items-center justify-center text-white font-medium">
-                  {user.avatar ? (
-                    <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
-                  ) : (
-                    user.name.charAt(0)
-                  )}
+                <div className="w-8 h-8 bg-audible-orange rounded-full flex items-center justify-center text-white font-medium text-sm">
+                  {user.name.charAt(0)}
                 </div>
-                <ChevronDown className={`w-4 h-4 text-echo-text-secondary transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-4 h-4 text-audible-gray-600 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
               </button>
-              
+
               {/* Dropdown Menu */}
               {showUserMenu && (
-                <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-echo-border overflow-hidden animate-slide-down">
-                  {/* User Info */}
-                  <div className="px-4 py-3 border-b border-echo-divider">
-                    <p className="font-semibold text-echo-text-primary">{user.name}</p>
-                    <p className="text-sm text-echo-text-secondary">{user.email}</p>
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-audible-gray-200 py-1 z-50">
+                  <div className="px-4 py-3 border-b border-audible-gray-200">
+                    <p className="text-sm font-medium text-audible-text-primary">{user.name}</p>
+                    <p className="text-xs text-audible-text-secondary">{user.email}</p>
                   </div>
-                  
-                  {/* Menu Items */}
-                  <div className="py-2">
+
+                  <div className="py-1">
                     {userMenuItems.map((item) => (
                       <Link
                         key={item.path}
                         to={item.path}
-                        className="flex items-center gap-3 px-4 py-2.5 text-echo-text-primary hover:bg-echo-beige transition-colors"
+                        className="flex items-center px-4 py-2 text-sm text-audible-text-primary hover:bg-audible-gray-50 transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
-                        <item.icon className="w-5 h-5 text-echo-text-secondary" />
-                        <span>{item.label}</span>
+                        <item.icon className="w-4 h-4 mr-3" />
+                        {item.label}
                       </Link>
                     ))}
                   </div>
-                  
-                  {/* Sign Out */}
-                  <div className="border-t border-echo-divider py-2">
-                    <button
-                      className="flex items-center gap-3 w-full px-4 py-2.5 text-echo-text-primary hover:bg-echo-beige transition-colors"
-                      onClick={() => {
-                        // Sign out functionality
-                        setShowUserMenu(false);
-                      }}
-                    >
-                      <LogOut className="w-5 h-5 text-echo-text-secondary" />
-                      <span>Sign out</span>
+
+                  <div className="border-t border-audible-gray-200 py-1">
+                    <button className="flex items-center w-full px-4 py-2 text-sm text-audible-text-primary hover:bg-audible-gray-50 transition-colors">
+                      <LogOut className="w-4 h-4 mr-3" />
+                      Sign Out
                     </button>
                   </div>
                 </div>

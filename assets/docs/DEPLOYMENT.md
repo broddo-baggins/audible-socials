@@ -1,6 +1,6 @@
 # Deployment Guide - Audible Social to Vercel
 
-## ✅ Pre-Deployment Checklist
+##  Pre-Deployment Checklist
 
 - [x] All components created and tested
 - [x] Mock data populated (50+ books, 8 clubs, 20 users)
@@ -13,7 +13,7 @@
 - [x] README.md documentation complete
 - [x] .gitignore file configured
 
-## 🚀 Deployment Steps
+##  Deployment Steps
 
 ### Option 1: Deploy via Vercel CLI (Recommended)
 
@@ -93,7 +93,7 @@ vercel --prod
 - **Install Command**: `npm install`
 - **Node Version**: 18.x (auto-detected)
 
-## 🔒 Environment Variables
+##  Environment Variables
 
 ### Not Required for Demo
 This project uses mock data and localStorage, so no environment variables are needed for the demo deployment.
@@ -111,7 +111,7 @@ To add in Vercel:
 3. Add key-value pairs
 4. Redeploy
 
-## 🎯 Post-Deployment
+##  Post-Deployment
 
 ### 1. Verify Deployment
 - [ ] Home page loads correctly
@@ -138,11 +138,11 @@ vercel domains add yourdomain.com
 
 ### 3. Performance Optimization
 - Vercel automatically handles:
-  - ✅ Edge caching
-  - ✅ Compression (gzip/brotli)
-  - ✅ Image optimization
-  - ✅ CDN distribution
-  - ✅ HTTP/2
+  -  Edge caching
+  -  Compression (gzip/brotli)
+  -  Image optimization
+  -  CDN distribution
+  -  HTTP/2
 
 ### 4. Analytics (Optional)
 ```bash
@@ -155,7 +155,7 @@ vercel domains add yourdomain.com
 }
 ```
 
-## 📊 Monitoring
+##  Monitoring
 
 ### Vercel Dashboard
 - **Deployments**: View all deployments and their status
@@ -169,7 +169,7 @@ vercel domains add yourdomain.com
 - Lighthouse score: Aim for 90+
 - Core Web Vitals: All green
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Build Fails
 ```bash
@@ -196,7 +196,7 @@ npm run build
 - This is expected - each user gets their own localStorage
 - Data doesn't sync across devices (by design for demo)
 
-## 🔄 Continuous Deployment
+##  Continuous Deployment
 
 ### Automatic Deployments
 Once connected to GitHub:
@@ -213,7 +213,7 @@ vercel
 vercel --prod
 ```
 
-## 📱 Testing Deployed Site
+##  Testing Deployed Site
 
 ### Desktop
 1. Open deployed URL
@@ -242,18 +242,18 @@ Test credentials:
 - 20 friends available to add
 ```
 
-## 🎉 Success Criteria
+##  Success Criteria
 
-- ✅ Build completes successfully
-- ✅ Site loads in < 3 seconds
-- ✅ All features functional
-- ✅ Mobile responsive
-- ✅ No console errors
-- ✅ localStorage working
-- ✅ Smooth animations
-- ✅ All routes accessible
+-  Build completes successfully
+-  Site loads in < 3 seconds
+-  All features functional
+-  Mobile responsive
+-  No console errors
+-  localStorage working
+-  Smooth animations
+-  All routes accessible
 
-## 📞 Support
+##  Support
 
 ### Vercel Documentation
 - [Vite Deployment](https://vercel.com/docs/frameworks/vite)
@@ -267,7 +267,7 @@ Test credentials:
 
 ---
 
-**Ready to Deploy!** 🚀
+**Ready to Deploy!** 
 
 The project is fully prepared for Vercel deployment. All configurations are in place, and the app is production-ready.
 

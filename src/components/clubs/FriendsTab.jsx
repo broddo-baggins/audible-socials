@@ -8,15 +8,13 @@ import { sendFriendRequest, getSuggestedFriends, isUserBlocked } from '../../uti
 import FriendRequestManager from '../friends/FriendRequestManager';
 
 export default function FriendsTab() {
-  const [userData, setUserData] = useState(null);
   const [friends, setFriends] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
 
   useEffect(() => {
-    const user = getUserData();
-    setUserData(user);
+    getUserData();
     loadFriends();
   }, []);
 
@@ -278,38 +276,106 @@ export default function FriendsTab() {
               </div>
             )}
 
-            {/* Currently Reading with Progress */}
+            {/* Reading Progress & History */}
             {selectedFriend.currentlyReading && selectedFriend.privacySettings?.shareProgress && (
               <div className="mb-6">
                 <h4 className="font-semibold text-gray-900 mb-3">Currently Listening</h4>
                 {(() => {
                   const currentBook = booksData.find(b => b.id === selectedFriend.currentlyReading);
                   if (!currentBook) return null;
+
+                  const progress = selectedFriend.currentProgress || 0;
+                  const totalDuration = currentBook.durationMinutes || 600; // fallback
+                  const currentPosition = Math.round((progress / 100) * totalDuration);
+                  const remainingTime = totalDuration - currentPosition;
+                  const estimatedCompletion = new Date(Date.now() + (remainingTime * 60 * 1000));
+
                   return (
-                    <div className="p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-purple-200">
+                    <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-purple-200">
                       <p className="font-semibold text-gray-900 text-sm mb-2">{currentBook.title}</p>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
-                          <div className="flex items-center space-x-1">
-                            <Clock className="w-3 h-3" />
+                      <p className="text-xs text-gray-600 mb-3">by {currentBook.author}</p>
+
+                      <div className="space-y-3">
+                        {/* Progress Bar */}
+                        <div>
+                          <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
                             <span>Progress</span>
+                            <span className="font-semibold">{progress}%</span>
                           </div>
-                          <span className="font-semibold">{selectedFriend.currentProgress || 0}%</span>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-purple-600 h-2 rounded-full transition-all"
+                              style={{ width: `${progress}%` }}
+                            />
+                          </div>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-1.5">
-                          <div 
-                            className="bg-purple-600 h-1.5 rounded-full transition-all"
-                            style={{ width: `${selectedFriend.currentProgress || 0}%` }}
-                          />
+
+                        {/* Time Information */}
+                        <div className="grid grid-cols-2 gap-4 text-xs">
+                          <div>
+                            <div className="text-gray-600">Current Position</div>
+                            <div className="font-semibold text-gray-900">
+                              {Math.floor(currentPosition / 60)}h {currentPosition % 60}m
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-gray-600">Time Remaining</div>
+                            <div className="font-semibold text-gray-900">
+                              {Math.floor(remainingTime / 60)}h {remainingTime % 60}m
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-1 text-xs text-gray-600 mt-2">
-                          <Gauge className="w-3 h-3" />
-                          <span>Listening at {selectedFriend.listeningSpeed || 1.0}x speed</span>
+
+                        {/* Listening Speed & Estimated Completion */}
+                        <div className="flex items-center justify-between text-xs text-gray-600 pt-2 border-t border-purple-200">
+                          <div className="flex items-center space-x-1">
+                            <Gauge className="w-3 h-3" />
+                            <span>{selectedFriend.listeningSpeed || 1.0}x speed</span>
+                          </div>
+                          <div>
+                            <span>Finishes: {estimatedCompletion.toLocaleDateString()}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   );
                 })()}
+              </div>
+            )}
+
+            {/* Recently Completed Books */}
+            {selectedFriend.privacySettings?.shareHistory && (
+              <div className="mb-6">
+                <h4 className="font-semibold text-gray-900 mb-3">Recently Completed</h4>
+                <div className="space-y-2">
+                  {Object.keys(selectedFriend.ratings)
+                    .slice(0, 3)
+                    .map((bookId) => {
+                      const book = booksData.find(b => b.id === bookId);
+                      if (!book) return null;
+
+                      const completionTime = selectedFriend.completionTimes?.[bookId] ||
+                        Math.floor((book.durationMinutes || 600) / (selectedFriend.listeningSpeed || 1.0));
+                      const daysAgo = Math.floor(Math.random() * 30) + 1; // Mock data
+
+                      return (
+                        <div key={bookId} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{book.title}</p>
+                            <p className="text-xs text-gray-600">
+                              Completed {daysAgo} days ago • {Math.floor(completionTime / 60)}h {completionTime % 60}m
+                            </p>
+                          </div>
+                          <div className="flex items-center space-x-1 ml-2">
+                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                            <span className="text-sm font-semibold text-gray-900">
+                              {selectedFriend.ratings[bookId]}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
               </div>
             )}
 

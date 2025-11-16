@@ -7,46 +7,63 @@ export default {
   theme: {
     extend: {
       colors: {
-        echo: {
-          // Primary - Warm deep orange
-          orange: '#D85A29',
-          'orange-dark': '#B84920',
-          'orange-light': '#E67347',
-          'orange-hover': '#C05126',
-          
-          // Secondary - Dark charcoal
-          charcoal: '#2A2A2A',
-          'charcoal-light': '#3D3D3D',
-          'charcoal-dark': '#1A1A1A',
-          
-          // Accent - Light beige and off-white
-          beige: '#F5F1ED',
-          'beige-dark': '#E8E1D9',
-          cream: '#FEFDFB',
+        audible: {
+          // Audible Brand Colors - Exact Match
+          orange: '#FF6B35',              // Audible's signature orange
+          'orange-dark': '#E55A2B',       // Darker orange for hovers
+          'orange-light': '#FF855A',      // Lighter orange for highlights
+
+          // Background Colors - Clean and Minimal
           white: '#FFFFFF',
-          
-          // Text colors
-          'text-primary': '#1A1A1A',
-          'text-secondary': '#5A5A5A',
-          'text-tertiary': '#8A8A8A',
-          
-          // UI colors
-          border: '#E0DDD9',
-          divider: '#EEEAE6',
-          
-          // Semantic colors
-          success: '#2D8F5F',
-          warning: '#E6A829',
-          error: '#D84848',
+          gray: {
+            50: '#F9FAFB',
+            100: '#F3F4F6',
+            200: '#E5E7EB',
+            300: '#D1D5DB',
+            400: '#9CA3AF',
+            500: '#6B7280',
+            600: '#4B5563',
+            700: '#374151',
+            800: '#1F2937',
+            900: '#111827',
+          },
+
+          // Text Colors
+          'text-primary': '#111827',      // Dark text for readability
+          'text-secondary': '#6B7280',    // Medium gray for secondary text
+          'text-tertiary': '#9CA3AF',     // Light gray for muted text
+          'text-inverse': '#FFFFFF',      // White text for dark backgrounds
+
+          // UI Element Colors
+          border: '#E5E7EB',
+          'border-light': '#F3F4F6',
+          divider: '#E5E7EB',
+          'surface': '#F9FAFB',
+          'surface-hover': '#F3F4F6',
+
+          // Interactive States
+          hover: '#F3F4F6',
+          focus: '#FF6B35',
+          active: '#E55A2B',
+
+          // Status Colors
+          success: '#10B981',
+          warning: '#F59E0B',
+          error: '#EF4444',
           info: '#3B82F6',
-          
-          // Player-specific dark theme
-          'player-bg': '#1A1A1A',
-          'player-surface': '#2A2A2A',
-          'player-elevated': '#3D3D3D',
-          'player-text': '#FEFDFB',
-          'player-text-muted': '#8A8A8A',
-          'player-border': '#3D3D3D',
+
+          // Content Type Colors
+          original: '#8B5CF6',            // Purple for originals
+          podcast: '#3B82F6',            // Blue for podcasts
+          'new-release': '#10B981',      // Green for new releases
+          bestseller: '#F59E0B',         // Gold for bestsellers
+
+          // Legacy EchoRead colors (kept for reference)
+          echo: {
+            orange: '#F27024',
+            cream: '#FEFDFB',
+            beige: '#F5F1ED',
+          }
         },
       },
       fontFamily: {

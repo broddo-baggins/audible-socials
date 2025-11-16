@@ -13,26 +13,26 @@ const Button = forwardRef(({
   className = '',
   ...props 
 }, ref) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-echo-orange disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variants = {
-    primary: 'bg-echo-orange text-white hover:bg-echo-orange-dark active:bg-echo-orange-dark shadow-sm hover:shadow-md',
-    secondary: 'bg-white text-echo-text-primary border-2 border-echo-border hover:border-echo-orange hover:text-echo-orange active:bg-echo-beige',
-    outline: 'bg-transparent text-echo-orange border-2 border-echo-orange hover:bg-echo-orange hover:text-white active:bg-echo-orange-dark',
-    ghost: 'bg-transparent text-echo-text-primary hover:bg-echo-beige active:bg-echo-beige-dark',
-    link: 'bg-transparent text-echo-orange hover:text-echo-orange-dark hover:underline',
-    dark: 'bg-echo-charcoal text-white hover:bg-echo-charcoal-light active:bg-echo-charcoal shadow-sm',
+    primary: 'bg-audible-orange text-white hover:bg-audible-orange-dark focus:ring-2 focus:ring-audible-orange focus:ring-offset-2',
+    secondary: 'bg-white text-audible-text-primary border border-audible-gray-300 hover:bg-audible-gray-50 focus:ring-2 focus:ring-audible-orange focus:ring-offset-2',
+    outline: 'bg-transparent text-audible-orange border border-audible-orange hover:bg-audible-orange hover:text-white focus:ring-2 focus:ring-audible-orange focus:ring-offset-2',
+    ghost: 'bg-transparent text-audible-gray-600 hover:text-audible-text-primary hover:bg-audible-gray-50',
+    link: 'bg-transparent text-audible-orange hover:text-audible-orange-dark underline',
+    dark: 'bg-audible-gray-800 text-white hover:bg-audible-gray-700 focus:ring-2 focus:ring-audible-orange focus:ring-offset-2',
   };
   
   const sizes = {
-    sm: 'px-3 py-1.5 text-sm rounded-md gap-1.5',
-    md: 'px-4 py-2 text-base rounded-lg gap-2',
-    lg: 'px-6 py-3 text-lg rounded-lg gap-2.5',
-    xl: 'px-8 py-4 text-xl rounded-xl gap-3',
+    sm: 'px-3 py-1.5 text-sm rounded-lg gap-1.5',
+    md: 'px-5 py-2.5 text-base rounded-lg gap-2',
+    lg: 'px-6 py-3 text-base rounded-lg gap-2.5',
+    xl: 'px-8 py-4 text-lg rounded-xl gap-3',
   };
   
   const widthClass = fullWidth ? 'w-full' : '';
-  const variantClass = disabled ? 'bg-echo-beige text-echo-text-tertiary cursor-not-allowed' : variants[variant];
+  const variantClass = disabled ? 'bg-echo-bg-tertiary text-echo-text-disabled cursor-not-allowed border border-echo-border' : variants[variant];
   
   return (
     <button

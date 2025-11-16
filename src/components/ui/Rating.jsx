@@ -47,7 +47,7 @@ const Rating = ({
     return (
       <div
         key={index}
-        className={`relative ${interactive ? 'cursor-pointer' : ''}`}
+        className={`relative ${interactive ? 'cursor-pointer hover:scale-110 transition-transform' : ''}`}
         onClick={() => handleClick(starValue)}
         onKeyDown={(e) => handleKeyDown(e, starValue)}
         role={interactive ? 'button' : undefined}
@@ -56,14 +56,14 @@ const Rating = ({
       >
         {halfFilled ? (
           <div className="relative">
-            <Star className={`${sizes[size]} text-echo-beige-dark fill-echo-beige-dark`} />
+            <Star className={`${sizes[size]} text-audible-gray-300 fill-audible-gray-300`} />
             <div className="absolute inset-0 overflow-hidden" style={{ width: '50%' }}>
-              <Star className={`${sizes[size]} text-echo-warning fill-echo-warning`} />
+              <Star className={`${sizes[size]} text-yellow-400 fill-yellow-400`} />
             </div>
           </div>
         ) : (
-          <Star 
-            className={`${sizes[size]} ${filled ? 'text-echo-warning fill-echo-warning' : 'text-echo-beige-dark fill-echo-beige-dark'} transition-colors duration-150`}
+          <Star
+            className={`${sizes[size]} ${filled ? 'text-yellow-400 fill-yellow-400' : 'text-audible-gray-300 fill-audible-gray-300'} transition-colors duration-150`}
           />
         )}
       </div>
@@ -77,13 +77,13 @@ const Rating = ({
       </div>
       
       {showValue && (
-        <span className={`${textSizes[size]} font-medium text-echo-text-primary ml-1`}>
+        <span className={`${textSizes[size]} font-medium text-audible-text-primary ml-1`}>
           {value.toFixed(1)}
         </span>
       )}
-      
+
       {showCount && count > 0 && (
-        <span className={`${textSizes[size]} text-echo-text-secondary`}>
+        <span className={`${textSizes[size]} text-audible-text-secondary`}>
           ({count.toLocaleString()})
         </span>
       )}

@@ -15,106 +15,108 @@ const HeroBanner = ({ book }) => {
   };
   
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden shadow-xl">
-      {/* Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-echo-orange via-echo-orange-dark to-echo-charcoal" />
-      
-      {/* Content */}
-      <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 p-8 md:p-12">
-        {/* Cover Image */}
-        <div className="flex-shrink-0 w-48 md:w-64">
-          <Link to={`/book/${book.id}`}>
-            <div className="relative aspect-book rounded-lg overflow-hidden shadow-2xl hover:scale-105 transition-transform duration-300">
-              <img
-                src={book.cover}
-                alt={`${book.title} cover`}
-                className="w-full h-full object-cover"
+    <div className="bg-white border-b border-audible-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+          {/* Cover Image */}
+          <div className="flex-shrink-0 w-48 md:w-64">
+            <Link to={`/book/${book.id}`}>
+              <div className="relative aspect-book rounded-md overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <img
+                  src={book.cover}
+                  alt={`${book.title} cover`}
+                  className="w-full h-full object-cover"
+                />
+                {book.contentType !== 'audiobook' && (
+                  <div className="absolute top-3 left-3">
+                    <Badge
+                      variant={book.contentType === 'original' ? 'original' : 'podcast'}
+                      size="sm"
+                    >
+                      {book.contentType === 'original' ? 'Original' : 'Podcast'}
+                    </Badge>
+                  </div>
+                )}
+              </div>
+            </Link>
+          </div>
+
+          {/* Book Info */}
+          <div className="flex-1 text-center lg:text-left">
+            <div className="mb-6">
+              <Badge variant="new-release" size="sm" className="mb-3">
+                Featured
+              </Badge>
+              <Link to={`/book/${book.id}`}>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-audible-text-primary mb-4 hover:text-audible-orange transition-colors">
+                  {book.title}
+                </h1>
+              </Link>
+              <p className="text-lg md:text-xl text-audible-text-secondary mb-2">
+                By {book.author}
+              </p>
+              {book.narrator && (
+                <p className="text-base text-audible-text-tertiary">
+                  Narrated by {book.narrator}
+                </p>
+              )}
+            </div>
+
+            {/* Rating */}
+            <div className="mb-6">
+              <Rating
+                value={book.rating}
+                showValue={true}
+                showCount={true}
+                count={book.ratingsCount}
+                size="md"
+                className="justify-center lg:justify-start"
               />
-              {book.contentType !== 'audiobook' && (
-                <div className="absolute top-3 left-3">
-                  <Badge 
-                    variant={book.contentType === 'original' ? 'original' : 'podcast'}
-                    size="md"
-                  >
-                    {book.contentType === 'original' ? 'Original' : 'Podcast'}
-                  </Badge>
+            </div>
+
+            {/* Description */}
+            <p className="text-base text-audible-text-secondary mb-8 max-w-2xl leading-relaxed">
+              {book.description}
+            </p>
+
+            {/* Meta Info */}
+            <div className="flex flex-wrap gap-4 mb-8 justify-center lg:justify-start">
+              {book.duration && (
+                <div className="text-sm text-audible-text-secondary">
+                  Length: <span className="font-medium text-audible-text-primary">{book.duration}</span>
+                </div>
+              )}
+              {book.genre && (
+                <div className="text-sm text-audible-text-secondary">
+                  Genre: <span className="font-medium text-audible-text-primary">{book.genre}</span>
                 </div>
               )}
             </div>
-          </Link>
-        </div>
-        
-        {/* Book Info */}
-        <div className="flex-1 text-center md:text-left text-white">
-          <div className="mb-4">
-            <Badge variant="new" size="md" className="mb-3">
-              Featured
-            </Badge>
-            <Link to={`/book/${book.id}`}>
-              <h1 className="text-3xl md:text-5xl font-serif font-bold mb-3 hover:text-echo-beige transition-colors">
-                {book.title}
-              </h1>
-            </Link>
-            <p className="text-xl md:text-2xl text-white/90 mb-2">
-              By {book.author}
-            </p>
-            {book.narrator && (
-              <p className="text-lg text-white/80">
-                Narrated by {book.narrator}
-              </p>
-            )}
-          </div>
-          
-          {/* Rating */}
-          <div className="mb-4">
-            <Rating 
-              value={book.rating} 
-              showValue={true}
-              showCount={true}
-              count={book.ratingsCount}
-              size="lg"
-              className="justify-center md:justify-start"
-            />
-          </div>
-          
-          {/* Description */}
-          <p className="text-lg text-white/90 mb-6 line-clamp-3 max-w-2xl">
-            {book.description}
-          </p>
-          
-          {/* Duration */}
-          {book.duration && (
-            <p className="text-base text-white/80 mb-6">
-              {book.duration}
-            </p>
-          )}
-          
-          {/* Actions */}
-          <div className="flex flex-wrap items-center gap-4 justify-center md:justify-start">
-            <Button 
-              size="lg"
-              onClick={handleStartListening}
-              leftIcon={<Play className="w-5 h-5" fill="currentColor" />}
-              className="bg-white text-echo-orange hover:bg-echo-beige"
-            >
-              Start Listening
-            </Button>
-            
-            <Button 
-              size="lg"
-              variant="outline"
-              leftIcon={<Plus className="w-5 h-5" />}
-              className="border-white text-white hover:bg-white/10"
-            >
-              Add to Library
-            </Button>
-            
-            <button
-              className="w-12 h-12 flex items-center justify-center rounded-full border-2 border-white text-white hover:bg-white/10 transition-colors"
-              aria-label="Add to wishlist"
-            >
-              <Heart className="w-6 h-6" />
-            </button>
+
+            {/* Actions */}
+            <div className="flex flex-wrap items-center gap-4 justify-center lg:justify-start">
+              <Button
+                size="lg"
+                onClick={handleStartListening}
+                leftIcon={<Play className="w-5 h-5" fill="currentColor" />}
+                className="bg-audible-orange text-white hover:bg-audible-orange-dark px-8 py-3 font-medium"
+              >
+                Start Listening
+              </Button>
+
+              <Button
+                size="lg"
+                variant="outline"
+                leftIcon={<Plus className="w-5 h-5" />}
+                className="border-audible-gray-300 text-audible-text-primary hover:bg-audible-gray-50 px-6 py-3"
+              >
+                Add to Library
+              </Button>
+
+              <button className="p-3 text-audible-gray-600 hover:text-audible-orange transition-colors" aria-label="Add to wishlist">
+                <Heart className="w-6 h-6" />
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -62,17 +62,17 @@ const BookCarousel = ({
   return (
     <div className={`w-full ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 px-4 sm:px-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-echo-text-primary">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-audible-text-primary">
           {title}
         </h2>
-        
+
         {seeAllLink && (
-          <Link 
+          <Link
             to={seeAllLink}
-            className="text-sm md:text-base font-medium text-echo-orange hover:text-echo-orange-dark transition-colors"
+            className="text-sm font-medium text-audible-orange hover:text-audible-orange-dark transition-colors"
           >
-            See all
+            See all →
           </Link>
         )}
       </div>
@@ -83,28 +83,28 @@ const BookCarousel = ({
         {canScrollLeft && (
           <button
             onClick={() => scroll('left')}
-            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 items-center justify-center rounded-full bg-white shadow-lg text-echo-text-primary hover:bg-echo-orange hover:text-white transition-all duration-250 opacity-0 group-hover:opacity-100 -translate-x-1/2"
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full bg-white shadow-lg text-audible-text-primary hover:bg-audible-orange hover:text-white border border-audible-gray-200 transition-colors opacity-0 group-hover:opacity-100 -translate-x-1/2"
             aria-label="Scroll left"
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
         )}
-        
+
         {/* Right Navigation Button - Hidden on mobile */}
         {canScrollRight && (
           <button
             onClick={() => scroll('right')}
-            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 items-center justify-center rounded-full bg-white shadow-lg text-echo-text-primary hover:bg-echo-orange hover:text-white transition-all duration-250 opacity-0 group-hover:opacity-100 translate-x-1/2"
+            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full bg-white shadow-lg text-audible-text-primary hover:bg-audible-orange hover:text-white border border-audible-gray-200 transition-colors opacity-0 group-hover:opacity-100 translate-x-1/2"
             aria-label="Scroll right"
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronRight className="w-5 h-5" />
           </button>
         )}
         
         {/* Books Scroll Container */}
         <div
           ref={scrollContainerRef}
-          className="flex gap-4 overflow-x-auto scrollbar-hide smooth-scroll px-4 sm:px-6 py-2"
+          className="flex gap-5 overflow-x-auto scrollbar-hide smooth-scroll px-1 py-2"
           onScroll={checkScrollability}
           role="region"
           aria-label={`${title} carousel`}
@@ -121,10 +121,10 @@ const BookCarousel = ({
         
         {/* Gradient Fade Edges - Hidden on mobile */}
         {canScrollLeft && (
-          <div className="hidden md:block absolute left-0 top-0 bottom-0 w-16 gradient-fade-left pointer-events-none" />
+          <div className="hidden md:block absolute left-0 top-0 bottom-0 w-20 gradient-fade-left pointer-events-none z-[5]" />
         )}
         {canScrollRight && (
-          <div className="hidden md:block absolute right-0 top-0 bottom-0 w-16 gradient-fade-right pointer-events-none" />
+          <div className="hidden md:block absolute right-0 top-0 bottom-0 w-20 gradient-fade-right pointer-events-none z-[5]" />
         )}
       </div>
     </div>

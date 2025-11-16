@@ -230,5 +230,5 @@ For issues or questions:
 - Review this guide
 - Inspect the implementation documentation in `IMPLEMENTATION_COMPLETE.md`
 
-**Enjoy exploring EchoRead!** 🎧📚
+**Enjoy exploring EchoRead!** 
 

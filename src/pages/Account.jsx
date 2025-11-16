@@ -1,9 +1,13 @@
-import { User, CreditCard, Settings, Bell, Globe, Shield, HelpCircle, BookOpen, TrendingUp, Award } from 'lucide-react';
+import React, { useState } from 'react';
+import { User, CreditCard, Settings, Bell, Globe, Shield, HelpCircle, BookOpen, TrendingUp, Award, Users } from 'lucide-react';
 import { Card, Button, Badge } from '../components/ui';
 import ListeningStats from '../components/stats/ListeningStats';
 import BadgeDisplay from '../components/badges/BadgeDisplay';
+import SocialDashboard from '../components/social/SocialDashboard';
 
 const Account = () => {
+  const [activeTab, setActiveTab] = useState('profile');
+
   // Mock user data - replace with actual user context
   const user = {
     name: 'Alex Morgan',
@@ -76,16 +80,44 @@ const Account = () => {
     },
   ];
   
+  const tabs = [
+    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'social', label: 'Social', icon: Users },
+    { id: 'settings', label: 'Settings', icon: Settings },
+  ];
+
   return (
-    <div className="min-h-screen bg-echo-cream">
+    <div className="min-h-screen bg-audible-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-echo-text-primary mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-audible-text-primary mb-8">
           Account
         </h1>
+
+        {/* Tab Navigation */}
+        <div className="flex border-b border-audible-gray-200 mb-8">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-6 py-3 font-medium transition-colors ${
+                  activeTab === tab.id
+                    ? 'text-audible-orange border-b-2 border-audible-orange'
+                    : 'text-audible-text-secondary hover:text-audible-text-primary'
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
         
-        <div className="grid lg:grid-cols-[1fr,400px] gap-8">
-          {/* Main Content */}
-          <div className="space-y-6">
+        {activeTab === 'profile' && (
+          <div className="grid lg:grid-cols-[1fr,400px] gap-8">
+            {/* Main Content */}
+            <div className="space-y-6">
             {/* Profile Card */}
             <Card padding="lg">
               <div className="flex items-start gap-6">
@@ -252,7 +284,7 @@ const Account = () => {
                 Favorite Genres
               </h3>
               <div className="space-y-3">
-                {user.favoriteGenres.map((genre, index) => (
+                {user.favoriteGenres.map((genre) => (
                   <div key={genre.name}>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm text-echo-text-secondary">{genre.name}</span>
@@ -268,8 +300,64 @@ const Account = () => {
                 ))}
               </div>
             </Card>
+            </div>
           </div>
-        </div>
+        )}
+
+        {activeTab === 'social' && (
+          <div className="max-w-6xl">
+            <SocialDashboard />
+          </div>
+        )}
+
+        {activeTab === 'settings' && (
+          <div className="grid lg:grid-cols-[1fr,400px] gap-8">
+            {/* Main Content */}
+            <div className="space-y-6">
+              {/* Settings Sections */}
+              {settingsSections.map((section) => (
+                <Card key={section.title} padding="lg">
+                  <h2 className="text-xl font-bold text-audible-text-primary mb-4 flex items-center gap-2">
+                    <section.icon className="w-5 h-5" />
+                    {section.title}
+                  </h2>
+                  <div className="space-y-4">
+                    {section.items.map((item, index) => (
+                      <div key={index} className="flex items-center justify-between py-2">
+                        <span className="text-audible-text-primary">{item.label}</span>
+                        <span className="text-audible-text-secondary">{item.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Account Actions */}
+              <Card padding="lg">
+                <h3 className="font-bold text-audible-text-primary mb-4">
+                  Account Actions
+                </h3>
+                <div className="space-y-3">
+                  <Button fullWidth variant="primary">
+                    Edit Profile
+                  </Button>
+                  <Button fullWidth variant="outline">
+                    Privacy Settings
+                  </Button>
+                  <Button fullWidth variant="outline">
+                    Download Data
+                  </Button>
+                  <Button fullWidth variant="outline" className="text-red-600 hover:text-red-700">
+                    Delete Account
+                  </Button>
+                </div>
+              </Card>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

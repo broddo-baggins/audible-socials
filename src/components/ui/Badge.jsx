@@ -8,19 +8,19 @@ const Badge = ({
   icon = null,
   className = '' 
 }) => {
-  const baseStyles = 'inline-flex items-center font-medium rounded-full whitespace-nowrap';
+  const baseStyles = 'inline-flex items-center font-semibold rounded-full whitespace-nowrap';
   
   const variants = {
-    default: 'bg-echo-beige text-echo-text-primary',
-    primary: 'bg-echo-orange text-white',
-    success: 'bg-echo-success text-white',
-    warning: 'bg-echo-warning text-white',
-    error: 'bg-echo-error text-white',
-    info: 'bg-echo-info text-white',
-    outline: 'bg-transparent border-2 border-echo-border text-echo-text-primary',
-    original: 'bg-gradient-to-r from-echo-orange to-echo-orange-light text-white',
-    podcast: 'bg-echo-charcoal text-white',
-    new: 'bg-echo-success text-white',
+    default: 'bg-audible-gray-100 text-audible-text-secondary',
+    primary: 'bg-audible-orange text-white',
+    success: 'bg-audible-new-release text-white',
+    warning: 'bg-audible-bestseller text-white',
+    error: 'bg-red-500 text-white',
+    info: 'bg-blue-500 text-white',
+    outline: 'bg-transparent border border-audible-gray-300 text-audible-text-primary',
+    original: 'bg-audible-original text-white',
+    podcast: 'bg-audible-podcast text-white',
+    new: 'bg-audible-new-release text-white',
   };
   
   const sizes = {

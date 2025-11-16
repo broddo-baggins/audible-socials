@@ -54,6 +54,13 @@ export default function ClubDetailPage() {
   }, [clubId]);
 
   const handleJoinClub = () => {
+    // Check if user owns the current book
+    const userLibrary = userData?.library || [];
+    if (!userLibrary.includes(club.currentBook)) {
+      alert(`You must own "${currentBook?.title}" to join this book club. Purchase the book first to participate in discussions.`);
+      return;
+    }
+
     const result = joinClub(clubId);
     if (result.success) {
       setIsMember(true);
@@ -76,7 +83,9 @@ export default function ClubDetailPage() {
   }
 
   const maxClubs = userData?.isPremium ? 3 : 2;
-  const canJoin = !isMember && (!club.isPremium || userData?.isPremium);
+  const userLibrary = userData?.library || [];
+  const ownsCurrentBook = userLibrary.includes(club.currentBook);
+  const canJoin = !isMember && (!club.isPremium || userData?.isPremium) && ownsCurrentBook;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -167,6 +176,29 @@ export default function ClubDetailPage() {
                 </div>
               ) : (
                 <div>
+                  {/* Ownership Requirement */}
+                  {!ownsCurrentBook && (
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mb-4 border border-orange-300/30">
+                      <div className="flex items-start space-x-3">
+                        <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <BookOpen className="w-4 h-4 text-white" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-white mb-1">Book Ownership Required</h4>
+                          <p className="text-sm text-white/90 mb-2">
+                            You must own "{currentBook?.title}" to join this book club and participate in discussions.
+                          </p>
+                          <Link
+                            to={`/book/${currentBook?.id}`}
+                            className="inline-block bg-orange-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-orange-600 transition-colors text-sm"
+                          >
+                            Get the Book
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {club.isPremium && !userData?.isPremium ? (
                     <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mb-4">
                       <p className="text-sm text-white/90 mb-2">
@@ -179,7 +211,7 @@ export default function ClubDetailPage() {
                         Upgrade to Premium
                       </Link>
                     </div>
-                  ) : canJoin ? (
+                  ) : !ownsCurrentBook ? null : canJoin ? (
                     <button
                       onClick={handleJoinClub}
                       className="w-full bg-white text-purple-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors"

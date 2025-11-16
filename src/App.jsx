@@ -18,7 +18,7 @@ function App() {
   return (
     <PlayerProvider>
       <Router>
-        <div className="flex flex-col min-h-screen bg-echo-cream">
+        <div className="flex flex-col min-h-screen bg-audible-white">
           {/* Desktop Header - hidden on mobile */}
           <div className="hidden md:block">
             <DesktopHeader />
