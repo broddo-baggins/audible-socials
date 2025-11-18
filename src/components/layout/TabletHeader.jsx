@@ -10,7 +10,6 @@ export default function TabletHeader() {
   const [userData, setUserData] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   React.useEffect(() => {
     setUserData(getUserData());
@@ -31,6 +30,7 @@ export default function TabletHeader() {
     { path: '/', label: 'Home' },
     { path: '/library', label: 'Library' },
     { path: '/discover', label: 'Discover' },
+    { path: '/battles', label: 'Battles' },
     { path: '/clubs', label: 'Socials' },
   ];
 

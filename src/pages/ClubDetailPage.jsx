@@ -7,6 +7,7 @@ import booksData from '../data/books.json';
 import usersData from '../data/users.json';
 import { getUserData, joinClub, leaveClub, getJoinedClubs, getFriends } from '../utils/localStorage';
 import { fetchGoogleImagesCover } from '../utils/googleImages';
+import { getClubFriends } from '../utils/friendManagement';
 import EventRSVP from '../components/events/EventRSVP';
 import ClubTimeline from '../components/clubs/ClubTimeline';
 
@@ -19,6 +20,7 @@ export default function ClubDetailPage() {
   const [isMember, setIsMember] = useState(false);
   const [coverUrl, setCoverUrl] = useState(null);
   const [friendsInClub, setFriendsInClub] = useState([]);
+  const [clubFriends, setClubFriends] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
@@ -50,10 +52,14 @@ export default function ClubDetailPage() {
 
       // Find friends in this club
       const friendIds = getFriends();
-      const friends = usersData.filter(u => 
-        friendIds.includes(u.id) && u.joinedClubs.includes(clubId)
+      const friends = usersData.filter(u =>
+        friendIds.includes(u.id) && u.joinedClubs && u.joinedClubs.includes(clubId)
       );
       setFriendsInClub(friends);
+
+      // Get all club friends (direct friends and friends of friends)
+      const clubFriendsData = getClubFriends(clubId, usersData);
+      setClubFriends(clubFriendsData);
     }
   }, [clubId]);
 
@@ -185,6 +191,34 @@ export default function ClubDetailPage() {
                 </div>
               </div>
 
+              {/* Next Meeting Highlight */}
+              {club.events && club.events.length > 0 && (
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 mt-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Calendar className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-white mb-1">Next Meeting</h4>
+                      <p className="text-white/90 font-semibold mb-1">{club.events[0].title}</p>
+                      <p className="text-sm text-white/80">
+                        {new Date(club.events[0].date).toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: 'numeric',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                      <div className="flex items-center space-x-4 mt-2 text-sm text-white/80">
+                        <span>{club.meetingsPerMonth} meetings per month</span>
+                        <span>{club.events.length} upcoming events</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Action Button */}
               {isMember ? (
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -206,26 +240,34 @@ export default function ClubDetailPage() {
                 <div>
                   {/* Ownership Requirement */}
                   {!ownsCurrentBook && (
-                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mb-4 border border-orange-300/30">
+                    <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 backdrop-blur-sm rounded-lg p-4 mb-4 border-2 border-orange-400/50">
                       <div className="flex items-start space-x-3">
-                        <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
-                          <BookOpen className="w-4 h-4 text-white" />
+                        <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <BookOpen className="w-5 h-5 text-white" />
                         </div>
-                        <div>
-                          <h4 className="text-sm font-semibold text-white mb-1">Book Ownership Required</h4>
-                          <p className="text-sm text-white/90 mb-3">
-                            You must own "{currentBook?.title}" to join this book club and participate in discussions.
+                        <div className="flex-1">
+                          <h4 className="text-lg font-bold text-white mb-2">Monthly Book Required</h4>
+                          <p className="text-white/90 mb-2 font-semibold">
+                            "{currentBook?.title}" by {currentBook?.author}
                           </p>
-                          <div className="flex gap-2">
+                          <p className="text-sm text-white/90 mb-4">
+                            Each month features a different book. You must own this month's selection to join the club, attend exclusive Q&A sessions, and participate in discussions with fellow members.
+                          </p>
+                          <div className="bg-orange-500/30 rounded-lg p-3 mb-4">
+                            <p className="text-sm text-white font-semibold">
+                              Get it now and save ${club?.discounts?.monthlyBook?.maxSavings || 15} with club membership!
+                            </p>
+                          </div>
+                          <div className="flex gap-3">
                             <button
                               onClick={() => setShowPurchaseModal(true)}
-                              className="inline-block bg-orange-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-orange-600 transition-colors text-sm"
+                              className="flex-1 bg-orange-500 text-white px-6 py-3 rounded-full font-bold hover:bg-orange-600 transition-colors text-center"
                             >
-                              Get the Book
+                              Get Book & Join Club
                             </button>
                             <Link
                               to={`/book/${currentBook?.id}`}
-                              className="inline-block bg-white/20 text-white px-4 py-2 rounded-full font-semibold hover:bg-white/30 transition-colors text-sm"
+                              className="px-6 py-3 bg-white/20 text-white rounded-full font-semibold hover:bg-white/30 transition-colors text-center"
                             >
                               View Details
                             </Link>
@@ -331,15 +373,28 @@ export default function ClubDetailPage() {
               </Link>
             </section>
 
+            {/* Meetings Summary */}
+            <section className="bg-white rounded-xl shadow-md p-6">
+              <MeetingsSummary club={club} showDetailed={true} />
+            </section>
+
+            {/* Member Benefits & Discounts */}
+            <section className="bg-white rounded-xl shadow-md p-6">
+              <DiscountDisplay
+                club={club}
+                ownsBook={ownsCurrentBook}
+              />
+            </section>
+
             {/* Upcoming Events */}
-            {club.events && club.events.length > 0 && (
+            {club.events && club.events.length > 1 && (
               <section className="bg-white rounded-xl shadow-md p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
                   <Calendar className="w-6 h-6 mr-2 text-purple-600" />
-                  Upcoming Events
+                  All Upcoming Events
                 </h2>
                 <div className="space-y-4">
-                  {club.events.map((event) => (
+                  {club.events.slice(1).map((event) => (
                     <EventRSVP key={event.id} event={event} clubId={clubId} />
                   ))}
                 </div>
@@ -415,6 +470,83 @@ export default function ClubDetailPage() {
                     </div>
                   ))}
                 </div>
+              </section>
+            )}
+
+            {/* Club Members - Friends & Friends of Friends */}
+            {clubFriends && (clubFriends.hasFriends || clubFriends.hasFriendsOfFriends) && (
+              <section className="bg-white rounded-xl shadow-md p-6">
+                <h3 className="font-bold text-gray-900 mb-4 flex items-center">
+                  <Users className="w-5 h-5 mr-2 text-purple-600" />
+                  People You Know in This Club
+                </h3>
+
+                {/* Direct Friends */}
+                {clubFriends.directFriends.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                      <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                      Your Friends ({clubFriends.directFriends.length})
+                    </h4>
+                    <div className="space-y-2">
+                      {clubFriends.directFriends.map((friend) => (
+                        <div key={friend.id} className="flex items-center space-x-3 p-2 bg-green-50 rounded-lg">
+                          <div className="relative">
+                            <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center text-white font-semibold text-xs">
+                              {friend.name.split(' ').map(n => n[0]).join('')}
+                            </div>
+                            {friend.isPremium && (
+                              <div className="absolute -bottom-1 -right-1 bg-yellow-400 rounded-full p-0.5">
+                                <span className="text-xs text-white font-bold">P</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900 text-sm">{friend.name}</p>
+                            <p className="text-xs text-gray-600">Your friend</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Friends of Friends */}
+                {clubFriends.friendsOfFriends.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                      Friends of Friends ({clubFriends.friendsOfFriends.length})
+                    </h4>
+                    <div className="space-y-2">
+                      {clubFriends.friendsOfFriends.slice(0, 5).map((user) => (
+                        <div key={user.id} className="flex items-center space-x-3 p-2 bg-blue-50 rounded-lg">
+                          <div className="relative">
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-xs">
+                              {user.name.split(' ').map(n => n[0]).join('')}
+                            </div>
+                            {user.isPremium && (
+                              <div className="absolute -bottom-1 -right-1 bg-yellow-400 rounded-full p-0.5">
+                                <span className="text-xs text-white font-bold">P</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900 text-sm">{user.name}</p>
+                            <p className="text-xs text-gray-600">
+                              Friend of {user.mutualFriendList ? user.mutualFriendList[0] : 'mutual friend'}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                      {clubFriends.friendsOfFriends.length > 5 && (
+                        <p className="text-xs text-gray-500 text-center py-2">
+                          +{clubFriends.friendsOfFriends.length - 5} more friends of friends
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
               </section>
             )}
 

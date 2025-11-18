@@ -46,10 +46,24 @@ export default function EventRSVP({ event }) {
     const labels = {
       'celebrity_chat': 'Celebrity Chat',
       'author_chat': 'Author Interview',
+      'author_qa': 'Author Q&A',
+      'narrator_qa': 'Narrator Q&A',
       'discussion': 'Group Discussion',
       'workshop': 'Workshop'
     };
     return labels[type] || type;
+  };
+
+  const getEventTypeColor = (type) => {
+    const colors = {
+      'celebrity_chat': 'bg-purple-100 text-purple-700',
+      'author_chat': 'bg-blue-100 text-blue-700',
+      'author_qa': 'bg-green-100 text-green-700',
+      'narrator_qa': 'bg-orange-100 text-orange-700',
+      'discussion': 'bg-gray-100 text-gray-700',
+      'workshop': 'bg-indigo-100 text-indigo-700'
+    };
+    return colors[type] || 'bg-gray-100 text-gray-700';
   };
 
   const capacityPercentage = (event.rsvpCount / event.maxCapacity) * 100;
@@ -60,9 +74,19 @@ export default function EventRSVP({ event }) {
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <div className="flex items-center space-x-2 mb-2">
-            <span className="text-xs font-semibold bg-purple-100 text-purple-700 px-2 py-1 rounded">
+            <span className={`text-xs font-semibold px-2 py-1 rounded ${getEventTypeColor(event.type)}`}>
               {getEventTypeLabel(event.type)}
             </span>
+            {event.isExclusive && (
+              <span className="text-xs font-semibold bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full flex items-center">
+                Members Only
+              </span>
+            )}
+            {event.qaEnabled && (
+              <span className="text-xs font-semibold bg-green-100 text-green-700 px-2 py-1 rounded flex items-center">
+                Interactive Q&A
+              </span>
+            )}
           </div>
           <h4 className="font-semibold text-gray-900 mb-2">{event.title}</h4>
           <p className="text-sm text-gray-600 mb-3">{event.description}</p>

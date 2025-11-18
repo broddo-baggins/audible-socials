@@ -8,6 +8,8 @@ const STORAGE_KEYS = {
   RATINGS: 'audible_ratings',
   CURRENTLY_READING: 'audible_currently_reading',
   NOTIFICATIONS: 'audible_notifications',
+  JOINED_BATTLES: 'audible_joined_battles',
+  BATTLE_PROGRESS: 'audible_battle_progress',
 };
 
 // User Data
@@ -66,6 +68,48 @@ export function leaveClub(clubId) {
   const userData = getUserData();
   userData.joinedClubs = userData.joinedClubs.filter(id => id !== clubId);
   saveUserData(userData);
+  return { success: true };
+}
+
+// Battle Management
+export function getJoinedBattles() {
+  const data = localStorage.getItem(STORAGE_KEYS.JOINED_BATTLES);
+  return data ? JSON.parse(data) : [];
+}
+
+export function joinBattle(battleId) {
+  const joinedBattles = getJoinedBattles();
+  if (!joinedBattles.includes(battleId)) {
+    joinedBattles.push(battleId);
+    localStorage.setItem(STORAGE_KEYS.JOINED_BATTLES, JSON.stringify(joinedBattles));
+    return { success: true };
+  }
+  return { success: false, error: 'Already in this battle' };
+}
+
+export function leaveBattle(battleId) {
+  const joinedBattles = getJoinedBattles();
+  const updated = joinedBattles.filter(id => id !== battleId);
+  localStorage.setItem(STORAGE_KEYS.JOINED_BATTLES, JSON.stringify(updated));
+  return { success: true };
+}
+
+export function getBattleProgress(battleId) {
+  const data = localStorage.getItem(`${STORAGE_KEYS.BATTLE_PROGRESS}_${battleId}`);
+  return data ? JSON.parse(data) : {
+    progress: 0,
+    score: 0,
+    lastUpdated: null,
+    completed: false
+  };
+}
+
+export function updateBattleProgress(battleId, progress) {
+  const key = `${STORAGE_KEYS.BATTLE_PROGRESS}_${battleId}`;
+  localStorage.setItem(key, JSON.stringify({
+    ...progress,
+    lastUpdated: new Date().toISOString()
+  }));
   return { success: true };
 }
 

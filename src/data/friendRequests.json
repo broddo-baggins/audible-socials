@@ -5,7 +5,7 @@
     "toUserId": "user-me",
     "status": "pending",
     "timestamp": "2025-11-09T14:30:00",
-    "message": "Hey! I saw you're reading Project Hail Mary. Would love to connect!"
+    "message": "Hey! I saw you're reading Project Hail Mary. Would love to connect and discuss the ending!"
   },
   {
     "id": "fr-2",
@@ -13,7 +13,7 @@
     "toUserId": "user-me",
     "status": "pending",
     "timestamp": "2025-11-10T09:15:00",
-    "message": "Let's share our reading lists!"
+    "message": "Hi! I noticed we both love science fiction. Want to share book recommendations?"
   },
   {
     "id": "fr-3",
@@ -22,6 +22,30 @@
     "status": "accepted",
     "timestamp": "2025-11-05T16:20:00",
     "acceptedAt": "2025-11-06T10:00:00"
+  },
+  {
+    "id": "fr-4",
+    "fromUserId": "12",
+    "toUserId": "user-me",
+    "status": "pending",
+    "timestamp": "2025-11-11T11:45:00",
+    "message": "Love your book reviews! Mind if we become reading buddies?"
+  },
+  {
+    "id": "fr-5",
+    "fromUserId": "user-me",
+    "toUserId": "15",
+    "status": "pending",
+    "timestamp": "2025-11-10T20:30:00",
+    "message": "I see you're a mystery fan too! Let's connect and share recommendations."
+  },
+  {
+    "id": "fr-6",
+    "fromUserId": "user-me",
+    "toUserId": "7",
+    "status": "rejected",
+    "timestamp": "2025-11-08T13:20:00",
+    "rejectedAt": "2025-11-09T15:30:00"
   }
 ]
 

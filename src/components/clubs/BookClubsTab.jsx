@@ -139,6 +139,24 @@ export default function BookClubsTab() {
                       </div>
                     </div>
 
+                    {/* Meetings Summary */}
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-200 mb-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs font-semibold text-blue-900 flex items-center">
+                          <Calendar className="w-3 h-3 mr-1" />
+                          Meeting Schedule
+                        </p>
+                        <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
+                          {club.meetingsPerMonth} per month
+                        </span>
+                      </div>
+                      {club.events && club.events.length > 0 && (
+                        <p className="text-xs text-blue-800">
+                          {club.events.length} upcoming event{club.events.length !== 1 ? 's' : ''}
+                        </p>
+                      )}
+                    </div>
+
                     {/* Club Perks Highlight */}
                     {club.perks && club.perks.length > 0 && (
                       <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-3 border border-orange-200 mb-3">
@@ -269,13 +287,48 @@ export default function BookClubsTab() {
                       </div>
                     )}
 
+                    {/* Meeting Frequency Highlight */}
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2 mb-3 border border-blue-200">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs text-blue-900 flex items-center gap-1">
+                          <Calendar className="w-3 h-3 text-blue-600" />
+                          <span className="font-semibold">Meetings</span>
+                        </p>
+                        <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
+                          {club.meetingsPerMonth} per month
+                        </span>
+                      </div>
+                      {club.events && club.events.length > 0 && (
+                        <p className="text-xs text-blue-800 mt-1">
+                          {club.events.length} upcoming event{club.events.length !== 1 ? 's' : ''}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Discount Highlight */}
+                    {club.discounts?.monthlyBook && (
+                      <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-2 mb-3 border border-green-200">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs text-green-900 flex items-center gap-1">
+                            <span className="font-semibold">Save</span>
+                          </p>
+                          <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded-full">
+                            ${club.discounts.monthlyBook.maxSavings} OFF
+                          </span>
+                        </div>
+                        <p className="text-xs text-green-800 mt-1">
+                          {club.discounts.monthlyBook.description}
+                        </p>
+                      </div>
+                    )}
+
                     {/* Stats */}
                     <div className="flex items-center justify-between text-xs text-gray-600 border-t border-gray-200 pt-3">
                       <div className="flex items-center">
                         <Users className="w-4 h-4 mr-1 text-purple-500" />
                         <span className="font-semibold">{club.memberCount.toLocaleString()}</span>
                       </div>
-                      <span className="text-purple-600 font-semibold">{club.meetingsPerMonth} meetings/mo</span>
+                      <span className="text-purple-600 font-semibold">Host: {club.host}</span>
                     </div>
                   </div>
                 </Link>

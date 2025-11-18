@@ -13,6 +13,7 @@ const DesktopHeader = () => {
     { label: 'Browse', path: '/browse' },
     { label: 'Library', path: '/library' },
     { label: 'Social', path: '/social' },
+    { label: 'Battles', path: '/battles' },
     { label: 'Originals', path: '/originals' },
     { label: 'Podcasts', path: '/podcasts' },
   ];

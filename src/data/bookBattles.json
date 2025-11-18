@@ -1,0 +1,89 @@
+[
+  {
+    "id": "battle_1",
+    "name": "Epic Fantasy Showdown",
+    "description": "Battle it out in Middle-earth! Who can finish The Lord of the Rings trilogy fastest?",
+    "type": "speed_reading",
+    "status": "active",
+    "startDate": "2025-12-01T00:00:00",
+    "endDate": "2025-12-31T23:59:59",
+    "participants": ["user_1", "user_2", "user_3"],
+    "books": ["406"],
+    "rules": {
+      "timeLimit": "30 days",
+      "minProgress": 80,
+      "scoring": "completion_time"
+    },
+    "prizes": {
+      "winner": "50 credits + Champion Badge",
+      "participants": "10 credits each"
+    },
+    "leaderboard": [
+      {
+        "userId": "user_1",
+        "username": "BookWarrior92",
+        "progress": 95,
+        "completionTime": "18 days",
+        "score": 1200
+      },
+      {
+        "userId": "user_2",
+        "username": "ReadingQueen",
+        "progress": 87,
+        "completionTime": "22 days",
+        "score": 980
+      }
+    ]
+  },
+  {
+    "id": "battle_2",
+    "name": "Sci-Fi Death Match",
+    "description": "I, Robot vs The Martian: Which sci-fi masterpiece reigns supreme?",
+    "type": "book_voting",
+    "status": "upcoming",
+    "startDate": "2025-12-15T00:00:00",
+    "endDate": "2025-12-22T23:59:59",
+    "participants": [],
+    "books": ["403", "26"],
+    "rules": {
+      "readBoth": true,
+      "votingPeriod": "7 days",
+      "scoring": "peer_voting"
+    },
+    "prizes": {
+      "winner": "30 credits",
+      "voters": "5 credits"
+    }
+  },
+  {
+    "id": "battle_3",
+    "name": "Monthly Reading Streak Challenge",
+    "description": "Can you maintain a 30-day listening streak? Compete with friends!",
+    "type": "streak_challenge",
+    "status": "active",
+    "startDate": "2025-12-01T00:00:00",
+    "endDate": "2025-12-31T23:59:59",
+    "participants": ["user_4", "user_5", "user_6", "user_7"],
+    "books": [],
+    "rules": {
+      "minDailyMinutes": 30,
+      "consecutiveDays": 30,
+      "scoring": "longest_streak"
+    },
+    "prizes": {
+      "winner": "Streak Master Badge + 25 credits",
+      "top3": "10 credits",
+      "participants": "5 credits"
+    },
+    "leaderboard": [
+      {
+        "userId": "user_4",
+        "username": "StreakKing",
+        "currentStreak": 28,
+        "bestStreak": 45,
+        "totalMinutes": 2100,
+        "score": 2800
+      }
+    ]
+  }
+]

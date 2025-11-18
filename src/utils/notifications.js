@@ -93,6 +93,16 @@ export const createFriendAcceptedNotification = (userId, acceptedUserName) => {
   });
 };
 
+export const createFriendRejectedNotification = (userId, rejectedUserName) => {
+  return createNotification({
+    userId,
+    type: 'friend_rejected',
+    title: 'Friend Request Declined',
+    message: `${rejectedUserName} declined your friend request`,
+    actionUrl: '/clubs/friends'
+  });
+};
+
 export const createRecommendationNotification = (userId, friendName, bookId, bookTitle, rating) => {
   return createNotification({
     userId,

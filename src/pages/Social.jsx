@@ -5,6 +5,7 @@ import SocialNudges from '../components/social/SocialNudges';
 import BadgeDisplay from '../components/badges/BadgeDisplay';
 import { Card } from '../components/ui';
 import { getUserData, getFriends, getJoinedClubs } from '../utils/localStorage';
+import { getFriendsOfFriends } from '../utils/friendManagement';
 import usersData from '../data/users.json';
 import clubsData from '../data/clubs.json';
 import booksData from '../data/books.json';
@@ -12,6 +13,7 @@ import booksData from '../data/books.json';
 const Social = () => {
   const [userData, setUserData] = useState(null);
   const [friends, setFriends] = useState([]);
+  const [friendsOfFriends, setFriendsOfFriends] = useState([]);
   const [featuredClubs, setFeaturedClubs] = useState([]);
   const [stats, setStats] = useState({
     totalFriends: 0,
@@ -26,6 +28,10 @@ const Social = () => {
     const friendIds = getFriends();
     const friendsList = usersData.filter(u => friendIds.includes(u.id));
     setFriends(friendsList);
+
+    // Load friends of friends
+    const fofList = getFriendsOfFriends('user-me', usersData).slice(0, 4); // Show top 4
+    setFriendsOfFriends(fofList);
 
     const joinedClubIds = getJoinedClubs();
     const featured = clubsData
@@ -140,15 +146,23 @@ const Social = () => {
                           >
                             {currentBook.title}
                           </Link>
-                          {friend.currentProgress && (
-                            <div className="flex items-center gap-2 mt-1">
-                              <div className="flex-1 bg-gray-200 rounded-full h-1">
+                          {friend.currentProgress && friend.currentProgress > 0 && (
+                            <div className="mt-2">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-xs font-semibold text-gray-700">Progress</span>
+                                <span className="text-sm font-bold text-green-600">{friend.currentProgress}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                                 <div
-                                  className="bg-green-500 h-1 rounded-full"
+                                  className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500"
                                   style={{ width: `${friend.currentProgress}%` }}
                                 />
                               </div>
-                              <span className="text-xs text-audible-text-tertiary">{friend.currentProgress}%</span>
+                              {friend.currentProgress < 100 && (
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {100 - friend.currentProgress}% remaining
+                                </p>
+                              )}
                             </div>
                           )}
                         </div>
@@ -172,6 +186,49 @@ const Social = () => {
                 >
                   View All Friends
                 </Link>
+              </Card>
+            )}
+
+            {/* Friends of Friends */}
+            {friendsOfFriends.length > 0 && (
+              <Card className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-audible-text-primary flex items-center gap-2">
+                    <Users className="w-5 h-5 text-indigo-600" />
+                    Friends of Friends
+                  </h3>
+                  <Link
+                    to="/clubs/friends"
+                    className="text-indigo-600 hover:text-indigo-700 font-semibold text-sm"
+                  >
+                    View All →
+                  </Link>
+                </div>
+                <p className="text-sm text-audible-text-secondary mb-4">
+                  Discover people through your friends' networks
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  {friendsOfFriends.slice(0, 4).map((user) => (
+                    <div key={user.id} className="bg-white rounded-lg p-3 border border-gray-200 hover:border-indigo-300 transition-colors">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">
+                            {user.name.split(' ').map(n => n[0]).join('')}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
+                          <p className="text-xs text-indigo-600">
+                            {user.mutualFriends} mutual friend{user.mutualFriends !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                      </div>
+                      <button className="w-full bg-indigo-600 text-white text-xs font-semibold py-2 rounded hover:bg-indigo-700 transition-colors">
+                        Add Friend
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </Card>
             )}
 

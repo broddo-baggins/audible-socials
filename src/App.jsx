@@ -1,5 +1,8 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
+
 import { PlayerProvider } from './contexts/PlayerContext';
+import { pageVariants, pageTransition } from './utils/animationVariants';
 import DesktopHeader from './components/layout/DesktopHeader';
 import TabletHeader from './components/layout/TabletHeader';
 import MobileBottomNav from './components/layout/MobileBottomNav';
@@ -18,6 +21,7 @@ import Account from './pages/Account';
 import Social from './pages/Social';
 import MyBookClubs from './pages/MyBookClubs';
 import ClubDetailPage from './pages/ClubDetailPage';
+import Battles from './pages/Battles';
 import Profile from './pages/Profile';
 import FriendLibrary from './pages/FriendLibrary';
 
@@ -44,6 +48,70 @@ import IOSApp from './pages/IOSApp';
 import AndroidApp from './pages/AndroidApp';
 import DesktopApp from './pages/DesktopApp';
 
+
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.main
+        key={location.pathname}
+        initial="initial"
+        animate="in"
+        exit="out"
+        variants={pageVariants}
+        transition={pageTransition}
+        className="flex-1 pb-20 tablet:pb-16 lg:pb-0"
+      >
+        <Routes location={location}>
+          <Route path="/" element={<Home />} />
+          <Route path="/library" element={<Library />} />
+          <Route path="/browse" element={<Browse />} />
+          <Route path="/originals" element={<Browse />} />
+          <Route path="/podcasts" element={<Browse />} />
+          <Route path="/book/:bookId" element={<BookDetail />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/settings" element={<Account />} />
+          <Route path="/help" element={<Account />} />
+          <Route path="/notifications" element={<Account />} />
+          <Route path="/social" element={<Social />} />
+          <Route path="/battles" element={<Battles />} />
+          <Route path="/clubs" element={<MyBookClubs />} />
+          <Route path="/clubs/friends" element={<MyBookClubs />} />
+          <Route path="/clubs/activity" element={<MyBookClubs />} />
+          <Route path="/club/:clubId" element={<ClubDetailPage />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/friend/:friendId/library" element={<FriendLibrary />} />
+
+          {/* Company Pages */}
+          <Route path="/about" element={<About />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/press" element={<Press />} />
+          <Route path="/blog" element={<Blog />} />
+
+          {/* Help Pages */}
+          <Route path="/support" element={<Support />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/accessibility" element={<Accessibility />} />
+
+          {/* Legal Pages */}
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/cookies" element={<Cookies />} />
+          <Route path="/content-policy" element={<ContentPolicy />} />
+
+          {/* App Pages */}
+          <Route path="/apps/ios" element={<IOSApp />} />
+          <Route path="/apps/android" element={<AndroidApp />} />
+          <Route path="/apps/desktop" element={<DesktopApp />} />
+        </Routes>
+      </motion.main>
+    </AnimatePresence>
+  );
+};
+
 function App() {
   return (
     <PlayerProvider>
@@ -56,66 +124,22 @@ function App() {
 
           {/* Tablet Header - shown only on tablet */}
           <TabletHeader />
-          
-          {/* Main Content */}
-          <main className="flex-1 pb-20 tablet:pb-16 lg:pb-0">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/library" element={<Library />} />
-              <Route path="/browse" element={<Browse />} />
-              <Route path="/originals" element={<Browse />} />
-              <Route path="/podcasts" element={<Browse />} />
-              <Route path="/book/:bookId" element={<BookDetail />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/account" element={<Account />} />
-              <Route path="/settings" element={<Account />} />
-              <Route path="/help" element={<Account />} />
-              <Route path="/notifications" element={<Account />} />
-              <Route path="/social" element={<Social />} />
-              <Route path="/clubs" element={<MyBookClubs />} />
-              <Route path="/clubs/friends" element={<MyBookClubs />} />
-              <Route path="/clubs/activity" element={<MyBookClubs />} />
-              <Route path="/club/:clubId" element={<ClubDetailPage />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/friend/:friendId/library" element={<FriendLibrary />} />
 
-              {/* Company Pages */}
-              <Route path="/about" element={<About />} />
-              <Route path="/careers" element={<Careers />} />
-              <Route path="/press" element={<Press />} />
-              <Route path="/blog" element={<Blog />} />
+          {/* Animated Main Content */}
+          <AnimatedRoutes />
 
-              {/* Help Pages */}
-              <Route path="/support" element={<Support />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/accessibility" element={<Accessibility />} />
-
-              {/* Legal Pages */}
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/cookies" element={<Cookies />} />
-              <Route path="/content-policy" element={<ContentPolicy />} />
-
-              {/* App Pages */}
-              <Route path="/apps/ios" element={<IOSApp />} />
-              <Route path="/apps/android" element={<AndroidApp />} />
-              <Route path="/apps/desktop" element={<DesktopApp />} />
-            </Routes>
-          </main>
-          
           {/* Audio Player Components */}
           <AudioPlayer />
           <MiniPlayer />
 
           {/* Mobile Bottom Navigation */}
           <MobileBottomNav />
-          
+
           {/* Footer - hidden on mobile */}
           <div className="hidden md:block">
             <Footer />
           </div>
-          
+
           {/* Scroll to Top Button */}
           <ScrollToTop />
         </div>

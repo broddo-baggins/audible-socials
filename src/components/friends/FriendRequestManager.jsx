@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react';
-import { UserPlus, UserX, Check, X, AlertCircle, Clock, Send } from 'lucide-react';
+import { UserPlus, UserX, Check, X, AlertCircle, Clock, Send, Heart, HeartHandshake, UserMinus } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 import usersData from '../../data/users.json';
-import { 
-  getPendingRequests, 
-  getSentRequests, 
-  acceptFriendRequest, 
+import {
+  getPendingRequests,
+  getSentRequests,
+  acceptFriendRequest,
   rejectFriendRequest,
   cancelFriendRequest,
   blockUser
 } from '../../utils/friendManagement';
-import { createFriendAcceptedNotification } from '../../utils/notifications';
+import { createFriendAcceptedNotification, createFriendRejectedNotification } from '../../utils/notifications';
 
 export default function FriendRequestManager({ onUpdate }) {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
   const [activeTab, setActiveTab] = useState('received');
+  const [actionFeedback, setActionFeedback] = useState(null);
 
   useEffect(() => {
     loadRequests();
@@ -25,22 +27,40 @@ export default function FriendRequestManager({ onUpdate }) {
     setSentRequests(getSentRequests());
   };
 
+  const showFeedback = (type, message) => {
+    setActionFeedback({ type, message });
+    setTimeout(() => setActionFeedback(null), 3000);
+  };
+
   const handleAccept = (requestId, fromUserId) => {
     const result = acceptFriendRequest(requestId);
     if (result.success) {
       const user = usersData.find(u => u.id === fromUserId);
       if (user) {
         createFriendAcceptedNotification(fromUserId, 'You');
+        showFeedback('success', `You are now friends with ${user.name}!`);
       }
       loadRequests();
       onUpdate?.();
+    } else {
+      showFeedback('error', 'Failed to accept friend request');
     }
   };
 
-  const handleReject = (requestId) => {
-    if (window.confirm('Are you sure you want to decline this request?')) {
-      rejectFriendRequest(requestId);
-      loadRequests();
+  const handleReject = (requestId, fromUserId) => {
+    if (window.confirm('Are you sure you want to decline this friend request?')) {
+      const user = usersData.find(u => u.id === fromUserId);
+      const result = rejectFriendRequest(requestId);
+      if (result.success) {
+        if (user) {
+          createFriendRejectedNotification(fromUserId, 'You');
+          showFeedback('info', `You declined ${user.name}'s friend request`);
+        }
+        loadRequests();
+        onUpdate?.();
+      } else {
+        showFeedback('error', 'Failed to decline friend request');
+      }
     }
   };
 
@@ -79,61 +99,100 @@ export default function FriendRequestManager({ onUpdate }) {
     if (!user) return null;
 
     return (
-      <div
+      <motion.div
         key={request.id}
-        className="bg-white border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors"
+        initial={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+        className="bg-gradient-to-r from-white to-purple-50/30 border-2 border-purple-200 rounded-xl p-5 hover:border-purple-400 transition-all shadow-sm hover:shadow-md"
       >
-        <div className="flex items-start space-x-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-semibold">
+        <div className="flex items-start space-x-4">
+          <motion.div
+            className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg"
+            whileHover={{ scale: 1.05 }}
+          >
+            <span className="text-white font-bold text-lg">
               {user.name.split(' ').map(n => n[0]).join('')}
             </span>
-          </div>
-          
+                      {user.isPremium && (
+                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
+                          <span className="text-xs text-white font-bold">P</span>
+                        </div>
+                      )}
+          </motion.div>
+
           <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between mb-1">
-              <h4 className="font-semibold text-gray-900">{user.name}</h4>
-              <span className="text-xs text-gray-500">{getTimeSince(request.timestamp)}</span>
-            </div>
-            
-            <p className="text-sm text-gray-600 mb-1">
-              {user.library.length} books • {user.joinedClubs.length} clubs
-            </p>
-            
-            {request.message && (
-              <div className="mt-2 p-2 bg-gray-50 rounded text-sm text-gray-700 italic">
-                "{request.message}"
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <h4 className="font-bold text-gray-900 text-lg">{user.name}</h4>
+                <div className="flex items-center gap-3 text-sm text-gray-600">
+                  <span className="flex items-center gap-1">
+                    <BookOpen className="w-4 h-4" />
+                    {user.library.length} books
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Users className="w-4 h-4" />
+                    {user.joinedClubs.length} clubs
+                  </span>
+                </div>
               </div>
+              <div className="text-right">
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                  {getTimeSince(request.timestamp)}
+                </span>
+                <div className="flex items-center gap-1 mt-1">
+                  <Heart className="w-4 h-4 text-red-400" />
+                  <span className="text-xs text-red-600 font-medium">Wants to connect</span>
+                </div>
+              </div>
+            </div>
+
+            {request.message && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="mt-3 p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-purple-100"
+              >
+                <div className="flex items-start gap-2">
+                  <HeartHandshake className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-gray-700 italic">"{request.message}"</p>
+                </div>
+              </motion.div>
             )}
 
-            <div className="flex items-center space-x-2 mt-3">
-              <button
+            <div className="flex items-center gap-3 mt-4">
+              <motion.button
                 onClick={() => handleAccept(request.id, request.fromUserId)}
-                className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center space-x-1"
+                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:from-green-600 hover:to-emerald-700 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <Check className="w-4 h-4" />
-                <span>Accept</span>
-              </button>
-              
-              <button
-                onClick={() => handleReject(request.id)}
-                className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors flex items-center justify-center space-x-1"
+                <Check className="w-5 h-5" />
+                <span>Accept Friend</span>
+              </motion.button>
+
+              <motion.button
+                onClick={() => handleReject(request.id, request.fromUserId)}
+                className="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-3 rounded-xl font-bold hover:from-gray-600 hover:to-gray-700 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
                 <span>Decline</span>
-              </button>
-              
-              <button
+              </motion.button>
+
+              <motion.button
                 onClick={() => handleBlock(request.id, request.fromUserId)}
-                className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                className="px-4 py-3 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition-colors"
                 title="Block user"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <UserX className="w-4 h-4" />
-              </button>
+                <UserX className="w-5 h-5" />
+              </motion.button>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   };
 
@@ -179,55 +238,121 @@ export default function FriendRequestManager({ onUpdate }) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
-      <div className="flex items-center space-x-2 mb-4">
-        <UserPlus className="w-5 h-5 text-purple-600" />
-        <h3 className="text-lg font-bold text-gray-900">Friend Requests</h3>
+    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+      {/* Feedback Notification */}
+      <AnimatePresence>
+        {actionFeedback && (
+          <motion.div
+            initial={{ opacity: 0, y: -50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className={`mb-4 p-4 rounded-lg border-2 ${
+              actionFeedback.type === 'success'
+                ? 'bg-green-50 border-green-200 text-green-800'
+                : actionFeedback.type === 'error'
+                ? 'bg-red-50 border-red-200 text-red-800'
+                : 'bg-blue-50 border-blue-200 text-blue-800'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              {actionFeedback.type === 'success' && <Check className="w-5 h-5 text-green-600" />}
+              {actionFeedback.type === 'error' && <X className="w-5 h-5 text-red-600" />}
+              {actionFeedback.type === 'info' && <AlertCircle className="w-5 h-5 text-blue-600" />}
+              <p className="font-semibold">{actionFeedback.message}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="flex items-center space-x-2 mb-6">
+        <UserPlus className="w-6 h-6 text-purple-600" />
+        <h3 className="text-xl font-bold text-gray-900">Friend Requests</h3>
+        {(pendingRequests.length + sentRequests.length) > 0 && (
+          <span className="bg-purple-100 text-purple-700 text-sm font-bold px-3 py-1 rounded-full">
+            {pendingRequests.length + sentRequests.length}
+          </span>
+        )}
       </div>
 
-      <div className="flex space-x-2 mb-4 border-b border-gray-200">
+      <div className="flex space-x-2 mb-6 border-b border-gray-200">
         <button
           onClick={() => setActiveTab('received')}
-          className={`pb-2 px-4 font-semibold transition-colors ${
+          className={`pb-3 px-4 font-bold transition-colors relative ${
             activeTab === 'received'
-              ? 'border-b-2 border-purple-600 text-purple-600'
+              ? 'border-b-3 border-purple-600 text-purple-600'
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
-          Received ({pendingRequests.length})
+          Received
+          {pendingRequests.length > 0 && (
+            <span className="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+              {pendingRequests.length}
+            </span>
+          )}
         </button>
         <button
           onClick={() => setActiveTab('sent')}
-          className={`pb-2 px-4 font-semibold transition-colors ${
+          className={`pb-3 px-4 font-bold transition-colors ${
             activeTab === 'sent'
-              ? 'border-b-2 border-purple-600 text-purple-600'
+              ? 'border-b-3 border-purple-600 text-purple-600'
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
-          Sent ({sentRequests.length})
+          Sent
+          {sentRequests.length > 0 && (
+            <span className="ml-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+              {sentRequests.length}
+            </span>
+          )}
         </button>
       </div>
 
       {activeTab === 'received' && (
-        <div className="space-y-3">
-          {pendingRequests.length === 0 ? (
-            <div className="text-center py-8">
-              <AlertCircle className="w-12 h-12 mx-auto text-gray-400 mb-3" />
-              <p className="text-gray-600">No pending friend requests</p>
-            </div>
-          ) : (
-            pendingRequests.map(renderPendingRequest)
-          )}
-        </div>
+        <AnimatePresence>
+          <div className="space-y-4">
+            {pendingRequests.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center py-12 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border-2 border-dashed border-purple-200"
+              >
+                <Heart className="w-16 h-16 mx-auto text-purple-400 mb-4" />
+                <h4 className="text-lg font-bold text-gray-900 mb-2">No Friend Requests Yet</h4>
+                <p className="text-gray-600 mb-4">When people want to connect with you, you'll see their requests here</p>
+                <Link
+                  to="/social"
+                  className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-semibold"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  Explore the Social Hub
+                </Link>
+              </motion.div>
+            ) : (
+              pendingRequests.map(renderPendingRequest)
+            )}
+          </div>
+        </AnimatePresence>
       )}
 
       {activeTab === 'sent' && (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {sentRequests.length === 0 ? (
-            <div className="text-center py-8">
-              <Send className="w-12 h-12 mx-auto text-gray-400 mb-3" />
-              <p className="text-gray-600">No sent requests</p>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-12 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-dashed border-blue-200"
+            >
+              <Send className="w-16 h-16 mx-auto text-blue-400 mb-4" />
+              <h4 className="text-lg font-bold text-gray-900 mb-2">No Sent Requests</h4>
+              <p className="text-gray-600 mb-4">Friend requests you've sent will appear here</p>
+              <Link
+                to="/social"
+                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold"
+              >
+                <UserPlus className="w-4 h-4" />
+                Find New Friends
+              </Link>
+            </motion.div>
           ) : (
             sentRequests.map(renderSentRequest)
           )}

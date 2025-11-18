@@ -9940,5 +9940,227 @@
     "price": 19.99,
     "clubs": [],
     "cover": "/images/covers/402-the-door-s-noun.jpg"
+  },
+  {
+    "id": "403",
+    "title": "I, Robot",
+    "author": "Isaac Asimov",
+    "narrator": "Scott Brick",
+    "genre": "Science Fiction",
+    "contentType": "audiobook",
+    "duration": "8h 30m",
+    "durationMinutes": 510,
+    "rating": 4.2,
+    "ratingsCount": 156789,
+    "description": "The classic collection of robot stories from the master of science fiction. This seminal work explores the Three Laws of Robotics and the relationship between humans and artificial intelligence through nine interconnected stories.",
+    "releaseDate": "1950-12-02",
+    "language": "English",
+    "publisher": "Random House Audio",
+    "sampleAudioUrl": "/audio/samples/i-robot.mp3",
+    "price": 16.99,
+    "clubs": ["10"],
+    "chapters": [
+      {
+        "id": 1,
+        "title": "Introduction",
+        "duration": "15:30"
+      },
+      {
+        "id": 2,
+        "title": "Robbie",
+        "duration": "25:45"
+      },
+      {
+        "id": 3,
+        "title": "Runaround",
+        "duration": "28:12"
+      }
+    ],
+    "cover": "/images/covers/300-the-burning-gate.jpg"
+  },
+  {
+    "id": "404",
+    "title": "He Who Fights With Monsters",
+    "author": "Shirtaloon",
+    "narrator": "Travis Baldree",
+    "genre": "LitRPG",
+    "contentType": "audiobook",
+    "duration": "14h 22m",
+    "durationMinutes": 862,
+    "rating": 4.7,
+    "ratingsCount": 89456,
+    "description": "Jason wakes up in a completely different world. A world where even mundane tasks require magic. Where people earn skills and levels. Where the gods watch from above and grant quests. A world where he has been transported to for being a corporate slave. Armed with nothing but his wits and some basic supplies, Jason must navigate this brave new world and thrive.",
+    "releaseDate": "2021-03-15",
+    "language": "English",
+    "publisher": "Podium Audio",
+    "sampleAudioUrl": "/audio/samples/he-who-fights.mp3",
+    "price": 19.99,
+    "clubs": ["11"],
+    "chapters": [
+      {
+        "id": 1,
+        "title": "Chapter 1: Welcome to a New World",
+        "duration": "32:15"
+      },
+      {
+        "id": 2,
+        "title": "Chapter 2: Skills and Levels",
+        "duration": "28:45"
+      },
+      {
+        "id": 3,
+        "title": "Chapter 3: First Quest",
+        "duration": "35:12"
+      }
+    ],
+    "cover": "/images/covers/301-a-ancient-gate.jpg"
+  },
+  {
+    "id": "405",
+    "title": "The Lies of Locke Lamora",
+    "author": "Scott Lynch",
+    "narrator": "Michael Page",
+    "genre": "Fantasy",
+    "contentType": "audiobook",
+    "duration": "15h 48m",
+    "durationMinutes": 948,
+    "rating": 4.3,
+    "ratingsCount": 124567,
+    "description": "An orphan's life is harsh—and often short—in the mysterious island city of Camorr. But young Locke Lamora dodges death and slavery, becoming a thief under a roof of shady grey where survival depends on wits and a facade of innocence. The estate of the Bondsmagi is famous for its trained con artists, and the welcome Locke receives is less 'please' and more 'put up your dukes.' For in the decadent salons of the rich, he meets a kindred spirit—fellow young thief Jean Tannen.",
+    "releaseDate": "2006-06-27",
+    "language": "English",
+    "publisher": "Audible Studios",
+    "sampleAudioUrl": "/audio/samples/locke-lamora.mp3",
+    "price": 17.99,
+    "clubs": ["12"],
+    "chapters": [
+      {
+        "id": 1,
+        "title": "Chapter 1: The Don Salvara Gambit",
+        "duration": "45:30"
+      },
+      {
+        "id": 2,
+        "title": "Chapter 2: A Crowded Market",
+        "duration": "38:15"
+      },
+      {
+        "id": 3,
+        "title": "Chapter 3: Three Ways to Be Sticky",
+        "duration": "42:20"
+      }
+    ],
+    "cover": "/images/covers/302-the-last-forest.jpg"
+  },
+  {
+    "id": "406",
+    "title": "The Lord of the Rings",
+    "author": "J.R.R. Tolkien",
+    "narrator": "Rob Inglis",
+    "genre": "Fantasy",
+    "contentType": "audiobook",
+    "duration": "56h 24m",
+    "durationMinutes": 3384,
+    "rating": 4.6,
+    "ratingsCount": 456789,
+    "description": "One Ring to rule them all, One Ring to find them, One Ring to bring them all and in the darkness bind them. In ancient times the Rings of Power were crafted by the Elven-smiths, and Sauron, the Dark Lord, forged the One Ring, filling it with his own power so that he could rule all others. But the One Ring was taken from him, and though he sought it throughout Middle-earth, it remained lost to him.",
+    "releaseDate": "1954-07-29",
+    "language": "English",
+    "publisher": "HarperCollins",
+    "sampleAudioUrl": "/audio/samples/lord-of-rings.mp3",
+    "price": 34.99,
+    "clubs": ["13"],
+    "chapters": [
+      {
+        "id": 1,
+        "title": "Prologue: Concerning Hobbits",
+        "duration": "25:40"
+      },
+      {
+        "id": 2,
+        "title": "Chapter 1: A Long-expected Party",
+        "duration": "32:15"
+      },
+      {
+        "id": 3,
+        "title": "Chapter 2: The Shadow of the Past",
+        "duration": "38:20"
+      }
+    ],
+    "cover": "/images/covers/303-beyond-the-south.jpg"
+  },
+  {
+    "id": "407",
+    "title": "The Blacktongue Thief",
+    "author": "Christopher Buehlman",
+    "narrator": "Daniel Weyman",
+    "genre": "Fantasy",
+    "contentType": "audiobook",
+    "duration": "11h 35m",
+    "durationMinutes": 695,
+    "rating": 4.4,
+    "ratingsCount": 67891,
+    "description": "Kinch Na Shannack was a con artist, a thief, and a murderer. But perhaps most importantly, he was a blacktongue - one of the rare survivors of a nightmarish plague that left its victims without tongues, but gifted them with supernatural abilities. When Kinch accidentally saves the life of a princess, he finds himself caught up in a conspiracy that threatens to destroy his world.",
+    "releaseDate": "2021-05-25",
+    "language": "English",
+    "publisher": "Orbit",
+    "sampleAudioUrl": "/audio/samples/blacktongue-thief.mp3",
+    "price": 18.99,
+    "clubs": ["14"],
+    "chapters": [
+      {
+        "id": 1,
+        "title": "Chapter 1: The Thieves' Road",
+        "duration": "28:45"
+      },
+      {
+        "id": 2,
+        "title": "Chapter 2: The Princess and the Plague",
+        "duration": "32:10"
+      },
+      {
+        "id": 3,
+        "title": "Chapter 3: The Blacktongue",
+        "duration": "29:15"
+      }
+    ],
+    "cover": "/images/covers/304-the-quiet-heart.jpg"
+  },
+  {
+    "id": "408",
+    "title": "Off to Be a Wizard",
+    "author": "Scott Meyer",
+    "narrator": "Luke Daniels",
+    "genre": "Fantasy",
+    "contentType": "audiobook",
+    "duration": "10h 12m",
+    "durationMinutes": 612,
+    "rating": 4.1,
+    "ratingsCount": 45678,
+    "description": "Martin Banks arrives in an alternate universe with magic instead of science. His new wizard mentor insists that Martin must be a powerful magician - but Martin can't cast a single spell. Then Martin discovers that his mentor is the one who brought him to this world, and that the mentor wants Martin to use his scientific knowledge to win a war against another wizard.",
+    "releaseDate": "2014-03-18",
+    "language": "English",
+    "publisher": "Audible Studios",
+    "sampleAudioUrl": "/audio/samples/off-to-be-wizard.mp3",
+    "price": 16.99,
+    "clubs": ["15"],
+    "chapters": [
+      {
+        "id": 1,
+        "title": "Chapter 1: A Most Unusual Event",
+        "duration": "22:30"
+      },
+      {
+        "id": 2,
+        "title": "Chapter 2: The Wizard's Tower",
+        "duration": "25:45"
+      },
+      {
+        "id": 3,
+        "title": "Chapter 3: Lessons Begin",
+        "duration": "28:12"
+      }
+    ],
+    "cover": "/images/covers/305-eternal-dusk.jpg"
   }
 ]

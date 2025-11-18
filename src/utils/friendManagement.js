@@ -162,18 +162,89 @@ export const getBlockedUsers = () => {
   return blocked.filter(b => b.userId === 'user-me');
 };
 
+export const getFriendsOfFriends = (currentUserId = 'user-me', allUsers = []) => {
+  const friends = JSON.parse(localStorage.getItem('audible_friends') || '[]');
+
+  // Get all friends of current user's friends (excluding current user and direct friends)
+  const friendsOfFriends = new Set();
+
+  friends.forEach(friendId => {
+    const friend = allUsers.find(u => u.id === friendId);
+    if (friend && friend.friends) {
+      friend.friends.forEach(fofId => {
+        // Don't include current user or direct friends
+        if (fofId !== currentUserId && !friends.includes(fofId)) {
+          friendsOfFriends.add(fofId);
+        }
+      });
+    }
+  });
+
+  // Convert back to user objects and add mutual friend info
+  return Array.from(friendsOfFriends).map(userId => {
+    const user = allUsers.find(u => u.id === userId);
+    if (!user) return null;
+
+    // Find mutual friends
+    const mutualFriends = friends.filter(friendId => {
+      const friend = allUsers.find(u => u.id === friendId);
+      return friend && friend.friends && friend.friends.includes(userId);
+    });
+
+    return {
+      ...user,
+      mutualFriends: mutualFriends.length,
+      mutualFriendList: mutualFriends.slice(0, 3).map(id => allUsers.find(u => u.id === id)?.name).filter(Boolean)
+    };
+  }).filter(Boolean);
+};
+
+export const getClubFriends = (clubId, allUsers = []) => {
+  const friends = JSON.parse(localStorage.getItem('audible_friends') || '[]');
+
+  // Get users who are in this club
+  const clubMembers = allUsers.filter(user =>
+    user.joinedClubs && user.joinedClubs.includes(clubId)
+  );
+
+  // Separate friends who are in the club vs friends of friends who are in the club
+  const directFriendsInClub = clubMembers.filter(user => friends.includes(user.id));
+  const friendsOfFriendsInClub = clubMembers.filter(user => !friends.includes(user.id));
+
+  return {
+    allMembers: clubMembers,
+    directFriends: directFriendsInClub,
+    friendsOfFriends: friendsOfFriendsInClub,
+    hasFriends: directFriendsInClub.length > 0,
+    hasFriendsOfFriends: friendsOfFriendsInClub.length > 0
+  };
+};
+
 export const getSuggestedFriends = (currentUserId = 'user-me', allUsers = []) => {
   const friends = JSON.parse(localStorage.getItem('audible_friends') || '[]');
   const blocked = getBlockedUsers().map(b => b.blockedUserId);
   const pending = getPendingRequests();
   const sent = getSentRequests();
-  
+
   const pendingIds = [...pending.map(r => r.fromUserId), ...sent.map(r => r.toUserId)];
-  
-  return allUsers.filter(user => 
+
+  // Get friends of friends first (prioritize them)
+  const friendsOfFriends = getFriendsOfFriends(currentUserId, allUsers)
+    .filter(user =>
+      !blocked.includes(user.id) &&
+      !pendingIds.includes(user.id)
+    )
+    .sort((a, b) => b.mutualFriends - a.mutualFriends); // Sort by most mutual friends
+
+  // Get other suggestions
+  const otherSuggestions = allUsers.filter(user =>
     user.id !== currentUserId &&
     !friends.includes(user.id) &&
     !blocked.includes(user.id) &&
-    !pendingIds.includes(user.id)
+    !pendingIds.includes(user.id) &&
+    !friendsOfFriends.some(fof => fof.id === user.id) // Don't duplicate
   );
+
+  // Return friends of friends first, then other suggestions
+  return [...friendsOfFriends, ...otherSuggestions];
 };

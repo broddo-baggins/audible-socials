@@ -23,24 +23,57 @@
         "type": "celebrity_chat",
         "description": "Join Reese Witherspoon for an intimate discussion about this month's pick and what drew her to this powerful story.",
         "rsvpCount": 8234,
-        "maxCapacity": 10000
+        "maxCapacity": 10000,
+        "isExclusive": true
       },
       {
         "id": "e2",
-        "title": "Author Interview: Delia Owens",
+        "title": "Author Q&A: Delia Owens Live",
         "date": "2025-12-02T18:00:00",
-        "type": "author_chat",
-        "description": "Exclusive conversation with author Delia Owens about the inspiration behind Where the Crawdads Sing.",
+        "type": "author_qa",
+        "description": "Exclusive live Q&A session with Delia Owens - ask your questions about Where the Crawdads Sing and her writing process!",
         "rsvpCount": 6890,
-        "maxCapacity": 10000
+        "maxCapacity": 10000,
+        "isExclusive": true,
+        "qaEnabled": true
+      },
+      {
+        "id": "e3",
+        "title": "Narrator Q&A: Cassandra Campbell",
+        "date": "2025-12-09T17:00:00",
+        "type": "narrator_qa",
+        "description": "Join award-winning narrator Cassandra Campbell for an exclusive Q&A about bringing Delia Owens' world to life through audio.",
+        "rsvpCount": 3456,
+        "maxCapacity": 5000,
+        "isExclusive": true,
+        "qaEnabled": true
       }
     ],
     "perks": [
-      "2-for-1 discount on featured book",
-      "Exclusive Reese interviews",
+      "50% OFF featured book (save up to $15)",
+      "Exclusive Reese interviews & Q&A",
       "Early access to next month's pick",
-      "Member-only discussion questions"
-    ]
+      "Member-only discussion questions",
+      "Monthly author/narrator Q&A sessions"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 50,
+        "maxSavings": 15,
+        "description": "50% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 2,
+        "description": "2 extra credits for joining this month"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
   },
   {
     "id": "2",
@@ -88,11 +121,37 @@
       }
     ],
     "perks": [
-      "2-for-1 discount on featured book",
-      "Exclusive Oprah SuperSoul conversations",
-      "Access to full OBC archive",
-      "Monthly reflection prompts"
-    ]
+      "60% OFF featured book (save up to $18)",
+      "Exclusive Oprah SuperSoul conversations & Q&A",
+      "Access to full OBC archive (25+ years)",
+      "Monthly reflection prompts & guided discussions",
+      "Live author/narrator Q&A with Oprah"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 60,
+        "maxSavings": 18,
+        "description": "60% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 3,
+        "description": "3 extra credits for joining this month"
+      },
+      "loyaltyDiscount": {
+        "type": "percentage",
+        "value": 10,
+        "description": "Additional 10% off after 3 months membership",
+        "requires": "3_months"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true,
+      "archiveAccess": true
+    }
   },
   {
     "id": "3",
@@ -131,11 +190,30 @@
       }
     ],
     "perks": [
-      "2-for-1 discount on featured book",
-      "Exclusive Emma Watson conversations",
+      "40% OFF featured book (save up to $12)",
+      "Exclusive Emma Watson conversations & Q&A",
       "Activism resource library",
-      "Global community connections"
-    ]
+      "Global community connections",
+      "Monthly feminist author Q&A sessions"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 40,
+        "maxSavings": 12,
+        "description": "40% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 1,
+        "description": "1 extra credit for joining this month"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
   },
   {
     "id": "4",
@@ -174,11 +252,30 @@
       }
     ],
     "perks": [
-      "2-for-1 discount on featured book",
-      "TODAY Show exclusives",
+      "45% OFF featured book (save up to $13)",
+      "TODAY Show exclusives & live Q&A",
       "Behind-the-scenes content",
-      "Early announcements"
-    ]
+      "Early announcements",
+      "Author Q&A with Jenna Bush Hager"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 45,
+        "maxSavings": 13,
+        "description": "45% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 1,
+        "description": "1 extra credit for joining this month"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
   },
   {
     "id": "5",
@@ -217,12 +314,37 @@
       }
     ],
     "perks": [
-      "2-for-1 discount on featured book",
-      "Premium literary discussions",
+      "55% OFF featured book (save up to $16)",
+      "Premium literary discussions & Q&A",
       "Indie author spotlights",
       "Signed editions available",
-      "SJP's personal reading notes"
-    ]
+      "SJP's personal reading notes",
+      "Exclusive author/narrator Q&A sessions"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 55,
+        "maxSavings": 16,
+        "description": "55% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 2,
+        "description": "2 extra credits for joining this month"
+      },
+      "loyaltyDiscount": {
+        "type": "percentage",
+        "value": 5,
+        "description": "Additional 5% off after 2 months membership",
+        "requires": "2_months"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
   },
   {
     "id": "6",
@@ -252,10 +374,30 @@
       }
     ],
     "perks": [
-      "2-for-1 discount on featured book",
+      "35% OFF featured book (save up to $10)",
       "Writing tips from Louise Penny",
-      "Early access to new releases"
-    ]
+      "Early access to new releases",
+      "Monthly mystery author Q&A",
+      "Exclusive writing workshops"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 35,
+        "maxSavings": 10,
+        "description": "35% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 1,
+        "description": "1 extra credit for joining this month"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
   },
   {
     "id": "7",
@@ -285,10 +427,30 @@
       }
     ],
     "perks": [
-      "2-for-1 discount on featured book",
-      "Science fact-checks from Andy",
-      "Exclusive short stories"
-    ]
+      "50% OFF featured book (save up to $15)",
+      "Science fact-checks from Andy Weir",
+      "Exclusive short stories",
+      "Monthly sci-fi author Q&A",
+      "Science & writing discussions"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 50,
+        "maxSavings": 15,
+        "description": "50% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 2,
+        "description": "2 extra credits for joining this month"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
   },
   {
     "id": "8",
@@ -318,10 +480,503 @@
       }
     ],
     "perks": [
-      "2-for-1 discount on featured book",
-      "Leadership worksheets",
-      "Brene Brown study guides"
-    ]
+      "45% OFF featured book (save up to $13)",
+      "Leadership worksheets & exercises",
+      "Brene Brown study guides",
+      "Monthly leadership author Q&A",
+      "Exclusive vulnerability workshops"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 45,
+        "maxSavings": 13,
+        "description": "45% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 1,
+        "description": "1 extra credit for joining this month"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
+  },
+  {
+    "id": "9",
+    "name": "Dungeon Crawler Carl Fan Club",
+    "host": "Matt Dinniman",
+    "hostType": "author",
+    "description": "Join fellow fans of Dungeon Crawler Carl in celebrating the hilarious and action-packed LitRPG series. Discuss the latest books, share fan theories, and connect with other readers who can't get enough of Carl's dungeon-crawling adventures.",
+    "coverQuery": "Dungeon Crawler Carl",
+    "currentBook": "69",
+    "previousBooks": [],
+    "memberCount": 23456,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 8,
+    "meetingsPerMonth": 2,
+    "nextMeeting": "2025-12-01T20:00:00",
+    "events": [
+      {
+        "id": "e29",
+        "title": "Live Q&A with Matt Dinniman",
+        "date": "2025-12-01T20:00:00",
+        "type": "author_qa",
+        "description": "Join author Matt Dinniman for an exclusive Q&A about the Dungeon Crawler Carl universe!",
+        "rsvpCount": 3456,
+        "maxCapacity": 8000,
+        "isExclusive": true,
+        "qaEnabled": true
+      },
+      {
+        "id": "e30",
+        "title": "Fan Theory Discussion",
+        "date": "2025-12-08T19:00:00",
+        "type": "discussion",
+        "description": "Share your wildest theories about what happens next in the Dungeon Crawler Carl series.",
+        "rsvpCount": 1987,
+        "maxCapacity": 4000,
+        "isExclusive": true
+      }
+    ],
+    "perks": [
+      "40% OFF Dungeon Crawler Carl books (save up to $12)",
+      "Exclusive Matt Dinniman Q&A sessions",
+      "Early access to new releases",
+      "Fan community discussions",
+      "Monthly dungeon-themed challenges"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 40,
+        "maxSavings": 12,
+        "description": "40% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 1,
+        "description": "1 extra credit for joining this month"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
+  },
+  {
+    "id": "10",
+    "name": "Asimov's Robot Chronicles",
+    "host": "Isaac Asimov Legacy",
+    "hostType": "author_legacy",
+    "description": "Explore the groundbreaking world of robotics and artificial intelligence through Isaac Asimov's classic stories. Join fellow enthusiasts in discussing the Three Laws of Robotics, the Foundation series, and Asimov's lasting impact on science fiction.",
+    "coverQuery": "I Robot Isaac Asimov",
+    "currentBook": "403",
+    "previousBooks": [],
+    "memberCount": 18765,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 12,
+    "meetingsPerMonth": 2,
+    "nextMeeting": "2025-12-05T18:00:00",
+    "events": [
+      {
+        "id": "e31",
+        "title": "Three Laws of Robotics Deep Dive",
+        "date": "2025-12-05T18:00:00",
+        "type": "discussion",
+        "description": "Explore the philosophical implications of Asimov's Three Laws and their relevance to modern AI.",
+        "rsvpCount": 2345,
+        "maxCapacity": 5000,
+        "isExclusive": true
+      },
+      {
+        "id": "e32",
+        "title": "AI Ethics in Science Fiction",
+        "date": "2025-12-12T19:00:00",
+        "type": "workshop",
+        "description": "Discuss how Asimov's robot stories predicted modern AI concerns and ethical dilemmas.",
+        "rsvpCount": 1876,
+        "maxCapacity": 4000,
+        "isExclusive": true
+      }
+    ],
+    "perks": [
+      "35% OFF Asimov classics (save up to $10)",
+      "Exclusive AI ethics discussions",
+      "Access to rare Asimov lectures",
+      "Monthly robot-themed challenges",
+      "Foundation series deep dives"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 35,
+        "maxSavings": 10,
+        "description": "35% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 1,
+        "description": "1 extra credit for joining this month"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
+  },
+  {
+    "id": "11",
+    "name": "Monster Fighter's Guild",
+    "host": "LitRPG Legends",
+    "hostType": "community",
+    "description": "Dive into the action-packed world of LitRPG with Shirtaloon's He Who Fights With Monsters. Join fellow gamers and readers in discussing progression systems, world-building, and the thrill of leveling up in a game-like universe.",
+    "coverQuery": "He Who Fights With Monsters",
+    "currentBook": "404",
+    "previousBooks": [],
+    "memberCount": 32145,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 15,
+    "meetingsPerMonth": 3,
+    "nextMeeting": "2025-12-08T20:00:00",
+    "events": [
+      {
+        "id": "e33",
+        "title": "LitRPG Mechanics Breakdown",
+        "date": "2025-12-08T20:00:00",
+        "type": "workshop",
+        "description": "Analyze the progression systems and game mechanics in He Who Fights With Monsters.",
+        "rsvpCount": 4567,
+        "maxCapacity": 8000,
+        "isExclusive": true
+      },
+      {
+        "id": "e34",
+        "title": "Author Q&A: Shirtaloon",
+        "date": "2025-12-15T19:00:00",
+        "type": "author_qa",
+        "description": "Live Q&A with Shirtaloon about writing LitRPG and the world of He Who Fights With Monsters!",
+        "rsvpCount": 6789,
+        "maxCapacity": 10000,
+        "isExclusive": true,
+        "qaEnabled": true
+      },
+      {
+        "id": "e35",
+        "title": "Fan Character Builds",
+        "date": "2025-12-22T18:00:00",
+        "type": "discussion",
+        "description": "Share your dream character builds inspired by the book's progression system.",
+        "rsvpCount": 2345,
+        "maxCapacity": 6000,
+        "isExclusive": true
+      }
+    ],
+    "perks": [
+      "50% OFF LitRPG series (save up to $15)",
+      "Exclusive Shirtaloon Q&A sessions",
+      "Weekly progression discussions",
+      "Character build workshops",
+      "Early access to new LitRPG releases"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 50,
+        "maxSavings": 15,
+        "description": "50% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 2,
+        "description": "2 extra credits for joining this month"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
+  },
+  {
+    "id": "12",
+    "name": "Gentleman Bastards United",
+    "host": "Scott Lynch",
+    "hostType": "author",
+    "description": "Enter the shadowy world of Camorr with Scott Lynch's Gentleman Bastard series. Join fellow con artists and thieves in discussing heists, cons, and the intricate plots that make Locke Lamora one of fantasy's most beloved anti-heroes.",
+    "coverQuery": "Lies of Locke Lamora",
+    "currentBook": "405",
+    "previousBooks": [],
+    "memberCount": 22345,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 20,
+    "meetingsPerMonth": 2,
+    "nextMeeting": "2025-12-13T19:00:00",
+    "events": [
+      {
+        "id": "e36",
+        "title": "The Art of the Con",
+        "date": "2025-12-13T19:00:00",
+        "type": "workshop",
+        "description": "Learn about the psychology and planning behind great cons, inspired by Locke Lamora.",
+        "rsvpCount": 3456,
+        "maxCapacity": 6000,
+        "isExclusive": true
+      },
+      {
+        "id": "e37",
+        "title": "Author Q&A: Scott Lynch",
+        "date": "2025-12-20T18:00:00",
+        "type": "author_qa",
+        "description": "Exclusive live Q&A with Scott Lynch about the Gentleman Bastard series and future plans!",
+        "rsvpCount": 5678,
+        "maxCapacity": 8000,
+        "isExclusive": true,
+        "qaEnabled": true
+      }
+    ],
+    "perks": [
+      "45% OFF Gentleman Bastard series (save up to $13)",
+      "Exclusive Scott Lynch Q&A sessions",
+      "Con artist psychology discussions",
+      "Monthly heist planning challenges",
+      "Early access to new Lynch works"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 45,
+        "maxSavings": 13,
+        "description": "45% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 1,
+        "description": "1 extra credit for joining this month"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
+  },
+  {
+    "id": "13",
+    "name": "Fellowship of the Ring Readers",
+    "host": "Middle-earth Enthusiasts",
+    "hostType": "community",
+    "description": "Journey through Middle-earth with J.R.R. Tolkien's masterpiece. Join fellow Tolkien fans in exploring the rich lore, languages, and themes of The Lord of the Rings. From the Shire to Mount Doom, discover new depths in this timeless epic.",
+    "coverQuery": "Lord of the Rings Tolkien",
+    "currentBook": "406",
+    "previousBooks": [],
+    "memberCount": 67890,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 25,
+    "meetingsPerMonth": 3,
+    "nextMeeting": "2025-12-18T19:00:00",
+    "events": [
+      {
+        "id": "e38",
+        "title": "Languages of Middle-earth",
+        "date": "2025-12-18T19:00:00",
+        "type": "workshop",
+        "description": "Explore Tolkien's constructed languages and their role in world-building.",
+        "rsvpCount": 4567,
+        "maxCapacity": 8000,
+        "isExclusive": true
+      },
+      {
+        "id": "e39",
+        "title": "Tolkien's Themes Deep Dive",
+        "date": "2025-12-25T18:00:00",
+        "type": "discussion",
+        "description": "Discuss power, corruption, friendship, and courage in Tolkien's masterpiece.",
+        "rsvpCount": 6789,
+        "maxCapacity": 10000,
+        "isExclusive": true
+      },
+      {
+        "id": "e40",
+        "title": "Middle-earth Lore Q&A",
+        "date": "2026-01-01T20:00:00",
+        "type": "discussion",
+        "description": "Ask questions about Tolkien's world, characters, and history with fellow experts.",
+        "rsvpCount": 3456,
+        "maxCapacity": 6000,
+        "isExclusive": true
+      }
+    ],
+    "perks": [
+      "55% OFF Lord of the Rings (save up to $16)",
+      "Exclusive Tolkien lore discussions",
+      "Monthly theme explorations",
+      "Language learning resources",
+      "Access to rare Tolkien materials"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 55,
+        "maxSavings": 16,
+        "description": "55% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 2,
+        "description": "2 extra credits for joining this month"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
+  },
+  {
+    "id": "14",
+    "name": "Blacktongue Brotherhood",
+    "host": "Christopher Buehlman",
+    "hostType": "author",
+    "description": "Enter the grimdark world of The Blacktongue Thief with fellow fans. Discuss the plague-ridden kingdoms, complex characters, and dark humor that make this series a standout in modern fantasy.",
+    "coverQuery": "Blacktongue Thief",
+    "currentBook": "407",
+    "previousBooks": [],
+    "memberCount": 15678,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 18,
+    "meetingsPerMonth": 2,
+    "nextMeeting": "2025-12-11T19:00:00",
+    "events": [
+      {
+        "id": "e41",
+        "title": "Grimdark World-Building",
+        "date": "2025-12-11T19:00:00",
+        "type": "discussion",
+        "description": "Explore the dark, plague-ridden world of The Blacktongue Thief and its inspirations.",
+        "rsvpCount": 1234,
+        "maxCapacity": 4000,
+        "isExclusive": true
+      },
+      {
+        "id": "e42",
+        "title": "Author Q&A: Christopher Buehlman",
+        "date": "2025-12-18T18:00:00",
+        "type": "author_qa",
+        "description": "Live Q&A with Christopher Buehlman about the Blacktongue universe and writing grimdark fantasy!",
+        "rsvpCount": 2345,
+        "maxCapacity": 5000,
+        "isExclusive": true,
+        "qaEnabled": true
+      }
+    ],
+    "perks": [
+      "45% OFF Blacktongue Thief series (save up to $13)",
+      "Exclusive Christopher Buehlman Q&A",
+      "Grimdark fantasy discussions",
+      "Monthly world-building workshops",
+      "Early access to Buehlman works"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 45,
+        "maxSavings": 13,
+        "description": "45% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 1,
+        "description": "1 extra credit for joining this month"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
+  },
+  {
+    "id": "15",
+    "name": "Magic University",
+    "host": "Scott Meyer",
+    "hostType": "author",
+    "description": "Step into the magical world of Off to Be a Wizard with fellow fans. Join discussions about science vs magic, humorous fantasy tropes, and the clever world-building that makes this series a delight for fans of both genres.",
+    "coverQuery": "Off to Be a Wizard",
+    "currentBook": "408",
+    "previousBooks": [],
+    "memberCount": 12345,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 22,
+    "meetingsPerMonth": 2,
+    "nextMeeting": "2025-12-15T18:00:00",
+    "events": [
+      {
+        "id": "e43",
+        "title": "Science vs Magic Debates",
+        "date": "2025-12-15T18:00:00",
+        "type": "discussion",
+        "description": "Discuss the fascinating interplay between scientific thinking and magical systems.",
+        "rsvpCount": 1876,
+        "maxCapacity": 4000,
+        "isExclusive": true
+      },
+      {
+        "id": "e44",
+        "title": "Author Q&A: Scott Meyer",
+        "date": "2025-12-22T19:00:00",
+        "type": "author_qa",
+        "description": "Live Q&A with Scott Meyer about the Magic 2.0 series and his approach to humorous fantasy!",
+        "rsvpCount": 2345,
+        "maxCapacity": 5000,
+        "isExclusive": true,
+        "qaEnabled": true
+      }
+    ],
+    "perks": [
+      "40% OFF Magic 2.0 series (save up to $12)",
+      "Exclusive Scott Meyer Q&A sessions",
+      "Science vs magic discussions",
+      "Monthly spell-crafting challenges",
+      "Early access to new Magic 2.0 books"
+    ],
+    "discounts": {
+      "monthlyBook": {
+        "type": "percentage",
+        "value": 40,
+        "maxSavings": 12,
+        "description": "40% off current month's featured book"
+      },
+      "membershipBonus": {
+        "type": "credits",
+        "value": 1,
+        "description": "1 extra credit for joining this month"
+      }
+    },
+    "memberBenefits": {
+      "bookOwnershipRequired": true,
+      "exclusiveEvents": true,
+      "earlyAccess": true
+    }
   }
 ]
 

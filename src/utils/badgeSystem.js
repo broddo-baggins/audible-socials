@@ -282,7 +282,7 @@ export const hasUnlockedPerk = (userId, clubId, perkId) => {
 };
 
 // Track when a user completes a club book
-export const recordClubBookCompletion = (userId, clubId, bookId, daysEarly = 0, isFirst = false) => {
+export const recordClubBookCompletion = (userId, clubId, bookId, isFirst = false) => {
   const clubProgress = getClubProgress(userId, clubId) || {
     clubId,
     progress: 0,
@@ -350,7 +350,7 @@ export const recordClubEventAttendance = (userId, clubId, eventId, isCelebrityEv
 };
 
 // Track when a user shares a club book
-export const recordClubBookShare = (userId, clubId, bookId, sharedWith) => {
+export const recordClubBookShare = (userId, clubId) => {
   const clubProgress = getClubProgress(userId, clubId) || {
     clubId,
     progress: 0,
@@ -372,7 +372,7 @@ export const recordClubBookShare = (userId, clubId, bookId, sharedWith) => {
 };
 
 // Track when a user starts a club discussion
-export const recordClubDiscussion = (userId, clubId, discussionId) => {
+export const recordClubDiscussion = (userId, clubId) => {
   const clubProgress = getClubProgress(userId, clubId) || {
     clubId,
     progress: 0,

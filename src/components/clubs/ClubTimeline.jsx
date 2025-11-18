@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import clubMilestonesData from '../../data/clubMilestones.json';
 import usersData from '../../data/users.json';
-import booksData from '../../data/books.json';
 
 export default function ClubTimeline({ clubId }) {
   const [milestones, setMilestones] = useState([]);

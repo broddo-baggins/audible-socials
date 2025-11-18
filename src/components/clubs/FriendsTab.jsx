@@ -4,11 +4,12 @@ import usersData from '../../data/users.json';
 import booksData from '../../data/books.json';
 import clubsData from '../../data/clubs.json';
 import { getUserData, getFriends, removeFriend } from '../../utils/localStorage';
-import { sendFriendRequest, getSuggestedFriends, isUserBlocked } from '../../utils/friendManagement';
+import { sendFriendRequest, getSuggestedFriends, getFriendsOfFriends, isUserBlocked } from '../../utils/friendManagement';
 import FriendRequestManager from '../friends/FriendRequestManager';
 
 export default function FriendsTab() {
   const [friends, setFriends] = useState([]);
+  const [friendsOfFriends, setFriendsOfFriends] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -22,6 +23,10 @@ export default function FriendsTab() {
     const friendIds = getFriends();
     const friendsList = usersData.filter(u => friendIds.includes(u.id));
     setFriends(friendsList);
+
+    // Load friends of friends
+    const fofList = getFriendsOfFriends('user-me', usersData).slice(0, 6); // Show top 6
+    setFriendsOfFriends(fofList);
   };
 
   const handleSearch = (query) => {
@@ -48,11 +53,16 @@ export default function FriendsTab() {
     }
   };
 
-  const handleRemoveFriend = (friendId) => {
-    if (window.confirm('Are you sure you want to remove this friend?')) {
-      removeFriend(friendId);
-      loadFriends();
-      setSelectedFriend(null);
+  const handleRemoveFriend = (friendId, friendName) => {
+    if (window.confirm(`Are you sure you want to remove ${friendName} from your friends? This action cannot be undone.`)) {
+      const result = removeFriend(friendId);
+      if (result.success) {
+        loadFriends();
+        setSelectedFriend(null);
+        alert(`You have removed ${friendName} from your friends.`);
+      } else {
+        alert('Failed to remove friend. Please try again.');
+      }
     }
   };
 
@@ -90,6 +100,80 @@ export default function FriendsTab() {
 
       {/* Friend Requests */}
       <FriendRequestManager onUpdate={loadFriends} />
+
+      {/* Friends of Friends */}
+      {friendsOfFriends.length > 0 && (
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl shadow-md p-6 border border-indigo-200">
+          <div className="flex items-center space-x-2 mb-4">
+            <Users className="w-5 h-5 text-indigo-600" />
+            <h3 className="text-lg font-bold text-gray-900">Friends of Friends</h3>
+            <span className="bg-indigo-100 text-indigo-700 text-sm font-semibold px-2 py-1 rounded-full">
+              Discover
+            </span>
+          </div>
+          <p className="text-gray-600 mb-4">
+            People you might know through your friends. Expand your reading circle!
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {friendsOfFriends.map((user) => (
+              <div
+                key={user.id}
+                className="bg-white rounded-lg p-4 border border-gray-200 hover:border-indigo-300 transition-colors"
+              >
+                <div className="flex items-start space-x-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white font-semibold">
+                      {user.name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="font-semibold text-gray-900">{user.name}</h4>
+                      {user.isPremium && (
+                        <Crown className="w-4 h-4 text-yellow-500" />
+                      )}
+                    </div>
+
+                    <p className="text-sm text-gray-600 mb-2">
+                      {user.library.length} books • {user.joinedClubs.length} clubs
+                    </p>
+
+                    {user.mutualFriends > 0 && (
+                      <p className="text-xs text-indigo-600 mb-2">
+                        <Users className="w-3 h-3 inline mr-1" />
+                        {user.mutualFriends} mutual friend{user.mutualFriends !== 1 ? 's' : ''}
+                        {user.mutualFriendList.length > 0 && (
+                          <span>: {user.mutualFriendList.join(', ')}</span>
+                        )}
+                      </p>
+                    )}
+
+                    <button
+                      onClick={() => handleSendRequest(user.id, user.name)}
+                      disabled={isUserBlocked(user.id)}
+                      className="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors text-sm flex items-center justify-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <UserPlus className="w-4 h-4" />
+                      <span>Add Friend</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center mt-4">
+            <Link
+              to="/social"
+              className="text-indigo-600 hover:text-indigo-700 font-semibold text-sm"
+            >
+              Explore more connections →
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Search Bar */}
       <div className="bg-white rounded-xl shadow-md p-6">
@@ -227,15 +311,11 @@ export default function FriendsTab() {
                   <div className="p-4">
                     {currentBook ? (
                       <div>
-                        <h5 className="text-xs font-semibold text-gray-500 uppercase mb-3 flex items-center">
-                          <BookOpen className="w-4 h-4 mr-1 text-green-500" />
-                          Currently Listening
-                        </h5>
-                        <Link 
+                        <Link
                           to={`/book/${currentBook.id}`}
                           className="block group/book"
                         >
-                          <div className="flex space-x-3 mb-3">
+                          <div className="flex space-x-3 mb-4">
                             <img
                               src={currentBook.cover}
                               alt={currentBook.title}
@@ -254,22 +334,66 @@ export default function FriendsTab() {
                               )}
                             </div>
                           </div>
-                          {/* Progress Bar */}
-                          {friend.currentProgress && (
-                            <div>
-                              <div className="flex justify-between text-xs text-gray-600 mb-1">
-                                <span>Progress</span>
-                                <span className="font-semibold">{friend.currentProgress}%</span>
+                        </Link>
+
+                        {/* Enhanced Progress Display */}
+                        {friend.currentProgress !== undefined && friend.currentProgress > 0 ? (
+                          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-3 border border-green-200">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                  <span className="text-white text-sm font-bold">{friend.currentProgress}%</span>
+                                </div>
+                                <div>
+                                  <p className="text-xs font-semibold text-gray-700">Reading Progress</p>
+                                  <p className="text-xs text-gray-600">
+                                    {friend.currentProgress < 100
+                                      ? `${100 - friend.currentProgress}% remaining`
+                                      : 'Completed!'
+                                    }
+                                  </p>
+                                </div>
                               </div>
-                              <div className="w-full bg-gray-200 rounded-full h-1.5">
-                                <div
-                                  className="bg-gradient-to-r from-green-400 to-blue-500 h-1.5 rounded-full transition-all"
-                                  style={{ width: `${friend.currentProgress}%` }}
-                                />
+                              <div className="text-right">
+                                <p className="text-lg font-bold text-green-600">{friend.currentProgress}%</p>
+                                <p className="text-xs text-gray-500">complete</p>
                               </div>
                             </div>
-                          )}
-                        </Link>
+
+                            {/* Large Progress Bar */}
+                            <div className="w-full bg-gray-200 rounded-full h-3 mb-2 overflow-hidden">
+                              <div
+                                className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500 ease-out shadow-sm"
+                                style={{ width: `${friend.currentProgress}%` }}
+                              />
+                            </div>
+
+                            {/* Progress Milestones */}
+                            <div className="flex justify-between text-xs text-gray-500">
+                              <span>0%</span>
+                              <span className={friend.currentProgress >= 25 ? 'text-green-600 font-semibold' : ''}>25%</span>
+                              <span className={friend.currentProgress >= 50 ? 'text-green-600 font-semibold' : ''}>50%</span>
+                              <span className={friend.currentProgress >= 75 ? 'text-green-600 font-semibold' : ''}>75%</span>
+                              <span className={friend.currentProgress >= 100 ? 'text-green-600 font-semibold' : ''}>100%</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                            <div className="flex items-center gap-2">
+                              <BookOpen className="w-5 h-5 text-gray-400" />
+                              <span className="text-sm text-gray-600">Reading progress not shared</span>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-center mt-3">
+                          <Link
+                            to={`/book/${currentBook.id}`}
+                            className="text-xs text-audible-orange hover:text-audible-orange-dark font-semibold"
+                          >
+                            View Book Details →
+                          </Link>
+                        </div>
                       </div>
                     ) : (
                       <div className="text-center py-6">
@@ -294,10 +418,10 @@ export default function FriendsTab() {
                       Profile
                     </button>
                     <button
-                      onClick={() => handleRemoveFriend(friend.id)}
-                      className="px-4 py-2 border border-red-300 text-red-600 rounded-lg font-semibold hover:bg-red-50 transition-colors text-sm"
+                      onClick={() => handleRemoveFriend(friend.id, friend.name)}
+                      className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-semibold hover:from-red-600 hover:to-red-700 transition-all text-sm shadow-md hover:shadow-lg"
                     >
-                      Remove
+                      Remove Friend
                     </button>
                   </div>
                 </div>
@@ -334,10 +458,10 @@ export default function FriendsTab() {
                 </div>
               </div>
               <button
-                onClick={() => handleRemoveFriend(selectedFriend.id)}
-                className="text-red-600 text-sm font-semibold hover:text-red-700"
+                onClick={() => handleRemoveFriend(selectedFriend.id, selectedFriend.name)}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors text-sm"
               >
-                Remove
+                Remove Friend
               </button>
             </div>
 
