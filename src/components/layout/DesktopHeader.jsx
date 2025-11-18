@@ -14,6 +14,7 @@ const DesktopHeader = () => {
     { label: 'Home', path: '/' },
     { label: 'Browse', path: '/browse' },
     { label: 'Library', path: '/library' },
+    { label: 'Socials', path: '/clubs' },
     { label: 'Originals', path: '/originals' },
     { label: 'Podcasts', path: '/podcasts' },
   ];
@@ -68,12 +69,14 @@ const DesktopHeader = () => {
     <header className="bg-white border-b border-audible-gray-200 sticky top-0 z-50">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <div className="text-2xl font-bold text-audible-text-primary">
-              audible
-            </div>
-          </Link>
+             {/* Logo */}
+             <Link to="/" className="flex items-center">
+               <img
+                 src="/images/audible-logo.svg"
+                 alt="Audible"
+                 className="h-8 w-auto"
+               />
+             </Link>
 
           {/* Main Navigation */}
           <div className="hidden md:flex items-center space-x-8">

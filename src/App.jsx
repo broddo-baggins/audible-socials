@@ -13,6 +13,7 @@ import Browse from './pages/Browse';
 import BookDetail from './pages/BookDetail';
 import Search from './pages/Search';
 import Account from './pages/Account';
+import MyBookClubs from './pages/MyBookClubs';
 
 function App() {
   return (
@@ -38,6 +39,9 @@ function App() {
               <Route path="/settings" element={<Account />} />
               <Route path="/help" element={<Account />} />
               <Route path="/notifications" element={<Account />} />
+              <Route path="/clubs" element={<MyBookClubs />} />
+              <Route path="/clubs/friends" element={<MyBookClubs />} />
+              <Route path="/clubs/activity" element={<MyBookClubs />} />
             </Routes>
           </main>
           

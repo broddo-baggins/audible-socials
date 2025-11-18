@@ -8,6 +8,7 @@ import BookClubTeaser from '../components/social/BookClubTeaser';
 import { Skeleton } from '../components/ui';
 import { usePlayer } from '../contexts/PlayerContext';
 import { getImageUrl } from '../utils/imageCache';
+import booksData from '../data/books.json';
 
 const BookDetail = () => {
   const { bookId } = useParams();
@@ -21,9 +22,6 @@ const BookDetail = () => {
   useEffect(() => {
     const loadBookDetails = async () => {
       try {
-        const response = await fetch('/src/data/books.json');
-        const booksData = await response.json();
-        
         const foundBook = booksData.find(b => b.id === bookId);
         if (!foundBook) {
           setLoading(false);

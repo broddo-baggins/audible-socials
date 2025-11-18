@@ -5,6 +5,7 @@ import { Input, Tag, Badge } from '../components/ui';
 import BookGrid from '../components/books/BookGrid';
 import { searchBooks, getAutocompleteSuggestions, debounce } from '../utils/searchFilter';
 import { getImageUrl } from '../utils/imageCache';
+import booksData from '../data/books.json';
 
 const Search = () => {
   const navigate = useNavigate();
@@ -33,9 +34,6 @@ const Search = () => {
   useEffect(() => {
     const loadBooks = async () => {
       try {
-        const response = await fetch('/src/data/books.json');
-        const booksData = await response.json();
-        
         const booksWithCovers = await Promise.all(
           booksData.map(async (book) => ({
             ...book,

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, Calendar, Crown, TrendingUp } from 'lucide-react';
 import clubsData from '../../data/clubs.json';
+import booksData from '../../data/books.json';
 import { getUserData, getJoinedClubs } from '../../utils/localStorage';
 
 export default function BookClubsTab() {
@@ -75,60 +76,91 @@ export default function BookClubsTab() {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {joinedClubs.map((club) => (
-              <Link
-                key={club.id}
-                to={`/club/${club.id}`}
-                className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all p-6 border-2 border-purple-200"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <h3 className="text-xl font-bold text-gray-900">{club.name}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {joinedClubs.map((club) => {
+              const currentBook = booksData.find(b => b.id === club.currentBook);
+              
+              return (
+                <Link
+                  key={club.id}
+                  to={`/club/${club.id}`}
+                  className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all overflow-hidden border-2 border-purple-200 hover:border-purple-400 group"
+                >
+                  {/* Book Cover Header */}
+                  {currentBook && (
+                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
+                      <img
+                        src={currentBook.cover}
+                        alt={currentBook.title}
+                        className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                       {club.isPremium && (
-                        <span className="bg-audible-gold text-white text-xs font-semibold px-2 py-1 rounded-full flex items-center">
+                        <div className="absolute top-3 right-3 bg-audible-gold text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center shadow-lg">
                           <Crown className="w-3 h-3 mr-1" />
                           Premium
-                        </span>
+                        </div>
                       )}
+                      <div className="absolute bottom-3 left-3 right-3">
+                        <p className="text-white text-sm font-semibold mb-1">Currently Reading:</p>
+                        <p className="text-white font-bold text-lg line-clamp-1">{currentBook.title}</p>
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-600">Hosted by {club.host}</p>
-                  </div>
-                </div>
+                  )}
 
-                <p className="text-sm text-gray-700 mb-4 line-clamp-2">{club.description}</p>
-
-                <div className="flex items-center justify-between text-sm border-t border-gray-200 pt-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center text-gray-600">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      <span className="font-semibold text-purple-600">{club.daysRemaining} days</span>
+                  <div className="p-5">
+                    {/* Club Info */}
+                    <div className="mb-4">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">
+                        {club.name}
+                      </h3>
+                      <div className="flex items-center space-x-2 mb-3">
+                        <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
+                          <span className="text-white font-bold text-xs">
+                            {club.host.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">Hosted by</p>
+                          <p className="text-sm font-semibold text-gray-900">{club.host}</p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center text-gray-600">
-                      <Users className="w-4 h-4 mr-1" />
-                      <span>{club.memberCount.toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
 
-                {club.events && club.events.length > 0 && (
-                  <div className="mt-4 bg-purple-50 rounded-lg p-3">
-                    <p className="text-xs font-semibold text-purple-900 mb-1">
-                      Next Event: {club.events[0].title}
-                    </p>
-                    <p className="text-xs text-purple-700">
-                      {new Date(club.events[0].date).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit'
-                      })}
-                    </p>
+                    {/* Stats */}
+                    <div className="flex items-center justify-between text-sm border-t border-gray-200 pt-3 mb-3">
+                      <div className="flex items-center text-gray-600">
+                        <Calendar className="w-4 h-4 mr-1 text-purple-500" />
+                        <span className="font-semibold">{club.daysRemaining} days left</span>
+                      </div>
+                      <div className="flex items-center text-gray-600">
+                        <Users className="w-4 h-4 mr-1 text-purple-500" />
+                        <span className="font-semibold">{club.memberCount.toLocaleString()}</span>
+                      </div>
+                    </div>
+
+                    {/* Next Event */}
+                    {club.events && club.events.length > 0 && (
+                      <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-3 border border-purple-200">
+                        <p className="text-xs font-semibold text-purple-900 mb-1 flex items-center">
+                          <Calendar className="w-3 h-3 mr-1" />
+                          Next Event
+                        </p>
+                        <p className="text-sm font-bold text-purple-900 mb-1">{club.events[0].title}</p>
+                        <p className="text-xs text-purple-700">
+                          {new Date(club.events[0].date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                    )}
                   </div>
-                )}
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </section>
       )}
@@ -162,34 +194,70 @@ export default function BookClubsTab() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredClubs.map((club) => (
-              <Link
-                key={club.id}
-                to={`/club/${club.id}`}
-                className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all p-6 border-2 border-transparent hover:border-purple-600"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-lg font-bold text-gray-900 flex-1">{club.name}</h3>
-                  {club.isPremium && (
-                    <span className="bg-audible-gold text-white text-xs font-semibold px-2 py-1 rounded-full flex items-center ml-2">
-                      <Crown className="w-3 h-3 mr-1" />
-                      Premium
-                    </span>
+            {featuredClubs.map((club) => {
+              const currentBook = booksData.find(b => b.id === club.currentBook);
+              
+              return (
+                <Link
+                  key={club.id}
+                  to={`/club/${club.id}`}
+                  className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all overflow-hidden border-2 border-gray-200 hover:border-purple-500 group"
+                >
+                  {/* Book Cover Header */}
+                  {currentBook && (
+                    <div className="relative h-44 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                      <img
+                        src={currentBook.cover}
+                        alt={currentBook.title}
+                        className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                      {club.isPremium && (
+                        <div className="absolute top-3 right-3 bg-audible-gold text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center shadow-lg">
+                          <Crown className="w-3 h-3 mr-1" />
+                          Premium
+                        </div>
+                      )}
+                      <div className="absolute bottom-3 left-3 right-3">
+                        <p className="text-white/90 text-xs font-semibold mb-1">Currently Reading:</p>
+                        <p className="text-white font-bold line-clamp-1">{currentBook.title}</p>
+                      </div>
+                    </div>
                   )}
-                </div>
 
-                <p className="text-xs text-gray-600 mb-3">Hosted by {club.host}</p>
-                <p className="text-sm text-gray-700 mb-4 line-clamp-2">{club.description}</p>
+                  <div className="p-4">
+                    {/* Club Info */}
+                    <div className="mb-3">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors line-clamp-1">
+                        {club.name}
+                      </h3>
+                      <div className="flex items-center space-x-2 mb-2">
+                        <div className="w-7 h-7 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-white font-bold text-xs">
+                            {club.host.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                          </span>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs text-gray-500">Hosted by</p>
+                          <p className="text-sm font-semibold text-gray-900 truncate">{club.host}</p>
+                        </div>
+                      </div>
+                    </div>
 
-                <div className="flex items-center justify-between text-sm text-gray-600 border-t border-gray-200 pt-3">
-                  <div className="flex items-center">
-                    <Users className="w-4 h-4 mr-1" />
-                    <span>{club.memberCount.toLocaleString()}</span>
+                    <p className="text-xs text-gray-600 mb-3 line-clamp-2">{club.description}</p>
+
+                    {/* Stats */}
+                    <div className="flex items-center justify-between text-xs text-gray-600 border-t border-gray-200 pt-3">
+                      <div className="flex items-center">
+                        <Users className="w-4 h-4 mr-1 text-purple-500" />
+                        <span className="font-semibold">{club.memberCount.toLocaleString()}</span>
+                      </div>
+                      <span className="text-purple-600 font-semibold">{club.meetingsPerMonth} meetings/mo</span>
+                    </div>
                   </div>
-                  <span className="text-xs">{club.meetingsPerMonth} meetings/mo</span>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </section>

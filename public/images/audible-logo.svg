@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" width="120" height="32">
+  <defs>
+    <style>
+      .audible-logo-text { 
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+        font-weight: 400; 
+        font-size: 28px; 
+        fill: #FF6B35; 
+      }
+    </style>
+  </defs>
+  <text x="0" y="24" class="audible-logo-text">audible</text>
+</svg>

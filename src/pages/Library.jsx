@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getImageUrl } from '../utils/imageCache';
 import BookGrid from '../components/books/BookGrid';
 import { BookCardSkeleton } from '../components/ui/Skeleton';
+import booksData from '../data/books.json';
 
 const Library = () => {
   const [books, setBooks] = useState([]);
@@ -23,9 +24,6 @@ const Library = () => {
         const library = JSON.parse(localStorage.getItem('echoread_library') || '[]');
         
         // For demo, load some books
-        const response = await fetch('/src/data/books.json');
-        const booksData = await response.json();
-        
         const booksWithCovers = await Promise.all(
           booksData.slice(0, 20).map(async (book) => ({
             ...book,

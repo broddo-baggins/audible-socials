@@ -1,4 +1,4 @@
-import { Home, Library, Compass, Search, User } from 'lucide-react';
+import { Home, Library, Compass, Search, User, Users } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 const MobileBottomNav = () => {
@@ -7,7 +7,7 @@ const MobileBottomNav = () => {
   const navItems = [
     { label: 'Home', path: '/', icon: Home },
     { label: 'Library', path: '/library', icon: Library },
-    { label: 'Discover', path: '/browse', icon: Compass },
+    { label: 'Socials', path: '/clubs', icon: Users },
     { label: 'Search', path: '/search', icon: Search },
     { label: 'Profile', path: '/account', icon: User },
   ];

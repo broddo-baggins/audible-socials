@@ -78,14 +78,15 @@ const Footer = () => {
 
         {/* Bottom Footer */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Logo and Copyright */}
-          <div className="flex flex-col items-center md:items-start gap-2">
-            <Link
-              to="/"
-              className="text-xl font-bold text-audible-text-primary hover:text-audible-orange transition-colors"
-            >
-              audible
-            </Link>
+             {/* Logo and Copyright */}
+             <div className="flex flex-col items-center md:items-start gap-2">
+               <Link to="/" className="flex items-center">
+                 <img
+                   src="/images/audible-logo.svg"
+                   alt="Audible"
+                   className="h-6 w-auto"
+                 />
+               </Link>
             <p className="text-audible-text-tertiary text-sm">
               &copy; {currentYear} Audible. All rights reserved.
             </p>

@@ -6,6 +6,7 @@ import BookGrid from '../components/books/BookGrid';
 import { Tag, Button } from '../components/ui';
 import { searchBooks, filterBooks, sortBooks, getFilterOptions, paginateResults } from '../utils/searchFilter';
 import { getImageUrl } from '../utils/imageCache';
+import booksData from '../data/books.json';
 
 const Browse = () => {
   const location = useLocation();
@@ -44,9 +45,6 @@ const Browse = () => {
   useEffect(() => {
     const loadBooks = async () => {
       try {
-        const response = await fetch('/src/data/books.json');
-        const booksData = await response.json();
-        
         const booksWithCovers = await Promise.all(
           booksData.map(async (book) => ({
             ...book,

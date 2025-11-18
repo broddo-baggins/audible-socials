@@ -5,14 +5,20 @@
     "isPremium": false,
     "credits": 2,
     "joinedClubs": [],
-    "library": ["1", "3", "7", "10", "19", "26"],
-    "currentlyReading": "1",
+    "library": [
+      "64",
+      "46",
+      "45",
+      "62",
+      "22",
+      "49"
+    ],
+    "currentlyReading": "46",
     "currentProgress": 45,
     "listeningSpeed": 1.2,
     "ratings": {
-      "26": 5,
-      "3": 4,
-      "10": 5
+      "62": 4,
+      "64": 4.5
     },
     "privacySettings": {
       "shareLibrary": true,
@@ -20,25 +26,97 @@
       "shareRatings": true,
       "shareClubs": true
     },
-    "rsvpEvents": ["e1", "e3"],
-    "recommendedBooks": ["2", "4", "6"]
+    "rsvpEvents": [
+      "e1",
+      "e3"
+    ],
+    "recommendedBooks": [
+      "5",
+      "93",
+      "3",
+      "25",
+      "9",
+      "48"
+    ],
+    "wishlist": [
+      "84",
+      "67",
+      "57",
+      "88",
+      "53",
+      "8",
+      "9"
+    ],
+    "completedBooks": [
+      "62",
+      "64"
+    ],
+    "inProgressBooks": [
+      "46",
+      "45",
+      "22"
+    ],
+    "stats": {
+      "totalHoursListened": 20,
+      "booksCompleted": 2,
+      "currentStreak": 25,
+      "longestStreak": 21,
+      "favoriteGenre": "Mystery & Thriller"
+    }
   },
   {
     "id": "1",
     "name": "Emma Richardson",
     "isPremium": true,
     "credits": 3,
-    "joinedClubs": ["1", "3"],
-    "library": ["1", "2", "7", "10", "12", "14", "19", "23", "26", "38"],
-    "currentlyReading": "1",
-    "currentProgress": 78,
+    "joinedClubs": [
+      "1",
+      "3"
+    ],
+    "library": [
+      "70",
+      "14",
+      "1",
+      "33",
+      "45",
+      "66",
+      "84",
+      "13",
+      "76",
+      "61",
+      "82",
+      "26",
+      "54",
+      "83",
+      "52",
+      "3",
+      "73",
+      "22",
+      "17",
+      "44",
+      "77",
+      "23",
+      "58",
+      "28",
+      "100",
+      "69"
+    ],
+    "currentlyReading": "14",
+    "currentProgress": 61,
     "listeningSpeed": 1.5,
     "ratings": {
       "1": 5,
-      "26": 5,
-      "7": 4,
-      "10": 5,
-      "23": 5
+      "3": 5,
+      "13": 4,
+      "17": 4.5,
+      "23": 5,
+      "26": 4.5,
+      "33": 4,
+      "44": 3,
+      "58": 4.5,
+      "61": 5,
+      "69": 4.5,
+      "77": 4.5
     },
     "privacySettings": {
       "shareLibrary": true,
@@ -46,23 +124,81 @@
       "shareRatings": true,
       "shareClubs": true
     },
-    "rsvpEvents": ["e1", "e6"],
-    "recommendedBooks": ["6", "9", "12"]
+    "rsvpEvents": [
+      "e1",
+      "e6"
+    ],
+    "recommendedBooks": [
+      "81",
+      "78",
+      "8"
+    ],
+    "wishlist": [
+      "53",
+      "60",
+      "93",
+      "27",
+      "20",
+      "39",
+      "50",
+      "62",
+      "10",
+      "51",
+      "4",
+      "38",
+      "49"
+    ],
+    "completedBooks": [
+      "1",
+      "3",
+      "13",
+      "17",
+      "23",
+      "26",
+      "33",
+      "44",
+      "58",
+      "61",
+      "69",
+      "77"
+    ],
+    "inProgressBooks": [
+      "70",
+      "14",
+      "45",
+      "66"
+    ],
+    "stats": {
+      "totalHoursListened": 132,
+      "booksCompleted": 12,
+      "currentStreak": 30,
+      "longestStreak": 41,
+      "favoriteGenre": "Science Fiction"
+    }
   },
   {
     "id": "2",
     "name": "Marcus Chen",
     "isPremium": false,
     "credits": 1,
-    "joinedClubs": ["8"],
-    "library": ["3", "15", "19", "20", "28", "32", "39", "45"],
-    "currentlyReading": "3",
-    "currentProgress": 34,
-    "listeningSpeed": 1.0,
+    "joinedClubs": [
+      "8"
+    ],
+    "library": [
+      "62",
+      "94",
+      "56",
+      "79",
+      "8",
+      "54"
+    ],
+    "currentlyReading": "94",
+    "currentProgress": 19,
+    "listeningSpeed": 1,
     "ratings": {
-      "3": 5,
-      "20": 4,
-      "19": 5
+      "56": 4,
+      "62": 5,
+      "79": 5
     },
     "privacySettings": {
       "shareLibrary": true,
@@ -70,24 +206,83 @@
       "shareRatings": true,
       "shareClubs": true
     },
-    "rsvpEvents": ["e14"],
-    "recommendedBooks": ["15", "20", "28"]
+    "rsvpEvents": [
+      "e14"
+    ],
+    "recommendedBooks": [
+      "55",
+      "68",
+      "17"
+    ],
+    "wishlist": [
+      "52",
+      "19",
+      "20",
+      "25",
+      "1"
+    ],
+    "completedBooks": [
+      "56",
+      "62",
+      "79"
+    ],
+    "inProgressBooks": [
+      "94"
+    ],
+    "stats": {
+      "totalHoursListened": 51,
+      "booksCompleted": 3,
+      "currentStreak": 9,
+      "longestStreak": 15,
+      "favoriteGenre": "Science Fiction"
+    }
   },
   {
     "id": "3",
     "name": "Sofia Martinez",
     "isPremium": true,
     "credits": 5,
-    "joinedClubs": ["5", "7"],
-    "library": ["2", "5", "6", "7", "10", "13", "17", "24", "30", "42", "44", "47"],
-    "currentlyReading": "7",
-    "currentProgress": 62,
+    "joinedClubs": [
+      "5",
+      "7"
+    ],
+    "library": [
+      "20",
+      "63",
+      "42",
+      "80",
+      "28",
+      "96",
+      "12",
+      "91",
+      "99",
+      "34",
+      "5",
+      "51",
+      "60",
+      "9",
+      "72",
+      "73",
+      "54",
+      "33",
+      "10",
+      "30",
+      "27"
+    ],
+    "currentlyReading": "80",
+    "currentProgress": 13,
     "listeningSpeed": 1.75,
     "ratings": {
-      "2": 5,
-      "10": 5,
-      "13": 4,
-      "6": 5
+      "12": 5,
+      "20": 5,
+      "27": 4,
+      "30": 3,
+      "34": 4.5,
+      "51": 4.5,
+      "80": 3,
+      "91": 5,
+      "96": 4,
+      "99": 5
     },
     "privacySettings": {
       "shareLibrary": true,
@@ -95,21 +290,109 @@
       "shareRatings": true,
       "shareClubs": true
     },
-    "rsvpEvents": ["e10", "e11"],
-    "recommendedBooks": ["13", "16", "18"]
+    "rsvpEvents": [
+      "e10",
+      "e11"
+    ],
+    "recommendedBooks": [
+      "61",
+      "49",
+      "21",
+      "52"
+    ],
+    "wishlist": [
+      "74",
+      "85",
+      "87",
+      "66",
+      "79",
+      "55",
+      "76",
+      "61",
+      "1",
+      "24",
+      "84",
+      "69",
+      "36",
+      "46",
+      "15"
+    ],
+    "completedBooks": [
+      "12",
+      "20",
+      "27",
+      "30",
+      "34",
+      "51",
+      "80",
+      "91",
+      "96",
+      "99"
+    ],
+    "inProgressBooks": [
+      "63",
+      "42",
+      "28",
+      "5"
+    ],
+    "stats": {
+      "totalHoursListened": 190,
+      "booksCompleted": 10,
+      "currentStreak": 21,
+      "longestStreak": 36,
+      "favoriteGenre": "Fantasy"
+    }
   },
   {
     "id": "4",
     "name": "Jamal Washington",
     "isPremium": false,
     "credits": 0,
-    "joinedClubs": ["2"],
-    "library": ["4", "9", "21", "22", "35", "36", "40"],
-    "currentlyReading": "4",
+    "joinedClubs": [
+      "2"
+    ],
+    "library": [
+      "82",
+      "64",
+      "58",
+      "72",
+      "10"
+    ],
+    "currentlyReading": "72",
     "ratings": {
-      "4": 4,
-      "9": 5,
-      "21": 5
+      "64": 5,
+      "72": 4.5,
+      "82": 4
+    },
+    "currentProgress": 14,
+    "recommendedBooks": [
+      "38",
+      "49",
+      "67",
+      "47"
+    ],
+    "wishlist": [
+      "21",
+      "74",
+      "17",
+      "67",
+      "26"
+    ],
+    "completedBooks": [
+      "64",
+      "72",
+      "82"
+    ],
+    "inProgressBooks": [
+      "58",
+      "10"
+    ],
+    "stats": {
+      "totalHoursListened": 367,
+      "booksCompleted": 3,
+      "currentStreak": 20,
+      "longestStreak": 55,
+      "favoriteGenre": "Mystery & Thriller"
     }
   },
   {
@@ -117,13 +400,102 @@
     "name": "Olivia Thompson",
     "isPremium": true,
     "credits": 2,
-    "joinedClubs": ["6"],
-    "library": ["11", "12", "14", "16", "23", "31", "38"],
-    "currentlyReading": "12",
+    "joinedClubs": [
+      "6"
+    ],
+    "library": [
+      "62",
+      "54",
+      "85",
+      "14",
+      "16",
+      "87",
+      "35",
+      "24",
+      "41",
+      "49",
+      "56",
+      "97",
+      "99",
+      "48",
+      "91",
+      "18",
+      "55",
+      "90",
+      "19",
+      "9",
+      "3",
+      "15",
+      "31",
+      "67",
+      "2",
+      "96",
+      "33",
+      "37",
+      "98"
+    ],
+    "currentlyReading": "85",
     "ratings": {
-      "11": 5,
-      "23": 5,
-      "16": 4
+      "3": 4.5,
+      "9": 4.5,
+      "16": 3.5,
+      "31": 4,
+      "33": 4.5,
+      "37": 4.5,
+      "41": 3,
+      "54": 4,
+      "62": 5,
+      "85": 4,
+      "91": 4.5,
+      "96": 3.5,
+      "97": 4,
+      "98": 4.5,
+      "99": 3
+    },
+    "currentProgress": 16,
+    "recommendedBooks": [
+      "83",
+      "39",
+      "1",
+      "38"
+    ],
+    "wishlist": [
+      "57",
+      "42",
+      "21",
+      "8",
+      "27",
+      "44",
+      "6",
+      "76"
+    ],
+    "completedBooks": [
+      "3",
+      "9",
+      "16",
+      "31",
+      "33",
+      "37",
+      "41",
+      "54",
+      "62",
+      "85",
+      "91",
+      "96",
+      "97",
+      "98",
+      "99"
+    ],
+    "inProgressBooks": [
+      "14",
+      "87"
+    ],
+    "stats": {
+      "totalHoursListened": 237,
+      "booksCompleted": 15,
+      "currentStreak": 8,
+      "longestStreak": 60,
+      "favoriteGenre": "Science Fiction"
     }
   },
   {
@@ -131,13 +503,84 @@
     "name": "Liam O'Connor",
     "isPremium": false,
     "credits": 1,
-    "joinedClubs": ["1"],
-    "library": ["1", "8", "21", "26", "34", "40", "46"],
-    "currentlyReading": "26",
+    "joinedClubs": [
+      "1"
+    ],
+    "library": [
+      "60",
+      "48",
+      "5",
+      "22",
+      "38",
+      "24",
+      "62",
+      "34",
+      "27",
+      "58",
+      "61",
+      "35",
+      "12",
+      "28",
+      "23",
+      "19",
+      "29",
+      "54",
+      "57",
+      "33"
+    ],
+    "currentlyReading": "5",
     "ratings": {
-      "1": 5,
-      "8": 4,
-      "46": 5
+      "5": 4.5,
+      "22": 3.5,
+      "24": 3.5,
+      "27": 4,
+      "35": 4,
+      "48": 5,
+      "58": 3,
+      "60": 4.5
+    },
+    "currentProgress": 95,
+    "recommendedBooks": [
+      "64",
+      "1",
+      "41",
+      "50",
+      "43"
+    ],
+    "wishlist": [
+      "82",
+      "1",
+      "41",
+      "15",
+      "36",
+      "46",
+      "6",
+      "13",
+      "2",
+      "51",
+      "72"
+    ],
+    "completedBooks": [
+      "5",
+      "22",
+      "24",
+      "27",
+      "35",
+      "48",
+      "58",
+      "60"
+    ],
+    "inProgressBooks": [
+      "38",
+      "62",
+      "34"
+    ],
+    "stats": {
+      "totalHoursListened": 497,
+      "booksCompleted": 8,
+      "currentStreak": 19,
+      "longestStreak": 51,
+      "favoriteGenre": "Historical Fiction"
     }
   },
   {
@@ -145,14 +588,107 @@
     "name": "Aisha Patel",
     "isPremium": true,
     "credits": 4,
-    "joinedClubs": ["4", "8"],
-    "library": ["3", "6", "10", "13", "15", "19", "25", "39", "43", "45"],
-    "currentlyReading": "19",
+    "joinedClubs": [
+      "4",
+      "8"
+    ],
+    "library": [
+      "13",
+      "61",
+      "54",
+      "5",
+      "50",
+      "16",
+      "67",
+      "26",
+      "1",
+      "60",
+      "41",
+      "20",
+      "7",
+      "45",
+      "11",
+      "10",
+      "58",
+      "29",
+      "49",
+      "2",
+      "36",
+      "98",
+      "14",
+      "40",
+      "83",
+      "71",
+      "21",
+      "85",
+      "62"
+    ],
+    "currentlyReading": "13",
     "ratings": {
-      "19": 5,
-      "6": 5,
-      "43": 5,
-      "3": 4
+      "1": 4,
+      "5": 3.5,
+      "11": 5,
+      "14": 4.5,
+      "16": 4,
+      "20": 3.5,
+      "21": 4.5,
+      "26": 3,
+      "49": 3,
+      "54": 4.5,
+      "58": 3.5,
+      "60": 5,
+      "61": 4.5,
+      "62": 4,
+      "67": 3,
+      "71": 3.5,
+      "83": 4,
+      "98": 4
+    },
+    "currentProgress": 84,
+    "recommendedBooks": [
+      "96",
+      "32",
+      "76",
+      "73"
+    ],
+    "wishlist": [
+      "78",
+      "96",
+      "22",
+      "64",
+      "39",
+      "24"
+    ],
+    "completedBooks": [
+      "1",
+      "5",
+      "11",
+      "14",
+      "16",
+      "20",
+      "21",
+      "26",
+      "49",
+      "54",
+      "58",
+      "60",
+      "61",
+      "62",
+      "67",
+      "71",
+      "83",
+      "98"
+    ],
+    "inProgressBooks": [
+      "13",
+      "50"
+    ],
+    "stats": {
+      "totalHoursListened": 246,
+      "booksCompleted": 18,
+      "currentStreak": 15,
+      "longestStreak": 34,
+      "favoriteGenre": "Memoir & Biography"
     }
   },
   {
@@ -161,12 +697,81 @@
     "isPremium": false,
     "credits": 2,
     "joinedClubs": [],
-    "library": ["1", "5", "17", "27", "30", "37", "41", "44"],
-    "currentlyReading": "44",
+    "library": [
+      "4",
+      "59",
+      "40",
+      "41",
+      "36",
+      "45",
+      "17",
+      "1",
+      "29",
+      "38",
+      "23",
+      "49",
+      "26",
+      "44",
+      "21",
+      "28"
+    ],
+    "currentlyReading": "4",
     "ratings": {
-      "5": 4,
-      "30": 5,
-      "17": 4
+      "1": 3.5,
+      "17": 3.5,
+      "21": 3.5,
+      "23": 4.5,
+      "26": 4,
+      "28": 5,
+      "38": 5,
+      "40": 4,
+      "44": 5,
+      "45": 4.5
+    },
+    "currentProgress": 21,
+    "recommendedBooks": [
+      "72",
+      "39",
+      "99",
+      "27",
+      "15",
+      "93"
+    ],
+    "wishlist": [
+      "84",
+      "27",
+      "88",
+      "37",
+      "63",
+      "13",
+      "18",
+      "54",
+      "43",
+      "75",
+      "70",
+      "61"
+    ],
+    "completedBooks": [
+      "1",
+      "17",
+      "21",
+      "23",
+      "26",
+      "28",
+      "38",
+      "40",
+      "44",
+      "45"
+    ],
+    "inProgressBooks": [
+      "4"
+    ],
+    "stats": {
+      "totalHoursListened": 471,
+      "booksCompleted": 10,
+      "currentStreak": 14,
+      "longestStreak": 56,
+      "favoriteGenre": "Mystery & Thriller"
     }
   },
   {
@@ -174,14 +779,99 @@
     "name": "Isabella Santos",
     "isPremium": true,
     "credits": 3,
-    "joinedClubs": ["2", "5"],
-    "library": ["2", "4", "5", "7", "9", "22", "24", "35", "42", "44", "48"],
-    "currentlyReading": "4",
+    "joinedClubs": [
+      "2",
+      "5"
+    ],
+    "library": [
+      "62",
+      "47",
+      "7",
+      "83",
+      "90",
+      "95",
+      "4",
+      "6",
+      "55",
+      "88",
+      "61",
+      "78",
+      "85",
+      "92",
+      "40",
+      "65",
+      "71",
+      "25",
+      "10",
+      "67",
+      "24",
+      "35",
+      "5",
+      "56"
+    ],
+    "currentlyReading": "7",
     "ratings": {
-      "2": 5,
-      "7": 5,
-      "24": 5,
-      "48": 5
+      "4": 4,
+      "10": 4,
+      "25": 3.5,
+      "47": 4.5,
+      "55": 4,
+      "61": 4,
+      "62": 4,
+      "67": 3.5,
+      "71": 4,
+      "78": 4,
+      "88": 4,
+      "90": 4.5,
+      "92": 4.5,
+      "95": 4.5
+    },
+    "currentProgress": 43,
+    "recommendedBooks": [
+      "8",
+      "18",
+      "12",
+      "42",
+      "27",
+      "45",
+      "43"
+    ],
+    "wishlist": [
+      "84",
+      "37",
+      "3",
+      "45",
+      "9",
+      "36",
+      "22",
+      "14"
+    ],
+    "completedBooks": [
+      "4",
+      "10",
+      "25",
+      "47",
+      "55",
+      "61",
+      "62",
+      "67",
+      "71",
+      "78",
+      "88",
+      "90",
+      "92",
+      "95"
+    ],
+    "inProgressBooks": [
+      "7",
+      "83"
+    ],
+    "stats": {
+      "totalHoursListened": 75,
+      "booksCompleted": 14,
+      "currentStreak": 20,
+      "longestStreak": 33,
+      "favoriteGenre": "Science Fiction"
     }
   },
   {
@@ -189,13 +879,70 @@
     "name": "Ethan Brooks",
     "isPremium": false,
     "credits": 1,
-    "joinedClubs": ["3"],
-    "library": ["1", "8", "18", "21", "23", "31", "34", "36", "40", "46"],
-    "currentlyReading": "8",
+    "joinedClubs": [
+      "3"
+    ],
+    "library": [
+      "21",
+      "23",
+      "69",
+      "39",
+      "38",
+      "18",
+      "76",
+      "5",
+      "81",
+      "44",
+      "63",
+      "61",
+      "42",
+      "46"
+    ],
+    "currentlyReading": "21",
     "ratings": {
-      "23": 5,
-      "34": 4,
-      "21": 5
+      "18": 4,
+      "21": 4,
+      "39": 3.5,
+      "44": 3.5,
+      "61": 3,
+      "63": 5
+    },
+    "currentProgress": 76,
+    "recommendedBooks": [
+      "53",
+      "88",
+      "84",
+      "17"
+    ],
+    "wishlist": [
+      "64",
+      "95",
+      "94",
+      "11",
+      "25",
+      "12",
+      "22"
+    ],
+    "completedBooks": [
+      "18",
+      "21",
+      "39",
+      "44",
+      "61",
+      "63"
+    ],
+    "inProgressBooks": [
+      "23",
+      "69",
+      "38",
+      "76"
+    ],
+    "stats": {
+      "totalHoursListened": 287,
+      "booksCompleted": 6,
+      "currentStreak": 24,
+      "longestStreak": 8,
+      "favoriteGenre": "Science Fiction"
     }
   },
   {
@@ -203,13 +950,96 @@
     "name": "Mia Johnson",
     "isPremium": true,
     "credits": 6,
-    "joinedClubs": ["6"],
-    "library": ["11", "12", "14", "16", "23", "31", "33", "38", "48"],
-    "currentlyReading": "12",
+    "joinedClubs": [
+      "6"
+    ],
+    "library": [
+      "51",
+      "95",
+      "61",
+      "77",
+      "71",
+      "89",
+      "70",
+      "93",
+      "100",
+      "57",
+      "78",
+      "30",
+      "29",
+      "88",
+      "4",
+      "80",
+      "1",
+      "34",
+      "28",
+      "73",
+      "75",
+      "85"
+    ],
+    "currentlyReading": "77",
     "ratings": {
-      "11": 5,
-      "12": 5,
-      "33": 5
+      "4": 3.5,
+      "28": 5,
+      "29": 3,
+      "34": 4,
+      "51": 4.5,
+      "57": 3.5,
+      "61": 5,
+      "71": 4.5,
+      "73": 5,
+      "77": 3,
+      "80": 4,
+      "88": 4.5,
+      "89": 3.5
+    },
+    "currentProgress": 87,
+    "recommendedBooks": [
+      "20",
+      "54",
+      "10"
+    ],
+    "wishlist": [
+      "14",
+      "49",
+      "48",
+      "64",
+      "2",
+      "79",
+      "36",
+      "31",
+      "23",
+      "10",
+      "56",
+      "68",
+      "21",
+      "81",
+      "96"
+    ],
+    "completedBooks": [
+      "4",
+      "28",
+      "29",
+      "34",
+      "51",
+      "57",
+      "61",
+      "71",
+      "73",
+      "77",
+      "80",
+      "88",
+      "89"
+    ],
+    "inProgressBooks": [
+      "95"
+    ],
+    "stats": {
+      "totalHoursListened": 348,
+      "booksCompleted": 13,
+      "currentStreak": 22,
+      "longestStreak": 37,
+      "favoriteGenre": "Self Development"
     }
   },
   {
@@ -217,13 +1047,91 @@
     "name": "Lucas Kim",
     "isPremium": false,
     "credits": 0,
-    "joinedClubs": ["8"],
-    "library": ["3", "15", "20", "28", "32", "39", "45", "50"],
-    "currentlyReading": "3",
+    "joinedClubs": [
+      "8"
+    ],
+    "library": [
+      "75",
+      "91",
+      "40",
+      "85",
+      "94",
+      "71",
+      "8",
+      "52",
+      "37",
+      "41",
+      "14",
+      "100",
+      "35",
+      "13",
+      "53",
+      "1",
+      "62",
+      "46",
+      "18"
+    ],
+    "currentlyReading": "85",
     "ratings": {
-      "3": 5,
-      "15": 4,
-      "45": 5
+      "13": 4.5,
+      "14": 5,
+      "35": 4,
+      "37": 3,
+      "40": 4.5,
+      "41": 5,
+      "46": 4,
+      "52": 5,
+      "53": 4.5,
+      "71": 4,
+      "85": 4,
+      "91": 3,
+      "94": 3.5
+    },
+    "currentProgress": 44,
+    "recommendedBooks": [
+      "93",
+      "2",
+      "47"
+    ],
+    "wishlist": [
+      "60",
+      "51",
+      "21",
+      "26",
+      "2",
+      "3",
+      "15",
+      "64",
+      "20",
+      "30",
+      "69",
+      "76"
+    ],
+    "completedBooks": [
+      "13",
+      "14",
+      "35",
+      "37",
+      "40",
+      "41",
+      "46",
+      "52",
+      "53",
+      "71",
+      "85",
+      "91",
+      "94"
+    ],
+    "inProgressBooks": [
+      "75",
+      "8"
+    ],
+    "stats": {
+      "totalHoursListened": 204,
+      "booksCompleted": 13,
+      "currentStreak": 26,
+      "longestStreak": 8,
+      "favoriteGenre": "Science Fiction"
     }
   },
   {
@@ -231,14 +1139,100 @@
     "name": "Charlotte Williams",
     "isPremium": true,
     "credits": 2,
-    "joinedClubs": ["5", "7"],
-    "library": ["2", "6", "7", "10", "13", "24", "29", "33", "42", "47", "48"],
-    "currentlyReading": "6",
+    "joinedClubs": [
+      "5",
+      "7"
+    ],
+    "library": [
+      "6",
+      "1",
+      "54",
+      "43",
+      "47",
+      "48",
+      "16",
+      "38",
+      "75",
+      "27",
+      "64",
+      "19",
+      "53",
+      "66",
+      "20",
+      "50",
+      "39",
+      "32",
+      "46",
+      "14",
+      "45",
+      "62",
+      "83",
+      "74",
+      "79",
+      "92",
+      "61",
+      "88",
+      "65"
+    ],
+    "currentlyReading": "1",
     "ratings": {
-      "10": 5,
-      "13": 5,
-      "6": 4,
-      "47": 5
+      "1": 3,
+      "6": 5,
+      "16": 3,
+      "32": 3.5,
+      "38": 3.5,
+      "39": 4.5,
+      "45": 3.5,
+      "46": 5,
+      "47": 5,
+      "61": 4,
+      "62": 3.5,
+      "65": 4,
+      "79": 5,
+      "88": 5
+    },
+    "currentProgress": 79,
+    "recommendedBooks": [
+      "3",
+      "13",
+      "91",
+      "87",
+      "26",
+      "96",
+      "17"
+    ],
+    "wishlist": [
+      "60",
+      "59",
+      "70",
+      "58",
+      "84"
+    ],
+    "completedBooks": [
+      "1",
+      "6",
+      "16",
+      "32",
+      "38",
+      "39",
+      "45",
+      "46",
+      "47",
+      "61",
+      "62",
+      "65",
+      "79",
+      "88"
+    ],
+    "inProgressBooks": [
+      "54"
+    ],
+    "stats": {
+      "totalHoursListened": 471,
+      "booksCompleted": 14,
+      "currentStreak": 11,
+      "longestStreak": 26,
+      "favoriteGenre": "Memoir & Biography"
     }
   },
   {
@@ -246,13 +1240,81 @@
     "name": "Benjamin Taylor",
     "isPremium": false,
     "credits": 1,
-    "joinedClubs": ["1"],
-    "library": ["1", "8", "19", "21", "26", "34", "46"],
-    "currentlyReading": "46",
+    "joinedClubs": [
+      "1"
+    ],
+    "library": [
+      "17",
+      "8",
+      "51",
+      "52",
+      "40",
+      "64",
+      "66",
+      "1",
+      "58",
+      "2",
+      "37",
+      "33",
+      "23",
+      "44",
+      "24",
+      "80",
+      "61"
+    ],
+    "currentlyReading": "51",
     "ratings": {
-      "1": 4,
-      "26": 5,
-      "46": 5
+      "2": 3.5,
+      "40": 3.5,
+      "44": 4.5,
+      "51": 5,
+      "52": 5,
+      "58": 3,
+      "61": 4,
+      "64": 4,
+      "66": 3.5,
+      "80": 4
+    },
+    "currentProgress": 50,
+    "recommendedBooks": [
+      "96",
+      "94",
+      "74",
+      "65",
+      "97"
+    ],
+    "wishlist": [
+      "16",
+      "55",
+      "94",
+      "3",
+      "97",
+      "28",
+      "27"
+    ],
+    "completedBooks": [
+      "2",
+      "40",
+      "44",
+      "51",
+      "52",
+      "58",
+      "61",
+      "64",
+      "66",
+      "80"
+    ],
+    "inProgressBooks": [
+      "17",
+      "8",
+      "1"
+    ],
+    "stats": {
+      "totalHoursListened": 234,
+      "booksCompleted": 10,
+      "currentStreak": 27,
+      "longestStreak": 44,
+      "favoriteGenre": "Fiction"
     }
   },
   {
@@ -260,13 +1322,83 @@
     "name": "Amelia Davis",
     "isPremium": true,
     "credits": 4,
-    "joinedClubs": ["2"],
-    "library": ["4", "9", "22", "24", "35", "36", "42", "44", "48", "49"],
-    "currentlyReading": "4",
+    "joinedClubs": [
+      "2"
+    ],
+    "library": [
+      "54",
+      "13",
+      "4",
+      "66",
+      "3",
+      "14",
+      "83",
+      "71",
+      "51",
+      "48",
+      "68",
+      "35",
+      "55",
+      "28",
+      "98"
+    ],
+    "currentlyReading": "66",
     "ratings": {
       "4": 5,
-      "9": 4,
-      "48": 5
+      "13": 3,
+      "28": 4.5,
+      "51": 4,
+      "54": 4,
+      "68": 4,
+      "71": 4,
+      "98": 4
+    },
+    "currentProgress": 60,
+    "recommendedBooks": [
+      "34",
+      "12",
+      "50",
+      "40",
+      "18",
+      "32",
+      "60"
+    ],
+    "wishlist": [
+      "2",
+      "53",
+      "1",
+      "31",
+      "24",
+      "42",
+      "32",
+      "23",
+      "44",
+      "33",
+      "22",
+      "10",
+      "16"
+    ],
+    "completedBooks": [
+      "4",
+      "13",
+      "28",
+      "51",
+      "54",
+      "68",
+      "71",
+      "98"
+    ],
+    "inProgressBooks": [
+      "66",
+      "3",
+      "14"
+    ],
+    "stats": {
+      "totalHoursListened": 156,
+      "booksCompleted": 8,
+      "currentStreak": 26,
+      "longestStreak": 20,
+      "favoriteGenre": "Mystery & Thriller"
     }
   },
   {
@@ -275,11 +1407,88 @@
     "isPremium": false,
     "credits": 2,
     "joinedClubs": [],
-    "library": ["5", "17", "18", "27", "30", "37", "41"],
-    "currentlyReading": "30",
+    "library": [
+      "83",
+      "14",
+      "66",
+      "85",
+      "1",
+      "65",
+      "88",
+      "91",
+      "2",
+      "99",
+      "18",
+      "36",
+      "48",
+      "80",
+      "42",
+      "96",
+      "69",
+      "7",
+      "11"
+    ],
+    "currentlyReading": "66",
     "ratings": {
-      "30": 5,
-      "18": 4
+      "1": 4,
+      "11": 5,
+      "14": 3.5,
+      "36": 4,
+      "42": 4,
+      "65": 4,
+      "69": 5,
+      "80": 5,
+      "85": 5,
+      "88": 3.5,
+      "91": 4.5,
+      "99": 4.5
+    },
+    "currentProgress": 13,
+    "recommendedBooks": [
+      "20",
+      "53",
+      "52",
+      "100"
+    ],
+    "wishlist": [
+      "100",
+      "9",
+      "25",
+      "3",
+      "23",
+      "17",
+      "4",
+      "12",
+      "15",
+      "39",
+      "27",
+      "19",
+      "60",
+      "53"
+    ],
+    "completedBooks": [
+      "1",
+      "11",
+      "14",
+      "36",
+      "42",
+      "65",
+      "69",
+      "80",
+      "85",
+      "88",
+      "91",
+      "99"
+    ],
+    "inProgressBooks": [
+      "83"
+    ],
+    "stats": {
+      "totalHoursListened": 393,
+      "booksCompleted": 12,
+      "currentStreak": 14,
+      "longestStreak": 38,
+      "favoriteGenre": "Science Fiction"
     }
   },
   {
@@ -287,13 +1496,78 @@
     "name": "Ava Nguyen",
     "isPremium": true,
     "credits": 3,
-    "joinedClubs": ["4"],
-    "library": ["19", "25", "29", "33", "39", "43", "45", "50"],
-    "currentlyReading": "19",
+    "joinedClubs": [
+      "4"
+    ],
+    "library": [
+      "67",
+      "13",
+      "4",
+      "8",
+      "60",
+      "29",
+      "86",
+      "1",
+      "71",
+      "12",
+      "81",
+      "34",
+      "37",
+      "15",
+      "49",
+      "96",
+      "94"
+    ],
+    "currentlyReading": "67",
     "ratings": {
-      "19": 5,
-      "43": 5,
-      "45": 4
+      "4": 5,
+      "8": 5,
+      "13": 3.5,
+      "37": 4,
+      "49": 4,
+      "60": 4.5,
+      "71": 4,
+      "94": 5,
+      "96": 5
+    },
+    "currentProgress": 80,
+    "recommendedBooks": [
+      "39",
+      "85",
+      "89",
+      "70",
+      "97"
+    ],
+    "wishlist": [
+      "69",
+      "91",
+      "93",
+      "5",
+      "58",
+      "73",
+      "84"
+    ],
+    "completedBooks": [
+      "4",
+      "8",
+      "13",
+      "37",
+      "49",
+      "60",
+      "71",
+      "94",
+      "96"
+    ],
+    "inProgressBooks": [
+      "67",
+      "29"
+    ],
+    "stats": {
+      "totalHoursListened": 67,
+      "booksCompleted": 9,
+      "currentStreak": 23,
+      "longestStreak": 37,
+      "favoriteGenre": "Mystery & Thriller"
     }
   },
   {
@@ -301,13 +1575,77 @@
     "name": "Alexander Moore",
     "isPremium": false,
     "credits": 1,
-    "joinedClubs": ["3"],
-    "library": ["1", "8", "16", "23", "31", "38", "40"],
-    "currentlyReading": "1",
+    "joinedClubs": [
+      "3"
+    ],
+    "library": [
+      "32",
+      "44",
+      "39",
+      "46",
+      "40",
+      "21",
+      "14",
+      "41",
+      "37",
+      "52",
+      "34",
+      "24"
+    ],
+    "currentlyReading": "39",
     "ratings": {
-      "1": 4,
-      "23": 5,
-      "38": 5
+      "14": 3.5,
+      "21": 4.5,
+      "24": 3.5,
+      "34": 3.5,
+      "39": 5,
+      "40": 3.5,
+      "44": 3.5,
+      "46": 5
+    },
+    "currentProgress": 84,
+    "recommendedBooks": [
+      "62",
+      "7",
+      "8",
+      "3"
+    ],
+    "wishlist": [
+      "83",
+      "73",
+      "89",
+      "95",
+      "1",
+      "84",
+      "63",
+      "65",
+      "15",
+      "67",
+      "43",
+      "5",
+      "31",
+      "8"
+    ],
+    "completedBooks": [
+      "14",
+      "21",
+      "24",
+      "34",
+      "39",
+      "40",
+      "44",
+      "46"
+    ],
+    "inProgressBooks": [
+      "32",
+      "41"
+    ],
+    "stats": {
+      "totalHoursListened": 197,
+      "booksCompleted": 8,
+      "currentStreak": 24,
+      "longestStreak": 40,
+      "favoriteGenre": "Self Development"
     }
   },
   {
@@ -315,14 +1653,102 @@
     "name": "Harper Wilson",
     "isPremium": true,
     "credits": 5,
-    "joinedClubs": ["5", "6"],
-    "library": ["2", "7", "11", "12", "14", "24", "38", "42", "44"],
-    "currentlyReading": "7",
+    "joinedClubs": [
+      "5",
+      "6"
+    ],
+    "library": [
+      "66",
+      "34",
+      "8",
+      "38",
+      "36",
+      "49",
+      "7",
+      "45",
+      "11",
+      "14",
+      "41",
+      "40",
+      "42",
+      "31",
+      "29",
+      "50",
+      "98",
+      "61",
+      "80",
+      "88",
+      "3",
+      "70",
+      "32",
+      "69",
+      "22",
+      "83"
+    ],
+    "currentlyReading": "38",
     "ratings": {
-      "2": 5,
-      "7": 5,
-      "11": 5,
-      "12": 4
+      "3": 3.5,
+      "7": 4.5,
+      "11": 3,
+      "34": 3.5,
+      "40": 3,
+      "41": 3.5,
+      "45": 5,
+      "49": 4.5,
+      "50": 5,
+      "61": 3.5,
+      "66": 4,
+      "80": 4,
+      "83": 4.5
+    },
+    "currentProgress": 78,
+    "recommendedBooks": [
+      "91",
+      "19",
+      "64",
+      "72",
+      "84",
+      "93",
+      "53"
+    ],
+    "wishlist": [
+      "47",
+      "2",
+      "16",
+      "54",
+      "21",
+      "53",
+      "43",
+      "1",
+      "33"
+    ],
+    "completedBooks": [
+      "3",
+      "7",
+      "11",
+      "34",
+      "40",
+      "41",
+      "45",
+      "49",
+      "50",
+      "61",
+      "66",
+      "80",
+      "83"
+    ],
+    "inProgressBooks": [
+      "8",
+      "38",
+      "36",
+      "14"
+    ],
+    "stats": {
+      "totalHoursListened": 214,
+      "booksCompleted": 13,
+      "currentStreak": 22,
+      "longestStreak": 16,
+      "favoriteGenre": "Science Fiction"
     }
   },
   {
@@ -330,14 +1756,83 @@
     "name": "Daniel Garcia",
     "isPremium": false,
     "credits": 0,
-    "joinedClubs": ["8"],
-    "library": ["3", "15", "20", "28", "32", "39"],
-    "currentlyReading": "15",
+    "joinedClubs": [
+      "8"
+    ],
+    "library": [
+      "6",
+      "95",
+      "51",
+      "82",
+      "4",
+      "47",
+      "52",
+      "62",
+      "45",
+      "23",
+      "18",
+      "89",
+      "11",
+      "39",
+      "81"
+    ],
+    "currentlyReading": "51",
     "ratings": {
-      "3": 5,
-      "20": 3,
-      "39": 4
+      "11": 4,
+      "23": 4.5,
+      "39": 4.5,
+      "51": 4,
+      "62": 4,
+      "81": 4.5,
+      "82": 4.5,
+      "89": 3
+    },
+    "currentProgress": 92,
+    "recommendedBooks": [
+      "1",
+      "57",
+      "56",
+      "61",
+      "70",
+      "60",
+      "65"
+    ],
+    "wishlist": [
+      "32",
+      "1",
+      "40",
+      "88",
+      "34",
+      "59",
+      "94",
+      "17",
+      "76",
+      "22",
+      "14",
+      "20",
+      "90",
+      "21"
+    ],
+    "completedBooks": [
+      "11",
+      "23",
+      "39",
+      "51",
+      "62",
+      "81",
+      "82",
+      "89"
+    ],
+    "inProgressBooks": [
+      "6",
+      "95"
+    ],
+    "stats": {
+      "totalHoursListened": 32,
+      "booksCompleted": 8,
+      "currentStreak": 25,
+      "longestStreak": 24,
+      "favoriteGenre": "Memoir & Biography"
     }
   }
 ]
-

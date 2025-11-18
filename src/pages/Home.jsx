@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import HeroBanner from '../components/home/HeroBanner';
 import BookCarousel from '../components/books/BookCarousel';
 import SocialNudges from '../components/social/SocialNudges';
 import { HeroSkeleton, CarouselSkeleton } from '../components/ui/Skeleton';
-import { Card } from '../components/ui';
+import { Card, Rating } from '../components/ui';
 import { getImageUrl } from '../utils/imageCache';
+import booksData from '../data/books.json';
 
 const Home = () => {
   const [books, setBooks] = useState([]);
@@ -14,8 +16,6 @@ const Home = () => {
   useEffect(() => {
     const loadBooks = async () => {
       try {
-        const response = await fetch('/src/data/books.json');
-        const booksData = await response.json();
         
         // Add cover images to books
         const booksWithCovers = await Promise.all(
@@ -108,21 +108,21 @@ const Home = () => {
         {/* Personalized Recommendations */}
         {recommendations.length > 0 && (
           <section>
-            <BookCarousel
+            <BookCarousel 
               title="Recommended for You"
               books={recommendations}
               cardSize="md"
             />
           </section>
         )}
-
+        
         {/* Social Features - Enhanced */}
         <section className="bg-audible-gray-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-12 mb-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-audible-text-primary mb-3">
                 Connect & Discover with Friends
-              </h2>
+          </h2>
               <p className="text-lg text-audible-text-secondary max-w-2xl mx-auto">
                 See what your friends are listening to, join book clubs, and discover new stories together
               </p>
@@ -324,11 +324,11 @@ const Home = () => {
             </div>
           </div>
         </section>
-
+        
         {/* New Releases */}
         {newReleases.length > 0 && (
           <section>
-            <BookCarousel
+            <BookCarousel 
               title="New Releases"
               books={newReleases}
               cardSize="md"
@@ -352,7 +352,7 @@ const Home = () => {
         {/* EchoRead Originals */}
         {originals.length > 0 && (
           <section>
-            <BookCarousel
+            <BookCarousel 
               title="Audible Originals"
               books={originals}
               cardSize="md"
@@ -376,7 +376,7 @@ const Home = () => {
         {/* Genre-based Recommendations */}
         {sciFiBooks.length > 0 && (
           <section>
-            <BookCarousel
+            <BookCarousel 
               title="Science Fiction"
               books={sciFiBooks}
               cardSize="md"
@@ -384,10 +384,10 @@ const Home = () => {
             />
           </section>
         )}
-
+        
         {mysteryBooks.length > 0 && (
           <section>
-            <BookCarousel
+            <BookCarousel 
               title="Mystery & Thriller"
               books={mysteryBooks}
               cardSize="md"
@@ -395,10 +395,10 @@ const Home = () => {
             />
           </section>
         )}
-
+        
         {fantasyBooks.length > 0 && (
           <section>
-            <BookCarousel
+            <BookCarousel 
               title="Fantasy"
               books={fantasyBooks}
               cardSize="md"
@@ -411,8 +411,8 @@ const Home = () => {
         <section>
           <h2 className="text-2xl font-bold text-audible-text-primary mb-6">
             Book Clubs
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="p-6 bg-audible-gray-50 rounded-lg border border-audible-gray-200 hover:shadow-md transition-shadow">
               <div className="w-12 h-12 bg-audible-orange rounded-full flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -422,13 +422,13 @@ const Home = () => {
               <h3 className="font-semibold text-lg mb-2 text-audible-text-primary">Join a Book Club</h3>
               <p className="text-audible-text-secondary text-sm mb-4">
                 Connect with fellow listeners and discuss your favorite audiobooks
-              </p>
-              <a
-                href="/clubs"
+                </p>
+                <a 
+                  href="/clubs" 
                 className="text-audible-orange hover:text-audible-orange-dark font-medium text-sm"
-              >
-                Explore clubs →
-              </a>
+                >
+                  Explore clubs →
+                </a>
             </div>
           </div>
         </section>
