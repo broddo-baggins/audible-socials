@@ -119,9 +119,14 @@ const ListeningStats = ({ stats }) => {
       
       {/* Genre Breakdown */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-echo-text-primary mb-4">
-          Top Genres
-        </h3>
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-echo-text-primary">
+            Top Genres
+          </h3>
+          <p className="text-sm text-echo-text-secondary">
+            Favorite genre: <span className="font-semibold text-echo-text-primary">{favoriteGenre}</span>
+          </p>
+        </div>
         <div className="space-y-3">
           {[
             { genre: 'Science Fiction', count: 23, percentage: 35 },

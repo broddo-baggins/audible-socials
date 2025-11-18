@@ -7,7 +7,6 @@ import NotificationCenter from '../notifications/NotificationCenter';
 
 export default function Header() {
   const location = useLocation();
-  const [showClubsDropdown, setShowClubsDropdown] = useState(false);
   const [userData, setUserData] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -149,4 +148,3 @@ export default function Header() {
     </header>
   );
 }
-

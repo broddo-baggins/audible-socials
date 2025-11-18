@@ -1,15 +1,6 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
-
-const PlayerContext = createContext(null);
-
-export const usePlayer = () => {
-  const context = useContext(PlayerContext);
-  if (!context) {
-    throw new Error('usePlayer must be used within a PlayerProvider');
-  }
-  return context;
-};
+import { PlayerContext } from './PlayerContextObject';
 
 export const PlayerProvider = ({ children }) => {
   const [currentBook, setCurrentBook] = useState(null);

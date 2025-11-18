@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Calendar, Crown, TrendingUp } from 'lucide-react';
+import { Users, Calendar, Crown, TrendingUp, Gift, Zap } from 'lucide-react';
 import clubsData from '../../data/clubs.json';
 import booksData from '../../data/books.json';
 import { getUserData, getJoinedClubs } from '../../utils/localStorage';
@@ -139,6 +139,19 @@ export default function BookClubsTab() {
                       </div>
                     </div>
 
+                    {/* Club Perks Highlight */}
+                    {club.perks && club.perks.length > 0 && (
+                      <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-3 border border-orange-200 mb-3">
+                        <p className="text-xs font-semibold text-orange-900 mb-1 flex items-center">
+                          <Gift className="w-3 h-3 mr-1" />
+                          Member Perks
+                        </p>
+                        <p className="text-xs text-orange-800 line-clamp-2">
+                          {club.perks[0]}
+                        </p>
+                      </div>
+                    )}
+
                     {/* Next Event */}
                     {club.events && club.events.length > 0 && (
                       <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-3 border border-purple-200">
@@ -245,6 +258,16 @@ export default function BookClubsTab() {
                     </div>
 
                     <p className="text-xs text-gray-600 mb-3 line-clamp-2">{club.description}</p>
+
+                    {/* Perks Highlight */}
+                    {club.perks && club.perks.length > 0 && (
+                      <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-2 mb-3 border border-orange-200">
+                        <p className="text-xs text-orange-900 flex items-center gap-1">
+                          <Zap className="w-3 h-3 text-orange-600" />
+                          <span className="font-semibold">{club.perks[0]}</span>
+                        </p>
+                      </div>
+                    )}
 
                     {/* Stats */}
                     <div className="flex items-center justify-between text-xs text-gray-600 border-t border-gray-200 pt-3">

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Calendar, Clock, Users, Check, Bell } from 'lucide-react';
 import { getUserData, saveUserData } from '../../utils/localStorage';
 
-export default function EventRSVP({ event, clubId }) {
+export default function EventRSVP({ event }) {
   const [hasRSVP, setHasRSVP] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -127,4 +127,3 @@ export default function EventRSVP({ event, clubId }) {
     </div>
   );
 }
-

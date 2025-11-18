@@ -72,11 +72,6 @@ const narratorPool = [
   "Cassandra Campbell", "Robert Petkoff", "Xe Sands", "R.C. Bray", "Ray Porter"
 ];
 
-const genres = [
-  "Science Fiction", "Fantasy", "Mystery & Thriller", "Romance", "Historical Fiction",
-  "Fiction", "Self Development", "Memoir & Biography", "History", "Business"
-];
-
 // Helper functions
 function getRandomItem(array) {
   return array[Math.floor(Math.random() * array.length)];
@@ -182,4 +177,3 @@ fs.writeFileSync('./src/data/books.json', JSON.stringify(allBooks, null, 2));
 console.log(`\n✅ SUCCESS! Generated ${allBooks.length} total books`);
 console.log(`New books added: ${allBooks.length - existingBooks.length}`);
 console.log('File saved: ./src/data/books.json\n');
-

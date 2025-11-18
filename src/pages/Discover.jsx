@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { Search, Filter, Star } from 'lucide-react';
 import booksData from '../data/books.json';
 import { fetchGoogleImagesCover } from '../utils/googleImages';
@@ -122,14 +122,14 @@ export default function Discover() {
             </button>
           </div>
         ) : (
-          <motion.div
+          <Motion.div
             variants={container}
             initial="hidden"
             animate="show"
             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6"
           >
             {filteredBooks.map((book) => (
-              <motion.div key={book.id} variants={item}>
+              <Motion.div key={book.id} variants={item}>
                 <Link to={`/book/${book.id}`} className="group">
                   <div className="relative overflow-hidden rounded-lg shadow-md group-hover:shadow-xl transition-all">
                     <img
@@ -165,12 +165,11 @@ export default function Discover() {
                     <p className="text-xs text-gray-600">{book.author}</p>
                   </div>
                 </Link>
-              </motion.div>
+              </Motion.div>
             ))}
-          </motion.div>
+          </Motion.div>
         )}
       </section>
     </div>
   );
 }
-

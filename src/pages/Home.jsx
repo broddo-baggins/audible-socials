@@ -5,7 +5,6 @@ import BookCarousel from '../components/books/BookCarousel';
 import SocialNudges from '../components/social/SocialNudges';
 import { HeroSkeleton, CarouselSkeleton } from '../components/ui/Skeleton';
 import { Card, Rating } from '../components/ui';
-import { getImageUrl } from '../utils/imageCache';
 import booksData from '../data/books.json';
 
 const Home = () => {
@@ -16,18 +15,10 @@ const Home = () => {
   useEffect(() => {
     const loadBooks = async () => {
       try {
-        
-        // Add cover images to books
-        const booksWithCovers = await Promise.all(
-          booksData.map(async (book) => ({
-            ...book,
-            cover: await getImageUrl(book.coverQuery || `${book.title} ${book.author} book cover`),
-          }))
-        );
-        
-        setBooks(booksWithCovers);
+        // Books already have cover paths in books.json
+        setBooks(booksData);
         // Set first audiobook as featured
-        setFeaturedBook(booksWithCovers.find(b => b.contentType === 'audiobook') || booksWithCovers[0]);
+        setFeaturedBook(booksData.find(b => b.contentType === 'audiobook') || booksData[0]);
         setLoading(false);
       } catch (error) {
         console.error('Error loading books:', error);
@@ -128,7 +119,7 @@ const Home = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 tablet:grid-cols-2 gap-8 mb-8">
               {/* Social Activity Feed */}
               <div>
                 <h3 className="text-xl font-semibold text-audible-text-primary mb-4 flex items-center gap-2">
@@ -159,9 +150,12 @@ const Home = () => {
                         <p className="text-sm text-audible-text-secondary">42K members • Monthly picks</p>
                         <p className="text-xs text-audible-text-tertiary mt-1">Currently reading: Where the Crawdads Sing</p>
                       </div>
-                      <button className="px-3 py-1 bg-audible-orange text-white text-sm rounded hover:bg-audible-orange-dark transition-colors">
-                        Join
-                      </button>
+                        <Link
+                          to="/clubs"
+                          className="px-3 py-1 bg-audible-orange text-white text-sm rounded hover:bg-audible-orange-dark transition-colors"
+                        >
+                          Join
+                        </Link>
                     </div>
                   </div>
 
@@ -175,9 +169,12 @@ const Home = () => {
                         <p className="text-sm text-audible-text-secondary">19K members • Bi-weekly</p>
                         <p className="text-xs text-audible-text-tertiary mt-1">Exploring the Three-Body Problem</p>
                       </div>
-                      <button className="px-3 py-1 bg-audible-blue-500 text-white text-sm rounded hover:bg-audible-blue-600 transition-colors">
+                      <Link
+                        to="/clubs"
+                        className="px-3 py-1 bg-audible-blue-500 text-white text-sm rounded hover:bg-audible-blue-600 transition-colors"
+                      >
                         Join
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -186,12 +183,15 @@ const Home = () => {
 
             {/* Call to Action */}
             <div className="text-center">
-              <button className="inline-flex items-center gap-2 px-6 py-3 bg-audible-orange text-white font-medium rounded-lg hover:bg-audible-orange-dark transition-colors">
+              <Link
+                to="/social"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-audible-orange text-white font-medium rounded-lg hover:bg-audible-orange-dark transition-colors shadow-lg hover:shadow-xl"
+              >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Find Friends & Join Clubs
-              </button>
+                Explore Social Hub
+              </Link>
             </div>
           </div>
         </section>
@@ -208,7 +208,7 @@ const Home = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 tablet:grid-cols-2 gap-8 mb-8">
               {/* Recently Completed */}
               <div>
                 <h3 className="text-xl font-semibold text-audible-text-primary mb-4 flex items-center gap-2">

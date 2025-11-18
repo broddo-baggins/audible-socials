@@ -6,8 +6,7 @@ import BookCarousel from '../components/books/BookCarousel';
 import FriendRecommendations from '../components/social/FriendRecommendations';
 import BookClubTeaser from '../components/social/BookClubTeaser';
 import { Skeleton } from '../components/ui';
-import { usePlayer } from '../contexts/PlayerContext';
-import { getImageUrl } from '../utils/imageCache';
+import { usePlayer } from '../contexts/usePlayer';
 import booksData from '../data/books.json';
 
 const BookDetail = () => {
@@ -28,36 +27,19 @@ const BookDetail = () => {
           return;
         }
         
-        // Load book with cover
-        const bookWithCover = {
-          ...foundBook,
-          cover: await getImageUrl(foundBook.coverQuery || `${foundBook.title} ${foundBook.author} book cover`),
-        };
-        
-        setBook(bookWithCover);
+        // Books already have cover paths in books.json
+        setBook(foundBook);
         
         // Load similar books (same genre)
-        const similar = await Promise.all(
-          booksData
-            .filter(b => b.genre === foundBook.genre && b.id !== bookId)
-            .slice(0, 12)
-            .map(async (b) => ({
-              ...b,
-              cover: await getImageUrl(b.coverQuery || `${b.title} ${b.author} book cover`),
-            }))
-        );
+        const similar = booksData
+          .filter(b => b.genre === foundBook.genre && b.id !== bookId)
+          .slice(0, 12);
         setSimilarBooks(similar);
         
         // Load author books
-        const authorBooks = await Promise.all(
-          booksData
-            .filter(b => b.author === foundBook.author && b.id !== bookId)
-            .slice(0, 12)
-            .map(async (b) => ({
-              ...b,
-              cover: await getImageUrl(b.coverQuery || `${b.title} ${b.author} book cover`),
-            }))
-        );
+        const authorBooks = booksData
+          .filter(b => b.author === foundBook.author && b.id !== bookId)
+          .slice(0, 12);
         setAuthorBooks(authorBooks);
         
         setLoading(false);

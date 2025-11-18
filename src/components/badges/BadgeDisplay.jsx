@@ -1,6 +1,7 @@
-import { Award, Lock } from 'lucide-react';
+import { Award, Lock, Sparkles, TrendingUp } from 'lucide-react';
 import { Card, Badge as BadgeUI } from '../ui';
 import PropTypes from 'prop-types';
+import badgesData from '../../data/badges.json';
 
 const BADGE_DEFINITIONS = {
   completionist: {
@@ -138,19 +139,128 @@ BadgeCard.propTypes = {
   size: PropTypes.oneOf(['sm', 'md', 'lg']),
 };
 
-const BadgeDisplay = ({ earnedBadges = [], allBadges = false, size = 'md' }) => {
+const BadgeProgress = ({ badge, progress = 0, earned = false }) => {
+  const rarityColors = {
+    common: 'bg-gray-100 text-gray-700 border-gray-300',
+    uncommon: 'bg-green-50 text-green-700 border-green-300',
+    rare: 'bg-blue-50 text-blue-700 border-blue-300',
+    epic: 'bg-purple-50 text-purple-700 border-purple-300',
+  };
+
+  return (
+    <Card className={`p-4 border-2 ${earned ? 'border-yellow-300 bg-yellow-50' : 'border-gray-200'} hover:shadow-lg transition-all`}>
+      <div className="flex items-start gap-3">
+        <div className={`w-12 h-12 rounded-full ${earned ? 'bg-gradient-to-br from-yellow-400 to-orange-500' : 'bg-gray-300'} flex items-center justify-center flex-shrink-0 shadow-md`}>
+          {earned ? (
+            <Award className="w-6 h-6 text-white" />
+          ) : (
+            <Lock className="w-5 h-5 text-gray-500" />
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <h4 className="font-bold text-audible-text-primary text-sm">{badge.name}</h4>
+            {badge.rarity && (
+              <span className={`text-xs px-2 py-0.5 rounded-full font-semibold border ${rarityColors[badge.rarity]}`}>
+                {badge.rarity}
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-audible-text-secondary mb-2">{badge.description}</p>
+          {!earned && progress > 0 && (
+            <div>
+              <div className="flex items-center justify-between text-xs text-audible-text-tertiary mb-1">
+                <span>Progress</span>
+                <span className="font-semibold">{progress}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-1.5">
+                <div
+                  className="bg-gradient-to-r from-orange-400 to-yellow-500 h-1.5 rounded-full transition-all"
+                  style={{ width: `${Math.min(progress, 100)}%` }}
+                />
+              </div>
+            </div>
+          )}
+          {earned && (
+            <div className="flex items-center gap-1 text-xs text-yellow-700">
+              <Sparkles className="w-3 h-3" />
+              <span className="font-semibold">Unlocked!</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+BadgeProgress.propTypes = {
+  badge: PropTypes.object.isRequired,
+  progress: PropTypes.number,
+  earned: PropTypes.bool,
+};
+
+const BadgeDisplay = ({ earnedBadges = [], allBadges = false, size = 'md', showProgress = false }) => {
   const badgesToShow = allBadges 
     ? Object.keys(BADGE_DEFINITIONS)
     : earnedBadges.filter(id => BADGE_DEFINITIONS[id]);
   
-  if (badgesToShow.length === 0) {
+  if (badgesToShow.length === 0 && !allBadges) {
     return (
-      <Card className="p-6 text-center">
-        <Award className="w-12 h-12 text-echo-text-tertiary mx-auto mb-3" />
-        <p className="text-echo-text-secondary">
-          No badges earned yet. Start listening to unlock achievements!
+      <Card className="p-8 text-center bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200">
+        <Award className="w-16 h-16 text-orange-400 mx-auto mb-4" />
+        <h3 className="text-xl font-bold text-audible-text-primary mb-2">
+          Start Earning Badges!
+        </h3>
+        <p className="text-audible-text-secondary mb-4">
+          Complete books, join clubs, and connect with friends to unlock achievements
         </p>
+        <div className="flex flex-wrap justify-center gap-2">
+          <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-full border border-gray-300">
+            Common
+          </span>
+          <span className="px-3 py-1 bg-green-50 text-green-700 text-xs font-semibold rounded-full border border-green-300">
+            Uncommon
+          </span>
+          <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-300">
+            Rare
+          </span>
+          <span className="px-3 py-1 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full border border-purple-300">
+            Epic
+          </span>
+        </div>
       </Card>
+    );
+  }
+  
+  // Show detailed progress view if requested
+  if (showProgress) {
+    return (
+      <div className="space-y-3">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-bold text-audible-text-primary flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-orange-500" />
+            Your Badges
+          </h3>
+          <span className="text-sm text-audible-text-secondary">
+            {earnedBadges.length} / {badgesData.length} earned
+          </span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {badgesData.map((badge) => {
+            const isEarned = earnedBadges.includes(badge.id);
+            // Mock progress for demonstration
+            const mockProgress = isEarned ? 100 : Math.floor(Math.random() * 80) + 10;
+            return (
+              <BadgeProgress
+                key={badge.id}
+                badge={badge}
+                progress={mockProgress}
+                earned={isEarned}
+              />
+            );
+          })}
+        </div>
+      </div>
     );
   }
   
@@ -172,7 +282,8 @@ BadgeDisplay.propTypes = {
   earnedBadges: PropTypes.arrayOf(PropTypes.string),
   allBadges: PropTypes.bool,
   size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  showProgress: PropTypes.bool,
 };
 
+export { BadgeProgress };
 export default BadgeDisplay;
-export { BADGE_DEFINITIONS, BadgeCard };

@@ -1,0 +1,243 @@
+[
+  {
+    "userId": "1",
+    "shareHistory": [
+      {
+        "id": "sh-1",
+        "bookId": "1",
+        "sharedWith": ["user-me", "6", "10"],
+        "timestamp": "2025-11-10T14:23:00Z",
+        "message": "This book is absolutely mind-blowing! You have to read it!",
+        "responses": [
+          {
+            "userId": "user-me",
+            "action": "added_to_wishlist",
+            "timestamp": "2025-11-10T15:30:00Z"
+          }
+        ]
+      },
+      {
+        "id": "sh-2",
+        "bookId": "3",
+        "sharedWith": ["user-me", "2", "7"],
+        "timestamp": "2025-11-05T09:15:00Z",
+        "message": "Life-changing habits book! Highly recommend.",
+        "responses": [
+          {
+            "userId": "7",
+            "action": "started_listening",
+            "timestamp": "2025-11-06T08:00:00Z"
+          }
+        ]
+      }
+    ],
+    "receivedRecommendations": [
+      {
+        "id": "rr-1",
+        "bookId": "81",
+        "fromUserId": "7",
+        "timestamp": "2025-11-12T11:20:00Z",
+        "message": "Based on your love of sci-fi!",
+        "status": "pending"
+      }
+    ],
+    "lendingHistory": [
+      {
+        "id": "lh-1",
+        "bookId": "13",
+        "lentTo": "6",
+        "lentDate": "2025-10-15T00:00:00Z",
+        "returnDate": "2025-10-28T00:00:00Z",
+        "status": "returned"
+      }
+    ]
+  },
+  {
+    "userId": "2",
+    "shareHistory": [
+      {
+        "id": "sh-3",
+        "bookId": "62",
+        "sharedWith": ["user-me", "8"],
+        "timestamp": "2025-11-08T16:45:00Z",
+        "message": "Check this out!",
+        "responses": []
+      }
+    ],
+    "receivedRecommendations": [],
+    "lendingHistory": []
+  },
+  {
+    "userId": "3",
+    "shareHistory": [
+      {
+        "id": "sh-4",
+        "bookId": "20",
+        "sharedWith": ["user-me", "9", "13"],
+        "timestamp": "2025-11-07T13:30:00Z",
+        "message": "One of my all-time favorites!",
+        "responses": [
+          {
+            "userId": "13",
+            "action": "purchased",
+            "timestamp": "2025-11-07T14:00:00Z"
+          }
+        ]
+      },
+      {
+        "id": "sh-5",
+        "bookId": "12",
+        "sharedWith": ["user-me", "7"],
+        "timestamp": "2025-11-01T10:00:00Z",
+        "message": "Fantasy masterpiece!",
+        "responses": []
+      }
+    ],
+    "receivedRecommendations": [],
+    "lendingHistory": []
+  },
+  {
+    "userId": "user-me",
+    "shareHistory": [
+      {
+        "id": "sh-6",
+        "bookId": "64",
+        "sharedWith": ["1", "3", "7"],
+        "timestamp": "2025-11-14T20:15:00Z",
+        "message": "Just finished this - absolutely brilliant!",
+        "responses": [
+          {
+            "userId": "1",
+            "action": "added_to_wishlist",
+            "timestamp": "2025-11-14T21:00:00Z"
+          },
+          {
+            "userId": "3",
+            "action": "started_listening",
+            "timestamp": "2025-11-15T08:30:00Z"
+          }
+        ]
+      },
+      {
+        "id": "sh-7",
+        "bookId": "46",
+        "sharedWith": ["2"],
+        "timestamp": "2025-11-13T15:30:00Z",
+        "message": "Great mystery thriller!",
+        "responses": []
+      }
+    ],
+    "receivedRecommendations": [
+      {
+        "id": "rr-2",
+        "bookId": "5",
+        "fromUserId": "1",
+        "timestamp": "2025-11-11T09:00:00Z",
+        "message": "Since you loved Project Hail Mary!",
+        "status": "added_to_library"
+      },
+      {
+        "id": "rr-3",
+        "bookId": "93",
+        "fromUserId": "3",
+        "timestamp": "2025-11-09T14:20:00Z",
+        "message": "Perfect for your favorite genre!",
+        "status": "pending"
+      }
+    ],
+    "lendingHistory": []
+  },
+  {
+    "userId": "5",
+    "shareHistory": [
+      {
+        "id": "sh-8",
+        "bookId": "62",
+        "sharedWith": ["user-me", "1", "11"],
+        "timestamp": "2025-11-06T12:00:00Z",
+        "message": "This one gave me chills!",
+        "responses": []
+      }
+    ],
+    "receivedRecommendations": [],
+    "lendingHistory": []
+  },
+  {
+    "userId": "6",
+    "shareHistory": [
+      {
+        "id": "sh-9",
+        "bookId": "48",
+        "sharedWith": ["user-me", "14"],
+        "timestamp": "2025-11-04T18:30:00Z",
+        "message": "Historical fiction at its best!",
+        "responses": []
+      }
+    ],
+    "receivedRecommendations": [],
+    "lendingHistory": [
+      {
+        "id": "lh-2",
+        "bookId": "13",
+        "lentTo": "user-me",
+        "lentDate": "2025-10-15T00:00:00Z",
+        "returnDate": "2025-10-28T00:00:00Z",
+        "status": "returned"
+      }
+    ]
+  },
+  {
+    "userId": "7",
+    "shareHistory": [
+      {
+        "id": "sh-10",
+        "bookId": "13",
+        "sharedWith": ["user-me", "1", "17"],
+        "timestamp": "2025-11-03T10:45:00Z",
+        "message": "Incredible memoir - so powerful!",
+        "responses": [
+          {
+            "userId": "1",
+            "action": "purchased",
+            "timestamp": "2025-11-03T11:30:00Z"
+          }
+        ]
+      },
+      {
+        "id": "sh-11",
+        "bookId": "60",
+        "sharedWith": ["user-me"],
+        "timestamp": "2025-10-28T16:00:00Z",
+        "message": "This changed my perspective on so many things.",
+        "responses": []
+      }
+    ],
+    "receivedRecommendations": [
+      {
+        "id": "rr-4",
+        "bookId": "96",
+        "fromUserId": "1",
+        "timestamp": "2025-11-10T13:45:00Z",
+        "message": "You'll love this one!",
+        "status": "pending"
+      }
+    ],
+    "lendingHistory": []
+  },
+  {
+    "userId": "9",
+    "shareHistory": [
+      {
+        "id": "sh-12",
+        "bookId": "62",
+        "sharedWith": ["user-me", "15"],
+        "timestamp": "2025-11-02T14:20:00Z",
+        "message": "Great sci-fi adventure!",
+        "responses": []
+      }
+    ],
+    "receivedRecommendations": [],
+    "lendingHistory": []
+  }
+]
+

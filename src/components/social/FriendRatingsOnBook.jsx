@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Users, Crown } from 'lucide-react';
 import { getFriends } from '../../utils/localStorage';
@@ -7,11 +7,7 @@ import usersData from '../../data/users.json';
 export default function FriendRatingsOnBook({ bookId }) {
   const [friendRatings, setFriendRatings] = useState([]);
 
-  useEffect(() => {
-    loadFriendRatings();
-  }, [bookId]);
-
-  const loadFriendRatings = () => {
+  const loadFriendRatings = useCallback(() => {
     const friendIds = getFriends();
     const friends = usersData.filter(u => friendIds.includes(u.id));
     
@@ -27,7 +23,11 @@ export default function FriendRatingsOnBook({ bookId }) {
       .sort((a, b) => b.rating - a.rating);
 
     setFriendRatings(ratings);
-  };
+  }, [bookId]);
+
+  useEffect(() => {
+    loadFriendRatings();
+  }, [loadFriendRatings]);
 
   if (friendRatings.length === 0) {
     return null;
@@ -103,4 +103,3 @@ export default function FriendRatingsOnBook({ bookId }) {
     </div>
   );
 }
-

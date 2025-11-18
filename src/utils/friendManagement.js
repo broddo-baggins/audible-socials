@@ -1,6 +1,5 @@
 import friendRequestsData from '../data/friendRequests.json';
 import blockedUsersData from '../data/blockedUsers.json';
-import { getUserData } from './localStorage';
 
 const FRIEND_REQUESTS_KEY = 'audible_friend_requests';
 const BLOCKED_USERS_KEY = 'audible_blocked_users';
@@ -178,4 +177,3 @@ export const getSuggestedFriends = (currentUserId = 'user-me', allUsers = []) =>
     !pendingIds.includes(user.id)
   );
 };
-

@@ -1,20 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, Bell, Globe, ChevronDown, User, Settings, HelpCircle, LogOut } from 'lucide-react';
-import { Input } from '../ui';
+import { Search, Bell, ChevronDown, User, Settings, HelpCircle, LogOut } from 'lucide-react';
 
 const DesktopHeader = () => {
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const userMenuRef = useRef(null);
   
   const navItems = [
     { label: 'Home', path: '/' },
     { label: 'Browse', path: '/browse' },
     { label: 'Library', path: '/library' },
-    { label: 'Socials', path: '/clubs' },
+    { label: 'Social', path: '/social' },
     { label: 'Originals', path: '/originals' },
     { label: 'Podcasts', path: '/podcasts' },
   ];
@@ -33,17 +31,6 @@ const DesktopHeader = () => {
     credits: 2,
   };
   
-  const notifications = []; // Replace with actual notifications
-  const hasNotifications = notifications.length > 0;
-  
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
   
   useEffect(() => {
     const handleClickOutside = (event) => {

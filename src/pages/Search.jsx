@@ -1,10 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Search as SearchIcon, TrendingUp, Clock } from 'lucide-react';
 import { Input, Tag, Badge } from '../components/ui';
 import BookGrid from '../components/books/BookGrid';
 import { searchBooks, getAutocompleteSuggestions, debounce } from '../utils/searchFilter';
-import { getImageUrl } from '../utils/imageCache';
 import booksData from '../data/books.json';
 
 const Search = () => {
@@ -34,14 +33,8 @@ const Search = () => {
   useEffect(() => {
     const loadBooks = async () => {
       try {
-        const booksWithCovers = await Promise.all(
-          booksData.map(async (book) => ({
-            ...book,
-            cover: await getImageUrl(book.coverQuery || `${book.title} ${book.author} book cover`),
-          }))
-        );
-        
-        setBooks(booksWithCovers);
+        // Books already have cover paths in books.json
+        setBooks(booksData);
       } catch (error) {
         console.error('Error loading books:', error);
       }
@@ -54,20 +47,20 @@ const Search = () => {
     if (saved) {
       try {
         setRecentSearches(JSON.parse(saved));
-      } catch (e) {
+      } catch (error) {
+        console.error('Error parsing saved searches:', error);
         setRecentSearches([]);
       }
     }
   }, []);
   
-  // Perform search when query param changes
-  useEffect(() => {
-    if (queryParam && books.length > 0) {
-      performSearch(queryParam);
-    }
-  }, [queryParam, books]);
+  const saveRecentSearch = useCallback((query) => {
+    const updated = [query, ...recentSearches.filter(q => q !== query)].slice(0, 10);
+    setRecentSearches(updated);
+    localStorage.setItem('echoread_recent_searches', JSON.stringify(updated));
+  }, [recentSearches]);
   
-  const performSearch = (query) => {
+  const performSearch = useCallback((query) => {
     if (!query.trim()) {
       setSearchResults([]);
       return;
@@ -78,15 +71,15 @@ const Search = () => {
     setSearchResults(results);
     setLoading(false);
     
-    // Save to recent searches
     saveRecentSearch(query);
-  };
+  }, [books, saveRecentSearch]);
   
-  const saveRecentSearch = (query) => {
-    const updated = [query, ...recentSearches.filter(q => q !== query)].slice(0, 10);
-    setRecentSearches(updated);
-    localStorage.setItem('echoread_recent_searches', JSON.stringify(updated));
-  };
+  // Perform search when query param changes
+  useEffect(() => {
+    if (queryParam && books.length > 0) {
+      performSearch(queryParam);
+    }
+  }, [queryParam, books.length, performSearch]);
   
   const clearRecentSearches = () => {
     setRecentSearches([]);
@@ -94,17 +87,26 @@ const Search = () => {
   };
   
   // Debounced autocomplete
-  const debouncedAutocomplete = useCallback(
-    debounce((query) => {
-      if (query.trim()) {
-        const results = getAutocompleteSuggestions(books, query, 5);
-        setSuggestions(results);
-      } else {
-        setSuggestions(null);
-      }
-    }, 300),
+  const debouncedAutocomplete = useMemo(
+    () =>
+      debounce((query) => {
+        if (query.trim()) {
+          const results = getAutocompleteSuggestions(books, query, 5);
+          setSuggestions(results);
+        } else {
+          setSuggestions(null);
+        }
+      }, 300),
     [books]
   );
+  
+  useEffect(() => {
+    return () => {
+      if (debouncedAutocomplete.cancel) {
+        debouncedAutocomplete.cancel();
+      }
+    };
+  }, [debouncedAutocomplete]);
   
   const handleSearchChange = (e) => {
     const value = e.target.value;

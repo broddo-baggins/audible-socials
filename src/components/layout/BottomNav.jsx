@@ -22,22 +22,24 @@ export default function BottomNav() {
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
       <div className="flex justify-around items-center h-16 px-2">
-        {navItems.map(({ path, icon: Icon, label }) => (
-          <Link
-            key={path}
-            to={path}
-            className={`flex flex-col items-center justify-center flex-1 py-2 ${
-              isActive(path)
-                ? 'text-audible-orange'
-                : 'text-gray-600'
-            }`}
-          >
-            <Icon className="w-6 h-6 mb-1" />
-            <span className="text-xs font-medium">{label}</span>
-          </Link>
-        ))}
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex flex-col items-center justify-center flex-1 py-2 ${
+                isActive(item.path)
+                  ? 'text-audible-orange'
+                  : 'text-gray-600'
+              }`}
+            >
+              <Icon className="w-6 h-6 mb-1" />
+              <span className="text-xs font-medium">{item.label}</span>
+            </Link>
+          );
+        })}
       </div>
     </nav>
   );
 }
-

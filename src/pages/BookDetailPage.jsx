@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { Play, Plus, Check, Star, Clock, Users, Share2, Heart, Crown } from 'lucide-react';
 import booksData from '../data/books.json';
 import clubsData from '../data/clubs.json';
 import usersData from '../data/users.json';
-import { getUserData, addToLibrary, useCredit, rateBook, setCurrentlyReading, getFriends } from '../utils/localStorage';
+import { getUserData, addToLibrary, spendCredit, rateBook, setCurrentlyReading, getFriends } from '../utils/localStorage';
 import { fetchGoogleImagesCover } from '../utils/googleImages';
 import FriendRatingsOnBook from '../components/social/FriendRatingsOnBook';
 
@@ -47,7 +47,7 @@ export default function BookDetailPage() {
   }, [bookId]);
 
   const handleAddToLibrary = () => {
-    const result = useCredit();
+    const result = spendCredit();
     if (result.success) {
       addToLibrary(bookId);
       setInLibrary(true);
@@ -87,7 +87,7 @@ export default function BookDetailPage() {
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid md:grid-cols-2 gap-8 items-start">
             {/* Book Cover */}
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex justify-center md:justify-start"
@@ -105,10 +105,10 @@ export default function BookDetailPage() {
                   </div>
                 )}
               </div>
-            </motion.div>
+            </Motion.div>
 
             {/* Book Info */}
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               className="space-y-4"
@@ -198,7 +198,7 @@ export default function BookDetailPage() {
                   </p>
                 </div>
               )}
-            </motion.div>
+            </Motion.div>
           </div>
         </div>
       </section>
@@ -376,4 +376,3 @@ export default function BookDetailPage() {
     </div>
   );
 }
-

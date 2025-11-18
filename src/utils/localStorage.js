@@ -119,7 +119,7 @@ export function getCredits() {
   return userData.credits || 0;
 }
 
-export function useCredit() {
+export function spendCredit() {
   const userData = getUserData();
   if (userData.credits > 0) {
     userData.credits--;
@@ -208,4 +208,3 @@ export function markNotificationAsRead(notificationId) {
 export function clearNotifications() {
   localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify([]));
 }
-

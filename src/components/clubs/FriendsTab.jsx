@@ -281,11 +281,17 @@ export default function FriendsTab() {
 
                   {/* Actions */}
                   <div className="border-t border-gray-100 p-4 bg-gray-50 flex space-x-2">
+                    <Link
+                      to={`/friend/${friend.id}/library`}
+                      className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition-colors text-sm text-center"
+                    >
+                      View Library
+                    </Link>
                     <button
                       onClick={() => handleSelectFriend(friend)}
-                      className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition-colors text-sm"
+                      className="flex-1 bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-semibold hover:bg-blue-200 transition-colors text-sm"
                     >
-                      View Profile
+                      Profile
                     </button>
                     <button
                       onClick={() => handleRemoveFriend(friend.id)}

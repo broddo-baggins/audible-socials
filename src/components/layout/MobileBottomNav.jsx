@@ -7,7 +7,7 @@ const MobileBottomNav = () => {
   const navItems = [
     { label: 'Home', path: '/', icon: Home },
     { label: 'Library', path: '/library', icon: Library },
-    { label: 'Socials', path: '/clubs', icon: Users },
+    { label: 'Social', path: '/social', icon: Users },
     { label: 'Search', path: '/search', icon: Search },
     { label: 'Profile', path: '/account', icon: User },
   ];

@@ -79,22 +79,43 @@ const BookCarousel = ({
       
       {/* Carousel Container */}
       <div className="relative group">
-        {/* Left Navigation Button - Hidden on mobile */}
+        {/* Left Navigation Button - Hidden on mobile, visible on tablet and desktop */}
         {canScrollLeft && (
           <button
             onClick={() => scroll('left')}
-            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full bg-white shadow-lg text-audible-text-primary hover:bg-audible-orange hover:text-white border border-audible-gray-200 transition-colors opacity-0 group-hover:opacity-100 -translate-x-1/2"
+            className="hidden tablet:flex lg:hidden absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center rounded-full bg-white shadow-lg text-audible-text-primary hover:bg-audible-orange hover:text-white border border-audible-gray-200 transition-colors opacity-70 hover:opacity-100 -translate-x-1/2"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+        )}
+
+        {/* Right Navigation Button - Hidden on mobile, visible on tablet and desktop */}
+        {canScrollRight && (
+          <button
+            onClick={() => scroll('right')}
+            className="hidden tablet:flex lg:hidden absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center rounded-full bg-white shadow-lg text-audible-text-primary hover:bg-audible-orange hover:text-white border border-audible-gray-200 transition-colors opacity-70 hover:opacity-100 translate-x-1/2"
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        )}
+
+        {/* Desktop Navigation Buttons - Larger and with hover effects */}
+        {canScrollLeft && (
+          <button
+            onClick={() => scroll('left')}
+            className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full bg-white shadow-lg text-audible-text-primary hover:bg-audible-orange hover:text-white border border-audible-gray-200 transition-colors opacity-0 group-hover:opacity-100 -translate-x-1/2"
             aria-label="Scroll left"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
         )}
 
-        {/* Right Navigation Button - Hidden on mobile */}
         {canScrollRight && (
           <button
             onClick={() => scroll('right')}
-            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full bg-white shadow-lg text-audible-text-primary hover:bg-audible-orange hover:text-white border border-audible-gray-200 transition-colors opacity-0 group-hover:opacity-100 translate-x-1/2"
+            className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full bg-white shadow-lg text-audible-text-primary hover:bg-audible-orange hover:text-white border border-audible-gray-200 transition-colors opacity-0 group-hover:opacity-100 translate-x-1/2"
             aria-label="Scroll right"
           >
             <ChevronRight className="w-5 h-5" />
@@ -119,12 +140,20 @@ const BookCarousel = ({
           ))}
         </div>
         
-        {/* Gradient Fade Edges - Hidden on mobile */}
+        {/* Gradient Fade Edges - Hidden on mobile, visible on tablet and desktop */}
         {canScrollLeft && (
-          <div className="hidden md:block absolute left-0 top-0 bottom-0 w-20 gradient-fade-left pointer-events-none z-[5]" />
+          <div className="hidden tablet:block lg:hidden absolute left-0 top-0 bottom-0 w-16 gradient-fade-left pointer-events-none z-[5]" />
         )}
         {canScrollRight && (
-          <div className="hidden md:block absolute right-0 top-0 bottom-0 w-20 gradient-fade-right pointer-events-none z-[5]" />
+          <div className="hidden tablet:block lg:hidden absolute right-0 top-0 bottom-0 w-16 gradient-fade-right pointer-events-none z-[5]" />
+        )}
+
+        {/* Desktop Gradient Fade Edges */}
+        {canScrollLeft && (
+          <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-20 gradient-fade-left pointer-events-none z-[5]" />
+        )}
+        {canScrollRight && (
+          <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-20 gradient-fade-right pointer-events-none z-[5]" />
         )}
       </div>
     </div>

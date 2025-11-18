@@ -86,6 +86,138 @@
       "type": "late_night_listening",
       "hours": 3
     }
+  },
+  {
+    "id": "club-champion",
+    "name": "Club Champion",
+    "description": "Completed all books in a club for 3 consecutive months",
+    "icon": "trophy",
+    "rarity": "epic",
+    "criteria": {
+      "type": "club_streak",
+      "consecutiveMonths": 3
+    }
+  },
+  {
+    "id": "discussion-starter",
+    "name": "Discussion Starter",
+    "description": "Started 10 discussions in book clubs",
+    "icon": "message-circle",
+    "rarity": "uncommon",
+    "criteria": {
+      "type": "club_discussions",
+      "minDiscussions": 10
+    }
+  },
+  {
+    "id": "event-enthusiast",
+    "name": "Event Enthusiast",
+    "description": "Attended 20 club events",
+    "icon": "calendar",
+    "rarity": "rare",
+    "criteria": {
+      "type": "total_events_attended",
+      "minEvents": 20
+    }
+  },
+  {
+    "id": "club-veteran",
+    "name": "Club Veteran",
+    "description": "Member of the same club for 6 months",
+    "icon": "award",
+    "rarity": "rare",
+    "criteria": {
+      "type": "club_membership_duration",
+      "minMonths": 6
+    }
+  },
+  {
+    "id": "first-finisher",
+    "name": "First Finisher",
+    "description": "First member to complete a club book",
+    "icon": "zap",
+    "rarity": "rare",
+    "criteria": {
+      "type": "first_to_complete",
+      "count": 1
+    }
+  },
+  {
+    "id": "club-connector",
+    "name": "Club Connector",
+    "description": "Made 5 friends through book clubs",
+    "icon": "users",
+    "rarity": "uncommon",
+    "criteria": {
+      "type": "club_friends",
+      "minFriends": 5
+    }
+  },
+  {
+    "id": "milestone-maker",
+    "name": "Milestone Maker",
+    "description": "Participated in 5 club milestones",
+    "icon": "target",
+    "rarity": "rare",
+    "criteria": {
+      "type": "club_milestones",
+      "minMilestones": 5
+    }
+  },
+  {
+    "id": "book-evangelist",
+    "name": "Book Evangelist",
+    "description": "Shared 10 club books with friends",
+    "icon": "share-2",
+    "rarity": "uncommon",
+    "criteria": {
+      "type": "club_shares",
+      "minShares": 10
+    }
+  },
+  {
+    "id": "super-listener",
+    "name": "Super Listener",
+    "description": "Listened to 100 hours in club books",
+    "icon": "headphones",
+    "rarity": "epic",
+    "criteria": {
+      "type": "club_listening_hours",
+      "minHours": 100
+    }
+  },
+  {
+    "id": "celebrity-fan",
+    "name": "Celebrity Fan",
+    "description": "Attended a celebrity-hosted club event",
+    "icon": "star",
+    "rarity": "uncommon",
+    "criteria": {
+      "type": "celebrity_event",
+      "count": 1
+    }
+  },
+  {
+    "id": "founding-member",
+    "name": "Founding Member",
+    "description": "Joined a club within its first month",
+    "icon": "sparkles",
+    "rarity": "epic",
+    "criteria": {
+      "type": "early_club_join",
+      "withinDays": 30
+    }
+  },
+  {
+    "id": "genre-explorer",
+    "name": "Genre Explorer",
+    "description": "Read books from 5 different genres in clubs",
+    "icon": "compass",
+    "rarity": "uncommon",
+    "criteria": {
+      "type": "club_genre_diversity",
+      "minGenres": 5
+    }
   }
 ]
 

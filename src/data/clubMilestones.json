@@ -1,0 +1,465 @@
+[
+  {
+    "clubId": "1",
+    "milestones": [
+      {
+        "id": "m1-1",
+        "type": "club_founded",
+        "title": "Club Founded",
+        "description": "Reese's Book Club was created",
+        "timestamp": "2020-01-15T00:00:00Z",
+        "participants": [],
+        "metadata": {
+          "foundedBy": "Reese Witherspoon"
+        }
+      },
+      {
+        "id": "m1-2",
+        "type": "member_milestone",
+        "title": "10,000 Members",
+        "description": "Reached 10,000 members",
+        "timestamp": "2022-06-20T00:00:00Z",
+        "participants": [],
+        "metadata": {
+          "memberCount": 10000
+        }
+      },
+      {
+        "id": "m1-3",
+        "type": "event",
+        "title": "Author Q&A: Delia Owens",
+        "description": "Exclusive conversation with the author of Where the Crawdads Sing",
+        "timestamp": "2025-11-10T18:00:00Z",
+        "participants": ["1", "user-me", "6", "14"],
+        "metadata": {
+          "eventId": "e2",
+          "attendeeCount": 6890
+        }
+      },
+      {
+        "id": "m1-4",
+        "type": "book_completion",
+        "title": "Current Book: 80% Complete",
+        "description": "Members collectively reached 80% completion on Where the Crawdads Sing",
+        "timestamp": "2025-11-15T12:00:00Z",
+        "participants": ["1", "6", "14"],
+        "metadata": {
+          "bookId": "4",
+          "completionRate": 80
+        }
+      },
+      {
+        "id": "m1-5",
+        "type": "member_achievement",
+        "title": "Emma Richardson - Early Finisher",
+        "description": "Emma completed the book 10 days early",
+        "timestamp": "2025-11-08T20:30:00Z",
+        "participants": ["1"],
+        "metadata": {
+          "userId": "1",
+          "daysEarly": 10,
+          "badgeEarned": "early-bird"
+        }
+      }
+    ],
+    "stats": {
+      "totalBooks": 7,
+      "totalEvents": 14,
+      "totalDiscussions": 156,
+      "averageCompletion": 78,
+      "mostActiveMembers": ["1", "6", "14"]
+    },
+    "upcomingMilestones": [
+      {
+        "type": "member_milestone",
+        "title": "50,000 Members",
+        "currentProgress": 42156,
+        "target": 50000,
+        "estimatedDate": "2026-03-15T00:00:00Z"
+      },
+      {
+        "type": "anniversary",
+        "title": "5 Year Anniversary",
+        "currentProgress": 58,
+        "target": 60,
+        "estimatedDate": "2026-01-15T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "clubId": "2",
+    "milestones": [
+      {
+        "id": "m2-1",
+        "type": "club_founded",
+        "title": "Club Founded",
+        "description": "Oprah's Book Club was created",
+        "timestamp": "1996-09-17T00:00:00Z",
+        "participants": [],
+        "metadata": {
+          "foundedBy": "Oprah Winfrey"
+        }
+      },
+      {
+        "id": "m2-2",
+        "type": "member_milestone",
+        "title": "25,000 Members",
+        "description": "Reached 25,000 members",
+        "timestamp": "2023-03-10T00:00:00Z",
+        "participants": [],
+        "metadata": {
+          "memberCount": 25000
+        }
+      },
+      {
+        "id": "m2-3",
+        "type": "event",
+        "title": "Oprah's Discussion: Educated",
+        "description": "In-depth discussion about Tara Westover's powerful memoir",
+        "timestamp": "2025-11-05T20:00:00Z",
+        "participants": ["4", "9", "15"],
+        "metadata": {
+          "eventId": "e3",
+          "attendeeCount": 9234
+        }
+      },
+      {
+        "id": "m2-4",
+        "type": "book_completion",
+        "title": "Book Discussion Ready",
+        "description": "85% of active members completed Educated",
+        "timestamp": "2025-11-12T00:00:00Z",
+        "participants": ["4", "9", "15"],
+        "metadata": {
+          "bookId": "5",
+          "completionRate": 85
+        }
+      }
+    ],
+    "stats": {
+      "totalBooks": 85,
+      "totalEvents": 180,
+      "totalDiscussions": 2456,
+      "averageCompletion": 82,
+      "mostActiveMembers": ["4", "9", "15"]
+    },
+    "upcomingMilestones": [
+      {
+        "type": "member_milestone",
+        "title": "40,000 Members",
+        "currentProgress": 38764,
+        "target": 40000,
+        "estimatedDate": "2026-01-20T00:00:00Z"
+      },
+      {
+        "type": "anniversary",
+        "title": "30 Year Anniversary",
+        "currentProgress": 29,
+        "target": 30,
+        "estimatedDate": "2026-09-17T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "clubId": "3",
+    "milestones": [
+      {
+        "id": "m3-1",
+        "type": "club_founded",
+        "title": "Club Founded",
+        "description": "Our Shared Shelf was created",
+        "timestamp": "2016-01-01T00:00:00Z",
+        "participants": [],
+        "metadata": {
+          "foundedBy": "Emma Watson"
+        }
+      },
+      {
+        "id": "m3-2",
+        "type": "member_milestone",
+        "title": "20,000 Members",
+        "description": "Reached 20,000 members",
+        "timestamp": "2024-08-15T00:00:00Z",
+        "participants": [],
+        "metadata": {
+          "memberCount": 20000
+        }
+      },
+      {
+        "id": "m3-3",
+        "type": "event",
+        "title": "Feminist Friday Discussion",
+        "description": "Emma Watson leads discussion on Becoming by Michelle Obama",
+        "timestamp": "2025-11-01T18:00:00Z",
+        "participants": ["1", "10", "18"],
+        "metadata": {
+          "eventId": "e6",
+          "attendeeCount": 5234
+        }
+      },
+      {
+        "id": "m3-4",
+        "type": "member_achievement",
+        "title": "Emma Richardson - Perfect Attendance",
+        "description": "Attended all club events this month",
+        "timestamp": "2025-11-14T00:00:00Z",
+        "participants": ["1"],
+        "metadata": {
+          "userId": "1",
+          "eventsAttended": 6,
+          "badgeEarned": "perfect-attendance"
+        }
+      }
+    ],
+    "stats": {
+      "totalBooks": 48,
+      "totalEvents": 96,
+      "totalDiscussions": 892,
+      "averageCompletion": 75,
+      "mostActiveMembers": ["1", "10", "18"]
+    },
+    "upcomingMilestones": [
+      {
+        "type": "member_milestone",
+        "title": "30,000 Members",
+        "currentProgress": 28932,
+        "target": 30000,
+        "estimatedDate": "2026-02-10T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "clubId": "4",
+    "milestones": [
+      {
+        "id": "m4-1",
+        "type": "club_founded",
+        "title": "Club Founded",
+        "description": "Read with Jenna was created",
+        "timestamp": "2019-03-01T00:00:00Z",
+        "participants": [],
+        "metadata": {
+          "foundedBy": "Jenna Bush Hager"
+        }
+      },
+      {
+        "id": "m4-2",
+        "type": "event",
+        "title": "TODAY Show Book Club Hour",
+        "description": "Live discussion of The Four Winds on national television",
+        "timestamp": "2025-10-24T10:00:00Z",
+        "participants": ["7", "17"],
+        "metadata": {
+          "eventId": "e8",
+          "attendeeCount": 6123
+        }
+      }
+    ],
+    "stats": {
+      "totalBooks": 42,
+      "totalEvents": 84,
+      "totalDiscussions": 678,
+      "averageCompletion": 71,
+      "mostActiveMembers": ["7", "17"]
+    },
+    "upcomingMilestones": [
+      {
+        "type": "member_milestone",
+        "title": "35,000 Members",
+        "currentProgress": 31845,
+        "target": 35000,
+        "estimatedDate": "2026-04-01T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "clubId": "5",
+    "milestones": [
+      {
+        "id": "m5-1",
+        "type": "club_founded",
+        "title": "Club Founded",
+        "description": "Book Club Central was created",
+        "timestamp": "2017-10-01T00:00:00Z",
+        "participants": [],
+        "metadata": {
+          "foundedBy": "Sarah Jessica Parker"
+        }
+      },
+      {
+        "id": "m5-2",
+        "type": "event",
+        "title": "Literary Salon with SJP",
+        "description": "Intimate evening discussing The Invisible Life of Addie LaRue",
+        "timestamp": "2025-11-02T20:00:00Z",
+        "participants": ["3", "9", "13", "19"],
+        "metadata": {
+          "eventId": "e10",
+          "attendeeCount": 3456
+        }
+      },
+      {
+        "id": "m5-3",
+        "type": "member_achievement",
+        "title": "Sofia Martinez - Speed Reader",
+        "description": "Completed book at 1.75x speed",
+        "timestamp": "2025-11-10T22:00:00Z",
+        "participants": ["3"],
+        "metadata": {
+          "userId": "3",
+          "listeningSpeed": 1.75,
+          "badgeEarned": "speed-listener"
+        }
+      }
+    ],
+    "stats": {
+      "totalBooks": 38,
+      "totalEvents": 76,
+      "totalDiscussions": 542,
+      "averageCompletion": 79,
+      "mostActiveMembers": ["3", "9", "13", "19"]
+    },
+    "upcomingMilestones": [
+      {
+        "type": "member_milestone",
+        "title": "20,000 Members",
+        "currentProgress": 19845,
+        "target": 20000,
+        "estimatedDate": "2026-01-05T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "clubId": "6",
+    "milestones": [
+      {
+        "id": "m6-1",
+        "type": "club_founded",
+        "title": "Club Founded",
+        "description": "Mystery Lovers Society was created",
+        "timestamp": "2018-05-10T00:00:00Z",
+        "participants": [],
+        "metadata": {
+          "foundedBy": "Louise Penny"
+        }
+      },
+      {
+        "id": "m6-2",
+        "type": "event",
+        "title": "Mystery Writing Masterclass",
+        "description": "Learn craft secrets from Louise Penny",
+        "timestamp": "2025-10-26T19:00:00Z",
+        "participants": ["5", "11", "19"],
+        "metadata": {
+          "eventId": "e12",
+          "attendeeCount": 2134
+        }
+      }
+    ],
+    "stats": {
+      "totalBooks": 32,
+      "totalEvents": 64,
+      "totalDiscussions": 445,
+      "averageCompletion": 73,
+      "mostActiveMembers": ["5", "11", "19"]
+    },
+    "upcomingMilestones": [
+      {
+        "type": "member_milestone",
+        "title": "20,000 Members",
+        "currentProgress": 15432,
+        "target": 20000,
+        "estimatedDate": "2026-06-01T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "clubId": "7",
+    "milestones": [
+      {
+        "id": "m7-1",
+        "type": "club_founded",
+        "title": "Club Founded",
+        "description": "Sci-Fi Sundays was created",
+        "timestamp": "2019-08-15T00:00:00Z",
+        "participants": [],
+        "metadata": {
+          "foundedBy": "Andy Weir"
+        }
+      },
+      {
+        "id": "m7-2",
+        "type": "event",
+        "title": "Science in Sci-Fi Discussion",
+        "description": "Andy Weir explains the real science behind Project Hail Mary",
+        "timestamp": "2025-10-23T16:00:00Z",
+        "participants": ["3", "13"],
+        "metadata": {
+          "eventId": "e13",
+          "attendeeCount": 3456
+        }
+      }
+    ],
+    "stats": {
+      "totalBooks": 28,
+      "totalEvents": 56,
+      "totalDiscussions": 389,
+      "averageCompletion": 76,
+      "mostActiveMembers": ["3", "13"]
+    },
+    "upcomingMilestones": [
+      {
+        "type": "member_milestone",
+        "title": "20,000 Members",
+        "currentProgress": 18765,
+        "target": 20000,
+        "estimatedDate": "2026-02-20T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "clubId": "8",
+    "milestones": [
+      {
+        "id": "m8-1",
+        "type": "club_founded",
+        "title": "Club Founded",
+        "description": "Women Who Lead was created",
+        "timestamp": "2020-06-01T00:00:00Z",
+        "participants": [],
+        "metadata": {
+          "foundedBy": "Brene Brown"
+        }
+      },
+      {
+        "id": "m8-2",
+        "type": "event",
+        "title": "Dare to Lead Workshop",
+        "description": "Apply vulnerability and courage principles to leadership",
+        "timestamp": "2025-10-27T18:00:00Z",
+        "participants": ["2", "7", "12", "20"],
+        "metadata": {
+          "eventId": "e14",
+          "attendeeCount": 4234
+        }
+      }
+    ],
+    "stats": {
+      "totalBooks": 24,
+      "totalEvents": 48,
+      "totalDiscussions": 356,
+      "averageCompletion": 80,
+      "mostActiveMembers": ["2", "7", "12", "20"]
+    },
+    "upcomingMilestones": [
+      {
+        "type": "member_milestone",
+        "title": "25,000 Members",
+        "currentProgress": 24567,
+        "target": 25000,
+        "estimatedDate": "2026-01-10T00:00:00Z"
+      }
+    ]
+  }
+]
+

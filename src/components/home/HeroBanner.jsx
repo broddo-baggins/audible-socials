@@ -2,7 +2,7 @@ import { Play, Plus, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Button, Rating, Badge } from '../ui';
-import { usePlayer } from '../../contexts/PlayerContext';
+import { usePlayer } from '../../contexts/usePlayer';
 
 const HeroBanner = ({ book }) => {
   const { loadBook, play } = usePlayer();

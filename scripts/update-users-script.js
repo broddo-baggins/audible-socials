@@ -1,7 +1,11 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const usersPath = path.join(__dirname, 'src/data/users.json');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const usersPath = path.join(__dirname, '../src/data/users.json');
 const users = JSON.parse(fs.readFileSync(usersPath, 'utf8'));
 
 users.forEach(user => {
@@ -22,4 +26,3 @@ users.forEach(user => {
 
 fs.writeFileSync(usersPath, JSON.stringify(users, null, 2));
 console.log('Updated all users successfully');
-

@@ -1,8 +1,44 @@
 import { useState, useEffect } from 'react';
-import { getImageUrl } from '../utils/imageCache';
 import BookGrid from '../components/books/BookGrid';
 import { BookCardSkeleton } from '../components/ui/Skeleton';
 import booksData from '../data/books.json';
+
+const getBookProgress = (bookId) => {
+  const progressKey = `echoread_progress_${bookId}`;
+  const saved = localStorage.getItem(progressKey);
+  if (saved) {
+    try {
+      const progress = JSON.parse(saved);
+      return progress.progress || 0;
+    } catch (error) {
+      console.error('Error parsing saved progress:', error);
+      return 0;
+    }
+  }
+  return Math.floor(Math.random() * 100);
+};
+
+const getBookStatus = (bookId) => {
+  const progress = getBookProgress(bookId);
+  if (progress === 0) return 'Not started';
+  if (progress === 100) return 'Finished';
+  return 'In progress';
+};
+
+const getLastListened = (bookId) => {
+  const progressKey = `echoread_progress_${bookId}`;
+  const saved = localStorage.getItem(progressKey);
+  if (saved) {
+    try {
+      const progress = JSON.parse(saved);
+      return progress.lastListened;
+    } catch (error) {
+      console.error('Error parsing last listened value:', error);
+      return null;
+    }
+  }
+  return null;
+};
 
 const Library = () => {
   const [books, setBooks] = useState([]);
@@ -20,22 +56,15 @@ const Library = () => {
   useEffect(() => {
     const loadLibrary = async () => {
       try {
-        // Load user's library from localStorage
-        const library = JSON.parse(localStorage.getItem('echoread_library') || '[]');
+        // Books already have cover paths in books.json
+        const booksWithProgress = booksData.slice(0, 20).map((book) => ({
+          ...book,
+          progress: getBookProgress(book.id),
+          status: getBookStatus(book.id),
+          lastListened: getLastListened(book.id),
+        }));
         
-        // For demo, load some books
-        const booksWithCovers = await Promise.all(
-          booksData.slice(0, 20).map(async (book) => ({
-            ...book,
-            cover: await getImageUrl(book.coverQuery || `${book.title} ${book.author} book cover`),
-            // Get progress from localStorage
-            progress: getBookProgress(book.id),
-            status: getBookStatus(book.id),
-            lastListened: getLastListened(book.id),
-          }))
-        );
-        
-        setBooks(booksWithCovers);
+        setBooks(booksWithProgress);
         setLoading(false);
       } catch (error) {
         console.error('Error loading library:', error);
@@ -45,41 +74,6 @@ const Library = () => {
     
     loadLibrary();
   }, []);
-  
-  const getBookProgress = (bookId) => {
-    const progressKey = `echoread_progress_${bookId}`;
-    const saved = localStorage.getItem(progressKey);
-    if (saved) {
-      try {
-        const progress = JSON.parse(saved);
-        return progress.progress || 0;
-      } catch (e) {
-        return 0;
-      }
-    }
-    return Math.floor(Math.random() * 100); // Demo progress
-  };
-  
-  const getBookStatus = (bookId) => {
-    const progress = getBookProgress(bookId);
-    if (progress === 0) return 'Not started';
-    if (progress === 100) return 'Finished';
-    return 'In progress';
-  };
-  
-  const getLastListened = (bookId) => {
-    const progressKey = `echoread_progress_${bookId}`;
-    const saved = localStorage.getItem(progressKey);
-    if (saved) {
-      try {
-        const progress = JSON.parse(saved);
-        return progress.lastListened;
-      } catch (e) {
-        return null;
-      }
-    }
-    return null;
-  };
   
   const filterBooksByTab = (books) => {
     switch (activeTab) {

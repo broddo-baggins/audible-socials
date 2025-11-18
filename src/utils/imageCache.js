@@ -51,6 +51,7 @@ export function getCacheSize() {
     const cache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
     return Object.keys(cache).length;
   } catch (error) {
+    console.error('Error calculating image cache size:', error);
     return 0;
   }
 }
@@ -82,4 +83,3 @@ export async function getImageUrl(query, genre = 'default') {
   const fallbackUrl = FALLBACK_IMAGES[genre] || FALLBACK_IMAGES.default;
   return fallbackUrl + '&sig=' + Math.random().toString(36).substring(7);
 }
-

@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Users, Calendar, Clock, Crown, Gift, Award, Check, X, Star } from 'lucide-react';
+import { motion as Motion } from 'framer-motion';
+import { Users, Calendar, Clock, Crown, Gift, Award, Check, X, Star, TrendingUp, BookOpen } from 'lucide-react';
 import clubsData from '../data/clubs.json';
 import booksData from '../data/books.json';
 import usersData from '../data/users.json';
 import { getUserData, joinClub, leaveClub, getJoinedClubs, getFriends } from '../utils/localStorage';
 import { fetchGoogleImagesCover } from '../utils/googleImages';
 import EventRSVP from '../components/events/EventRSVP';
+import ClubTimeline from '../components/clubs/ClubTimeline';
 
 export default function ClubDetailPage() {
   const { clubId } = useParams();
@@ -18,6 +19,9 @@ export default function ClubDetailPage() {
   const [isMember, setIsMember] = useState(false);
   const [coverUrl, setCoverUrl] = useState(null);
   const [friendsInClub, setFriendsInClub] = useState([]);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
 
   useEffect(() => {
     const foundClub = clubsData.find(c => c.id === clubId);
@@ -78,6 +82,30 @@ export default function ClubDetailPage() {
     }
   };
 
+  const handlePurchaseBook = () => {
+    // Mock purchase - add book to user's library
+    const currentUser = getUserData();
+    if (!currentUser.library.includes(club.currentBook)) {
+      currentUser.library.push(club.currentBook);
+      localStorage.setItem('userData', JSON.stringify(currentUser));
+      
+      // Deduct credit
+      if (currentUser.credits > 0) {
+        currentUser.credits -= 1;
+        localStorage.setItem('userData', JSON.stringify(currentUser));
+      }
+      
+      setPurchaseSuccess(true);
+      setUserData(currentUser);
+      
+      // Auto-close modal after 2 seconds
+      setTimeout(() => {
+        setShowPurchaseModal(false);
+        setPurchaseSuccess(false);
+      }, 2000);
+    }
+  };
+
   if (!club || !currentBook) {
     return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
@@ -94,7 +122,7 @@ export default function ClubDetailPage() {
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid md:grid-cols-2 gap-8 items-start">
             {/* Book Cover */}
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex justify-center md:justify-start"
@@ -104,10 +132,10 @@ export default function ClubDetailPage() {
                 alt={currentBook.title}
                 className="w-64 md:w-80 rounded-lg shadow-2xl"
               />
-            </motion.div>
+            </Motion.div>
 
             {/* Club Info */}
-            <motion.div
+            <Motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               className="space-y-4"
@@ -185,15 +213,23 @@ export default function ClubDetailPage() {
                         </div>
                         <div>
                           <h4 className="text-sm font-semibold text-white mb-1">Book Ownership Required</h4>
-                          <p className="text-sm text-white/90 mb-2">
+                          <p className="text-sm text-white/90 mb-3">
                             You must own "{currentBook?.title}" to join this book club and participate in discussions.
                           </p>
-                          <Link
-                            to={`/book/${currentBook?.id}`}
-                            className="inline-block bg-orange-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-orange-600 transition-colors text-sm"
-                          >
-                            Get the Book
-                          </Link>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => setShowPurchaseModal(true)}
+                              className="inline-block bg-orange-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-orange-600 transition-colors text-sm"
+                            >
+                              Get the Book
+                            </button>
+                            <Link
+                              to={`/book/${currentBook?.id}`}
+                              className="inline-block bg-white/20 text-white px-4 py-2 rounded-full font-semibold hover:bg-white/30 transition-colors text-sm"
+                            >
+                              View Details
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -227,16 +263,46 @@ export default function ClubDetailPage() {
                   )}
                 </div>
               )}
-            </motion.div>
+            </Motion.div>
           </div>
         </div>
       </section>
 
+      {/* Tabs Navigation */}
+      <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex space-x-8">
+            <button
+              onClick={() => setActiveTab('overview')}
+              className={`py-4 border-b-2 font-semibold transition-colors ${
+                activeTab === 'overview'
+                  ? 'border-purple-600 text-purple-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Overview
+            </button>
+            <button
+              onClick={() => setActiveTab('timeline')}
+              className={`py-4 border-b-2 font-semibold transition-colors flex items-center space-x-2 ${
+                activeTab === 'timeline'
+                  ? 'border-purple-600 text-purple-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <TrendingUp className="w-4 h-4" />
+              <span>Timeline & Milestones</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Left Column - Current Book & Events */}
-          <div className="md:col-span-2 space-y-8">
+        {activeTab === 'overview' ? (
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Left Column - Current Book & Events */}
+            <div className="md:col-span-2 space-y-8">
             {/* Current Book */}
             <section className="bg-white rounded-xl shadow-md p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Currently Reading</h2>
@@ -398,9 +464,139 @@ export default function ClubDetailPage() {
               </section>
             )}
           </div>
-        </div>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <ClubTimeline clubId={clubId} />
+          </div>
+        )}
       </div>
+
+      {/* Purchase Modal */}
+      {showPurchaseModal && currentBook && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => !purchaseSuccess && setShowPurchaseModal(false)}>
+          <Motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {!purchaseSuccess ? (
+              <>
+                <div className="bg-gradient-to-r from-orange-500 to-pink-500 p-6 text-white">
+                  <h2 className="text-2xl font-bold mb-2">Get This Book</h2>
+                  <p className="text-white/90">Join {club.name} and start reading today</p>
+                </div>
+
+                <div className="p-6">
+                  <div className="flex gap-6 mb-6">
+                    <img
+                      src={coverUrl || currentBook.cover}
+                      alt={currentBook.title}
+                      className="w-32 h-48 object-cover rounded-lg shadow-lg flex-shrink-0"
+                    />
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{currentBook.title}</h3>
+                      <p className="text-lg text-gray-600 mb-3">By {currentBook.author}</p>
+                      <div className="flex items-center gap-2 mb-3">
+                        <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                        <span className="font-semibold text-gray-900">{currentBook.rating}</span>
+                        <span className="text-gray-500">({currentBook.ratingsCount.toLocaleString()} ratings)</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">
+                        <Clock className="w-4 h-4 inline mr-1" />
+                        {currentBook.duration}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Club Bundle Offer */}
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 mb-6 border-2 border-purple-200">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Gift className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-bold text-purple-900 mb-1">Book Club Bundle</h4>
+                        <p className="text-sm text-purple-800 mb-2">
+                          Get this book and automatically join {club.name}
+                        </p>
+                        <ul className="space-y-1 text-xs text-purple-700">
+                          {club.perks.slice(0, 3).map((perk, idx) => (
+                            <li key={idx} className="flex items-start">
+                              <Check className="w-4 h-4 mr-1 flex-shrink-0 text-green-600" />
+                              <span>{perk}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Pricing */}
+                  <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-gray-700">Book Price</span>
+                      <span className="text-gray-900 font-semibold">1 Credit</span>
+                    </div>
+                    <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-200">
+                      <span className="text-gray-700">Club Membership</span>
+                      <span className="text-green-600 font-semibold">FREE</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-gray-900">Total</span>
+                      <span className="text-2xl font-bold text-orange-600">1 Credit</span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      You have {userData?.credits || 0} credit{userData?.credits !== 1 ? 's' : ''} available
+                    </p>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowPurchaseModal(false)}
+                      className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-full hover:bg-gray-50 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handlePurchaseBook}
+                      disabled={!userData?.credits || userData.credits < 1}
+                      className="flex-1 px-6 py-3 bg-orange-500 text-white font-bold rounded-full hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {userData?.credits && userData.credits >= 1 ? 'Get Book & Join Club' : 'Not Enough Credits'}
+                    </button>
+                  </div>
+
+                  {(!userData?.credits || userData.credits < 1) && (
+                    <p className="text-center text-sm text-red-600 mt-3">
+                      You need at least 1 credit to purchase this book. <Link to="/account" className="underline">Get more credits</Link>
+                    </p>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="p-12 text-center">
+                <Motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6"
+                >
+                  <Check className="w-12 h-12 text-white" />
+                </Motion.div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Success!</h3>
+                <p className="text-lg text-gray-600 mb-4">
+                  "{currentBook.title}" has been added to your library
+                </p>
+                <p className="text-sm text-gray-500">
+                  You can now join {club.name} and start reading
+                </p>
+              </div>
+            )}
+          </Motion.div>
+        </div>
+      )}
     </div>
   );
 }
-

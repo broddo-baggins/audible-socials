@@ -5,7 +5,6 @@ import FilterSidebar from '../components/browse/FilterSidebar';
 import BookGrid from '../components/books/BookGrid';
 import { Tag, Button } from '../components/ui';
 import { searchBooks, filterBooks, sortBooks, getFilterOptions, paginateResults } from '../utils/searchFilter';
-import { getImageUrl } from '../utils/imageCache';
 import booksData from '../data/books.json';
 
 const Browse = () => {
@@ -45,15 +44,9 @@ const Browse = () => {
   useEffect(() => {
     const loadBooks = async () => {
       try {
-        const booksWithCovers = await Promise.all(
-          booksData.map(async (book) => ({
-            ...book,
-            cover: await getImageUrl(book.coverQuery || `${book.title} ${book.author} book cover`),
-          }))
-        );
-        
-        setBooks(booksWithCovers);
-        setFilterOptions(getFilterOptions(booksWithCovers));
+        // Books already have cover paths in books.json
+        setBooks(booksData);
+        setFilterOptions(getFilterOptions(booksData));
         setLoading(false);
       } catch (error) {
         console.error('Error loading books:', error);

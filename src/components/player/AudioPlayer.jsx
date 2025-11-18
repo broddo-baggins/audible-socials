@@ -3,7 +3,7 @@ import {
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
   X, Maximize2, Minimize2, Bookmark, List, Clock
 } from 'lucide-react';
-import { usePlayer } from '../../contexts/PlayerContext';
+import { usePlayer } from '../../contexts/usePlayer';
 import { ProgressBar, Button, Badge } from '../ui';
 
 const AudioPlayer = () => {

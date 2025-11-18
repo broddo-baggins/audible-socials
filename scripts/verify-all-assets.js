@@ -105,7 +105,7 @@ allCoverFiles.forEach(file => {
   }
 });
 
-const duplicates = Object.entries(coversByID).filter(([id, files]) => files.length > 1);
+const duplicates = Object.entries(coversByID).filter(([, files]) => files.length > 1);
 if (duplicates.length > 0) {
   console.log(`Found ${duplicates.length} book IDs with duplicate covers:`);
   duplicates.slice(0, 10).forEach(([id, files]) => {
@@ -129,4 +129,3 @@ if (missingCovers.length === 0 && missingAvatars.length === 0) {
 }
 
 console.log('');
-

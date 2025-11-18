@@ -1,5 +1,5 @@
 import { Play, Pause, X } from 'lucide-react';
-import { usePlayer } from '../../contexts/PlayerContext';
+import { usePlayer } from '../../contexts/usePlayer';
 import { ProgressBar } from '../ui';
 
 const MiniPlayer = () => {

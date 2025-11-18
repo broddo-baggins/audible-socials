@@ -5,6 +5,16 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    screens: {
+      'xs': '475px',
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+      // Custom tablet breakpoint for iPad
+      'tablet': {'min': '768px', 'max': '1023px'},
+    },
     extend: {
       colors: {
         audible: {
@@ -34,6 +44,11 @@ export default {
           'text-tertiary': '#9CA3AF',     // Light gray for muted text
           'text-inverse': '#FFFFFF',      // White text for dark backgrounds
 
+          // Player Text Colors
+          'player-text': '#FFFFFF',       // White text for player
+          'player-text-muted': '#9CA3AF', // Muted text for player
+          'player-subtitle': '#D1D5DB',   // Subtitle text for player
+
           // UI Element Colors
           border: '#E5E7EB',
           'border-light': '#F3F4F6',
@@ -58,12 +73,36 @@ export default {
           'new-release': '#10B981',      // Green for new releases
           bestseller: '#F59E0B',         // Gold for bestsellers
 
-          // Legacy EchoRead colors (kept for reference)
+          // Legacy EchoRead colors
           echo: {
             orange: '#F27024',
+            'orange-dark': '#E55A2B',
             cream: '#FEFDFB',
             beige: '#F5F1ED',
-          }
+            charcoal: '#15191E',
+
+            // Echo Text Colors
+            'text-primary': '#111827',
+            'text-secondary': '#6B7280',
+            'text-tertiary': '#9CA3AF',
+
+            // Echo UI Colors
+            border: '#E5E7EB',
+            divider: '#E5E7EB',
+
+            // Echo Status Colors
+            success: '#10B981',
+            error: '#EF4444',
+            info: '#3B82F6',
+          },
+
+          // Player Component Colors (Dark Theme)
+          'player-bg': '#0A0E13',
+          'player-surface': '#15191E',
+          'player-elevated': '#1A1E23',
+          'player-border': '#2A3038',
+          'player-hover': 'rgba(255, 255, 255, 0.1)',
+          charcoal: '#15191E',
         },
       },
       fontFamily: {
