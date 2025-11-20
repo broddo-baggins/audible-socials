@@ -58,6 +58,47 @@ export const callGrokAPI = async (messages, options = {}) => {
 };
 
 /**
+ * Generate intelligent mock responses when API key is not available
+ * @param {Array} messages - User messages
+ * @returns {string} Mock AI response
+ */
+const getMockResponse = (messages) => {
+  const userMessage = messages[messages.length - 1]?.content?.toLowerCase() || '';
+
+  // Intelligent mock responses based on user input
+  if (userMessage.includes('recommend') || userMessage.includes('suggest')) {
+    return "I'd recommend 'The Name of the Wind' by Patrick Rothfuss - it's an epic fantasy with incredible world-building and character development. If you enjoy intricate magic systems and coming-of-age stories, this is perfect for you!";
+  }
+
+  if (userMessage.includes('similar to') || userMessage.includes('like')) {
+    return "If you enjoyed that book, you might like 'The Way of Kings' by Brandon Sanderson. It has similar epic scope and complex magic systems, though with a different cultural setting.";
+  }
+
+  if (userMessage.includes('summary') || userMessage.includes('plot')) {
+    return "Without spoiling too much, this book follows a young protagonist who discovers their connection to an ancient magical tradition. The story explores themes of identity, power, and the cost of knowledge.";
+  }
+
+  if (userMessage.includes('author') || userMessage.includes('who wrote')) {
+    return "That's an interesting question! The author you're thinking of has written several books in this genre. Their writing style often features intricate world-building and complex character relationships.";
+  }
+
+  if (userMessage.includes('favorite') || userMessage.includes('best')) {
+    return "One of my favorite aspects of literature is how different readers find different meanings in the same story. What draws you most to a particular book - the characters, the world-building, or the themes?";
+  }
+
+  // Default responses
+  const defaultResponses = [
+    "That's a fascinating insight about literature! Books have this incredible ability to transport us to different worlds and perspectives.",
+    "I love how reading creates these personal connections between readers and stories. What books have had the biggest impact on your reading journey?",
+    "Literature often reflects the human experience in such profound ways. Have you noticed how certain themes appear across different cultures and time periods?",
+    "One of the joys of reading is discovering new authors and genres. What's a book that surprised you with how much you enjoyed it?",
+    "Books can be such powerful tools for empathy and understanding. Which book helped you see the world from a different perspective?"
+  ];
+
+  return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+};
+
+/**
  * Call Grok API with retry logic
  * @param {Array} messages - Message history
  * @param {Object} options - API options
