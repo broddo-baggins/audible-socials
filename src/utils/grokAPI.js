@@ -195,7 +195,25 @@ Recommend 3 audiobooks they'll love:`;
  * @returns {Promise<Object>} Response with content and metadata
  */
 export const getAIBookAnswer = async (question, context) => {
-  const { allowSpoilers, currentBook, userProgress, conversationHistory } = context;
+  const { allowSpoilers, currentBook, userProgress, conversationHistory, bookCatalog } = context;
+
+  // Add current book context if available
+  let bookContext = '';
+  if (currentBook) {
+    bookContext = `\n\n**Currently Discussing:** "${currentBook.title}" by ${currentBook.author}
+Genre: ${currentBook.genre}
+Rating: ${currentBook.rating}/5
+${currentBook.description ? `Description: ${currentBook.description}` : ''}
+${userProgress > 0 ? `User's Progress: ${userProgress}%` : ''}`;
+  }
+
+  // Add book catalog info
+  if (bookCatalog && bookCatalog.length > 0) {
+    const catalogInfo = bookCatalog.slice(0, 20).map(b => 
+      `- "${b.title}" by ${b.author} (${b.genre})`
+    ).join('\n');
+    bookContext += `\n\n**Books Available in Catalog:**\n${catalogInfo}`;
+  }
 
   const systemPrompt = `You are a knowledgeable book discussion AI assistant for Listenable audiobook platform.
 
@@ -204,12 +222,15 @@ CRITICAL RULES:
 2. Be conversational and enthusiastic about books
 3. Provide 2-3 suggested follow-up questions
 4. Keep responses under 200 words
-5. If discussing a specific book, reference it naturally
+5. Reference specific books from the catalog when relevant
+6. If discussing a specific book, use the provided context
+
+${bookContext}
 
 When spoilers are DISABLED:
 - Discuss themes, writing style, character types (not fates)
 - Explain what makes the book compelling
-- Compare to similar books
+- Compare to similar books in the catalog
 - Share critical reception
 - NO plot specifics beyond the premise
 
@@ -217,7 +238,9 @@ When spoilers are ENABLED:
 - You may discuss full plot details
 - Explain character arcs and endings
 - Analyze plot twists
-- Still warn: "⚠️ SPOILER WARNING" at the start`;
+- Still warn: "⚠️ SPOILER WARNING" at the start
+
+IMPORTANT: You have access to real books in the Listenable catalog. Reference them by title and author when making recommendations.`;
 
   const messages = [
     { role: 'system', content: systemPrompt },
