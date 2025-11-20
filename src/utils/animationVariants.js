@@ -1,4 +1,21 @@
-// Global animation variants for interactive elements
+/**
+ * Animation Variants - Centralized Animation Configurations
+ *
+ * This file contains reusable animation variants used throughout the application
+ * for consistent, smooth animations using Framer Motion. All animations are
+ * optimized for performance and follow a cohesive design language.
+ *
+ * Usage:
+ * - interactiveVariants: For buttons, links, and interactive elements
+ * - cardHoverVariants: For card hover effects with elevation
+ * - pageVariants + pageTransition: For route transitions between pages
+ */
+
+/**
+ * Interactive Element Variants
+ * Used for buttons, links, and other clickable elements.
+ * Provides subtle scale and position animations for better UX.
+ */
 export const interactiveVariants = {
   hover: {
     scale: 1.02,
@@ -20,6 +37,11 @@ export const interactiveVariants = {
   }
 };
 
+/**
+ * Card Hover Variants
+ * Used for book cards and other card components.
+ * Includes elevation shadow changes for depth perception.
+ */
 export const cardHoverVariants = {
   hover: {
     y: -4,
@@ -35,7 +57,11 @@ export const cardHoverVariants = {
   }
 };
 
-// Page transition variants - battle-tested smooth animations
+/**
+ * Page Transition Variants
+ * Used with AnimatePresence for smooth route transitions.
+ * Provides fade, slide, and scale effects for page changes.
+ */
 export const pageVariants = {
   initial: {
     opacity: 0,
@@ -54,6 +80,11 @@ export const pageVariants = {
   }
 };
 
+/**
+ * Page Transition Configuration
+ * Tween animation with anticipate easing for smooth, natural transitions.
+ * Duration is optimized for perceived performance.
+ */
 export const pageTransition = {
   type: "tween",
   ease: "anticipate",

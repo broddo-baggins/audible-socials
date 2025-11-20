@@ -10,7 +10,7 @@
  */
 
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 import { PlayerProvider } from './contexts/PlayerContext';
 import { pageVariants, pageTransition } from './utils/animationVariants';

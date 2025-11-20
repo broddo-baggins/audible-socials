@@ -76,10 +76,11 @@ export const useIdleGame = (isPlaying = false, currentBook = null) => {
           shouldUnlock = state.level >= achievement.requirement;
           break;
         
-        case 'activity_time':
+        case 'activity_time': {
           const activityMinutes = state.activityStats[achievement.activityId] || 0;
           shouldUnlock = activityMinutes >= achievement.requirement;
           break;
+        }
         
         case 'activity_specific':
           // Handle special conditions like "gain X XP in Y activity"
@@ -257,7 +258,7 @@ export const useIdleGame = (isPlaying = false, currentBook = null) => {
     
     // Apply upgrade effects
     const unlockedActivities = [...state.unlockedActivities];
-    const activityBoosts = { ...state.activityBoosts } || {};
+    const activityBoosts = { ...(state.activityBoosts || {}) };
 
     if (upgrade.effect.type === 'xp_multiplier') {
       multipliers.xp = (multipliers.xp || 1) * upgrade.effect.value;

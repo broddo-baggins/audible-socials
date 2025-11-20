@@ -22,7 +22,7 @@ const AchievementIcon = ({ icon, unlocked = true }) => {
 
 const IdleGamePage = () => {
   const [gameState, setGameState] = useState(getIdleGameState());
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying] = useState(false);
 
   useEffect(() => {
     // Refresh game state periodically

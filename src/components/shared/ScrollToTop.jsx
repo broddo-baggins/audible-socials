@@ -1,3 +1,18 @@
+/**
+ * ScrollToTop Component - Floating Scroll Button
+ *
+ * A floating action button that appears when the user scrolls down the page,
+ * providing quick navigation back to the top. Features smooth scrolling animation
+ * and responsive positioning.
+ *
+ * Features:
+ * - Appears after scrolling 300px down
+ * - Smooth scroll-to-top animation
+ * - Responsive positioning (bottom-right corner)
+ * - Hover effects and accessibility
+ * - Auto-hides when at top of page
+ */
+
 import { useState, useEffect } from 'react';
 import { ArrowUp } from 'lucide-react';
 

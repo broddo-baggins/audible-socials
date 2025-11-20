@@ -1,22 +1,41 @@
+/**
+ * Button Component - Reusable UI Button with Multiple Variants
+ *
+ * A highly customizable button component built with React.forwardRef for proper
+ * accessibility and ref handling. Supports multiple variants, sizes, loading states,
+ * and animations using Framer Motion.
+ *
+ * Features:
+ * - 6 variants: primary, secondary, outline, ghost, link, dark
+ * - 4 sizes: sm, md, lg, xl
+ * - Loading state with spinner animation
+ * - Icon support (left/right positioning)
+ * - Smooth animations and transitions
+ * - Full accessibility support
+ * - Responsive design with Tailwind CSS
+ */
+
 import { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 
 const Button = forwardRef(({
   children,
-  variant = 'primary',
-  size = 'md',
-  fullWidth = false,
-  disabled = false,
-  loading = false,
-  leftIcon = null,
-  rightIcon = null,
-  animated = true,
-  className = '',
-  ...props
+  variant = 'primary',        // Button style variant
+  size = 'md',                // Button size
+  fullWidth = false,          // Whether button should take full width
+  disabled = false,           // Disabled state
+  loading = false,            // Loading state with spinner
+  leftIcon = null,            // Icon to display on the left
+  rightIcon = null,           // Icon to display on the right
+  animated = true,            // Whether to use animations
+  className = '',             // Additional CSS classes
+  ...props                    // Other button props (onClick, type, etc.)
 }, ref) => {
+  // Base styles applied to all button variants
   const baseStyles = 'inline-flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden';
 
+  // Style variants for different button appearances
   const variants = {
     primary: 'bg-audible-orange text-white focus:ring-2 focus:ring-audible-orange focus:ring-offset-2',
     secondary: 'bg-white text-audible-text-primary border border-audible-gray-300 focus:ring-2 focus:ring-audible-orange focus:ring-offset-2',
@@ -26,6 +45,7 @@ const Button = forwardRef(({
     dark: 'bg-audible-gray-800 text-white focus:ring-2 focus:ring-audible-orange focus:ring-offset-2',
   };
 
+  // Size configurations with responsive padding and typography
   const sizes = {
     sm: 'px-3 py-1.5 text-sm rounded-lg gap-1.5',
     md: 'px-5 py-2.5 text-base rounded-lg gap-2',
@@ -33,10 +53,11 @@ const Button = forwardRef(({
     xl: 'px-8 py-4 text-lg rounded-xl gap-3',
   };
 
+  // Dynamic class assignments
   const widthClass = fullWidth ? 'w-full' : '';
   const variantClass = disabled ? 'bg-echo-bg-tertiary text-echo-text-disabled cursor-not-allowed border border-echo-border' : variants[variant];
 
-  // Enhanced button animations
+  // Framer Motion animation variants for smooth interactions
   const buttonVariants = {
     initial: { scale: 1 },
     hover: !disabled && !loading && animated ? {

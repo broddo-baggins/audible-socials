@@ -1,21 +1,44 @@
+/**
+ * PlayerContext Provider - Audio Player State Management
+ *
+ * Provides comprehensive state management for the audio player functionality.
+ * Handles playback controls, progress tracking, bookmarks, sleep timers, and
+ * persistent state storage in localStorage.
+ *
+ * Key Features:
+ * - Audio playback state (playing, paused, time, duration)
+ * - Chapter navigation and tracking
+ * - Playback speed and volume controls
+ * - Sleep timer functionality
+ * - Bookmark system for audio positions
+ * - Persistent state across browser sessions
+ * - Minimized/maximized player states
+ */
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { PlayerContext } from './PlayerContextObject';
 
 export const PlayerProvider = ({ children }) => {
-  const [currentBook, setCurrentBook] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [currentChapter, setCurrentChapter] = useState(0);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
-  const [volume, setVolume] = useState(1.0);
-  const [sleepTimer, setSleepTimer] = useState(null);
-  const [bookmarks, setBookmarks] = useState([]);
-  const [isMinimized, setIsMinimized] = useState(true);
-  
-  const playbackIntervalRef = useRef(null);
-  const sleepTimerRef = useRef(null);
+  // Core playback state
+  const [currentBook, setCurrentBook] = useState(null);    // Currently loaded book
+  const [isPlaying, setIsPlaying] = useState(false);       // Playback status
+  const [currentTime, setCurrentTime] = useState(0);       // Current playback position (seconds)
+  const [duration, setDuration] = useState(0);             // Total book duration (seconds)
+  const [currentChapter, setCurrentChapter] = useState(0); // Current chapter index
+
+  // Playback controls
+  const [playbackSpeed, setPlaybackSpeed] = useState(1.0); // Playback speed multiplier
+  const [volume, setVolume] = useState(1.0);               // Volume level (0-1)
+
+  // Additional features
+  const [sleepTimer, setSleepTimer] = useState(null);      // Sleep timer end time
+  const [bookmarks, setBookmarks] = useState([]);          // User bookmarks
+  const [isMinimized, setIsMinimized] = useState(true);    // Player UI state
+
+  // Refs for managing intervals and timers
+  const playbackIntervalRef = useRef(null);               // Interval for playback simulation
+  const sleepTimerRef = useRef(null);                     // Timeout for sleep timer
   
   // Load saved state from localStorage
   useEffect(() => {

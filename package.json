@@ -1,7 +1,8 @@
 {
   "name": "audible-socials",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Audible Socials - Complete social audiobook platform with 400+ books, celebrity book clubs, and social features",
   "type": "module",
   "scripts": {
     "dev": "vite",
