@@ -9,6 +9,9 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "env": {
+    "VITE_GROK_API_KEY": "@vite_grok_api_key"
+  }
 }
 
