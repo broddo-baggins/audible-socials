@@ -15,6 +15,10 @@ const FloatingText = ({ items }) => {
         return 'text-green-400';
       case 'achievement':
         return 'text-purple-400';
+      case 'level':
+        return 'text-orange-400';
+      case 'info':
+        return 'text-cyan-400';
       default:
         return 'text-white';
     }

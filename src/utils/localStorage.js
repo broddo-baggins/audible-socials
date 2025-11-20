@@ -1,3 +1,5 @@
+import usersData from '../data/users.json';
+
 const STORAGE_KEYS = {
   USER_DATA: 'audible_user_data',
   JOINED_CLUBS: 'audible_joined_clubs',
@@ -19,7 +21,15 @@ export function getUserData() {
     return JSON.parse(data);
   }
   
-  // Default user data
+  // Initialize from users.json if available
+  const defaultUser = usersData.find(u => u.id === 'user-me');
+  
+  if (defaultUser) {
+    saveUserData(defaultUser);
+    return defaultUser;
+  }
+  
+  // Fallback default user data if users.json is missing 'user-me'
   return {
     id: 'user-me',
     name: 'You',
@@ -251,4 +261,26 @@ export function markNotificationAsRead(notificationId) {
 
 export function clearNotifications() {
   localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify([]));
+}
+
+// Generic localStorage getter
+export function getFromLocalStorage(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.warn(`Error getting data from localStorage for key: ${key}`, error);
+    return null;
+  }
+}
+
+// Generic localStorage setter
+export function saveToLocalStorage(key, data) {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+    return { success: true };
+  } catch (error) {
+    console.warn(`Error saving data to localStorage for key: ${key}`, error);
+    return { success: false, error: error.message };
+  }
 }

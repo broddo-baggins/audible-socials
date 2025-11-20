@@ -1,0 +1,79 @@
+{
+  "books": [
+    {
+      "id": "librivox_1763650423342_uczmk9mhv",
+      "title": "pride and prejudice jane",
+      "author": "austen",
+      "narrator": "Unknown",
+      "genre": "Public Domain",
+      "description": "Public domain audiobook: pride and prejudice jane by austen",
+      "length": "Unknown",
+      "rating": 4,
+      "cover": "/images/covers/default-cover.jpg",
+      "sampleAudioUrl": "/audio/librivox/pride_and_prejudice_jane_austen.mp3",
+      "librivox_id": null,
+      "is_public_domain": true,
+      "source": "librivox"
+    },
+    {
+      "id": "librivox_1763650686959_s6px1wvpp",
+      "title": "Dracula",
+      "author": "Bram Stoker",
+      "narrator": "Unknown",
+      "genre": "Public Domain",
+      "description": "Public domain audiobook: Dracula by Bram Stoker",
+      "length": "Unknown",
+      "rating": 4,
+      "cover": "/images/covers/default-cover.jpg",
+      "sampleAudioUrl": "/audio/librivox/Dracula by Bram Stoker.mp3",
+      "librivox_id": null,
+      "is_public_domain": true,
+      "source": "librivox"
+    },
+    {
+      "id": "librivox_1763650686959_s2ej7iw5u",
+      "title": "Frankenstein",
+      "author": "Mary Shelley",
+      "narrator": "Unknown",
+      "genre": "Public Domain",
+      "description": "Public domain audiobook: Frankenstein by Mary Shelley",
+      "length": "Unknown",
+      "rating": 4,
+      "cover": "/images/covers/default-cover.jpg",
+      "sampleAudioUrl": "/audio/librivox/Frankenstein by Mary Shelley.mp3",
+      "librivox_id": null,
+      "is_public_domain": true,
+      "source": "librivox"
+    },
+    {
+      "id": "librivox_1763650686959_s1uvw7mc4",
+      "title": "Pride And Prejudice",
+      "author": "Jane Austen",
+      "narrator": "Elizabeth Klett",
+      "genre": "Romance",
+      "description": "A classic romance novel that critiques the British landed gentry at the end of the 18th century.",
+      "length": "11 hours 32 minutes",
+      "rating": 4,
+      "cover": "/images/covers/default-cover.jpg",
+      "sampleAudioUrl": "/audio/librivox/Pride and Prejudice by Jane Austen.mp3",
+      "librivox_id": "1342",
+      "is_public_domain": true,
+      "source": "librivox"
+    },
+    {
+      "id": "librivox_1763650686959_2dh65n164",
+      "title": "The Adventures Of Sherlock Holmes",
+      "author": "Arthur Conan Doyle",
+      "narrator": "Unknown",
+      "genre": "Public Domain",
+      "description": "Public domain audiobook: The Adventures Of Sherlock Holmes by Arthur Conan Doyle",
+      "length": "Unknown",
+      "rating": 4,
+      "cover": "/images/covers/default-cover.jpg",
+      "sampleAudioUrl": "/audio/librivox/The Adventures of Sherlock Holmes by Arthur Conan Doyle.mp3",
+      "librivox_id": null,
+      "is_public_domain": true,
+      "source": "librivox"
+    }
+  ]
+}

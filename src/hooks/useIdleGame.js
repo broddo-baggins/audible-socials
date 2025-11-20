@@ -19,6 +19,13 @@ export const useIdleGame = (isPlaying = false, currentBook = null) => {
   const [newAchievements, setNewAchievements] = useState([]);
   const intervalRef = useRef(null);
   const floatingTextIdRef = useRef(0);
+  
+  // Initialize lastActiveTime from saved state if available, otherwise now
+  const lastActiveTimeRef = useRef(
+    gameState.lastSaveTime && !isNaN(gameState.lastSaveTime) 
+      ? gameState.lastSaveTime 
+      : Date.now()
+  );
 
   // Add floating text notification
   const addFloatingText = useCallback((text, type = 'xp') => {
@@ -152,7 +159,8 @@ export const useIdleGame = (isPlaying = false, currentBook = null) => {
       totalFocusPointsEarned: newTotalFP,
       totalMinutesListened: newTotalMinutes,
       unlockedActivities,
-      activityStats
+      activityStats,
+      lastSaveTime: Date.now() // Update last save time on every tick
     };
 
     // Check for achievements
@@ -178,6 +186,123 @@ export const useIdleGame = (isPlaying = false, currentBook = null) => {
       addFloatingText(`+${fpGained} FP`, 'fp');
     }
   }, [calculateRewards, checkAchievements, addFloatingText]);
+
+  // Function to calculate and award offline progress
+  const processOfflineProgress = useCallback(() => {
+    const now = Date.now();
+    const lastActive = lastActiveTimeRef.current;
+    
+    // Only calculate if meaningful time has passed (more than 1 minute)
+    // And lastActive is valid (not 0 or future)
+    if (now <= lastActive) return;
+    
+    const offlineTimeMs = now - lastActive;
+    const offlineMinutes = Math.floor(offlineTimeMs / (1000 * 60)); // Convert to minutes
+
+    // Cap offline progress to prevent abuse (max 24 hours = 1440 minutes)
+    const cappedMinutes = Math.min(offlineMinutes, 1440);
+
+    // Check if we should award progress (only if offline progress is allowed when app was closed)
+    // STRICT MODE: Only award progress if isPlaying was true when tab was hidden/closed.
+    // Since we can't reliably know if it was playing when closed (state lost), 
+    // we rely on lastSaveTime update. 
+    // However, for "background tab" (visibility change), we can check current isPlaying prop.
+    // But processOfflineProgress is called on mount too.
+    
+    // Logic Update: We will NOT award offline progress on mount (app closed) to strictly enforce "only when playing".
+    // We WILL award progress if the tab was just hidden and audio kept playing (visibility change).
+    
+    // But wait, if audio plays in background tab, the interval loop SHOULD keep running in most modern browsers
+    // unless heavily throttled. If throttled, this catch-up logic helps.
+    
+    // If the user wants "only when playing", then "app closed" progress is technically cheating unless
+    // we assume they were listening on another device (which we don't track).
+    // So we will DISABLE large offline jumps on mount, but keep small jumps for tab switching.
+    
+    // Modification: Only run this logic if called from visibility change AND isPlaying is true.
+    // Or if on mount, maybe disable it? 
+    // Let's restrict it: cappedMinutes > 0 && isPlaying is required.
+    // Since isPlaying is false on initial mount usually (unless persisted), this naturally disables app-closed progress.
+    
+    if (cappedMinutes > 0) {
+       // We pass isPlaying to this hook, so we can check it.
+       // But inside useCallback, we need to ensure we have the latest isPlaying.
+       // It's in the dependency array.
+       
+       // Note: On strict reload, isPlaying is false. So no progress.
+       // On tab switch, isPlaying remains true. So progress is awarded.
+       // This matches "only when playing".
+       
+       // However, we need to access 'isPlaying' inside here.
+       // The hook scope has 'isPlaying'.
+       
+       if (isPlaying) {
+          console.log(`🎮 Calculating ${cappedMinutes} minutes of background progress...`);
+
+          // Show loading notification for offline progress
+          addFloatingText('⏳ Syncing progress...', 'info');
+
+          // Calculate and award offline progress
+          const currentState = getIdleGameState();
+          const rewards = calculateRewards(cappedMinutes, currentState);
+          
+          if (rewards.xpGained > 0 || rewards.fpGained > 0) {
+            // Update state with offline rewards
+            const updatedState = updateIdleGameState({
+              experience: currentState.experience + rewards.xpGained,
+              focusPoints: currentState.focusPoints + rewards.fpGained,
+              totalMinutesListened: currentState.totalMinutesListened + cappedMinutes,
+              lastSaveTime: now
+            });
+
+            // Check for level ups and achievements
+            const newLevel = Math.floor(updatedState.experience / 1000) + 1;
+            if (newLevel > currentState.level) {
+              updatedState.level = newLevel;
+              addFloatingText(`🎉 Level ${newLevel}!`, 'level');
+            }
+
+            // Check for achievements using existing logic
+            const achievementsResult = checkAchievements(updatedState);
+            if (achievementsResult.length > 0) {
+              updatedState.achievements = [...updatedState.achievements, ...achievementsResult.map(a => a.id)];
+              setNewAchievements(achievementsResult);
+              
+              // Clear achievement notifications
+              setTimeout(() => {
+                setNewAchievements([]);
+              }, 5000);
+              
+              // Persist achievement updates
+              updateIdleGameState(updatedState);
+            }
+
+            setGameState(updatedState);
+
+            // Show offline progress notification
+            const timeString = cappedMinutes < 60
+              ? `${cappedMinutes}m`
+              : `${Math.floor(cappedMinutes / 60)}h ${cappedMinutes % 60}m`;
+
+            addFloatingText(`⏰ +${timeString} catch-up!`, 'info');
+            addFloatingText(`⭐ +${rewards.xpGained} XP`, 'xp');
+            if (rewards.fpGained > 0) {
+              addFloatingText(`🎯 +${rewards.fpGained} FP`, 'fp');
+            }
+
+            console.log(`✅ Awarded ${timeString} background progress: ${rewards.xpGained} XP, ${rewards.fpGained} FP`);
+          }
+       }
+    }
+
+    // Update last active time to now
+    lastActiveTimeRef.current = now;
+  }, [calculateRewards, checkAchievements, addFloatingText, isPlaying]);
+
+  // Run offline progress check on mount
+  useEffect(() => {
+    processOfflineProgress();
+  }, [processOfflineProgress]);
 
   // Handle play/pause state changes
   useEffect(() => {
@@ -211,6 +336,28 @@ export const useIdleGame = (isPlaying = false, currentBook = null) => {
       }
     };
   }, [isPlaying, sessionStartTime, processListeningTime]);
+
+  // Handle page visibility changes
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Page is now hidden - save state and record time
+        const now = Date.now();
+        lastActiveTimeRef.current = now;
+        updateIdleGameState({ lastSaveTime: now });
+      } else {
+        // Page is now visible - calculate offline progress
+        processOfflineProgress();
+      }
+    };
+
+    // Listen for visibility changes
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [processOfflineProgress]);
 
   // Change current activity
   const changeActivity = useCallback((activityId) => {
@@ -317,4 +464,3 @@ export const useIdleGame = (isPlaying = false, currentBook = null) => {
     processListeningTime
   };
 };
-

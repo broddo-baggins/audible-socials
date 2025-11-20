@@ -34,7 +34,7 @@ export const getSentRequests = (userId = 'user-me') => {
   return requests.filter(req => req.fromUserId === userId && req.status === 'pending');
 };
 
-export const sendFriendRequest = (toUserId, message = '') => {
+export const sendFriendRequest = (toUserId, message = '', relationshipContext = null, extraData = {}) => {
   initializeFriendData();
   const requests = JSON.parse(localStorage.getItem(FRIEND_REQUESTS_KEY) || '[]');
   const blocked = isUserBlocked(toUserId) || isBlockedByUser(toUserId);
@@ -58,7 +58,9 @@ export const sendFriendRequest = (toUserId, message = '') => {
     toUserId,
     status: 'pending',
     timestamp: new Date().toISOString(),
-    message
+    message,
+    relationshipContext, // 'book_club', 'similar_taste', 'family', 'real_life', 'influencer'
+    ...extraData
   };
 
   requests.push(newRequest);

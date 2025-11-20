@@ -30,9 +30,9 @@ export default function MyBookClubs() {
   return (
     <div className="min-h-screen bg-audible-cream">
       {/* Header */}
-      <section className="bg-gradient-to-r from-audible-orange to-audible-orange-dark text-white py-12 px-4">
+      <section className="bg-gradient-to-r from-[#FF6B35] to-[#E55A2B] text-white py-12 px-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl md:text-5xl font-bold mb-3 font-serif">
+          <h1 className="text-3xl md:text-5xl font-bold mb-3 font-serif text-white">
             My Book Clubs
           </h1>
           <p className="text-xl text-white/90">

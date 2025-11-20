@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Search, UserPlus, Crown, Users, BookOpen, Star, Gauge, Clock, Send } from 'lucide-react';
 import usersData from '../../data/users.json';
 import booksData from '../../data/books.json';
@@ -43,13 +44,65 @@ export default function FriendsTab() {
     }
   };
 
+  const getContextualMessage = (user, currentUser) => {
+    // Check for shared clubs
+    const sharedClubs = user.joinedClubs?.filter(clubId => 
+      currentUser.joinedClubs?.includes(clubId)
+    ) || [];
+    
+    if (sharedClubs.length > 0) {
+      const club = clubsData.find(c => c.id === sharedClubs[0]);
+      return {
+        message: `Hey! We're both in ${club?.name}. I'd love to connect and share our thoughts on the books!`,
+        context: 'book_club',
+        sharedClub: sharedClubs[0]
+      };
+    }
+
+    // Check for similar reading taste (shared books in library)
+    const sharedBooks = user.library?.filter(bookId => 
+      currentUser.library?.includes(bookId)
+    ) || [];
+    
+    if (sharedBooks.length >= 3) {
+      return {
+        message: `Hi! I noticed we have ${sharedBooks.length} books in common - we have such similar taste! Would love to connect and share recommendations.`,
+        context: 'similar_taste'
+      };
+    }
+
+    // Check for same favorite genre
+    const userFavoriteGenre = user.stats?.favoriteGenre;
+    const myFavoriteGenre = currentUser.stats?.favoriteGenre;
+    
+    if (userFavoriteGenre && userFavoriteGenre === myFavoriteGenre) {
+      return {
+        message: `Hey! I see we both love ${userFavoriteGenre}. Let's connect and swap our favorite listens!`,
+        context: 'similar_taste'
+      };
+    }
+
+    // Default message
+    return {
+      message: `Hi! Your reading list looks great. Would love to connect and share book recommendations!`,
+      context: null
+    };
+  };
+
   const handleSendRequest = (friendId, userName) => {
-    const result = sendFriendRequest(friendId, '');
-    if (result.success) {
-      alert(`Friend request sent to ${userName}`);
-      handleSearch(searchQuery);
-    } else {
-      alert(result.error);
+    const currentUser = getUserData();
+    const targetUser = usersData.find(u => u.id === friendId);
+    
+    if (targetUser) {
+      const { message, context, ...extraData } = getContextualMessage(targetUser, currentUser);
+      const result = sendFriendRequest(friendId, message, context, extraData);
+      
+      if (result.success) {
+        alert(`Friend request sent to ${userName}!`);
+        handleSearch(searchQuery);
+      } else {
+        alert(result.error);
+      }
     }
   };
 
@@ -122,10 +175,20 @@ export default function FriendsTab() {
                 className="bg-white rounded-lg p-4 border border-gray-200 hover:border-indigo-300 transition-colors"
               >
                 <div className="flex items-start space-x-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-semibold">
-                      {user.name.split(' ').map(n => n[0]).join('')}
-                    </span>
+                  <div className="flex-shrink-0">
+                    {user.avatar ? (
+                      <img 
+                        src={user.avatar} 
+                        alt={user.name} 
+                        className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center shadow-sm">
+                        <span className="text-white font-semibold">
+                          {user.name.split(' ').map(n => n[0]).join('')}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -199,11 +262,19 @@ export default function FriendsTab() {
               >
                 <div className="flex items-center space-x-3">
                   <div className="relative">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center">
-                      <span className="text-white font-semibold">
-                        {user.name.split(' ').map(n => n[0]).join('')}
-                      </span>
-                    </div>
+                    {user.avatar ? (
+                      <img 
+                        src={user.avatar} 
+                        alt={user.name} 
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center">
+                        <span className="text-white font-semibold">
+                          {user.name.split(' ').map(n => n[0]).join('')}
+                        </span>
+                      </div>
+                    )}
                     {user.isPremium && (
                       <div className="absolute -bottom-1 -right-1 bg-audible-gold rounded-full p-0.5">
                         <Crown className="w-3 h-3 text-white" />
@@ -269,11 +340,19 @@ export default function FriendsTab() {
                   <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4 text-white">
                     <div className="flex items-center space-x-3 mb-3">
                       <div className="relative">
-                        <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white">
-                          <span className="text-white font-bold text-lg">
-                            {friend.name.split(' ').map(n => n[0]).join('')}
-                          </span>
-                        </div>
+                        {friend.avatar ? (
+                          <img 
+                            src={friend.avatar} 
+                            alt={friend.name} 
+                            className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm"
+                          />
+                        ) : (
+                          <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white">
+                            <span className="text-white font-bold text-lg">
+                              {friend.name.split(' ').map(n => n[0]).join('')}
+                            </span>
+                          </div>
+                        )}
                         {friend.isPremium && (
                           <div className="absolute -bottom-1 -right-1 bg-audible-gold rounded-full p-1">
                             <Crown className="w-4 h-4 text-white" />
@@ -439,11 +518,19 @@ export default function FriendsTab() {
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <div className="relative">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-xl">
-                      {selectedFriend.name.split(' ').map(n => n[0]).join('')}
-                    </span>
-                  </div>
+                  {selectedFriend.avatar ? (
+                    <img 
+                      src={selectedFriend.avatar} 
+                      alt={selectedFriend.name} 
+                      className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center border-2 border-white shadow-md">
+                      <span className="text-white font-bold text-xl">
+                        {selectedFriend.name.split(' ').map(n => n[0]).join('')}
+                      </span>
+                    </div>
+                  )}
                   {selectedFriend.isPremium && (
                     <div className="absolute -bottom-1 -right-1 bg-audible-gold rounded-full p-1">
                       <Crown className="w-4 h-4 text-white" />

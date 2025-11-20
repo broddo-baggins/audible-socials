@@ -3,651 +3,1211 @@
     "id": "1",
     "name": "Sarah Chen",
     "username": "litRPG_warrior",
-    "avatar": null,
-    "favoriteGenres": ["LitRPG", "Fantasy", "Science Fiction"],
+    "avatar": "https://i.pravatar.cc/150?u=1",
+    "favoriteGenres": [
+      "LitRPG",
+      "Fantasy",
+      "Science Fiction"
+    ],
     "booksRead": 87,
     "hoursListened": 523,
     "memberSince": "2021-03-15",
     "bio": "Living for the next level-up. LitRPG addict and proud of it.",
-    "currentlyReading": ["1", "3"],
-    "badges": ["completionist", "speed_reader", "genre_explorer"]
+    "currentlyReading": [
+      "1",
+      "3"
+    ],
+    "badges": [
+      "completionist",
+      "speed_reader",
+      "genre_explorer"
+    ]
   },
   {
     "id": "2",
     "name": "Marcus Johnson",
     "username": "scifi_explorer",
-    "avatar": null,
-    "favoriteGenres": ["Science Fiction", "Hard SF", "Space Opera"],
+    "avatar": "https://i.pravatar.cc/150?u=2",
+    "favoriteGenres": [
+      "Science Fiction",
+      "Hard SF",
+      "Space Opera"
+    ],
     "booksRead": 143,
     "hoursListened": 892,
     "memberSince": "2020-01-20",
     "bio": "Hard SF enthusiast. Physics PhD exploring the cosmos through fiction.",
-    "currentlyReading": ["2", "5"],
-    "badges": ["space_cadet", "science_master", "veteran_listener"]
+    "currentlyReading": [
+      "2",
+      "5"
+    ],
+    "badges": [
+      "space_cadet",
+      "science_master",
+      "veteran_listener"
+    ]
   },
   {
     "id": "3",
     "name": "Elena Rodriguez",
     "username": "fantasy_dreamer",
-    "avatar": null,
-    "favoriteGenres": ["Fantasy", "Epic Fantasy", "Urban Fantasy"],
+    "avatar": "https://i.pravatar.cc/150?u=3",
+    "favoriteGenres": [
+      "Fantasy",
+      "Epic Fantasy",
+      "Urban Fantasy"
+    ],
     "booksRead": 201,
     "hoursListened": 1247,
     "memberSince": "2019-06-10",
     "bio": "Dragons, magic, and epic quests. Living in fictional worlds.",
-    "currentlyReading": ["7", "12"],
-    "badges": ["legendary_reader", "fantasy_master", "marathon_listener"]
+    "currentlyReading": [
+      "7",
+      "12"
+    ],
+    "badges": [
+      "legendary_reader",
+      "fantasy_master",
+      "marathon_listener"
+    ]
   },
   {
     "id": "4",
     "name": "James Park",
     "username": "horror_nights",
-    "avatar": null,
-    "favoriteGenres": ["Horror", "Thriller", "Dark Fantasy"],
+    "avatar": "https://i.pravatar.cc/150?u=4",
+    "favoriteGenres": [
+      "Horror",
+      "Thriller",
+      "Dark Fantasy"
+    ],
     "booksRead": 92,
     "hoursListened": 567,
     "memberSince": "2021-10-31",
     "bio": "Midnight listener. The darker, the better.",
-    "currentlyReading": ["15", "18"],
-    "badges": ["night_owl", "horror_fan", "brave_soul"]
+    "currentlyReading": [
+      "15",
+      "18"
+    ],
+    "badges": [
+      "night_owl",
+      "horror_fan",
+      "brave_soul"
+    ]
   },
   {
     "id": "5",
     "name": "Aisha Patel",
     "username": "mystery_solver",
-    "avatar": null,
-    "favoriteGenres": ["Mystery", "Detective", "Crime"],
+    "avatar": "https://i.pravatar.cc/150?u=5",
+    "favoriteGenres": [
+      "Mystery",
+      "Detective",
+      "Crime"
+    ],
     "booksRead": 156,
     "hoursListened": 734,
     "memberSince": "2020-08-12",
     "bio": "Always one step ahead of the detective. Mystery addict.",
-    "currentlyReading": ["20", "22"],
-    "badges": ["detective", "plot_master", "clue_hunter"]
+    "currentlyReading": [
+      "20",
+      "22"
+    ],
+    "badges": [
+      "detective",
+      "plot_master",
+      "clue_hunter"
+    ]
   },
   {
     "id": "6",
     "name": "David Kim",
     "username": "progression_fan",
-    "avatar": null,
-    "favoriteGenres": ["LitRPG", "Progression Fantasy", "Cultivation"],
+    "avatar": "https://i.pravatar.cc/150?u=6",
+    "favoriteGenres": [
+      "LitRPG",
+      "Progression Fantasy",
+      "Cultivation"
+    ],
     "booksRead": 178,
     "hoursListened": 1089,
     "memberSince": "2020-02-14",
     "bio": "Progression fantasy is life. Stats, levels, and power systems.",
-    "currentlyReading": ["3", "8"],
-    "badges": ["power_leveler", "cultivation_master", "system_expert"]
+    "currentlyReading": [
+      "3",
+      "8"
+    ],
+    "badges": [
+      "power_leveler",
+      "cultivation_master",
+      "system_expert"
+    ]
   },
   {
     "id": "7",
     "name": "Sophie Laurent",
     "username": "romance_reader",
-    "avatar": null,
-    "favoriteGenres": ["Romance", "Contemporary Romance", "Fantasy Romance"],
+    "avatar": "https://i.pravatar.cc/150?u=7",
+    "favoriteGenres": [
+      "Romance",
+      "Contemporary Romance",
+      "Fantasy Romance"
+    ],
     "booksRead": 234,
     "hoursListened": 1456,
     "memberSince": "2019-02-14",
     "bio": "Happily ever afters and swoon-worthy moments.",
-    "currentlyReading": ["25", "28"],
-    "badges": ["romantic", "emotional_listener", "relationship_goals"]
+    "currentlyReading": [
+      "25",
+      "28"
+    ],
+    "badges": [
+      "romantic",
+      "emotional_listener",
+      "relationship_goals"
+    ]
   },
   {
     "id": "8",
     "name": "Thomas Wright",
     "username": "history_buff",
-    "avatar": null,
-    "favoriteGenres": ["Historical Fiction", "Biography", "Military History"],
+    "avatar": "https://i.pravatar.cc/150?u=8",
+    "favoriteGenres": [
+      "Historical Fiction",
+      "Biography",
+      "Military History"
+    ],
     "booksRead": 167,
     "hoursListened": 1023,
     "memberSince": "2020-05-20",
     "bio": "History comes alive through stories. Time traveler at heart.",
-    "currentlyReading": ["30", "32"],
-    "badges": ["historian", "time_traveler", "fact_checker"]
+    "currentlyReading": [
+      "30",
+      "32"
+    ],
+    "badges": [
+      "historian",
+      "time_traveler",
+      "fact_checker"
+    ]
   },
   {
     "id": "9",
     "name": "Maya Anderson",
     "username": "urban_fantasy_fan",
-    "avatar": null,
-    "favoriteGenres": ["Urban Fantasy", "Paranormal", "Fantasy"],
+    "avatar": "https://i.pravatar.cc/150?u=9",
+    "favoriteGenres": [
+      "Urban Fantasy",
+      "Paranormal",
+      "Fantasy"
+    ],
     "booksRead": 189,
     "hoursListened": 1134,
     "memberSince": "2019-09-05",
     "bio": "Magic in the modern world. Urban fantasy is my escape.",
-    "currentlyReading": ["12", "35"],
-    "badges": ["urban_explorer", "magic_user", "night_hunter"]
+    "currentlyReading": [
+      "12",
+      "35"
+    ],
+    "badges": [
+      "urban_explorer",
+      "magic_user",
+      "night_hunter"
+    ]
   },
   {
     "id": "10",
     "name": "Ryan O'Connor",
     "username": "thriller_seeker",
-    "avatar": null,
-    "favoriteGenres": ["Thriller", "Suspense", "Action"],
+    "avatar": "https://i.pravatar.cc/150?u=10",
+    "favoriteGenres": [
+      "Thriller",
+      "Suspense",
+      "Action"
+    ],
     "booksRead": 124,
     "hoursListened": 687,
     "memberSince": "2021-01-18",
     "bio": "Adrenaline junkie. Can't stop until the last chapter.",
-    "currentlyReading": ["40", "42"],
-    "badges": ["thrill_seeker", "edge_sitter", "action_hero"]
+    "currentlyReading": [
+      "40",
+      "42"
+    ],
+    "badges": [
+      "thrill_seeker",
+      "edge_sitter",
+      "action_hero"
+    ]
   },
   {
     "id": "11",
     "name": "Priya Sharma",
     "username": "self_dev_master",
-    "avatar": null,
-    "favoriteGenres": ["Self Development", "Business", "Psychology"],
+    "avatar": "https://i.pravatar.cc/150?u=11",
+    "favoriteGenres": [
+      "Self Development",
+      "Business",
+      "Psychology"
+    ],
     "booksRead": 213,
     "hoursListened": 1267,
     "memberSince": "2019-01-01",
     "bio": "Investing in myself, one book at a time. Growth mindset.",
-    "currentlyReading": ["45", "48"],
-    "badges": ["self_improver", "knowledge_seeker", "goal_crusher"]
+    "currentlyReading": [
+      "45",
+      "48"
+    ],
+    "badges": [
+      "self_improver",
+      "knowledge_seeker",
+      "goal_crusher"
+    ]
   },
   {
     "id": "12",
     "name": "Alex Rivera",
     "username": "space_opera_fan",
-    "avatar": null,
-    "favoriteGenres": ["Space Opera", "Military SF", "Science Fiction"],
+    "avatar": "https://i.pravatar.cc/150?u=12",
+    "favoriteGenres": [
+      "Space Opera",
+      "Military SF",
+      "Science Fiction"
+    ],
     "booksRead": 198,
     "hoursListened": 1345,
     "memberSince": "2019-11-22",
     "bio": "Epic space battles and galactic empires. To infinity!",
-    "currentlyReading": ["5", "50"],
-    "badges": ["space_admiral", "fleet_commander", "cosmic_explorer"]
+    "currentlyReading": [
+      "5",
+      "50"
+    ],
+    "badges": [
+      "space_admiral",
+      "fleet_commander",
+      "cosmic_explorer"
+    ]
   },
   {
     "id": "13",
     "name": "Isabella Costa",
     "username": "cozy_mystery_lover",
-    "avatar": null,
-    "favoriteGenres": ["Cozy Mystery", "Mystery", "Contemporary"],
+    "avatar": "https://i.pravatar.cc/150?u=13",
+    "favoriteGenres": [
+      "Cozy Mystery",
+      "Mystery",
+      "Contemporary"
+    ],
     "booksRead": 245,
     "hoursListened": 1523,
     "memberSince": "2018-07-15",
     "bio": "Tea, mysteries, and small-town sleuths. Cozy vibes only.",
-    "currentlyReading": ["22", "52"],
-    "badges": ["cozy_sleuth", "tea_lover", "village_detective"]
+    "currentlyReading": [
+      "22",
+      "52"
+    ],
+    "badges": [
+      "cozy_sleuth",
+      "tea_lover",
+      "village_detective"
+    ]
   },
   {
     "id": "14",
     "name": "Kevin Zhang",
     "username": "dungeon_crawler",
-    "avatar": null,
-    "favoriteGenres": ["Dungeon Core", "LitRPG", "GameLit"],
+    "avatar": "https://i.pravatar.cc/150?u=14",
+    "favoriteGenres": [
+      "Dungeon Core",
+      "LitRPG",
+      "GameLit"
+    ],
     "booksRead": 167,
     "hoursListened": 1001,
     "memberSince": "2020-03-10",
     "bio": "Dungeon building and monster management. Core enthusiast.",
-    "currentlyReading": ["3", "8"],
-    "badges": ["dungeon_master", "core_builder", "monster_tamer"]
+    "currentlyReading": [
+      "3",
+      "8"
+    ],
+    "badges": [
+      "dungeon_master",
+      "core_builder",
+      "monster_tamer"
+    ]
   },
   {
     "id": "15",
     "name": "Olivia Thompson",
     "username": "epic_fantasy_queen",
-    "avatar": null,
-    "favoriteGenres": ["Epic Fantasy", "High Fantasy", "Sword and Sorcery"],
+    "avatar": "https://i.pravatar.cc/150?u=15",
+    "favoriteGenres": [
+      "Epic Fantasy",
+      "High Fantasy",
+      "Sword and Sorcery"
+    ],
     "booksRead": 287,
     "hoursListened": 1876,
     "memberSince": "2018-04-20",
     "bio": "Living for epic fantasy sagas. The longer, the better.",
-    "currentlyReading": ["7", "12"],
-    "badges": ["epic_reader", "saga_survivor", "world_builder"]
+    "currentlyReading": [
+      "7",
+      "12"
+    ],
+    "badges": [
+      "epic_reader",
+      "saga_survivor",
+      "world_builder"
+    ]
   },
   {
     "id": "16",
     "name": "Nathan Brooks",
     "username": "cyberpunk_rebel",
-    "avatar": null,
-    "favoriteGenres": ["Cyberpunk", "Dystopian", "Science Fiction"],
+    "avatar": "https://i.pravatar.cc/150?u=16",
+    "favoriteGenres": [
+      "Cyberpunk",
+      "Dystopian",
+      "Science Fiction"
+    ],
     "booksRead": 134,
     "hoursListened": 789,
     "memberSince": "2020-11-05",
     "bio": "High tech, low life. Cyberpunk is the future.",
-    "currentlyReading": ["2", "55"],
-    "badges": ["hacker", "rebel", "neon_dreamer"]
+    "currentlyReading": [
+      "2",
+      "55"
+    ],
+    "badges": [
+      "hacker",
+      "rebel",
+      "neon_dreamer"
+    ]
   },
   {
     "id": "17",
     "name": "Zara Ahmed",
     "username": "literary_fiction_fan",
-    "avatar": null,
-    "favoriteGenres": ["Literary Fiction", "Contemporary", "Drama"],
+    "avatar": "https://i.pravatar.cc/150?u=17",
+    "favoriteGenres": [
+      "Literary Fiction",
+      "Contemporary",
+      "Drama"
+    ],
     "booksRead": 178,
     "hoursListened": 1123,
     "memberSince": "2019-08-30",
     "bio": "Beautiful prose and deep characters. Literary fiction lover.",
-    "currentlyReading": ["58", "60"],
-    "badges": ["literary_scholar", "prose_appreciator", "character_analyst"]
+    "currentlyReading": [
+      "58",
+      "60"
+    ],
+    "badges": [
+      "literary_scholar",
+      "prose_appreciator",
+      "character_analyst"
+    ]
   },
   {
     "id": "18",
     "name": "Brandon Lee",
     "username": "apocalypse_survivor",
-    "avatar": null,
-    "favoriteGenres": ["Post-Apocalyptic", "Dystopian", "Survival"],
+    "avatar": "https://i.pravatar.cc/150?u=18",
+    "favoriteGenres": [
+      "Post-Apocalyptic",
+      "Dystopian",
+      "Survival"
+    ],
     "booksRead": 156,
     "hoursListened": 934,
     "memberSince": "2020-06-15",
     "bio": "Preparing for the end times through fiction. Survivalist.",
-    "currentlyReading": ["62", "64"],
-    "badges": ["survivor", "prepper", "wasteland_warrior"]
+    "currentlyReading": [
+      "62",
+      "64"
+    ],
+    "badges": [
+      "survivor",
+      "prepper",
+      "wasteland_warrior"
+    ]
   },
   {
     "id": "19",
     "name": "Lily Wang",
     "username": "cultivation_addict",
-    "avatar": null,
-    "favoriteGenres": ["Cultivation", "Xianxia", "Wuxia"],
+    "avatar": "https://i.pravatar.cc/150?u=19",
+    "favoriteGenres": [
+      "Cultivation",
+      "Xianxia",
+      "Wuxia"
+    ],
     "booksRead": 234,
     "hoursListened": 1567,
     "memberSince": "2019-03-25",
     "bio": "Ascending to immortality, one chapter at a time.",
-    "currentlyReading": ["3", "8"],
-    "badges": ["immortal_cultivator", "dao_seeker", "martial_artist"]
+    "currentlyReading": [
+      "3",
+      "8"
+    ],
+    "badges": [
+      "immortal_cultivator",
+      "dao_seeker",
+      "martial_artist"
+    ]
   },
   {
     "id": "20",
     "name": "Christopher Hall",
     "username": "hard_sf_nerd",
-    "avatar": null,
-    "favoriteGenres": ["Hard Science Fiction", "Science Fiction", "Physics"],
+    "avatar": "https://i.pravatar.cc/150?u=20",
+    "favoriteGenres": [
+      "Hard Science Fiction",
+      "Science Fiction",
+      "Physics"
+    ],
     "booksRead": 189,
     "hoursListened": 1234,
     "memberSince": "2019-10-12",
     "bio": "Science-based SF only. If the physics don't check out, I'm out.",
-    "currentlyReading": ["2", "5"],
-    "badges": ["scientist", "physics_fan", "accuracy_expert"]
+    "currentlyReading": [
+      "2",
+      "5"
+    ],
+    "badges": [
+      "scientist",
+      "physics_fan",
+      "accuracy_expert"
+    ]
   },
   {
     "id": "21",
     "name": "Emma Wilson",
     "username": "paranormal_romance",
-    "avatar": null,
-    "favoriteGenres": ["Paranormal Romance", "Fantasy Romance", "Urban Fantasy"],
+    "avatar": "https://i.pravatar.cc/150?u=21",
+    "favoriteGenres": [
+      "Paranormal Romance",
+      "Fantasy Romance",
+      "Urban Fantasy"
+    ],
     "booksRead": 267,
     "hoursListened": 1678,
     "memberSince": "2018-09-18",
     "bio": "Vampires, werewolves, and forbidden love. My jam.",
-    "currentlyReading": ["12", "28"],
-    "badges": ["paranormal_lover", "supernatural_shipper", "fang_fan"]
+    "currentlyReading": [
+      "12",
+      "28"
+    ],
+    "badges": [
+      "paranormal_lover",
+      "supernatural_shipper",
+      "fang_fan"
+    ]
   },
   {
     "id": "22",
     "name": "Omar Hassan",
     "username": "military_sf_soldier",
-    "avatar": null,
-    "favoriteGenres": ["Military Science Fiction", "Space Opera", "Action"],
+    "avatar": "https://i.pravatar.cc/150?u=22",
+    "favoriteGenres": [
+      "Military Science Fiction",
+      "Space Opera",
+      "Action"
+    ],
     "booksRead": 145,
     "hoursListened": 876,
     "memberSince": "2020-07-04",
     "bio": "Space marines and tactical battles. Oorah!",
-    "currentlyReading": ["5", "50"],
-    "badges": ["soldier", "tactician", "combat_veteran"]
+    "currentlyReading": [
+      "5",
+      "50"
+    ],
+    "badges": [
+      "soldier",
+      "tactician",
+      "combat_veteran"
+    ]
   },
   {
     "id": "23",
     "name": "Hannah Schmidt",
     "username": "ya_fantasy_teen",
-    "avatar": null,
-    "favoriteGenres": ["Young Adult", "YA Fantasy", "Contemporary YA"],
+    "avatar": "https://i.pravatar.cc/150?u=23",
+    "favoriteGenres": [
+      "Young Adult",
+      "YA Fantasy",
+      "Contemporary YA"
+    ],
     "booksRead": 312,
     "hoursListened": 1789,
     "memberSince": "2018-01-10",
     "bio": "YA fantasy forever. Coming-of-age stories are my favorite.",
-    "currentlyReading": ["7", "12"],
-    "badges": ["young_reader", "teen_spirit", "chosen_one"]
+    "currentlyReading": [
+      "7",
+      "12"
+    ],
+    "badges": [
+      "young_reader",
+      "teen_spirit",
+      "chosen_one"
+    ]
   },
   {
     "id": "24",
     "name": "Lucas Martinez",
     "username": "steampunk_engineer",
-    "avatar": null,
-    "favoriteGenres": ["Steampunk", "Alternate History", "Fantasy"],
+    "avatar": "https://i.pravatar.cc/150?u=24",
+    "favoriteGenres": [
+      "Steampunk",
+      "Alternate History",
+      "Fantasy"
+    ],
     "booksRead": 123,
     "hoursListened": 745,
     "memberSince": "2021-02-28",
     "bio": "Clockwork, steam, and Victorian aesthetics. Steampunk enthusiast.",
-    "currentlyReading": ["30", "65"],
-    "badges": ["engineer", "inventor", "brass_collector"]
+    "currentlyReading": [
+      "30",
+      "65"
+    ],
+    "badges": [
+      "engineer",
+      "inventor",
+      "brass_collector"
+    ]
   },
   {
     "id": "25",
     "name": "Fatima Ali",
     "username": "audiobook_marathoner",
-    "avatar": null,
-    "favoriteGenres": ["Fantasy", "Science Fiction", "Mystery"],
+    "avatar": "https://i.pravatar.cc/150?u=25",
+    "favoriteGenres": [
+      "Fantasy",
+      "Science Fiction",
+      "Mystery"
+    ],
     "booksRead": 423,
     "hoursListened": 2567,
     "memberSince": "2017-05-15",
     "bio": "Always listening. Audiobooks are my constant companion.",
-    "currentlyReading": ["1", "2", "20"],
-    "badges": ["marathon_champion", "multi_tasker", "audio_legend"]
+    "currentlyReading": [
+      "1",
+      "2",
+      "20"
+    ],
+    "badges": [
+      "marathon_champion",
+      "multi_tasker",
+      "audio_legend"
+    ]
   },
   {
     "id": "26",
     "name": "Tyler Anderson",
     "username": "grimdark_enthusiast",
-    "avatar": null,
-    "favoriteGenres": ["Grimdark", "Dark Fantasy", "Epic Fantasy"],
+    "avatar": "https://i.pravatar.cc/150?u=26",
+    "favoriteGenres": [
+      "Grimdark",
+      "Dark Fantasy",
+      "Epic Fantasy"
+    ],
     "booksRead": 167,
     "hoursListened": 1034,
     "memberSince": "2020-04-22",
     "bio": "No heroes, only survivors. Grimdark is reality.",
-    "currentlyReading": ["7", "15"],
-    "badges": ["dark_soul", "grim_reader", "survivor"]
+    "currentlyReading": [
+      "7",
+      "15"
+    ],
+    "badges": [
+      "dark_soul",
+      "grim_reader",
+      "survivor"
+    ]
   },
   {
     "id": "27",
     "name": "Mei Lin",
     "username": "slice_of_life",
-    "avatar": null,
-    "favoriteGenres": ["Slice of Life", "Contemporary", "Drama"],
+    "avatar": "https://i.pravatar.cc/150?u=27",
+    "favoriteGenres": [
+      "Slice of Life",
+      "Contemporary",
+      "Drama"
+    ],
     "booksRead": 198,
     "hoursListened": 1245,
     "memberSince": "2019-12-08",
     "bio": "Finding magic in everyday moments. Slice of life forever.",
-    "currentlyReading": ["58", "60"],
-    "badges": ["peaceful_listener", "everyday_hero", "life_appreciator"]
+    "currentlyReading": [
+      "58",
+      "60"
+    ],
+    "badges": [
+      "peaceful_listener",
+      "everyday_hero",
+      "life_appreciator"
+    ]
   },
   {
     "id": "28",
     "name": "Derek Foster",
     "username": "true_crime_detective",
-    "avatar": null,
-    "favoriteGenres": ["True Crime", "Crime", "Mystery"],
+    "avatar": "https://i.pravatar.cc/150?u=28",
+    "favoriteGenres": [
+      "True Crime",
+      "Crime",
+      "Mystery"
+    ],
     "booksRead": 234,
     "hoursListened": 1456,
     "memberSince": "2019-01-20",
     "bio": "Real stories, real mysteries. True crime addict.",
-    "currentlyReading": ["20", "22"],
-    "badges": ["crime_solver", "true_detective", "case_closer"]
+    "currentlyReading": [
+      "20",
+      "22"
+    ],
+    "badges": [
+      "crime_solver",
+      "true_detective",
+      "case_closer"
+    ]
   },
   {
     "id": "29",
     "name": "Yuki Tanaka",
     "username": "isekai_traveler",
-    "avatar": null,
-    "favoriteGenres": ["Isekai", "LitRPG", "Fantasy"],
+    "avatar": "https://i.pravatar.cc/150?u=29",
+    "favoriteGenres": [
+      "Isekai",
+      "LitRPG",
+      "Fantasy"
+    ],
     "booksRead": 289,
     "hoursListened": 1789,
     "memberSince": "2018-11-11",
     "bio": "Transported to another world through stories. Isekai life.",
-    "currentlyReading": ["1", "3", "8"],
-    "badges": ["world_hopper", "reincarnator", "portal_traveler"]
+    "currentlyReading": [
+      "1",
+      "3",
+      "8"
+    ],
+    "badges": [
+      "world_hopper",
+      "reincarnator",
+      "portal_traveler"
+    ]
   },
   {
     "id": "30",
     "name": "Victoria Greene",
     "username": "historical_romance",
-    "avatar": null,
-    "favoriteGenres": ["Historical Romance", "Regency", "Romance"],
+    "avatar": "https://i.pravatar.cc/150?u=30",
+    "favoriteGenres": [
+      "Historical Romance",
+      "Regency",
+      "Romance"
+    ],
     "booksRead": 345,
     "hoursListened": 2134,
     "memberSince": "2017-09-14",
     "bio": "Regency balls and forbidden love. Historical romance devotee.",
-    "currentlyReading": ["25", "30"],
-    "badges": ["time_traveler", "romance_historian", "ballroom_dancer"]
+    "currentlyReading": [
+      "25",
+      "30"
+    ],
+    "badges": [
+      "time_traveler",
+      "romance_historian",
+      "ballroom_dancer"
+    ]
   },
   {
     "id": "31",
     "name": "Andre Santos",
     "username": "superhero_fan",
-    "avatar": null,
-    "favoriteGenres": ["Superhero", "Action", "Science Fiction"],
+    "avatar": "https://i.pravatar.cc/150?u=31",
+    "favoriteGenres": [
+      "Superhero",
+      "Action",
+      "Science Fiction"
+    ],
     "booksRead": 156,
     "hoursListened": 923,
     "memberSince": "2020-08-30",
     "bio": "Capes, powers, and world-saving. Superhero stories all day.",
-    "currentlyReading": ["40", "42"],
-    "badges": ["hero", "power_collector", "world_saver"]
+    "currentlyReading": [
+      "40",
+      "42"
+    ],
+    "badges": [
+      "hero",
+      "power_collector",
+      "world_saver"
+    ]
   },
   {
     "id": "32",
     "name": "Rachel Cohen",
     "username": "memoir_reader",
-    "avatar": null,
-    "favoriteGenres": ["Memoir", "Biography", "Self Development"],
+    "avatar": "https://i.pravatar.cc/150?u=32",
+    "favoriteGenres": [
+      "Memoir",
+      "Biography",
+      "Self Development"
+    ],
     "booksRead": 187,
     "hoursListened": 1123,
     "memberSince": "2019-07-19",
     "bio": "Learning from others' experiences. Memoir enthusiast.",
-    "currentlyReading": ["45", "48"],
-    "badges": ["life_learner", "story_collector", "empathy_master"]
+    "currentlyReading": [
+      "45",
+      "48"
+    ],
+    "badges": [
+      "life_learner",
+      "story_collector",
+      "empathy_master"
+    ]
   },
   {
     "id": "33",
     "name": "Jake Morrison",
     "username": "horror_survival",
-    "avatar": null,
-    "favoriteGenres": ["Horror", "Survival Horror", "Thriller"],
+    "avatar": "https://i.pravatar.cc/150?u=33",
+    "favoriteGenres": [
+      "Horror",
+      "Survival Horror",
+      "Thriller"
+    ],
     "booksRead": 178,
     "hoursListened": 1067,
     "memberSince": "2020-10-01",
     "bio": "Jump scares and survival tactics. Horror is my comfort zone.",
-    "currentlyReading": ["15", "18", "62"],
-    "badges": ["horror_veteran", "fear_conqueror", "survivor"]
+    "currentlyReading": [
+      "15",
+      "18",
+      "62"
+    ],
+    "badges": [
+      "horror_veteran",
+      "fear_conqueror",
+      "survivor"
+    ]
   },
   {
     "id": "34",
     "name": "Sophia Papadopoulos",
     "username": "mythology_lover",
-    "avatar": null,
-    "favoriteGenres": ["Mythology", "Fantasy", "Historical Fiction"],
+    "avatar": "https://i.pravatar.cc/150?u=34",
+    "favoriteGenres": [
+      "Mythology",
+      "Fantasy",
+      "Historical Fiction"
+    ],
     "booksRead": 223,
     "hoursListened": 1456,
     "memberSince": "2019-03-17",
     "bio": "Ancient myths and modern retellings. Mythology scholar.",
-    "currentlyReading": ["7", "30"],
-    "badges": ["myth_keeper", "legend_hunter", "ancient_scholar"]
+    "currentlyReading": [
+      "7",
+      "30"
+    ],
+    "badges": [
+      "myth_keeper",
+      "legend_hunter",
+      "ancient_scholar"
+    ]
   },
   {
     "id": "35",
     "name": "Carlos Mendoza",
     "username": "business_strategist",
-    "avatar": null,
-    "favoriteGenres": ["Business", "Entrepreneurship", "Finance"],
+    "avatar": "https://i.pravatar.cc/150?u=35",
+    "favoriteGenres": [
+      "Business",
+      "Entrepreneurship",
+      "Finance"
+    ],
     "booksRead": 267,
     "hoursListened": 1634,
     "memberSince": "2018-06-22",
     "bio": "Building empires through knowledge. Business book collector.",
-    "currentlyReading": ["45", "48"],
-    "badges": ["entrepreneur", "strategist", "wealth_builder"]
+    "currentlyReading": [
+      "45",
+      "48"
+    ],
+    "badges": [
+      "entrepreneur",
+      "strategist",
+      "wealth_builder"
+    ]
   },
   {
     "id": "36",
     "name": "Nora Bergstrom",
     "username": "magical_realism",
-    "avatar": null,
-    "favoriteGenres": ["Magical Realism", "Literary Fiction", "Fantasy"],
+    "avatar": "https://i.pravatar.cc/150?u=36",
+    "favoriteGenres": [
+      "Magical Realism",
+      "Literary Fiction",
+      "Fantasy"
+    ],
     "booksRead": 189,
     "hoursListened": 1234,
     "memberSince": "2019-09-09",
     "bio": "Magic hiding in the ordinary. Magical realism devotee.",
-    "currentlyReading": ["58", "60"],
-    "badges": ["magic_finder", "realism_dreamer", "prose_lover"]
+    "currentlyReading": [
+      "58",
+      "60"
+    ],
+    "badges": [
+      "magic_finder",
+      "realism_dreamer",
+      "prose_lover"
+    ]
   },
   {
     "id": "37",
     "name": "Jackson Taylor",
     "username": "western_rider",
-    "avatar": null,
-    "favoriteGenres": ["Western", "Historical Fiction", "Adventure"],
+    "avatar": "https://i.pravatar.cc/150?u=37",
+    "favoriteGenres": [
+      "Western",
+      "Historical Fiction",
+      "Adventure"
+    ],
     "booksRead": 134,
     "hoursListened": 823,
     "memberSince": "2020-12-15",
     "bio": "Cowboys, outlaws, and the Wild West. Yeehaw!",
-    "currentlyReading": ["30", "32"],
-    "badges": ["cowboy", "frontier_explorer", "lawman"]
+    "currentlyReading": [
+      "30",
+      "32"
+    ],
+    "badges": [
+      "cowboy",
+      "frontier_explorer",
+      "lawman"
+    ]
   },
   {
     "id": "38",
     "name": "Amara Okafor",
     "username": "afrofuturism_fan",
-    "avatar": null,
-    "favoriteGenres": ["Afrofuturism", "Science Fiction", "Fantasy"],
+    "avatar": "https://i.pravatar.cc/150?u=38",
+    "favoriteGenres": [
+      "Afrofuturism",
+      "Science Fiction",
+      "Fantasy"
+    ],
     "booksRead": 145,
     "hoursListened": 892,
     "memberSince": "2020-09-21",
     "bio": "Black futures and African mythology. Afrofuturism advocate.",
-    "currentlyReading": ["2", "5", "7"],
-    "badges": ["future_builder", "culture_keeper", "vision_seeker"]
+    "currentlyReading": [
+      "2",
+      "5",
+      "7"
+    ],
+    "badges": [
+      "future_builder",
+      "culture_keeper",
+      "vision_seeker"
+    ]
   },
   {
     "id": "39",
     "name": "Sebastian Mueller",
     "username": "philosophy_thinker",
-    "avatar": null,
-    "favoriteGenres": ["Philosophy", "Psychology", "Self Development"],
+    "avatar": "https://i.pravatar.cc/150?u=39",
+    "favoriteGenres": [
+      "Philosophy",
+      "Psychology",
+      "Self Development"
+    ],
     "booksRead": 198,
     "hoursListened": 1289,
     "memberSince": "2019-04-03",
     "bio": "Deep questions, deeper answers. Philosophy is life.",
-    "currentlyReading": ["45", "48"],
-    "badges": ["thinker", "wisdom_seeker", "mind_explorer"]
+    "currentlyReading": [
+      "45",
+      "48"
+    ],
+    "badges": [
+      "thinker",
+      "wisdom_seeker",
+      "mind_explorer"
+    ]
   },
   {
     "id": "40",
     "name": "Grace Kim",
     "username": "romantic_comedy",
-    "avatar": null,
-    "favoriteGenres": ["Romantic Comedy", "Contemporary Romance", "Humor"],
+    "avatar": "https://i.pravatar.cc/150?u=40",
+    "favoriteGenres": [
+      "Romantic Comedy",
+      "Contemporary Romance",
+      "Humor"
+    ],
     "booksRead": 298,
     "hoursListened": 1823,
     "memberSince": "2018-02-14",
     "bio": "Laughter and love. Rom-com is my happy place.",
-    "currentlyReading": ["25", "28"],
-    "badges": ["laugh_master", "love_finder", "happy_listener"]
+    "currentlyReading": [
+      "25",
+      "28"
+    ],
+    "badges": [
+      "laugh_master",
+      "love_finder",
+      "happy_listener"
+    ]
   },
   {
     "id": "41",
     "name": "Mohammed Rahman",
     "username": "epic_poetry",
-    "avatar": null,
-    "favoriteGenres": ["Poetry", "Literary Fiction", "Drama"],
+    "avatar": "https://i.pravatar.cc/150?u=41",
+    "favoriteGenres": [
+      "Poetry",
+      "Literary Fiction",
+      "Drama"
+    ],
     "booksRead": 167,
     "hoursListened": 1034,
     "memberSince": "2020-01-08",
     "bio": "Words as art. Poetry and prose combined.",
-    "currentlyReading": ["58", "60"],
-    "badges": ["poet", "word_artist", "verse_master"]
+    "currentlyReading": [
+      "58",
+      "60"
+    ],
+    "badges": [
+      "poet",
+      "word_artist",
+      "verse_master"
+    ]
   },
   {
     "id": "42",
     "name": "Chloe Dubois",
     "username": "noir_detective",
-    "avatar": null,
-    "favoriteGenres": ["Noir", "Mystery", "Crime"],
+    "avatar": "https://i.pravatar.cc/150?u=42",
+    "favoriteGenres": [
+      "Noir",
+      "Mystery",
+      "Crime"
+    ],
     "booksRead": 189,
     "hoursListened": 1156,
     "memberSince": "2019-11-30",
     "bio": "Hard-boiled detectives and femme fatales. Noir lover.",
-    "currentlyReading": ["20", "22"],
-    "badges": ["noir_detective", "shadow_walker", "case_breaker"]
+    "currentlyReading": [
+      "20",
+      "22"
+    ],
+    "badges": [
+      "noir_detective",
+      "shadow_walker",
+      "case_breaker"
+    ]
   },
   {
     "id": "43",
     "name": "Ethan Russell",
     "username": "gamelit_player",
-    "avatar": null,
-    "favoriteGenres": ["GameLit", "LitRPG", "Virtual Reality"],
+    "avatar": "https://i.pravatar.cc/150?u=43",
+    "favoriteGenres": [
+      "GameLit",
+      "LitRPG",
+      "Virtual Reality"
+    ],
     "booksRead": 234,
     "hoursListened": 1456,
     "memberSince": "2019-05-25",
     "bio": "Living in game worlds. GameLit is reality.",
-    "currentlyReading": ["1", "3", "8"],
-    "badges": ["gamer", "vr_explorer", "quest_completer"]
+    "currentlyReading": [
+      "1",
+      "3",
+      "8"
+    ],
+    "badges": [
+      "gamer",
+      "vr_explorer",
+      "quest_completer"
+    ]
   },
   {
     "id": "44",
     "name": "Jasmine Patel",
     "username": "wellness_guru",
-    "avatar": null,
-    "favoriteGenres": ["Wellness", "Self Development", "Spirituality"],
+    "avatar": "https://i.pravatar.cc/150?u=44",
+    "favoriteGenres": [
+      "Wellness",
+      "Self Development",
+      "Spirituality"
+    ],
     "booksRead": 267,
     "hoursListened": 1678,
     "memberSince": "2018-08-15",
     "bio": "Mind, body, spirit. Wellness journey through audiobooks.",
-    "currentlyReading": ["45", "48"],
-    "badges": ["wellness_warrior", "spirit_guide", "mindful_listener"]
+    "currentlyReading": [
+      "45",
+      "48"
+    ],
+    "badges": [
+      "wellness_warrior",
+      "spirit_guide",
+      "mindful_listener"
+    ]
   },
   {
     "id": "45",
     "name": "Connor Walsh",
     "username": "sports_enthusiast",
-    "avatar": null,
-    "favoriteGenres": ["Sports", "Biography", "Memoir"],
+    "avatar": "https://i.pravatar.cc/150?u=45",
+    "favoriteGenres": [
+      "Sports",
+      "Biography",
+      "Memoir"
+    ],
     "booksRead": 145,
     "hoursListened": 892,
     "memberSince": "2020-11-20",
     "bio": "Sports stories and athlete memoirs. Game on!",
-    "currentlyReading": ["32", "48"],
-    "badges": ["athlete", "team_player", "champion"]
+    "currentlyReading": [
+      "32",
+      "48"
+    ],
+    "badges": [
+      "athlete",
+      "team_player",
+      "champion"
+    ]
   },
   {
     "id": "46",
     "name": "Luna Morales",
     "username": "witchy_reader",
-    "avatar": null,
-    "favoriteGenres": ["Witchy Fiction", "Urban Fantasy", "Paranormal"],
+    "avatar": "https://i.pravatar.cc/150?u=46",
+    "favoriteGenres": [
+      "Witchy Fiction",
+      "Urban Fantasy",
+      "Paranormal"
+    ],
     "booksRead": 223,
     "hoursListened": 1389,
     "memberSince": "2019-10-31",
     "bio": "Spells, potions, and witchy vibes. Magic is real.",
-    "currentlyReading": ["12", "35"],
-    "badges": ["witch", "spell_caster", "moon_child"]
+    "currentlyReading": [
+      "12",
+      "35"
+    ],
+    "badges": [
+      "witch",
+      "spell_caster",
+      "moon_child"
+    ]
   },
   {
     "id": "47",
     "name": "Isaac Goldstein",
     "username": "alternate_history",
-    "avatar": null,
-    "favoriteGenres": ["Alternate History", "Historical Fiction", "Science Fiction"],
+    "avatar": "https://i.pravatar.cc/150?u=47",
+    "favoriteGenres": [
+      "Alternate History",
+      "Historical Fiction",
+      "Science Fiction"
+    ],
     "booksRead": 178,
     "hoursListened": 1123,
     "memberSince": "2020-02-29",
     "bio": "What if history went differently? Alt-history explorer.",
-    "currentlyReading": ["30", "65"],
-    "badges": ["time_changer", "history_rewriter", "alternate_thinker"]
+    "currentlyReading": [
+      "30",
+      "65"
+    ],
+    "badges": [
+      "time_changer",
+      "history_rewriter",
+      "alternate_thinker"
+    ]
   },
   {
     "id": "48",
     "name": "Aria Johnson",
     "username": "music_memoir",
-    "avatar": null,
-    "favoriteGenres": ["Music", "Memoir", "Biography"],
+    "avatar": "https://i.pravatar.cc/150?u=48",
+    "favoriteGenres": [
+      "Music",
+      "Memoir",
+      "Biography"
+    ],
     "booksRead": 189,
     "hoursListened": 1234,
     "memberSince": "2019-06-21",
     "bio": "Music biographies and rock memoirs. Living the rock life.",
-    "currentlyReading": ["32", "48"],
-    "badges": ["music_lover", "rock_star", "melody_master"]
+    "currentlyReading": [
+      "32",
+      "48"
+    ],
+    "badges": [
+      "music_lover",
+      "rock_star",
+      "melody_master"
+    ]
   },
   {
     "id": "49",
     "name": "Felix Chen",
     "username": "anthology_collector",
-    "avatar": null,
-    "favoriteGenres": ["Anthology", "Short Stories", "Fantasy"],
+    "avatar": "https://i.pravatar.cc/150?u=49",
+    "favoriteGenres": [
+      "Anthology",
+      "Short Stories",
+      "Fantasy"
+    ],
     "booksRead": 312,
     "hoursListened": 1923,
     "memberSince": "2018-03-10",
     "bio": "Short stories, big impact. Anthology enthusiast.",
-    "currentlyReading": ["7", "12", "58"],
-    "badges": ["collector", "short_story_master", "variety_seeker"]
+    "currentlyReading": [
+      "7",
+      "12",
+      "58"
+    ],
+    "badges": [
+      "collector",
+      "short_story_master",
+      "variety_seeker"
+    ]
   },
   {
     "id": "50",
     "name": "Zoe Williams",
     "username": "eclectic_reader",
-    "avatar": null,
-    "favoriteGenres": ["Fantasy", "Science Fiction", "Mystery", "Romance", "Horror"],
+    "avatar": "https://i.pravatar.cc/150?u=50",
+    "favoriteGenres": [
+      "Fantasy",
+      "Science Fiction",
+      "Mystery",
+      "Romance",
+      "Horror"
+    ],
     "booksRead": 398,
     "hoursListened": 2456,
     "memberSince": "2017-12-01",
     "bio": "Reading everything. No genre boundaries here.",
-    "currentlyReading": ["1", "2", "7", "20", "25"],
-    "badges": ["genre_master", "omni_reader", "book_omnivore"]
+    "currentlyReading": [
+      "1",
+      "2",
+      "7",
+      "20",
+      "25"
+    ],
+    "badges": [
+      "genre_master",
+      "omni_reader",
+      "book_omnivore"
+    ]
   }
 ]
-

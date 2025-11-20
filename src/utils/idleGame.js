@@ -1,3 +1,5 @@
+import { DCC_ACHIEVEMENTS } from '../data/dccAchievements';
+
 const IDLE_GAME_KEY = 'audible_idle_game';
 
 // Activity definitions with their requirements and rewards
@@ -172,271 +174,8 @@ export const UPGRADES = {
   }
 };
 
-// Dedicated Idle Game Achievements (separate from main app badges)
-export const ACHIEVEMENTS = {
-  // Getting Started - Short-term
-  getting_started: {
-    name: 'Getting Started',
-    description: 'Listen for 30 minutes',
-    icon: '▶️',
-    type: 'listening_time',
-    requirement: 30,
-    rarity: 'common',
-    reward: { type: 'fp', amount: 100 }
-  },
-  first_hour: {
-    name: 'First Hour',
-    description: 'Listen for 1 hour total',
-    icon: '🎧',
-    type: 'listening_time',
-    requirement: 60,
-    rarity: 'common',
-    reward: { type: 'fp', amount: 200 }
-  },
-  quick_session: {
-    name: 'Quick Session',
-    description: 'Listen for 2 hours total',
-    icon: '⏱️',
-    type: 'listening_time',
-    requirement: 120,
-    rarity: 'common',
-    reward: { type: 'fp', amount: 300 }
-  },
-  dedicated_beginner: {
-    name: 'Dedicated Beginner',
-    description: 'Listen for 5 hours total',
-    icon: '⭐',
-    type: 'listening_time',
-    requirement: 300,
-    rarity: 'uncommon',
-    reward: { type: 'fp', amount: 500 }
-  },
-
-  // Medium-term listening
-  bookworm: {
-    name: 'Bookworm',
-    description: 'Listen for 10 hours total',
-    icon: '📖',
-    type: 'listening_time',
-    requirement: 600,
-    rarity: 'uncommon',
-    reward: { type: 'fp', amount: 1000 }
-  },
-  audiobook_enthusiast: {
-    name: 'Audiobook Enthusiast',
-    description: 'Listen for 25 hours total',
-    icon: '📚',
-    type: 'listening_time',
-    requirement: 1500,
-    rarity: 'rare',
-    reward: { type: 'fp', amount: 2000 }
-  },
-  dedicated_listener: {
-    name: 'Dedicated Listener',
-    description: 'Listen for 50 hours total',
-    icon: '🎵',
-    type: 'listening_time',
-    requirement: 3000,
-    rarity: 'rare',
-    reward: { type: 'fp', amount: 3000 }
-  },
-  marathon_listener: {
-    name: 'Marathon Listener',
-    description: 'Listen for 100 hours total',
-    icon: '🏃',
-    type: 'listening_time',
-    requirement: 6000,
-    rarity: 'epic',
-    reward: { type: 'fp', amount: 5000 }
-  },
-
-  // Level-based achievements
-  level_5: {
-    name: 'Level 5',
-    description: 'Reach level 5',
-    icon: '🔰',
-    type: 'level',
-    requirement: 5,
-    rarity: 'common',
-    reward: { type: 'fp', amount: 500 }
-  },
-  level_10: {
-    name: 'Level 10',
-    description: 'Reach level 10',
-    icon: '🎖️',
-    type: 'level',
-    requirement: 10,
-    rarity: 'uncommon',
-    reward: { type: 'fp', amount: 1000 }
-  },
-  level_25: {
-    name: 'Level 25',
-    description: 'Reach level 25',
-    icon: '🏆',
-    type: 'level',
-    requirement: 25,
-    rarity: 'rare',
-    reward: { type: 'fp', amount: 2500 }
-  },
-  level_50: {
-    name: 'Level 50',
-    description: 'Reach level 50',
-    icon: '👑',
-    type: 'level',
-    requirement: 50,
-    rarity: 'epic',
-    reward: { type: 'fp', amount: 5000 }
-  },
-  level_100: {
-    name: 'Level 100',
-    description: 'Reach level 100',
-    icon: '💎',
-    type: 'level',
-    requirement: 100,
-    rarity: 'legendary',
-    reward: { type: 'fp', amount: 10000 }
-  },
-
-  // Activity-specific achievements
-  the_multitasker: {
-    name: 'The Multitasker',
-    description: 'Gain 1000 XP in Cook activity',
-    icon: '🍳',
-    type: 'activity_specific',
-    activityId: 'cook',
-    requirement: 1000,
-    rarity: 'uncommon',
-    reward: { type: 'fp', amount: 800 }
-  },
-  zen_master: {
-    name: 'Zen Master',
-    description: 'Spend 10 hours meditating',
-    icon: '🧘',
-    type: 'activity_time',
-    activityId: 'meditate',
-    requirement: 600,
-    rarity: 'rare',
-    reward: { type: 'fp', amount: 1500 }
-  },
-  green_thumb: {
-    name: 'Green Thumb',
-    description: 'Spend 15 hours gardening',
-    icon: '🌱',
-    type: 'activity_time',
-    activityId: 'garden',
-    requirement: 900,
-    rarity: 'rare',
-    reward: { type: 'fp', amount: 2000 }
-  },
-  cat_whisperer: {
-    name: 'Cat Whisperer',
-    description: 'Spend 12 hours playing with cat',
-    icon: '🐱',
-    type: 'activity_time',
-    activityId: 'play_with_cat',
-    requirement: 720,
-    rarity: 'uncommon',
-    reward: { type: 'fp', amount: 1200 }
-  },
-  fire_enjoyer: {
-    name: 'Fire Enjoyer',
-    description: 'Spend 8 hours by the fire',
-    icon: '🔥',
-    type: 'activity_time',
-    activityId: 'sit_by_fire',
-    requirement: 480,
-    rarity: 'uncommon',
-    reward: { type: 'fp', amount: 800 }
-  },
-  craft_master: {
-    name: 'Craft Master',
-    description: 'Spend 20 hours crafting',
-    icon: '🎨',
-    type: 'activity_time',
-    activityId: 'craft',
-    requirement: 1200,
-    rarity: 'rare',
-    reward: { type: 'fp', amount: 1800 }
-  },
-
-  // Currency-based achievements
-  focus_collector: {
-    name: 'Focus Collector',
-    description: 'Earn 5,000 total Focus Points',
-    icon: '💰',
-    type: 'currency',
-    requirement: 5000,
-    rarity: 'uncommon',
-    reward: { type: 'fp', amount: 500 }
-  },
-  focus_hoarder: {
-    name: 'Focus Hoarder',
-    description: 'Earn 25,000 total Focus Points',
-    icon: '💎',
-    type: 'currency',
-    requirement: 25000,
-    rarity: 'rare',
-    reward: { type: 'fp', amount: 2000 }
-  },
-  focus_master: {
-    name: 'Focus Master',
-    description: 'Earn 100,000 total Focus Points',
-    icon: '🌟',
-    type: 'currency',
-    requirement: 100000,
-    rarity: 'epic',
-    reward: { type: 'fp', amount: 5000 }
-  },
-
-  // Upgrade-based achievements
-  first_purchase: {
-    name: 'First Purchase',
-    description: 'Buy your first upgrade',
-    icon: '🛒',
-    type: 'upgrade',
-    requirement: 1,
-    rarity: 'common',
-    reward: { type: 'fp', amount: 300 }
-  },
-  smart_shopper: {
-    name: 'Smart Shopper',
-    description: 'Buy 5 upgrades',
-    icon: '🛍️',
-    type: 'upgrade',
-    requirement: 5,
-    rarity: 'uncommon',
-    reward: { type: 'fp', amount: 1000 }
-  },
-  max_upgrades: {
-    name: 'Fully Upgraded',
-    description: 'Buy all available upgrades',
-    icon: '⚡',
-    type: 'upgrade',
-    requirement: Object.keys(UPGRADES).length,
-    rarity: 'legendary',
-    reward: { type: 'fp', amount: 10000 }
-  },
-
-  // Special idle-specific achievements
-  silence_is_golden: {
-    name: 'Silence is Golden',
-    description: 'Check idle game while not playing 10 times',
-    icon: '🤫',
-    type: 'passive_check',
-    requirement: 10,
-    rarity: 'uncommon',
-    reward: { type: 'fp', amount: 500 }
-  },
-  activity_explorer: {
-    name: 'Activity Explorer',
-    description: 'Try all available activities',
-    icon: '🗺️',
-    type: 'activity_count',
-    requirement: 9, // All 9 activities
-    rarity: 'rare',
-    reward: { type: 'fp', amount: 1500 }
-  }
-};
+// Dedicated Idle Game Achievements (using new DCC style list)
+export const ACHIEVEMENTS = DCC_ACHIEVEMENTS;
 
 // Initialize idle game state with new economy fields
 export const initializeIdleGame = () => {
@@ -469,6 +208,7 @@ export const initializeIdleGame = () => {
         read_books: 0
       },
       lastActivityChange: Date.now(),
+      lastSaveTime: Date.now(), // Track when game was last saved/active
       passiveChecks: 0,
       character: {
         name: 'Listener',
@@ -515,6 +255,10 @@ export const initializeIdleGame = () => {
     }
     if (state.activityBoosts === undefined) {
       state.activityBoosts = {};
+      needsUpdate = true;
+    }
+    if (state.lastSaveTime === undefined) {
+      state.lastSaveTime = Date.now();
       needsUpdate = true;
     }
 

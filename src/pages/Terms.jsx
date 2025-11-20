@@ -9,15 +9,15 @@ const Terms = () => {
     {
       title: 'Acceptance of Terms',
       content: [
-        'By accessing and using Audible\'s services, you accept and agree to be bound by the terms and provision of this agreement.',
-        'If you do not agree to abide by the above, please do not use this service.',
-        'This Terms of Service agreement is effective as of the date stated above and governs your use of Audible\'s services.'
+        'EDUCATIONAL DISCLAIMER: This is a mock educational project ("Listenable") created for academic purposes. This is not a real service and no actual terms apply.',
+        'This demonstration showcases social networking features for audiobook platforms. Not affiliated with Audible or Amazon.',
+        'By using this demo, you acknowledge this is for educational purposes only.'
       ]
     },
     {
       title: 'Description of Service',
       content: [
-        'Audible provides access to a digital library of audiobooks, podcasts, and other audio content.',
+        'Listenable demonstrates access to a mock digital library of audiobooks and audio content.',
         'Services include streaming, downloading, and offline access to content, subject to subscription terms.',
         'Content is available through web browsers, mobile applications, and supported devices.',
         'Service availability may vary by region and device compatibility.'
@@ -36,7 +36,7 @@ const Terms = () => {
     {
       title: 'Subscription and Billing',
       content: [
-        'Audible offers various subscription plans with different features and pricing.',
+        'Listenable demonstrates various subscription plan concepts (educational mock only).',
         'Subscriptions automatically renew unless cancelled before the renewal date.',
         'You may cancel your subscription at any time through your account settings.',
         'Refunds are available for eligible purchases within specified timeframes.',
@@ -58,7 +58,7 @@ const Terms = () => {
       content: [
         'Content may be accessed on up to 16 compatible devices per account.',
         'Some content may have additional device or platform restrictions.',
-        'Audible reserves the right to limit access based on device compatibility.',
+        'This is a demonstration project showing device compatibility concepts.',
         'Unsupported devices may lose access to certain features or content.'
       ]
     },
@@ -84,7 +84,7 @@ const Terms = () => {
     {
       title: 'Service Availability and Changes',
       content: [
-        'Audible strives to maintain high service availability but does not guarantee uptime.',
+        'This educational demonstration is provided as-is for academic purposes.',
         'We reserve the right to modify, suspend, or discontinue services with notice.',
         'Content availability may change based on licensing agreements.',
         'Technical support is available for service-related issues.',
@@ -94,7 +94,7 @@ const Terms = () => {
     {
       title: 'Limitation of Liability',
       content: [
-        'Audible\'s liability is limited to the maximum extent permitted by law.',
+        'This is an educational mock project with no actual liability (not a real service).',
         'We are not liable for indirect, incidental, or consequential damages.',
         'Service is provided "as is" without warranties of any kind.',
         'Your sole remedy for dissatisfaction is to discontinue use of the service.',

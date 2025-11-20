@@ -1,13 +1,15 @@
-# Audible Socials - Complete Social Audiobook Platform
+# Listenable Socials - Educational Mock Audiobook Platform
 
 > **Status**: 🟢 Production Ready | **Build**: ✅ Passing | **Version**: 1.0.0
+> 
+> **⚠️ EDUCATIONAL DISCLAIMER**: This is a mock educational project created for academic purposes to showcase social networking features for audiobook platforms. This project is not affiliated with, endorsed by, or connected to Audible or Amazon. Created to demonstrate how social features could reduce "Time To Next Book" metrics in audiobook service funnels.
 
-A comprehensive social audiobook platform built as an approved mock task for Audible. Features exact 1:1 design match with Audible's interface, 400+ curated books (Sci-Fi & LitRPG focus), celebrity-hosted book clubs, and robust social features to reduce "Time To Next Book."
+A comprehensive social audiobook platform built as an educational mock project. Features modern design, 400+ curated books (Sci-Fi & LitRPG focus), celebrity-hosted book clubs, and robust social features to reduce "Time To Next Book."
 
 ##  Overview
 
-**Audible Socials** is a fully-featured social audiobook platform that combines:
-- **Exact Audible Design**: 1:1 match of colors, typography, and layout
+**Listenable Socials** is a fully-featured social audiobook platform that combines:
+- **Modern Audiobook Design**: Clean interface with audiobook platform aesthetics
 - **400+ Books**: Curated collection featuring Three Body Problem, Dungeon Crawler Carl, and more
 - **Celebrity Book Clubs**: Reese Witherspoon, Oprah, Emma Watson, Jenna Bush Hager, Sarah Jessica Parker
 - **Social Features**: Friend management, progress tracking, recommendations, achievements
@@ -20,6 +22,19 @@ A comprehensive social audiobook platform built as an approved mock task for Aud
 - **[Testing Results](./assets/docs/TESTING_RESULTS.md)** - Quality assurance report
 
 ##  Features
+
+### 🤖 AI Reading Assistant (NEW!)
+- **Smart Recommendations**: AI-powered "Next Listen" suggestions based on:
+  - Your listening history and preferences
+  - Friends' activity and ratings
+  - Book club trends and discussions
+  - Reading patterns and time available
+- **Context-Aware Q&A**: Ask questions about books with intelligent features:
+  - Spoiler protection by default (toggle to enable)
+  - Contextual responses about plot, characters, themes
+  - Suggested follow-up questions
+  - Reading progress awareness
+- **Floating AI Widget**: Accessible from any page in the app
 
 ### Book Clubs
 - Join up to 2 clubs (3 for Premium members)
@@ -61,7 +76,7 @@ A comprehensive social audiobook platform built as an approved mock task for Aud
 
 ```bash
 # Clone the repository
-cd audible-socials
+cd listenable-socials
 
 # Install dependencies
 npm install
@@ -75,7 +90,7 @@ The app will be available at `http://localhost:5173`
 ## ️ Project Structure
 
 ```
-audible-socials/
+listenable-socials/
 ├── src/
 │   ├── components/
 │   │   ├── layout/          # Header, BottomNav
@@ -102,13 +117,30 @@ The app includes:
 - **Complete metadata**: Ratings, reviews, progress tracking, achievements
 - **Social data**: Friend connections, club memberships, activity feeds
 
+### 📚 Librivox Integration
+
+Add thousands of public domain audiobooks from [Librivox.org](https://librivox.org):
+
+```bash
+# Search for books
+node scripts/download-librivox-audiobooks.js search "pride and prejudice"
+
+# Organize downloaded files
+node scripts/download-librivox-audiobooks.js organize ~/Downloads/Librivox
+
+# Integrate into application
+node scripts/download-librivox-audiobooks.js integrate
+```
+
+See **[Librivox Integration Guide](./LIBRIVOX_INTEGRATION_README.md)** for complete instructions.
+
 ##  Design Philosophy
 
-- **Premium Minimalist**: Clean, elegant design inspired by Audible
+- **Premium Minimalist**: Clean, elegant design inspired by modern audiobook platforms
 - **Smooth Animations**: Framer Motion for delightful transitions
 - **Responsive**: Mobile-first approach with desktop enhancements
 - **Typography**: Inter for body text, Literata for headings
-- **Color Palette**: Audible orange (#F86800) as primary, with navy and cream accents
+- **Color Palette**: Orange (#F86800) as primary, with navy and cream accents
 
 ##  Key Functionalities
 
@@ -178,28 +210,56 @@ The demo includes these key testing scenarios:
 4. **Friend/Library Sharing**: "Would seeing a friend's list influence your next book pick?"
 5. **Club Notifications**: "Are these updates useful or overwhelming?"
 
+## 🎯 Key Innovation: AI-Powered Discovery
+
+This project demonstrates how AI can reduce the "Time To Next Book" metric by:
+
+1. **Proactive Recommendations**: AI suggests books before users finish their current listen
+2. **Social Context**: Recommendations consider friends' activity and book club discussions
+3. **Spoiler-Free Exploration**: Users can learn about books without plot spoilers
+4. **Personalized Discovery**: Machine learning adapts to individual reading patterns
+
+### Metrics Impact (Theoretical)
+- **Time To Next Book**: Reduce from 5-7 days to 1-2 days
+- **User Engagement**: Increase book discovery by 40%
+- **Social Features**: Drive 60% more friend interactions
+- **Retention**: Improve subscription renewal by 25%
+
 ##  Future Enhancements
 
 - Real audio playback functionality
-- Backend API integration
+- Backend API integration with actual LLM (GPT-4, Claude, etc.)
 - Real-time notifications
 - Direct messaging between friends
 - Book club discussion forums
 - Integration with actual Google Images API
 - User authentication
 - Social sharing features
+- Advanced AI features:
+  - Voice-based book queries
+  - Emotional tone analysis of books
+  - Reading buddy matching
+  - Predictive listening schedules
 
 ##  License
 
-This is a demo project created for educational and portfolio purposes.
+This is a mock educational project created for academic and portfolio purposes only. Not affiliated with or endorsed by any audiobook service provider.
+
+##  Educational Purpose
+
+This project was created to:
+- Demonstrate social networking integration in audiobook platforms
+- Showcase how social features can reduce "Time To Next Book" metrics
+- Explore UX patterns for community-driven content discovery
+- Provide a portfolio piece demonstrating full-stack frontend development
 
 ##  Acknowledgments
 
-- Design inspiration: Audible
+- Design inspiration: Modern audiobook platforms
 - Icons: Lucide React
 - Fonts: Google Fonts (Inter, Literata)
 - Images: Unsplash (placeholder images)
 
 ---
 
-Built with ️ for the Audible Social Product Demo
+Built with ️ as an Educational Mock Project | Not affiliated with Audible or Amazon

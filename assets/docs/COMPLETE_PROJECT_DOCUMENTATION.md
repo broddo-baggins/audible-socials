@@ -43,7 +43,7 @@
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd audible-socials
+cd listenable-socials
 
 # Install dependencies
 npm install
@@ -369,7 +369,7 @@ No environment variables required for basic functionality. The app uses:
 
 ### Project Structure
 ```
-audible-socials/
+listenable-socials/
 ├── src/
 │   ├── components/
 │   │   ├── books/          # Book-related components

@@ -36,9 +36,16 @@ export const PlayerProvider = ({ children }) => {
   const [bookmarks, setBookmarks] = useState([]);          // User bookmarks
   const [isMinimized, setIsMinimized] = useState(true);    // Player UI state
 
-  // Refs for managing intervals and timers
-  const playbackIntervalRef = useRef(null);               // Interval for playback simulation
-  const sleepTimerRef = useRef(null);                     // Timeout for sleep timer
+  // Audio playback state
+  const [isLoading, setIsLoading] = useState(false);       // Loading audio state
+  const [audioError, setAudioError] = useState(null);      // Audio loading errors
+  const [audioSrc, setAudioSrc] = useState(null);          // Current audio source
+  const [youtubeResults, setYoutubeResults] = useState([]); // YouTube search results
+  const [usingYoutube, setUsingYoutube] = useState(false); // Whether using YouTube embed
+
+  // Refs for managing audio and timers
+  const audioRef = useRef(null);                           // HTML5 audio element
+  const sleepTimerRef = useRef(null);                      // Timeout for sleep timer
   
   // Load saved state from localStorage
   useEffect(() => {
@@ -71,31 +78,74 @@ export const PlayerProvider = ({ children }) => {
     }
   }, [currentBook, currentTime, currentChapter, playbackSpeed]);
   
-  // Simulate playback
+  // Initialize audio element
   useEffect(() => {
-    if (isPlaying && currentBook) {
-      playbackIntervalRef.current = setInterval(() => {
-        setCurrentTime(prev => {
-          const newTime = prev + playbackSpeed;
-          if (newTime >= duration) {
-            setIsPlaying(false);
-            return duration;
-          }
-          return newTime;
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+      audioRef.current.volume = volume;
+      audioRef.current.playbackRate = playbackSpeed;
+
+      // Handle audio events
+      audioRef.current.addEventListener('loadedmetadata', () => {
+        setDuration(audioRef.current.duration);
+        setIsLoading(false);
+        setAudioError(null);
+      });
+
+      audioRef.current.addEventListener('timeupdate', () => {
+        setCurrentTime(audioRef.current.currentTime);
+      });
+
+      audioRef.current.addEventListener('ended', () => {
+        setIsPlaying(false);
+      });
+
+      audioRef.current.addEventListener('error', (e) => {
+        console.error('Audio error:', e);
+        setAudioError('Failed to load audio');
+        setIsLoading(false);
+        setIsPlaying(false);
+      });
+
+      audioRef.current.addEventListener('loadstart', () => {
+        setIsLoading(true);
+        setAudioError(null);
+      });
+
+      audioRef.current.addEventListener('canplay', () => {
+        setIsLoading(false);
+      });
+    }
+  }, []);
+
+  // Handle playback state changes
+  useEffect(() => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.play().catch(e => {
+          console.error('Playback failed:', e);
+          setAudioError('Playback failed');
+          setIsPlaying(false);
         });
-      }, 1000);
-    } else {
-      if (playbackIntervalRef.current) {
-        clearInterval(playbackIntervalRef.current);
+      } else {
+        audioRef.current.pause();
       }
     }
-    
-    return () => {
-      if (playbackIntervalRef.current) {
-        clearInterval(playbackIntervalRef.current);
-      }
-    };
-  }, [isPlaying, currentBook, duration, playbackSpeed]);
+  }, [isPlaying]);
+
+  // Handle volume changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
+
+  // Handle playback speed changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = playbackSpeed;
+    }
+  }, [playbackSpeed]);
   
   // Handle sleep timer
   useEffect(() => {
@@ -115,10 +165,23 @@ export const PlayerProvider = ({ children }) => {
   
   const loadBook = useCallback((book) => {
     setCurrentBook(book);
-    setDuration(book.durationMinutes || 0);
-    setCurrentTime(book.progress || 0);
     setCurrentChapter(0);
     setIsMinimized(false);
+
+    // Try to load sample audio
+    const sampleUrl = book.sampleAudioUrl;
+    if (sampleUrl && audioRef.current) {
+      setAudioSrc(sampleUrl);
+      audioRef.current.src = sampleUrl;
+      audioRef.current.currentTime = book.progress || 0;
+      setIsLoading(true);
+    } else {
+      // Fallback to simulation for books without audio
+      setDuration(book.durationMinutes * 60 || 3600); // Convert to seconds, default 1 hour
+      setCurrentTime(book.progress || 0);
+      setAudioSrc(null);
+      setAudioError('No audio sample available');
+    }
   }, []);
   
   const play = useCallback(() => {
@@ -134,16 +197,28 @@ export const PlayerProvider = ({ children }) => {
   }, []);
   
   const seek = useCallback((time) => {
-    setCurrentTime(Math.max(0, Math.min(time, duration)));
-  }, [duration]);
-  
+    const safeTime = Math.max(0, Math.min(time, duration));
+    setCurrentTime(safeTime);
+    if (audioRef.current && !usingYoutube) {
+      audioRef.current.currentTime = safeTime;
+    }
+  }, [duration, usingYoutube]);
+
   const skipForward = useCallback((seconds = 30) => {
-    setCurrentTime(prev => Math.min(prev + seconds, duration));
-  }, [duration]);
-  
+    const newTime = Math.min(currentTime + seconds, duration);
+    setCurrentTime(newTime);
+    if (audioRef.current && !usingYoutube) {
+      audioRef.current.currentTime = newTime;
+    }
+  }, [currentTime, duration, usingYoutube]);
+
   const skipBackward = useCallback((seconds = 30) => {
-    setCurrentTime(prev => Math.max(prev - seconds, 0));
-  }, []);
+    const newTime = Math.max(currentTime - seconds, 0);
+    setCurrentTime(newTime);
+    if (audioRef.current && !usingYoutube) {
+      audioRef.current.currentTime = newTime;
+    }
+  }, [currentTime, usingYoutube]);
   
   const changeSpeed = useCallback((speed) => {
     setPlaybackSpeed(speed);
@@ -201,6 +276,42 @@ export const PlayerProvider = ({ children }) => {
     setIsPlaying(false);
     setCurrentTime(0);
     setIsMinimized(true);
+    setAudioSrc(null);
+    setUsingYoutube(false);
+    setYoutubeResults([]);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = '';
+    }
+  }, []);
+
+  // Search for YouTube audiobook previews
+  const searchYouTube = useCallback(async (book) => {
+    if (!book) return;
+
+    const query = `${book.title} ${book.author} audiobook preview sample`;
+    const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+
+    // Open YouTube search in new tab
+    window.open(searchUrl, '_blank');
+
+    // Also set some mock results for UI demonstration
+    setYoutubeResults([
+      {
+        id: 'sample1',
+        title: `${book.title} - Audiobook Preview`,
+        thumbnail: 'https://img.youtube.com/vi/sample1/0.jpg',
+        url: searchUrl
+      }
+    ]);
+  }, []);
+
+  // Load YouTube embed (if we get an embed URL)
+  const loadYouTubeEmbed = useCallback((embedUrl) => {
+    setUsingYoutube(true);
+    setAudioSrc(embedUrl);
+    // In a real implementation, you'd set up YouTube Player API here
+    // For now, we'll just simulate
   }, []);
   
   const formatTime = useCallback((minutes) => {
@@ -225,6 +336,11 @@ export const PlayerProvider = ({ children }) => {
     sleepTimer,
     bookmarks,
     isMinimized,
+    isLoading,
+    audioError,
+    audioSrc,
+    youtubeResults,
+    usingYoutube,
     loadBook,
     play,
     pause,
@@ -241,6 +357,8 @@ export const PlayerProvider = ({ children }) => {
     minimize,
     maximize,
     closePlayer,
+    searchYouTube,
+    loadYouTubeEmbed,
     formatTime,
   };
   
@@ -254,3 +372,4 @@ export const PlayerProvider = ({ children }) => {
 PlayerProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
+

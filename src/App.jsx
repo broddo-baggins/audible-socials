@@ -1,7 +1,7 @@
 /**
- * Audible Socials - Main Application Component
+ * Listenable Socials - Main Application Component
  *
- * This component serves as the root of the Audible Socials application. It provides:
+ * This component serves as the root of the Listenable Socials application. It provides:
  * - React Router for client-side navigation
  * - Player context for audio playback state management
  * - Responsive layout components (desktop/tablet/mobile headers, navigation)
@@ -27,6 +27,9 @@ import MiniPlayer from './components/player/MiniPlayer';
 
 // Shared Utilities
 import ScrollToTop from './components/shared/ScrollToTop';
+
+// AI Assistant
+import AIAssistant from './components/ai/AIAssistant';
 
 // Pages
 import Home from './pages/Home';
@@ -183,6 +186,9 @@ function App() {
 
           {/* Scroll to Top Utility */}
           <ScrollToTop />
+
+          {/* AI Assistant - Floating AI helper */}
+          <AIAssistant />
         </div>
       </Router>
     </PlayerProvider>

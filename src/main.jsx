@@ -1,7 +1,7 @@
 /**
- * Audible Socials - Main Entry Point
+ * Listenable Socials - Main Entry Point
  *
- * This file serves as the main entry point for the Audible Socials React application.
+ * This file serves as the main entry point for the Listenable Socials React application.
  * It initializes the React app with strict mode for development warnings and renders
  * the main App component into the DOM.
  */

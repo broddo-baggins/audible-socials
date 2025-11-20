@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { AlertCircle, GraduationCap } from 'lucide-react';
 import HeroBanner from '../components/home/HeroBanner';
 import BookCarousel from '../components/books/BookCarousel';
 import SocialNudges from '../components/social/SocialNudges';
@@ -78,6 +79,30 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-audible-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+        {/* Educational Disclaimer Banner */}
+        <section>
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-4 shadow-sm">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0">
+                <GraduationCap className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-blue-900 mb-1">
+                  📚 Educational Mock Project - Listenable
+                </h3>
+                <p className="text-xs text-blue-800 leading-relaxed">
+                  This is a demonstration platform created for academic purposes to showcase how <strong>social networking features</strong> can reduce "<strong>Time To Next Book</strong>" metrics in audiobook service funnels. 
+                  <span className="block mt-1 font-medium">Not affiliated with or endorsed by Audible or Amazon.</span>
+                </p>
+                <div className="mt-2 flex items-center gap-2 text-xs">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Educational Demo</span>
+                  <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">AI Features Added</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Hero Banner */}
         <section>
           <HeroBanner book={featuredBook} />

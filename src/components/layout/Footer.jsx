@@ -82,13 +82,13 @@ const Footer = () => {
              <div className="flex flex-col items-center md:items-start gap-2">
                <Link to="/" className="flex items-center">
                  <img
-                   src="/images/audible-logo.svg"
-                   alt="Audible"
+                   src="/images/listenable-logo.svg"
+                   alt="Listenable"
                    className="h-6 w-auto"
                  />
                </Link>
             <p className="text-audible-text-tertiary text-sm">
-              &copy; {currentYear} Audible. All rights reserved.
+              &copy; {currentYear} Listenable. Educational Mock Project. Not affiliated with Audible or Amazon.
             </p>
           </div>
 

@@ -1,6 +1,19 @@
 import { useState, useEffect } from 'react';
-import { UserPlus, UserX, Check, X, AlertCircle, Clock, Send, Heart, HeartHandshake, UserMinus } from 'lucide-react';
-import { AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { 
+  UserPlus, 
+  UserX, 
+  Check, 
+  X, 
+  AlertCircle, 
+  Clock, 
+  Send, 
+  Heart, 
+  HeartHandshake, 
+  BookOpen, 
+  Users 
+} from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import usersData from '../../data/users.json';
 import {
   getPendingRequests,
@@ -94,9 +107,22 @@ export default function FriendRequestManager({ onUpdate }) {
     return 'Just now';
   };
 
+  const getRelationshipBadge = (context) => {
+    const badges = {
+      'book_club': { icon: '📚', text: 'Book Club Member', color: 'bg-blue-100 text-blue-700' },
+      'similar_taste': { icon: '⭐', text: 'Similar Taste', color: 'bg-purple-100 text-purple-700' },
+      'family': { icon: '👨‍👩‍👧‍👦', text: 'Family', color: 'bg-green-100 text-green-700' },
+      'real_life': { icon: '🤝', text: 'Friend IRL', color: 'bg-orange-100 text-orange-700' },
+      'influencer': { icon: '🌟', text: 'Influencer', color: 'bg-yellow-100 text-yellow-700' }
+    };
+    return badges[context] || null;
+  };
+
   const renderPendingRequest = (request) => {
     const user = usersData.find(u => u.id === request.fromUserId);
     if (!user) return null;
+
+    const relationshipBadge = request.relationshipContext ? getRelationshipBadge(request.relationshipContext) : null;
 
     return (
       <motion.div
@@ -107,14 +133,24 @@ export default function FriendRequestManager({ onUpdate }) {
       >
         <div className="flex items-start space-x-4">
           <motion.div
-            className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg"
+            className="flex-shrink-0 relative"
             whileHover={{ scale: 1.05 }}
           >
-            <span className="text-white font-bold text-lg">
-              {user.name.split(' ').map(n => n[0]).join('')}
-            </span>
+            {user.avatar ? (
+              <img 
+                src={user.avatar} 
+                alt={user.name} 
+                className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-lg"
+              />
+            ) : (
+              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-lg">
+                  {user.name.split(' ').map(n => n[0]).join('')}
+                </span>
+              </div>
+            )}
                       {user.isPremium && (
-                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center">
+                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
                           <span className="text-xs text-white font-bold">P</span>
                         </div>
                       )}
@@ -145,6 +181,15 @@ export default function FriendRequestManager({ onUpdate }) {
                 </div>
               </div>
             </div>
+
+            {relationshipBadge && (
+              <div className="mb-2">
+                <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${relationshipBadge.color}`}>
+                  <span>{relationshipBadge.icon}</span>
+                  <span>{relationshipBadge.text}</span>
+                </span>
+              </div>
+            )}
 
             {request.message && (
               <motion.div
@@ -206,10 +251,20 @@ export default function FriendRequestManager({ onUpdate }) {
         className="bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
       >
         <div className="flex items-start space-x-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-white font-semibold">
-              {user.name.split(' ').map(n => n[0]).join('')}
-            </span>
+          <div className="flex-shrink-0">
+            {user.avatar ? (
+              <img 
+                src={user.avatar} 
+                alt={user.name} 
+                className="w-12 h-12 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-12 h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
+                <span className="text-white font-semibold">
+                  {user.name.split(' ').map(n => n[0]).join('')}
+                </span>
+              </div>
+            )}
           </div>
           
           <div className="flex-1 min-w-0">

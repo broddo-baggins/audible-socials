@@ -4,7 +4,7 @@
 
 ### 1. Install Dependencies
 ```bash
-cd /Users/amity/projects/audible-socials
+cd /Users/amity/projects/listenable-socials
 npm install
 ```
 

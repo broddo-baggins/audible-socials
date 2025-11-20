@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 32" width="140" height="32">
+  <defs>
+    <style>
+      .listenable-logo-text { 
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+        font-weight: 400; 
+        font-size: 28px; 
+        fill: #FF6B35; 
+      }
+    </style>
+  </defs>
+  <text x="0" y="24" class="listenable-logo-text">listenable</text>
+</svg>

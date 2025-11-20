@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Play, Pause, Trophy, Star, Clock, Award, Zap, Lock } from 'lucide-react';
 import IdleGame from '../components/idle/IdleGame';
-import { Card } from '../components/ui';
-import { getIdleGameState, ACHIEVEMENTS } from '../utils/idleGame';
+import { Card, Button } from '../components/ui';
+import { getIdleGameState, ACHIEVEMENTS, updateIdleGameState } from '../utils/idleGame';
 
 // Achievement Icon Component - now using emoji icons
 const AchievementIcon = ({ icon, unlocked = true }) => {
@@ -23,6 +23,26 @@ const AchievementIcon = ({ icon, unlocked = true }) => {
 const IdleGamePage = () => {
   const [gameState, setGameState] = useState(getIdleGameState());
   const [isPlaying] = useState(false);
+
+  // Development helper: Simulate offline progress
+  const simulateOfflineProgress = (minutes) => {
+    const now = Date.now();
+    const pastTime = now - (minutes * 60 * 1000);
+
+    // Temporarily modify localStorage to simulate being away
+    const currentState = getIdleGameState();
+    const fakeState = {
+      ...currentState,
+      lastSaveTime: pastTime
+    };
+    localStorage.setItem('idleGameState', JSON.stringify(fakeState));
+
+    // Trigger visibility change to simulate coming back
+    setTimeout(() => {
+      // This will trigger the offline progress calculation
+      document.dispatchEvent(new Event('visibilitychange'));
+    }, 100);
+  };
 
   useEffect(() => {
     // Refresh game state periodically
@@ -126,6 +146,47 @@ const IdleGamePage = () => {
                 </Link>
               </div>
             </Card>
+
+            {/* Development: Offline Progress Simulator */}
+            {process.env.NODE_ENV === 'development' && (
+              <Card className="p-4 bg-yellow-50 border-2 border-yellow-200">
+                <h4 className="font-bold text-gray-900 mb-2">🧪 Development Tools</h4>
+                <p className="text-sm text-gray-600 mb-3">Test offline progress accumulation:</p>
+                <div className="flex gap-2 flex-wrap">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => simulateOfflineProgress(5)}
+                  >
+                    +5 min offline
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => simulateOfflineProgress(30)}
+                  >
+                    +30 min offline
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => simulateOfflineProgress(120)}
+                  >
+                    +2h offline
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => simulateOfflineProgress(1440)}
+                  >
+                    +24h offline
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Switch tabs/minimize browser, then click a button to test offline progress.
+                </p>
+              </Card>
+            )}
           </div>
 
           {/* Sidebar */}

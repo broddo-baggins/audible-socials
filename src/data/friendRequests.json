@@ -5,7 +5,9 @@
     "toUserId": "user-me",
     "status": "pending",
     "timestamp": "2025-11-09T14:30:00",
-    "message": "Hey! I saw you're reading Project Hail Mary. Would love to connect and discuss the ending!"
+    "message": "Hey! We're both in the Mystery Lovers Society book club. I loved your thoughts on the last discussion - want to connect?",
+    "relationshipContext": "book_club",
+    "sharedClub": "6"
   },
   {
     "id": "fr-2",
@@ -13,7 +15,8 @@
     "toUserId": "user-me",
     "status": "pending",
     "timestamp": "2025-11-10T09:15:00",
-    "message": "Hi! I noticed we both love science fiction. Want to share book recommendations?"
+    "message": "Hi! Your reading list is amazing - we have such similar taste in sci-fi. Would love to be friends and share recommendations!",
+    "relationshipContext": "similar_taste"
   },
   {
     "id": "fr-3",
@@ -29,7 +32,8 @@
     "toUserId": "user-me",
     "status": "pending",
     "timestamp": "2025-11-11T11:45:00",
-    "message": "Love your book reviews! Mind if we become reading buddies?"
+    "message": "Hey cousin! Finally signed up for Audible like you told me to. Let's connect and share our favorite listens! 📚",
+    "relationshipContext": "family"
   },
   {
     "id": "fr-5",
@@ -46,6 +50,25 @@
     "status": "rejected",
     "timestamp": "2025-11-08T13:20:00",
     "rejectedAt": "2025-11-09T15:30:00"
+  },
+  {
+    "id": "fr-7",
+    "fromUserId": "9",
+    "toUserId": "user-me",
+    "status": "pending",
+    "timestamp": "2025-11-12T15:20:00",
+    "message": "Hi! It's Sarah from work. Saw you on here - didn't know you loved audiobooks too! Let's connect and swap recommendations during lunch breaks! 😊",
+    "relationshipContext": "real_life"
+  },
+  {
+    "id": "fr-8",
+    "fromUserId": "7",
+    "toUserId": "user-me",
+    "status": "pending",
+    "timestamp": "2025-11-13T10:30:00",
+    "message": "Hey! We're both in Women Who Lead book club. I noticed you have an incredible listening streak - you inspire me! Would love to connect and motivate each other.",
+    "relationshipContext": "book_club",
+    "sharedClub": "8"
   }
 ]
 

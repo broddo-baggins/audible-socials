@@ -60,8 +60,8 @@ const DesktopHeader = () => {
              {/* Logo */}
              <Link to="/" className="flex items-center">
                <img
-                 src="/images/audible-logo.svg"
-                 alt="Audible"
+                 src="/images/listenable-logo.svg"
+                 alt="Listenable"
                  className="h-8 w-auto"
                />
              </Link>

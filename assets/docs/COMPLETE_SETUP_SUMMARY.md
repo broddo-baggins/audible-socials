@@ -89,7 +89,7 @@
 ## 📁 Organized File Structure
 
 ```
-/audible-socials/
+/listenable-socials/
 │
 ├── README.md                    ✅ Project documentation
 ├── README_SCRIPTS.md            ✅ Scripts guide

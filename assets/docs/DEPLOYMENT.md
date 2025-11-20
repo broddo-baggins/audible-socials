@@ -22,7 +22,7 @@
 npm install -g vercel
 
 # 2. Navigate to project directory
-cd /Users/amity/projects/audible-socials
+cd /Users/amity/projects/listenable-socials
 
 # 3. Login to Vercel
 vercel login
@@ -233,7 +233,7 @@ vercel --prod
 ### Share Link for User Testing
 ```
 Your demo is live at:
-https://audible-socials.vercel.app
+https://listenable-socials.vercel.app
 
 Test credentials:
 - Default user (no login required)

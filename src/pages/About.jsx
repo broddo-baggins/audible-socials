@@ -39,11 +39,12 @@ const About = () => {
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-audible-text-primary mb-6">
-            About Audible
+            About Listenable
           </h1>
           <p className="text-xl text-audible-text-secondary max-w-3xl mx-auto leading-relaxed">
-            We're revolutionizing the way people experience stories. Through our innovative audio platform,
-            we're making literature, education, and entertainment accessible to millions worldwide.
+            <em className="block text-sm mb-4 text-audible-orange font-semibold">⚠️ Educational Mock Project - Not affiliated with Audible or Amazon</em>
+            This platform demonstrates how social features can revolutionize the audiobook experience. 
+            Created for academic purposes to showcase social networking integration in audiobook services.
           </p>
         </div>
 
@@ -93,7 +94,7 @@ const About = () => {
               Our Values
             </h2>
             <p className="text-lg text-audible-text-secondary max-w-3xl mx-auto">
-              The principles that guide everything we do at Audible.
+              The principles that guide this educational demonstration project.
             </p>
           </div>
 

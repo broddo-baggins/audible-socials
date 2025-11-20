@@ -43,11 +43,19 @@ export default function Profile() {
           <div className="flex items-start space-x-6">
             {/* Avatar */}
             <div className="relative">
-              <div className="w-24 h-24 bg-gradient-to-br from-audible-orange to-audible-orange-dark rounded-full flex items-center justify-center">
-                <User className="w-12 h-12 text-white" />
-              </div>
+              {userData.avatar ? (
+                <img 
+                  src={userData.avatar} 
+                  alt={userData.name} 
+                  className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
+                />
+              ) : (
+                <div className="w-24 h-24 bg-gradient-to-br from-audible-orange to-audible-orange-dark rounded-full flex items-center justify-center">
+                  <User className="w-12 h-12 text-white" />
+                </div>
+              )}
               {userData.isPremium && (
-                <div className="absolute -bottom-1 -right-1 bg-audible-gold rounded-full p-1.5">
+                <div className="absolute -bottom-1 -right-1 bg-audible-gold rounded-full p-1.5 shadow-sm">
                   <Crown className="w-4 h-4 text-white" />
                 </div>
               )}
@@ -289,9 +297,17 @@ export default function Profile() {
                   className="text-center p-3 border border-gray-200 rounded-lg hover:border-audible-orange transition-colors"
                 >
                   <div className="relative inline-block mb-2">
-                    <div className="w-12 h-12 bg-gradient-to-br from-audible-orange to-audible-orange-dark rounded-full flex items-center justify-center">
-                      <User className="w-6 h-6 text-white" />
-                    </div>
+                    {friend.avatar ? (
+                      <img 
+                        src={friend.avatar} 
+                        alt={friend.name} 
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-gradient-to-br from-audible-orange to-audible-orange-dark rounded-full flex items-center justify-center">
+                        <User className="w-6 h-6 text-white" />
+                      </div>
+                    )}
                     {friend.isPremium && (
                       <div className="absolute -bottom-1 -right-1 bg-audible-gold rounded-full p-0.5">
                         <Crown className="w-3 h-3 text-white" />
