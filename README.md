@@ -23,7 +23,8 @@ A comprehensive social audiobook platform built as an educational mock project. 
 
 ##  Features
 
-### 🤖 AI Reading Assistant (NEW!)
+### 🤖 AI Reading Assistant (NEW!) - **Powered by Grok API**
+- **Real AI Intelligence**: Integrated with xAI's Grok for genuine, intelligent responses
 - **Smart Recommendations**: AI-powered "Next Listen" suggestions based on:
   - Your listening history and preferences
   - Friends' activity and ratings
@@ -33,8 +34,11 @@ A comprehensive social audiobook platform built as an educational mock project. 
   - Spoiler protection by default (toggle to enable)
   - Contextual responses about plot, characters, themes
   - Suggested follow-up questions
-  - Reading progress awareness
+  - Natural language understanding
+- **Live/Offline Mode**: Toggle between real AI and offline mock responses
 - **Floating AI Widget**: Accessible from any page in the app
+
+**See [Grok API Integration Guide](./GROK_API_INTEGRATION.md) for complete details.**
 
 ### Book Clubs
 - Join up to 2 clubs (3 for Premium members)
@@ -117,6 +121,17 @@ The app includes:
 - **Complete metadata**: Ratings, reviews, progress tracking, achievements
 - **Social data**: Friend connections, club memberships, activity feeds
 
+### 📖 **Actual Book Content Available**
+
+The application now includes **actual book content** for public domain classics:
+
+- **Pride and Prejudice** by Jane Austen (752KB)
+- **Dracula** by Bram Stoker (870KB)
+- **Frankenstein** by Mary Shelley (421KB)
+- **The Adventures of Sherlock Holmes** by Arthur Conan Doyle (607KB)
+
+All content is legally sourced from **Project Gutenberg** and fully readable within the application.
+
 ### 📚 Librivox Integration
 
 Add thousands of public domain audiobooks from [Librivox.org](https://librivox.org):
@@ -130,6 +145,21 @@ node scripts/download-librivox-audiobooks.js organize ~/Downloads/Librivox
 
 # Integrate into application
 node scripts/download-librivox-audiobooks.js integrate
+```
+
+### 📚 Public Domain Content System
+
+Download additional public domain books legally:
+
+```bash
+# Download content for all books in database
+node scripts/download-public-domain-books.js download
+
+# List all available public domain books
+node scripts/download-public-domain-books.js list
+
+# Download specific book
+node scripts/download-public-domain-books.js single pride_and_prejudice_jane_austen
 ```
 
 See **[Librivox Integration Guide](./LIBRIVOX_INTEGRATION_README.md)** for complete instructions.
