@@ -28,6 +28,12 @@ export const callGrokAPI = async (messages, options = {}) => {
     max_tokens: maxTokens,
   };
 
+  // Check if API key is configured
+  if (!GROK_API_CONFIG.apiKey || GROK_API_CONFIG.apiKey === 'YOUR_GROK_API_KEY_HERE') {
+    console.warn('🤖 Grok API key not configured - using intelligent mock responses');
+    return getMockResponse(messages);
+  }
+
   try {
     const response = await fetch(`${GROK_API_CONFIG.baseUrl}/chat/completions`, {
       method: 'POST',
