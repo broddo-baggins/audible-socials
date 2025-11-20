@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { 
+import {
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
   X, Maximize2, Minimize2, Bookmark, List, Clock
 } from 'lucide-react';
 import { usePlayer } from '../../contexts/usePlayer';
 import { ProgressBar, Button, Badge } from '../ui';
+import IdleGame from '../idle/IdleGame';
 
 const AudioPlayer = () => {
   const {
@@ -307,7 +308,12 @@ const AudioPlayer = () => {
               )}
             </div>
           </div>
-          
+
+          {/* Idle Game */}
+          <div className="mt-6">
+            <IdleGame isPlaying={isPlaying} currentBook={currentBook} />
+          </div>
+
           {/* Chapters Panel */}
           {showChapters && currentBook.chapters && (
             <div className="mt-6 bg-echo-player-surface rounded-lg p-4 max-h-64 overflow-y-auto">

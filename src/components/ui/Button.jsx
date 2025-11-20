@@ -50,16 +50,19 @@ const Button = forwardRef(({
   };
 
   const MotionComponent = animated ? motion.button : 'button';
+  const motionProps = animated ? {
+    variants: buttonVariants,
+    initial: "initial",
+    whileHover: "hover",
+    whileTap: "tap"
+  } : {};
 
   return (
     <MotionComponent
       ref={ref}
       disabled={disabled || loading}
       className={`${baseStyles} ${variantClass} ${sizes[size]} ${widthClass} ${className}`}
-      variants={buttonVariants}
-      initial="initial"
-      whileHover="hover"
-      whileTap="tap"
+      {...motionProps}
       {...props}
     >
       {loading && (

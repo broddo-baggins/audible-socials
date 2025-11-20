@@ -1,4 +1,4 @@
-import { Home, Library, Compass, Search, User, Users } from 'lucide-react';
+import { Home, Library, Compass, Search, User, Users, Zap } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
 
@@ -9,7 +9,7 @@ const MobileBottomNav = () => {
     { label: 'Home', path: '/', icon: Home },
     { label: 'Library', path: '/library', icon: Library },
     { label: 'Social', path: '/social', icon: Users },
-    { label: 'Search', path: '/search', icon: Search },
+    { label: 'Idle', path: '/idle', icon: Zap },
     { label: 'Profile', path: '/account', icon: User },
   ];
 

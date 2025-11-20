@@ -1,14 +1,31 @@
+/**
+ * Audible Socials - Main Application Component
+ *
+ * This component serves as the root of the Audible Socials application. It provides:
+ * - React Router for client-side navigation
+ * - Player context for audio playback state management
+ * - Responsive layout components (desktop/tablet/mobile headers, navigation)
+ * - Audio player components
+ * - Page transition animations using Framer Motion
+ */
+
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import { PlayerProvider } from './contexts/PlayerContext';
 import { pageVariants, pageTransition } from './utils/animationVariants';
+
+// Layout Components - Responsive headers and navigation
 import DesktopHeader from './components/layout/DesktopHeader';
 import TabletHeader from './components/layout/TabletHeader';
 import MobileBottomNav from './components/layout/MobileBottomNav';
 import Footer from './components/layout/Footer';
+
+// Audio Player Components
 import AudioPlayer from './components/player/AudioPlayer';
 import MiniPlayer from './components/player/MiniPlayer';
+
+// Shared Utilities
 import ScrollToTop from './components/shared/ScrollToTop';
 
 // Pages
@@ -19,6 +36,7 @@ import BookDetail from './pages/BookDetail';
 import Search from './pages/Search';
 import Account from './pages/Account';
 import Social from './pages/Social';
+import IdleGamePage from './pages/IdleGamePage';
 import MyBookClubs from './pages/MyBookClubs';
 import ClubDetailPage from './pages/ClubDetailPage';
 import Battles from './pages/Battles';
@@ -49,6 +67,13 @@ import AndroidApp from './pages/AndroidApp';
 import DesktopApp from './pages/DesktopApp';
 
 
+/**
+ * AnimatedRoutes Component
+ *
+ * Handles page transitions using Framer Motion. Each route change triggers
+ * a smooth animation between pages. The component uses AnimatePresence
+ * with mode="wait" to ensure exit animations complete before new page enters.
+ */
 const AnimatedRoutes = () => {
   const location = useLocation();
 
@@ -76,6 +101,7 @@ const AnimatedRoutes = () => {
           <Route path="/help" element={<Account />} />
           <Route path="/notifications" element={<Account />} />
           <Route path="/social" element={<Social />} />
+          <Route path="/idle" element={<IdleGamePage />} />
           <Route path="/battles" element={<Battles />} />
           <Route path="/clubs" element={<MyBookClubs />} />
           <Route path="/clubs/friends" element={<MyBookClubs />} />
@@ -112,35 +138,50 @@ const AnimatedRoutes = () => {
   );
 };
 
+/**
+ * App Component - Main Application Layout
+ *
+ * The root component that provides the overall application structure:
+ * - PlayerProvider: Context for audio playback state management
+ * - Router: Client-side routing with React Router
+ * - Responsive layout: Different headers/navigation for desktop/tablet/mobile
+ * - Audio player: Full and mini player components
+ * - Page transitions: Smooth animations between routes
+ *
+ * Layout Structure:
+ * - Desktop: Header + Main Content + Footer + Audio Player
+ * - Tablet: Header + Main Content + Audio Player
+ * - Mobile: Main Content + Bottom Nav + Audio Player
+ */
 function App() {
   return (
     <PlayerProvider>
       <Router>
         <div className="flex flex-col min-h-screen bg-audible-white">
-          {/* Desktop Header - hidden on mobile and tablet */}
+          {/* Desktop Header - visible only on large screens */}
           <div className="hidden lg:block">
             <DesktopHeader />
           </div>
 
-          {/* Tablet Header - shown only on tablet */}
+          {/* Tablet Header - shown on tablet and desktop */}
           <TabletHeader />
 
-          {/* Animated Main Content */}
+          {/* Main Content with Page Transitions */}
           <AnimatedRoutes />
 
-          {/* Audio Player Components */}
+          {/* Audio Player Components - available on all devices */}
           <AudioPlayer />
           <MiniPlayer />
 
-          {/* Mobile Bottom Navigation */}
+          {/* Mobile Bottom Navigation - visible on mobile/tablet */}
           <MobileBottomNav />
 
-          {/* Footer - hidden on mobile */}
+          {/* Footer - hidden on mobile devices */}
           <div className="hidden md:block">
             <Footer />
           </div>
 
-          {/* Scroll to Top Button */}
+          {/* Scroll to Top Utility */}
           <ScrollToTop />
         </div>
       </Router>

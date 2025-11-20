@@ -48,14 +48,17 @@ const Card = ({
   };
 
   const MotionComponent = animated || hoverable ? motion.div : 'div';
+  const motionProps = (animated || hoverable) ? {
+    initial: "initial",
+    whileHover: "hover",
+    variants: hoverVariants
+  } : {};
 
   return (
     <MotionComponent
       className={`${baseStyles} ${variants[variant]} ${className}`}
-      initial="initial"
-      whileHover="hover"
-      variants={hoverVariants}
       style={{ cursor: hoverable ? 'pointer' : 'default' }}
+      {...motionProps}
       {...props}
     >
       {image && (
