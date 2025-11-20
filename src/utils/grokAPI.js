@@ -34,6 +34,9 @@ export const callGrokAPI = async (messages, options = {}) => {
     return getMockResponse(messages);
   }
 
+  // Log API key status (without revealing the key)
+  console.log('🔑 API Key Status:', GROK_API_CONFIG.apiKey.startsWith('gsk_') ? 'Valid format' : 'Invalid format');
+
   try {
     const response = await fetch(`${GROK_API_CONFIG.baseUrl}/chat/completions`, {
       method: 'POST',

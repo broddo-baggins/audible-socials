@@ -97,28 +97,34 @@ The app will be available at `http://localhost:5173`
 
 To enable the AI features powered by Grok API:
 
-1. **Get a Grok API Key** from [x.ai](https://x.ai):
-   - Visit https://x.ai
-   - Sign up for an account
-   - Generate an API key from your dashboard
+1. **Get a Fresh Grok API Key** from [x.ai](https://x.ai):
+   - Visit https://console.x.ai
+   - Sign in to your account
+   - Go to API Keys section
+   - Generate a new API key (format: `gsk_...`)
 
 2. **Create a `.env` file** in the project root:
 
 ```bash
-# Create .env file with your actual API key
-echo "GROK_API_KEY=your_actual_grok_api_key_here" > .env
+# Create .env file with your fresh API key
+echo "VITE_GROK_API_KEY=gsk_your_actual_key_here" > .env
 ```
 
-3. **The application will automatically use the API key** for real AI responses
-4. **Toggle AI features** in the configuration (`src/config/api.js`)
+3. **Restart the development server** to pick up the new environment variable
 
-**⚠️ Security Note:** Never commit `.env` files to version control. The application will fall back to mock responses if no valid API key is provided.
+**⚠️ Important Notes:**
+- API keys can expire - if you get authentication errors, generate a new key
+- Never commit `.env` files to version control
+- The application gracefully falls back to intelligent mock responses if no valid key is provided
 
 **🔧 Testing Your API Key:**
 ```bash
-# The app will show "🔴 OFFLINE MODE" if the API key is invalid
-# It will show "🟢 LIVE AI" when working properly
+# The app will show "🟢 LIVE AI" when working properly
+# It will show "🔴 OFFLINE MODE" if the API key is invalid
+# Check browser console for detailed error messages
 ```
+
+**🚨 Current Status:** The provided API key appears to be expired or invalid. Please generate a fresh key from [console.x.ai](https://console.x.ai).
 
 ## ️ Project Structure
 
