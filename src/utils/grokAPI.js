@@ -36,6 +36,7 @@ export const callGrokAPI = async (messages, options = {}) => {
 
   // Log API key status (without revealing the key)
   console.log('🔑 API Key Status:', GROK_API_CONFIG.apiKey.startsWith('gsk_') ? 'Valid format' : 'Invalid format');
+  console.log('🚀 Using Real Grok API - attempting connection...');
 
   try {
     const response = await fetch(`${GROK_API_CONFIG.baseUrl}/chat/completions`, {
