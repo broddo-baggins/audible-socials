@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, Users, MapPin, Check, X, Video, Plus, Edit } from 'lucide-react';
+import { Calendar, Clock, Users, Check, X, Video, Plus } from 'lucide-react';
 import { Card } from '../ui';
 import { getClubEvents, createClubEvent, rsvpClubEvent, getUserData } from '../../utils/localStorage';
 

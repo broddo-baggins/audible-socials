@@ -30,10 +30,6 @@ export default function BookClubsTab() {
   }, []);
 
   const handleClubCreated = (newClub) => {
-    // In a real app, this would save to a database
-    // For now, we'll just update local state
-    console.log('New private club created:', newClub);
-
     // Add to joined clubs
     const updatedJoined = [...joinedClubs, newClub];
     setJoinedClubs(updatedJoined);

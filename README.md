@@ -62,6 +62,10 @@ This platform demonstrates how combining social features with AI can reduce "Tim
   - Contextual responses about plot, characters, themes
   - Suggested follow-up questions
   - Natural language understanding
+- **In-Player Companion**: Dedicated AI chat directly in the audio player
+  - Aware of current playback position (chapter & time)
+  - Instant answers about what you just heard
+  - Seamless integration without leaving the player
 - **Live/Offline Mode**: Toggle between real AI and offline mock responses
 - **Floating AI Widget**: Accessible from any page in the app
 

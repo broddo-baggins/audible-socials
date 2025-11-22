@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, AlertTriangle, MessageCircle, User, Clock, Eye, EyeOff } from 'lucide-react';
+import { MessageCircle, User, Clock, Eye, EyeOff } from 'lucide-react';
 import { Card } from '../ui';
 import { addClubDiscussion, addDiscussionReply, getClubDiscussions, getUserData } from '../../utils/localStorage';
 

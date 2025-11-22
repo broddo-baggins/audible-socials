@@ -133,7 +133,7 @@ Just click to instantly ask!
 
 ---
 
-## 5. **Understanding AI Behavior**
+## 6. **Understanding AI Behavior**
 
 ### What AI Can Do:
 ✅ Recommend books based on your taste
@@ -159,7 +159,7 @@ Just click to instantly ask!
 
 ---
 
-## 6. **Tips for Best Results**
+## 7. **Tips for Best Results**
 
 ### Getting Better Recommendations
 1. **Rate books** you've listened to
@@ -183,7 +183,7 @@ Just click to instantly ask!
 
 ---
 
-## 7. **AI Privacy & Data**
+## 8. **AI Privacy & Data**
 
 ### What AI Knows
 - ✅ Your library (locally stored)
@@ -205,7 +205,7 @@ Just click to instantly ask!
 
 ---
 
-## 8. **Troubleshooting**
+## 9. **Troubleshooting**
 
 ### AI Button Not Showing?
 - Check bottom-right corner
@@ -246,7 +246,7 @@ In a production app, this would use:
 
 ---
 
-## 10. **Feature Roadmap**
+## 11. **Feature Roadmap**
 
 ### Coming Soon (Conceptual)
 - 🎤 Voice input for questions

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Vote, Users, Check, Clock, Trophy, BookOpen } from 'lucide-react';
+import { Vote, Users, Check, Trophy, BookOpen } from 'lucide-react';
 import { Card } from '../ui';
 import booksData from '../../data/books.json';
 import { getClubVotes, castClubVote, getUserData } from '../../utils/localStorage';
