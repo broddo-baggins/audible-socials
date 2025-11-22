@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Calendar, Crown, TrendingUp, Gift, Zap } from 'lucide-react';
+import { Users, Calendar, Crown, TrendingUp, Gift, Zap, Plus, Lock } from 'lucide-react';
 import clubsData from '../../data/clubs.json';
 import booksData from '../../data/books.json';
 import { getUserData, getJoinedClubs } from '../../utils/localStorage';
+import CreatePrivateClub from './CreatePrivateClub';
 
 export default function BookClubsTab() {
   const [userData, setUserData] = useState(null);
@@ -27,6 +28,19 @@ export default function BookClubsTab() {
       .slice(0, 6);
     setFeaturedClubs(featured);
   }, []);
+
+  const handleClubCreated = (newClub) => {
+    // In a real app, this would save to a database
+    // For now, we'll just update local state
+    console.log('New private club created:', newClub);
+
+    // Add to joined clubs
+    const updatedJoined = [...joinedClubs, newClub];
+    setJoinedClubs(updatedJoined);
+
+    // Close modal
+    setShowCreateModal(false);
+  };
 
   const maxClubs = userData?.isPremium ? 3 : 2;
 

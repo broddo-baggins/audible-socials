@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import {
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
-  X, Maximize2, Minimize2, Bookmark, List, Clock
+  X, Maximize2, Minimize2, Bookmark, List, Clock, Sparkles
 } from 'lucide-react';
 import { usePlayer } from '../../contexts/usePlayer';
 import { ProgressBar, Button, Badge } from '../ui';
 import IdleGame from '../idle/IdleGame';
+import AIBookChat from '../ai/AIBookChat';
 
 const AudioPlayer = () => {
   const {
@@ -35,6 +36,7 @@ const AudioPlayer = () => {
   const [showChapters, setShowChapters] = useState(false);
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const [showSleepTimer, setShowSleepTimer] = useState(false);
+  const [showAIChat, setShowAIChat] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   
   const speedOptions = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
@@ -94,7 +96,7 @@ const AudioPlayer = () => {
         </div>
         
         {/* Right Side - Controls and Info */}
-        <div className="flex-1 flex flex-col justify-between min-h-0">
+        <div className="flex-1 flex flex-col justify-between min-h-0 relative">
           {/* Header Actions */}
           <div className="flex items-start justify-between mb-6">
             <div className="flex-1 min-w-0">
@@ -262,7 +264,7 @@ const AudioPlayer = () => {
                   <Clock className="w-5 h-5" />
                 </button>
                 {showSleepTimer && (
-                  <div className="absolute bottom-full right-0 mb-2 bg-echo-player-surface rounded-lg shadow-xl border border-echo-player-border overflow-hidden min-w-[120px]">
+                  <div className="absolute bottom-full right-0 mb-2 bg-echo-player-surface rounded-lg shadow-xl border border-echo-player-border overflow-hidden min-w-[120px] z-10">
                     <div className="px-4 py-2 text-sm text-echo-player-text-muted border-b border-echo-player-border">
                       Sleep timer
                     </div>
@@ -287,6 +289,19 @@ const AudioPlayer = () => {
                 )}
               </div>
               
+              {/* AI Chat Toggle */}
+              <button
+                onClick={() => setShowAIChat(!showAIChat)}
+                className={`p-2 rounded-lg transition-colors ${
+                  showAIChat 
+                    ? 'bg-purple-600 text-white' 
+                    : 'text-echo-player-text hover:bg-echo-player-elevated'
+                }`}
+                aria-label="Ask AI about this book"
+              >
+                <Sparkles className="w-5 h-5" />
+              </button>
+
               {/* Bookmark */}
               <button
                 onClick={handleBookmark}
@@ -313,6 +328,36 @@ const AudioPlayer = () => {
           <div className="mt-6">
             <IdleGame isPlaying={isPlaying} currentBook={currentBook} />
           </div>
+
+          {/* AI Chat Modal */}
+          {showAIChat && (
+            <div className="absolute bottom-20 right-0 z-50 w-full md:w-96 bg-white rounded-xl shadow-2xl overflow-hidden border border-audible-gray-200 flex flex-col max-h-[60vh] md:max-h-[500px]">
+              <div className="flex items-center justify-between px-4 py-3 bg-purple-600 text-white shrink-0">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  <span className="font-medium text-sm">Book Companion</span>
+                </div>
+                <button 
+                  onClick={() => setShowAIChat(false)}
+                  className="p-1 hover:bg-purple-500 rounded-lg transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-hidden bg-white">
+                <AIBookChat 
+                  contextBook={currentBook}
+                  playbackState={{
+                    currentTime,
+                    duration,
+                    currentChapter,
+                    currentBook
+                  }}
+                  compact={true}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Chapters Panel */}
           {showChapters && currentBook.chapters && (

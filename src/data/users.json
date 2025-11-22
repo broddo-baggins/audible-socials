@@ -11,7 +11,15 @@
     "friends": [
       "1",
       "2",
-      "3"
+      "3",
+      "6",
+      "11",
+      "13"
+    ],
+    "joinedClubs": [
+      "1",
+      "3",
+      "private-1"
     ],
     "library": [
       "64",
@@ -274,7 +282,8 @@
       "4",
       "6",
       "5",
-      "7"
+      "7",
+      "private-2"
     ],
     "friends": [
       "user-me",
@@ -448,7 +457,8 @@
     "isPremium": true,
     "credits": 2,
     "joinedClubs": [
-      "6"
+      "6",
+      "private-2"
     ],
     "friends": [
       "2",
@@ -777,7 +787,8 @@
     ],
     "joinedClubs": [
       "3",
-      "4"
+      "4",
+      "private-2"
     ],
     "library": [
       "4",
@@ -1166,7 +1177,8 @@
       "19"
     ],
     "joinedClubs": [
-      "8"
+      "8",
+      "private-2"
     ],
     "library": [
       "75",
@@ -1552,7 +1564,8 @@
     "credits": 2,
     "joinedClubs": [
       "8",
-      "1"
+      "1",
+      "private-2"
     ],
     "library": [
       "83",

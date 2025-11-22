@@ -977,6 +977,222 @@
       "exclusiveEvents": true,
       "earlyAccess": true
     }
+  },
+
+  {
+    "id": "private-1",
+    "name": "Sci-Fi Enthusiasts",
+    "host": "user-1",
+    "hostType": "user",
+    "description": "A private club for sci-fi lovers! We discuss classic and modern science fiction, share recommendations, and have monthly online meetups.",
+    "coverQuery": "science fiction books",
+    "currentBook": "1",
+    "previousBooks": [],
+    "memberCount": 4,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 15,
+    "meetingsPerMonth": 1,
+    "nextMeeting": "2025-12-01T19:00:00",
+    "isPrivate": true,
+    "members": ["user-me", "1", "2", "3", "6", "11", "13"],
+    "invitedMembers": [],
+    "bookVotes": {
+      "1": ["user-me", "1", "6"],
+      "2": ["2", "11"],
+      "3": ["3", "13"]
+    },
+    "selectedBook": null,
+    "discussions": [
+      {
+        "id": "disc-1",
+        "title": "Chapter 1 Discussion - Ryland's Discovery",
+        "content": "What did you think of Ryland's discovery on the ship? I found it fascinating how the AI system works!",
+        "author": "user-1",
+        "timestamp": "2025-11-15T14:30:00",
+        "bookSection": "Chapter 1",
+        "hasSpoilers": false,
+        "replies": [
+          {
+            "id": "reply-1",
+            "content": "Totally agree! The technical details were spot on. Made me think about real-life space travel.",
+            "author": "2",
+            "timestamp": "2025-11-15T15:45:00",
+            "hasSpoilers": false
+          },
+          {
+            "id": "reply-2",
+            "content": "I loved this part! The way Ryland interacts with the AI feels so natural. Can't wait for the twist later in the book!",
+            "author": "3",
+            "timestamp": "2025-11-15T16:20:00",
+            "hasSpoilers": true
+          },
+          {
+            "id": "reply-3",
+            "content": "The AI scenes are incredible! It really captures the loneliness of space.",
+            "author": "1",
+            "timestamp": "2025-11-15T17:10:00",
+            "hasSpoilers": false
+          }
+        ]
+      },
+      {
+        "id": "disc-2",
+        "title": "Book Selection for Next Month",
+        "content": "Hey friends! What should we read next? Here are my suggestions:",
+        "author": "user-me",
+        "timestamp": "2025-11-10T10:00:00",
+        "bookSection": null,
+        "hasSpoilers": false,
+        "replies": [
+          {
+            "id": "reply-3",
+            "content": "I vote for 'The Three-Body Problem'! It's an amazing sci-fi classic.",
+            "author": "6",
+            "timestamp": "2025-11-10T11:30:00",
+            "hasSpoilers": false
+          },
+          {
+            "id": "reply-4",
+            "content": "What about 'Dune' by Frank Herbert? The world-building is phenomenal!",
+            "author": "11",
+            "timestamp": "2025-11-10T12:15:00",
+            "hasSpoilers": false
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "id": "priv-1",
+        "title": "Monthly Meetup: Project Hail Mary Discussion",
+        "date": "2025-12-01T19:00:00",
+        "type": "discussion",
+        "description": "Join us for our monthly online discussion of Project Hail Mary! We'll cover the major themes and favorite moments.",
+        "rsvpCount": 5,
+        "maxCapacity": 7,
+        "isExclusive": true,
+        "attendees": ["user-me", "1", "2", "3", "6"]
+      }
+    ]
+  },
+
+  {
+    "id": "private-2",
+    "name": "Fantasy Readers Circle",
+    "host": "3",
+    "hostType": "user",
+    "description": "A cozy group of fantasy lovers sharing our passion for magical worlds, epic quests, and unforgettable characters. We discuss everything from classic fantasy to modern takes!",
+    "coverQuery": "fantasy books",
+    "currentBook": "7",
+    "previousBooks": [],
+    "memberCount": 5,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 20,
+    "meetingsPerMonth": 1,
+    "nextMeeting": "2025-12-05T19:00:00",
+    "isPrivate": true,
+    "members": ["3", "5", "8", "12", "16"],
+    "invitedMembers": [],
+    "bookVotes": {
+      "7": ["3", "5"],
+      "13": ["8", "12"],
+      "22": ["16"]
+    },
+    "selectedBook": null,
+    "discussions": [
+      {
+        "id": "fantasy-disc-1",
+        "title": "Michelle Obama's Writing Style",
+        "content": "I love how Michelle brings such authenticity to her storytelling. Her voice really shines through in the audiobook narration too!",
+        "author": "3",
+        "timestamp": "2025-11-18T14:30:00",
+        "bookSection": "Chapter 2",
+        "hasSpoilers": false,
+        "replies": [
+          {
+            "id": "fantasy-reply-1",
+            "content": "Absolutely! Her memoir reads like a conversation with a dear friend. So approachable and honest.",
+            "author": "5",
+            "timestamp": "2025-11-18T15:45:00",
+            "hasSpoilers": false
+          },
+          {
+            "id": "fantasy-reply-2",
+            "content": "The part about her childhood memories is so beautifully written. Made me tear up!",
+            "author": "16",
+            "timestamp": "2025-11-18T16:20:00",
+            "hasSpoilers": false
+          }
+        ]
+      },
+      {
+        "id": "fantasy-disc-2",
+        "title": "Next Book Suggestions!",
+        "content": "Alright fantasy friends! Time to choose our next adventure. I've suggested some of my favorites above. What do you think?",
+        "author": "3",
+        "timestamp": "2025-11-12T10:00:00",
+        "bookSection": null,
+        "hasSpoilers": false,
+        "replies": [
+          {
+            "id": "fantasy-reply-3",
+            "content": "The Invisible Life of Addie LaRue sounds perfect! Time manipulation stories are my weakness.",
+            "author": "8",
+            "timestamp": "2025-11-12T11:30:00",
+            "hasSpoilers": false
+          },
+          {
+            "id": "fantasy-reply-4",
+            "content": "I haven't read it yet but I've heard amazing things about Addie LaRue. Count me in!",
+            "author": "12",
+            "timestamp": "2025-11-12T12:15:00",
+            "hasSpoilers": false
+          }
+        ]
+      }
+    ],
+    "events": [
+      {
+        "id": "fantasy-meetup-1",
+        "title": "Monthly Fantasy Discussion: Becoming",
+        "date": "2025-12-05T19:00:00",
+        "type": "discussion",
+        "description": "Join us for our monthly discussion of Becoming! We'll talk about Michelle's journey, leadership lessons, and how her story inspires us all.",
+        "rsvpCount": 4,
+        "maxCapacity": 5,
+        "isExclusive": true,
+        "attendees": ["3", "5", "8", "16"]
+      }
+    ]
+  },
+
+  {
+    "id": "private-template",
+    "name": "",
+    "host": "",
+    "hostType": "user",
+    "description": "",
+    "coverQuery": "",
+    "currentBook": null,
+    "previousBooks": [],
+    "memberCount": 1,
+    "isPremium": false,
+    "timeframe": "monthly",
+    "duration": "1 month",
+    "daysRemaining": 30,
+    "meetingsPerMonth": 1,
+    "nextMeeting": null,
+    "isPrivate": true,
+    "members": [],
+    "invitedMembers": [],
+    "bookVotes": {},
+    "selectedBook": null,
+    "discussions": [],
+    "events": []
   }
 ]
 

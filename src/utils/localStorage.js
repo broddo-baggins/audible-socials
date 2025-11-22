@@ -12,6 +12,10 @@ const STORAGE_KEYS = {
   NOTIFICATIONS: 'audible_notifications',
   JOINED_BATTLES: 'audible_joined_battles',
   BATTLE_PROGRESS: 'audible_battle_progress',
+  PRIVATE_CLUBS: 'audible_private_clubs',
+  CLUB_DISCUSSIONS: 'audible_club_discussions',
+  CLUB_VOTES: 'audible_club_votes',
+  CLUB_EVENTS: 'audible_club_events',
 };
 
 // User Data
@@ -78,7 +82,189 @@ export function leaveClub(clubId) {
   const userData = getUserData();
   userData.joinedClubs = userData.joinedClubs.filter(id => id !== clubId);
   saveUserData(userData);
+
+  // If it's a private club, also update the club data
+  if (clubId.startsWith('private-')) {
+    const clubs = getPrivateClubs();
+    const clubIndex = clubs.findIndex(c => c.id === clubId);
+    if (clubIndex !== -1) {
+      clubs[clubIndex].members = clubs[clubIndex].members.filter(id => id !== userData.id);
+      savePrivateClubs(clubs);
+    }
+  }
+
   return { success: true };
+}
+
+// Private Club Management
+export function getPrivateClubs() {
+  const data = localStorage.getItem(STORAGE_KEYS.PRIVATE_CLUBS);
+  return data ? JSON.parse(data) : [];
+}
+
+export function savePrivateClubs(clubs) {
+  localStorage.setItem(STORAGE_KEYS.PRIVATE_CLUBS, JSON.stringify(clubs));
+}
+
+export function createPrivateClub(clubData) {
+  const clubs = getPrivateClubs();
+  const newClub = {
+    id: `private-${Date.now()}`,
+    ...clubData,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  clubs.push(newClub);
+  savePrivateClubs(clubs);
+
+  // Auto-join the creator
+  joinClub(newClub.id);
+
+  return { success: true, club: newClub };
+}
+
+export function updatePrivateClub(clubId, updates) {
+  const clubs = getPrivateClubs();
+  const clubIndex = clubs.findIndex(c => c.id === clubId);
+
+  if (clubIndex === -1) {
+    return { success: false, error: 'Club not found' };
+  }
+
+  clubs[clubIndex] = {
+    ...clubs[clubIndex],
+    ...updates,
+    updatedAt: new Date().toISOString()
+  };
+
+  savePrivateClubs(clubs);
+  return { success: true, club: clubs[clubIndex] };
+}
+
+export function deletePrivateClub(clubId) {
+  const clubs = getPrivateClubs();
+  const filteredClubs = clubs.filter(c => c.id !== clubId);
+  savePrivateClubs(filteredClubs);
+
+  // Remove from joined clubs
+  leaveClub(clubId);
+
+  return { success: true };
+}
+
+// Club Discussions
+export function getClubDiscussions(clubId) {
+  const data = localStorage.getItem(`${STORAGE_KEYS.CLUB_DISCUSSIONS}_${clubId}`);
+  return data ? JSON.parse(data) : [];
+}
+
+export function addClubDiscussion(clubId, discussion) {
+  const discussions = getClubDiscussions(clubId);
+  const newDiscussion = {
+    id: `disc-${Date.now()}`,
+    timestamp: new Date().toISOString(),
+    replies: [],
+    ...discussion
+  };
+
+  discussions.unshift(newDiscussion);
+  localStorage.setItem(`${STORAGE_KEYS.CLUB_DISCUSSIONS}_${clubId}`, JSON.stringify(discussions));
+
+  return { success: true, discussion: newDiscussion };
+}
+
+export function addDiscussionReply(clubId, discussionId, reply) {
+  const discussions = getClubDiscussions(clubId);
+  const discussionIndex = discussions.findIndex(d => d.id === discussionId);
+
+  if (discussionIndex === -1) {
+    return { success: false, error: 'Discussion not found' };
+  }
+
+  const newReply = {
+    id: `reply-${Date.now()}`,
+    timestamp: new Date().toISOString(),
+    ...reply
+  };
+
+  discussions[discussionIndex].replies = discussions[discussionIndex].replies || [];
+  discussions[discussionIndex].replies.push(newReply);
+
+  localStorage.setItem(`${STORAGE_KEYS.CLUB_DISCUSSIONS}_${clubId}`, JSON.stringify(discussions));
+
+  return { success: true, reply: newReply };
+}
+
+// Club Voting
+export function getClubVotes(clubId) {
+  const data = localStorage.getItem(`${STORAGE_KEYS.CLUB_VOTES}_${clubId}`);
+  return data ? JSON.parse(data) : {};
+}
+
+export function castClubVote(clubId, bookId, userId) {
+  const votes = getClubVotes(clubId);
+
+  // Remove previous vote if exists
+  Object.keys(votes).forEach(book => {
+    votes[book] = votes[book].filter(id => id !== userId);
+  });
+
+  // Add new vote
+  if (!votes[bookId]) {
+    votes[bookId] = [];
+  }
+
+  if (!votes[bookId].includes(userId)) {
+    votes[bookId].push(userId);
+  }
+
+  localStorage.setItem(`${STORAGE_KEYS.CLUB_VOTES}_${clubId}`, JSON.stringify(votes));
+
+  return { success: true, votes };
+}
+
+// Club Events
+export function getClubEvents(clubId) {
+  const data = localStorage.getItem(`${STORAGE_KEYS.CLUB_EVENTS}_${clubId}`);
+  return data ? JSON.parse(data) : [];
+}
+
+export function createClubEvent(clubId, eventData) {
+  const events = getClubEvents(clubId);
+  const newEvent = {
+    id: `event-${Date.now()}`,
+    createdAt: new Date().toISOString(),
+    attendees: [eventData.host],
+    ...eventData
+  };
+
+  events.push(newEvent);
+  localStorage.setItem(`${STORAGE_KEYS.CLUB_EVENTS}_${clubId}`, JSON.stringify(events));
+
+  return { success: true, event: newEvent };
+}
+
+export function rsvpClubEvent(clubId, eventId, userId, attending) {
+  const events = getClubEvents(clubId);
+  const eventIndex = events.findIndex(e => e.id === eventId);
+
+  if (eventIndex === -1) {
+    return { success: false, error: 'Event not found' };
+  }
+
+  const event = events[eventIndex];
+
+  if (attending && !event.attendees.includes(userId)) {
+    event.attendees.push(userId);
+  } else if (!attending) {
+    event.attendees = event.attendees.filter(id => id !== userId);
+  }
+
+  event.rsvpCount = event.attendees.length;
+  localStorage.setItem(`${STORAGE_KEYS.CLUB_EVENTS}_${clubId}`, JSON.stringify(events));
+
+  return { success: true, event };
 }
 
 // Battle Management

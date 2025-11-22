@@ -196,7 +196,7 @@ Recommend 3 audiobooks they'll love:`;
  * @returns {Promise<Object>} Response with content and metadata
  */
 export const getAIBookAnswer = async (question, context) => {
-  const { allowSpoilers, currentBook, userProgress, conversationHistory, bookCatalog } = context;
+  const { allowSpoilers, currentBook, userProgress, conversationHistory, bookCatalog, currentChapter, currentTime } = context;
 
   // Add current book context if available
   let bookContext = '';
@@ -206,6 +206,20 @@ Genre: ${currentBook.genre}
 Rating: ${currentBook.rating}/5
 ${currentBook.description ? `Description: ${currentBook.description}` : ''}
 ${userProgress > 0 ? `User's Progress: ${userProgress}%` : ''}`;
+
+    if (currentChapter !== undefined) {
+      bookContext += `\nCurrent Chapter Index: ${currentChapter}`;
+      // Add chapter title if available in book object
+      if (currentBook.chapters && currentBook.chapters[currentChapter]) {
+        bookContext += `\nCurrent Chapter Title: "${currentBook.chapters[currentChapter].title}"`;
+      }
+    }
+    
+    if (currentTime !== undefined) {
+      // Format time for readability
+      const minutes = Math.floor(currentTime / 60);
+      bookContext += `\nCurrent Playback Time: ${minutes} minutes`;
+    }
   }
 
   // Add book catalog info

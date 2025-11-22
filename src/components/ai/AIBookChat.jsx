@@ -15,11 +15,13 @@ import { getFromLocalStorage } from '../../utils/localStorage';
  * - Users can explicitly request spoilers
  * - Tracks reading progress to avoid spoilers
  */
-const AIBookChat = () => {
+const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: 'Hi! I can help you explore books in your library. Ask me about characters, themes, or what happens next. I\'ll avoid spoilers unless you specifically ask for them! 📚',
+      content: contextBook 
+        ? `Hi! I'm here to help you with "${contextBook.title}". Ask me about the plot, characters, or clarify something you just heard! 🎧`
+        : 'Hi! I can help you explore books in your library. Ask me about characters, themes, or what happens next. I\'ll avoid spoilers unless you specifically ask for them! 📚',
       timestamp: new Date(),
     },
   ]);
@@ -28,12 +30,38 @@ const AIBookChat = () => {
   const [allowSpoilers, setAllowSpoilers] = useState(false);
   const [error, setError] = useState(null);
   const [useRealAI, setUseRealAI] = useState(FEATURES.useRealAI);
-  const [currentBook, setCurrentBook] = useState(null);
+  const [currentBook, setCurrentBook] = useState(contextBook || null);
   const [showBookSelector, setShowBookSelector] = useState(false);
   const [bookSearch, setBookSearch] = useState('');
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const allBooks = getAllBooks();
+
+  // Sync with contextBook if provided
+  useEffect(() => {
+    if (contextBook) {
+      setCurrentBook(contextBook);
+      // Only reset messages if it's a different book than what we might have been chatting about
+      // But for simplicity, let's just reset if the prop changes significantly or if we want to force it.
+      // Actually, we should probably not wipe history if it's the same book.
+    }
+  }, [contextBook]);
+
+  const filteredBooks = allBooks.filter(book => 
+    book.title.toLowerCase().includes(bookSearch.toLowerCase()) ||
+    book.author.toLowerCase().includes(bookSearch.toLowerCase())
+  );
+
+  const handleBookSelect = (book) => {
+    setCurrentBook(book);
+    setShowBookSelector(false);
+    setBookSearch('');
+    setMessages([{
+      role: 'assistant',
+      content: `Let's discuss "${book.title}" by ${book.author}! Ask me anything about this ${book.genre} audiobook. I'll keep it spoiler-free unless you toggle spoilers on! 📚`,
+      timestamp: new Date(),
+    }]);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -80,12 +108,19 @@ const AIBookChat = () => {
 
         // Get user progress if book is selected
         const userProgress = currentBook ? getFromLocalStorage('userProgress')?.[currentBook.id]?.progress || 0 : 0;
+        
+        // Calculate real-time progress if playbackState is available and matching current book
+        const realTimeProgress = (playbackState && currentBook)
+          ? (playbackState.currentTime / playbackState.duration * 100) 
+          : userProgress;
 
         response = await getAIBookAnswer(currentInput, {
           allowSpoilers,
           conversationHistory,
           currentBook,
-          userProgress,
+          userProgress: realTimeProgress,
+          currentChapter: playbackState?.currentChapter,
+          currentTime: playbackState?.currentTime,
           bookCatalog: allBooks.slice(0, 50), // Top 50 books for context
         });
       } else {
@@ -152,8 +187,8 @@ const AIBookChat = () => {
         {/* Book Selector */}
         <div className="mb-2 relative">
           <button
-            onClick={() => setShowBookSelector(!showBookSelector)}
-            className="w-full flex items-center justify-between px-3 py-2 bg-white border border-audible-gray-300 rounded-lg text-sm hover:border-purple-600 transition-colors"
+            onClick={() => !contextBook && setShowBookSelector(!showBookSelector)}
+            className={`w-full flex items-center justify-between px-3 py-2 bg-white border border-audible-gray-300 rounded-lg text-sm ${!contextBook ? 'hover:border-purple-600' : 'cursor-default'} transition-colors`}
           >
             {currentBook ? (
               <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -161,6 +196,7 @@ const AIBookChat = () => {
                 <span className="truncate text-audible-text-primary">
                   {currentBook.title}
                 </span>
+                {!contextBook && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -171,6 +207,7 @@ const AIBookChat = () => {
                 >
                   <X className="w-3 h-3" />
                 </button>
+                )}
               </div>
             ) : (
               <>
