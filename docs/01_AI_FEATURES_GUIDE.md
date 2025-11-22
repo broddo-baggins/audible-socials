@@ -113,7 +113,7 @@ Just click to instantly ask!
 
 ---
 
-## 4. **AI Features Throughout the App**
+## 5. **AI Features Throughout the App**
 
 ### On Any Page
 - ✅ AI Assistant always accessible
@@ -229,7 +229,7 @@ Just click to instantly ask!
 
 ---
 
-## 9. **Educational Note**
+## 10. **Educational Note**
 
 **This is a demonstration of AI features in audiobook platforms.**
 
