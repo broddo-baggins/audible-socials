@@ -3,7 +3,7 @@ export const DCC_ACHIEVEMENTS = {
   started_listening: {
     name: "AUDIO PIONEER",
     description: "You listened to a book for 1 minute. Every journey begins with a single word.",
-    icon: "👂",
+    icon: "Ear",
     type: "listening_time",
     requirement: 1,
     rarity: "common",
@@ -12,7 +12,7 @@ export const DCC_ACHIEVEMENTS = {
   warm_up: {
     name: "GETTING COMFY",
     description: "30 minutes of listening. Settle in, this is going to be good.",
-    icon: "🛋️",
+    icon: "Sofa",
     type: "listening_time",
     requirement: 30,
     rarity: "common",
@@ -21,7 +21,7 @@ export const DCC_ACHIEVEMENTS = {
   hour_one: {
     name: "STORYTELLER'S APPRENTICE",
     description: "You made it one hour. The plot thickens!",
-    icon: "⭐",
+    icon: "Star",
     type: "listening_time",
     requirement: 60,
     rarity: "common",
@@ -30,7 +30,7 @@ export const DCC_ACHIEVEMENTS = {
   two_hours: {
     name: "IMMERSED LISTENER",
     description: "2 hours. You're really getting into it now.",
-    icon: "🐠",
+    icon: "Fish",
     type: "listening_time",
     requirement: 120,
     rarity: "uncommon",
@@ -39,7 +39,7 @@ export const DCC_ACHIEVEMENTS = {
   five_hours: {
     name: "CHAPTER CHAMPION",
     description: "5 hours. The world around you fades away.",
-    icon: "🏛️",
+    icon: "Landmark",
     type: "listening_time",
     requirement: 300,
     rarity: "uncommon",
@@ -48,7 +48,7 @@ export const DCC_ACHIEVEMENTS = {
   ten_hours: {
     name: "NARRATIVE NAVIGATOR",
     description: "10 hours. You're charting a course through stories.",
-    icon: "🧭",
+    icon: "Compass",
     type: "listening_time",
     requirement: 600,
     rarity: "uncommon",
@@ -57,7 +57,7 @@ export const DCC_ACHIEVEMENTS = {
   twenty_four: {
     name: "AUDIO ADVENTURER",
     description: "24 hours. A full day of stories! What a journey.",
-    icon: "🌍",
+    icon: "Globe",
     type: "listening_time",
     requirement: 1440,
     rarity: "rare",
@@ -66,7 +66,7 @@ export const DCC_ACHIEVEMENTS = {
   fifty_hours: {
     name: "LORE KEEPER",
     description: "50 hours. Your mind is a library of tales.",
-    icon: "📚",
+    icon: "Library",
     type: "listening_time",
     requirement: 3000,
     rarity: "rare",
@@ -75,7 +75,7 @@ export const DCC_ACHIEVEMENTS = {
   hundred_hours: {
     name: "SAGA SEEKER",
     description: "100 hours. Epic stories require epic dedication.",
-    icon: "💯",
+    icon: "Target",
     type: "listening_time",
     requirement: 6000,
     rarity: "epic",
@@ -84,7 +84,7 @@ export const DCC_ACHIEVEMENTS = {
   two_fifty: {
     name: "MASTER OF TALES",
     description: "250 hours. You've lived a thousand lives through books.",
-    icon: "🧙‍♂️",
+    icon: "Sparkles",
     type: "listening_time",
     requirement: 15000,
     rarity: "epic",
@@ -93,7 +93,7 @@ export const DCC_ACHIEVEMENTS = {
   five_hundred: {
     name: "LIBRARY LEGEND",
     description: "500 hours. Your knowledge grows with every word.",
-    icon: "🏰",
+    icon: "Castle",
     type: "listening_time",
     requirement: 30000,
     rarity: "legendary",
@@ -102,7 +102,7 @@ export const DCC_ACHIEVEMENTS = {
   one_thousand: {
     name: "ARCHMAGE OF AUDIO",
     description: "1000 hours. The spoken word is your domain.",
-    icon: "🔮",
+    icon: "Circle",
     type: "listening_time",
     requirement: 60000,
     rarity: "legendary",
@@ -111,7 +111,7 @@ export const DCC_ACHIEVEMENTS = {
   two_thousand: {
     name: "CHRONICLER OF AGES",
     description: "2000 hours. Your wisdom rivals the ancients.",
-    icon: "📜",
+    icon: "Scroll",
     type: "listening_time",
     requirement: 120000,
     rarity: "legendary",
@@ -120,7 +120,7 @@ export const DCC_ACHIEVEMENTS = {
   five_thousand: {
     name: "VOICE OF THE COSMOS",
     description: "5000 hours. You hear the universe's story.",
-    icon: "🌌",
+    icon: "Sparkles",
     type: "listening_time",
     requirement: 300000,
     rarity: "godly",
@@ -129,7 +129,7 @@ export const DCC_ACHIEVEMENTS = {
   ten_thousand: {
     name: "ETERNAL LISTENER",
     description: "10,000 hours. Time flows like a river of words.",
-    icon: "⏳",
+    icon: "Hourglass",
     type: "listening_time",
     requirement: 600000,
     rarity: "godly",
@@ -140,7 +140,7 @@ export const DCC_ACHIEVEMENTS = {
   level_2: {
     name: "LEVEL 2 HERO",
     description: "Level 2. You've taken the first step into a larger world.",
-    icon: "🌱",
+    icon: "Sprout",
     type: "level",
     requirement: 2,
     rarity: "common",
@@ -149,7 +149,7 @@ export const DCC_ACHIEVEMENTS = {
   level_5: {
     name: "RISING STAR",
     description: "Level 5. You're getting the hang of this!",
-    icon: "🌟",
+    icon: "Star",
     type: "level",
     requirement: 5,
     rarity: "common",
@@ -158,7 +158,7 @@ export const DCC_ACHIEVEMENTS = {
   level_10: {
     name: "TENACIOUS TEN",
     description: "Level 10. Double digits! Keep climbing.",
-    icon: "🧗",
+    icon: "Mountain",
     type: "level",
     requirement: 10,
     rarity: "uncommon",
@@ -167,7 +167,7 @@ export const DCC_ACHIEVEMENTS = {
   level_20: {
     name: "EXPERIENCED EXPLORER",
     description: "Level 20. New horizons await.",
-    icon: "🔭",
+    icon: "Compass",
     type: "level",
     requirement: 20,
     rarity: "uncommon",
@@ -176,7 +176,7 @@ export const DCC_ACHIEVEMENTS = {
   level_30: {
     name: "SEASONED VETERAN",
     description: "Level 30. You've seen quite a bit now.",
-    icon: "🛡️",
+    icon: "Shield",
     type: "level",
     requirement: 30,
     rarity: "rare",
@@ -185,7 +185,7 @@ export const DCC_ACHIEVEMENTS = {
   level_42: {
     name: "THE ANSWER",
     description: "Level 42. You're figuring it all out.",
-    icon: "🐬",
+    icon: "Fish",
     type: "level",
     requirement: 42,
     rarity: "rare",
@@ -194,7 +194,7 @@ export const DCC_ACHIEVEMENTS = {
   level_50: {
     name: "HALFWAY HERO",
     description: "Level 50. A significant milestone on your journey.",
-    icon: "🏔️",
+    icon: "Mountain",
     type: "level",
     requirement: 50,
     rarity: "epic",
@@ -203,7 +203,7 @@ export const DCC_ACHIEVEMENTS = {
   level_69: {
     name: "BALANCED BEING",
     description: "Level 69. Perfect harmony.",
-    icon: "☯️",
+    icon: "Circle",
     type: "level",
     requirement: 69,
     rarity: "epic",
@@ -212,7 +212,7 @@ export const DCC_ACHIEVEMENTS = {
   level_75: {
     name: "DIAMOND TIER",
     description: "Level 75. You shine bright like a diamond.",
-    icon: "💎",
+    icon: "Sparkles",
     type: "level",
     requirement: 75,
     rarity: "legendary",
@@ -221,7 +221,7 @@ export const DCC_ACHIEVEMENTS = {
   level_100: {
     name: "CENTENNIAL SAGE",
     description: "Level 100. A century of levels. Incredible!",
-    icon: "🎂",
+    icon: "Crown",
     type: "level",
     requirement: 100,
     rarity: "godly",
@@ -233,7 +233,7 @@ export const DCC_ACHIEVEMENTS = {
   zen_1: {
     name: "MINDFUL MOMENT",
     description: "Meditated for 1 hour. Peace begins with a pause.",
-    icon: "🧘",
+    icon: "Circle",
     type: "activity_time",
     activityId: "meditate",
     requirement: 60,
@@ -243,7 +243,7 @@ export const DCC_ACHIEVEMENTS = {
   zen_master: {
     name: "TRANQUILITY",
     description: "Meditated for 24 hours. You have found your center.",
-    icon: "💮",
+    icon: "Circle",
     type: "activity_time",
     activityId: "meditate",
     requirement: 1440,
@@ -254,7 +254,7 @@ export const DCC_ACHIEVEMENTS = {
   chef_boy: {
     name: "CULINARY STUDENT",
     description: "Cooked for 1 hour. Something smells good!",
-    icon: "🍳",
+    icon: "ChefHat",
     type: "activity_time",
     activityId: "cook",
     requirement: 60,
@@ -264,7 +264,7 @@ export const DCC_ACHIEVEMENTS = {
   gordon: {
     name: "MASTER CHEF",
     description: "Cooked for 24 hours. A feast fit for a king.",
-    icon: "👨‍🍳",
+    icon: "ChefHat",
     type: "activity_time",
     activityId: "cook",
     requirement: 1440,
@@ -275,7 +275,7 @@ export const DCC_ACHIEVEMENTS = {
   janitor: {
     name: "TIDY UP",
     description: "Cleaned for 1 hour. A fresh start.",
-    icon: "🧹",
+    icon: "Sparkles",
     type: "activity_time",
     activityId: "clean",
     requirement: 60,
@@ -285,7 +285,7 @@ export const DCC_ACHIEVEMENTS = {
   sparkle: {
     name: "SPARKLING CLEAN",
     description: "Cleaned for 24 hours. Everything shines brighter now.",
-    icon: "✨",
+    icon: "Sparkles",
     type: "activity_time",
     activityId: "clean",
     requirement: 1440,
@@ -296,7 +296,7 @@ export const DCC_ACHIEVEMENTS = {
   glue_eater: {
     name: "CRAFTY HANDS",
     description: "Crafted for 1 hour. Making things is magic.",
-    icon: "🎨",
+    icon: "Palette",
     type: "activity_time",
     activityId: "craft",
     requirement: 60,
@@ -306,7 +306,7 @@ export const DCC_ACHIEVEMENTS = {
   master_builder: {
     name: "ARTISAN",
     description: "Crafted for 24 hours. You create wonders.",
-    icon: "🔨",
+    icon: "Hammer",
     type: "activity_time",
     activityId: "craft",
     requirement: 1440,
@@ -317,7 +317,7 @@ export const DCC_ACHIEVEMENTS = {
   pspsps: {
     name: "FELINE FRIEND",
     description: "Played with cat for 1 hour. Purrfect.",
-    icon: "🐱",
+    icon: "Cat",
     type: "activity_time",
     activityId: "play_with_cat",
     requirement: 60,
@@ -327,7 +327,7 @@ export const DCC_ACHIEVEMENTS = {
   servant: {
     name: "CAT COMPANION",
     description: "Played with cat for 24 hours. Best friends furever.",
-    icon: "🐾",
+    icon: "Footprints",
     type: "activity_time",
     activityId: "play_with_cat",
     requirement: 1440,
@@ -338,7 +338,7 @@ export const DCC_ACHIEVEMENTS = {
   grandma: {
     name: "COZY KNITTER",
     description: "Knitted for 1 hour. Warm and fuzzy feelings.",
-    icon: "🧶",
+    icon: "Scissors",
     type: "activity_time",
     activityId: "knit",
     requirement: 60,
@@ -348,7 +348,7 @@ export const DCC_ACHIEVEMENTS = {
   scarf_lord: {
     name: "WEAVER OF WARMTH",
     description: "Knitted for 24 hours. Wrapping the world in comfort.",
-    icon: "🧣",
+    icon: "Scissors",
     type: "activity_time",
     activityId: "knit",
     requirement: 1440,
@@ -359,7 +359,7 @@ export const DCC_ACHIEVEMENTS = {
   pyro: {
     name: "WARM HEARTH",
     description: "Sat by fire for 1 hour. So cozy.",
-    icon: "🔥",
+    icon: "Flame",
     type: "activity_time",
     activityId: "sit_by_fire",
     requirement: 60,
@@ -369,7 +369,7 @@ export const DCC_ACHIEVEMENTS = {
   toasty: {
     name: "KEEPER OF THE FLAME",
     description: "Sat by fire for 24 hours. The fire within burns bright.",
-    icon: "🕯️",
+    icon: "Candle",
     type: "activity_time",
     activityId: "sit_by_fire",
     requirement: 1440,
@@ -380,7 +380,7 @@ export const DCC_ACHIEVEMENTS = {
   touch_grass: {
     name: "NATURE LOVER",
     description: "Gardened for 1 hour. Growth is good.",
-    icon: "🌱",
+    icon: "Sprout",
     type: "activity_time",
     activityId: "garden",
     requirement: 60,
@@ -390,7 +390,7 @@ export const DCC_ACHIEVEMENTS = {
   forest: {
     name: "FOREST GUARDIAN",
     description: "Gardened for 24 hours. You are one with nature.",
-    icon: "🌳",
+    icon: "Tree",
     type: "activity_time",
     activityId: "garden",
     requirement: 1440,
@@ -401,7 +401,7 @@ export const DCC_ACHIEVEMENTS = {
   traitor: {
     name: "HYBRID READER",
     description: "Read a physical book for 1 hour. Eyes and ears working in harmony.",
-    icon: "📖",
+    icon: "BookOpen",
     type: "activity_time",
     activityId: "read_books",
     requirement: 60,
@@ -411,7 +411,7 @@ export const DCC_ACHIEVEMENTS = {
   library: {
     name: "SCHOLAR",
     description: "Read physical books for 24 hours. A true love for literature.",
-    icon: "👓",
+    icon: "Glasses",
     type: "activity_time",
     activityId: "read_books",
     requirement: 1440,
@@ -422,7 +422,7 @@ export const DCC_ACHIEVEMENTS = {
   jack_of_all: {
     name: "ENTHUSIAST",
     description: "Unlocked 3 activities. Exploring your options.",
-    icon: "🃏",
+    icon: "Star",
     type: "activity_count",
     requirement: 3,
     rarity: "common",
@@ -431,7 +431,7 @@ export const DCC_ACHIEVEMENTS = {
   halfway_there: {
     name: "VERSATILE",
     description: "Unlocked 5 activities. You can do it all!",
-    icon: "🌈",
+    icon: "Sparkles",
     type: "activity_count",
     requirement: 5,
     rarity: "uncommon",
@@ -440,7 +440,7 @@ export const DCC_ACHIEVEMENTS = {
   completionist: {
     name: "RENAISSANCE SOUL",
     description: "Unlocked all activities. A master of many talents.",
-    icon: "🎨",
+    icon: "Palette",
     type: "activity_count",
     requirement: 9,
     rarity: "epic",
@@ -451,7 +451,7 @@ export const DCC_ACHIEVEMENTS = {
   penny_pincher: {
     name: "SAVER",
     description: "Earned 100 Focus Points. A penny saved is a penny earned.",
-    icon: "🪙",
+    icon: "Coins",
     type: "currency",
     requirement: 100,
     rarity: "common",
@@ -460,7 +460,7 @@ export const DCC_ACHIEVEMENTS = {
   piggy_bank: {
     name: "NEST EGG",
     description: "Earned 1,000 Focus Points. Building a bright future.",
-    icon: "🐷",
+    icon: "Pig",
     type: "currency",
     requirement: 1000,
     rarity: "common",
@@ -469,7 +469,7 @@ export const DCC_ACHIEVEMENTS = {
   wallet_fat: {
     name: "PROSPERITY",
     description: "Earned 5,000 Focus Points. Success looks good on you.",
-    icon: "💼",
+    icon: "Briefcase",
     type: "currency",
     requirement: 5000,
     rarity: "uncommon",
@@ -478,7 +478,7 @@ export const DCC_ACHIEVEMENTS = {
   money_bags: {
     name: "WEALTH",
     description: "Earned 10,000 Focus Points. Abundance flows.",
-    icon: "💰",
+    icon: "DollarSign",
     type: "currency",
     requirement: 10000,
     rarity: "rare",
@@ -487,7 +487,7 @@ export const DCC_ACHIEVEMENTS = {
   scrooge: {
     name: "FORTUNE",
     description: "Earned 50,000 Focus Points. A fortune of focus.",
-    icon: "🏦",
+    icon: "Landmark",
     type: "currency",
     requirement: 50000,
     rarity: "epic",
@@ -496,7 +496,7 @@ export const DCC_ACHIEVEMENTS = {
   consumer: {
     name: "INVESTOR",
     description: "Bought your first upgrade. Investing in yourself.",
-    icon: "📈",
+    icon: "TrendingUp",
     type: "upgrade",
     requirement: 1,
     rarity: "common",
@@ -505,7 +505,7 @@ export const DCC_ACHIEVEMENTS = {
   shopper: {
     name: "COLLECTOR",
     description: "Bought 3 upgrades. Gathering useful tools.",
-    icon: "🛍️",
+    icon: "ShoppingBag",
     type: "upgrade",
     requirement: 3,
     rarity: "common",
@@ -514,7 +514,7 @@ export const DCC_ACHIEVEMENTS = {
   hoarder: {
     name: "CURATOR",
     description: "Bought 5 upgrades. A fine collection.",
-    icon: "🏛️",
+    icon: "Landmark",
     type: "upgrade",
     requirement: 5,
     rarity: "uncommon",
@@ -523,7 +523,7 @@ export const DCC_ACHIEVEMENTS = {
   maxed_out: {
     name: "COMPLETIONIST",
     description: "Bought all upgrades. You have everything you need.",
-    icon: "🏆",
+    icon: "Trophy",
     type: "upgrade",
     requirement: 10,
     rarity: "legendary",
@@ -534,7 +534,7 @@ export const DCC_ACHIEVEMENTS = {
   stalker: {
     name: "CHECKING IN",
     description: "Checked the idle game 10 times while offline. Thanks for visiting!",
-    icon: "👋",
+    icon: "Hand",
     type: "passive_check",
     requirement: 10,
     rarity: "uncommon",
@@ -543,7 +543,7 @@ export const DCC_ACHIEVEMENTS = {
   obsessed: {
     name: "DEDICATED FAN",
     description: "Checked the idle game 50 times. Always happy to see you.",
-    icon: "❤️",
+    icon: "Heart",
     type: "passive_check",
     requirement: 50,
     rarity: "rare",
@@ -552,7 +552,7 @@ export const DCC_ACHIEVEMENTS = {
   night_owl: {
     name: "STARRY EYED",
     description: "Played between 2AM and 5AM. The night is young.",
-    icon: "🌙",
+    icon: "Moon",
     type: "time_window", // Logic to be implemented in hook
     requirement: 1,
     rarity: "rare",
@@ -561,7 +561,7 @@ export const DCC_ACHIEVEMENTS = {
   early_bird: {
     name: "SUNRISE SEEKER",
     description: "Played between 5AM and 7AM. The early bird gets the worm.",
-    icon: "☀️",
+    icon: "Sun",
     type: "time_window", // Logic to be implemented in hook
     requirement: 1,
     rarity: "rare",

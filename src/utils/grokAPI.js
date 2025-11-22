@@ -30,13 +30,13 @@ export const callGrokAPI = async (messages, options = {}) => {
 
   // Check if API key is configured
   if (!GROK_API_CONFIG.apiKey || GROK_API_CONFIG.apiKey === 'YOUR_GROK_API_KEY_HERE') {
-    console.warn('🤖 Grok API key not configured - using intelligent mock responses');
+    console.warn('[Grok API] API key not configured - using intelligent mock responses');
     return getMockResponse(messages);
   }
 
   // Log API key status (without revealing the key)
-  console.log('🔑 API Key Status:', GROK_API_CONFIG.apiKey.startsWith('gsk_') ? 'Valid format' : 'Invalid format');
-  console.log('🚀 Using Real Grok API - attempting connection...');
+  console.log('[Grok API] API Key Status:', GROK_API_CONFIG.apiKey.startsWith('gsk_') ? 'Valid format' : 'Invalid format');
+  console.log('[Grok API] Using Real Grok API - attempting connection...');
 
   try {
     const response = await fetch(`${GROK_API_CONFIG.baseUrl}/chat/completions`, {
@@ -253,7 +253,7 @@ When spoilers are ENABLED:
 - You may discuss full plot details
 - Explain character arcs and endings
 - Analyze plot twists
-- Still warn: "⚠️ SPOILER WARNING" at the start
+- Still warn: "WARNING: SPOILERS AHEAD" at the start
 
 IMPORTANT: You have access to real books in the Listenable catalog. Reference them by title and author when making recommendations.`;
 
@@ -282,7 +282,7 @@ IMPORTANT: You have access to real books in the Listenable catalog. Reference th
 
     return {
       content: response,
-      hasSpoilerWarning: response.includes('SPOILER WARNING') || response.includes('⚠️'),
+      hasSpoilerWarning: response.includes('SPOILER WARNING') || response.includes('SPOILERS AHEAD'),
       suggestedQuestions: suggestedQuestions.length > 0 ? suggestedQuestions : [
         'What should I read next?',
         'Tell me more about this genre',

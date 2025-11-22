@@ -86,7 +86,7 @@ export const UPGRADES = {
     description: 'Increase XP gain by 10%',
     cost: 500,
     effect: { type: 'xp_multiplier', value: 1.1 },
-    icon: '🎧',
+    icon: 'Headphones',
     category: 'equipment'
   },
   premium_headphones: {
@@ -96,7 +96,7 @@ export const UPGRADES = {
     cost: 2000,
     requires: 'basic_headphones',
     effect: { type: 'xp_multiplier', value: 1.25 },
-    icon: '🎧',
+    icon: 'Headphones',
     category: 'equipment'
   },
   audiophile_setup: {
@@ -106,7 +106,7 @@ export const UPGRADES = {
     cost: 5000,
     requires: 'premium_headphones',
     effect: { type: 'xp_multiplier', value: 1.5 },
-    icon: '🎧',
+    icon: 'Headphones',
     category: 'equipment'
   },
   comfy_chair: {
@@ -115,7 +115,7 @@ export const UPGRADES = {
     description: 'Unlock "Read Books" activity early',
     cost: 1500,
     effect: { type: 'unlock_activity', value: 'read_books' },
-    icon: '🪑',
+    icon: 'Armchair',
     category: 'furniture'
   },
   cozy_blanket: {
@@ -124,7 +124,7 @@ export const UPGRADES = {
     description: 'Increase Focus Points gain by 20%',
     cost: 800,
     effect: { type: 'fp_multiplier', value: 1.2 },
-    icon: '🛋️',
+    icon: 'Sofa',
     category: 'furniture'
   },
   coffee_maker: {
@@ -133,7 +133,7 @@ export const UPGRADES = {
     description: 'Increase Focus Points gain by 30%',
     cost: 3000,
     effect: { type: 'fp_multiplier', value: 1.3 },
-    icon: '☕',
+    icon: 'Coffee',
     category: 'consumable'
   },
   bookshelf: {
@@ -142,7 +142,7 @@ export const UPGRADES = {
     description: 'Increase all gains by 15%',
     cost: 4000,
     effect: { type: 'global_multiplier', value: 1.15 },
-    icon: '📚',
+    icon: 'Library',
     category: 'furniture'
   },
   meditation_cushion: {
@@ -151,7 +151,7 @@ export const UPGRADES = {
     description: 'Double XP gain in Meditate activity',
     cost: 1200,
     effect: { type: 'activity_boost', activity: 'meditate', value: 2 },
-    icon: '🧘',
+    icon: 'Circle',
     category: 'equipment'
   },
   kitchen_upgrade: {
@@ -160,7 +160,7 @@ export const UPGRADES = {
     description: 'Double XP gain in Cook activity',
     cost: 1500,
     effect: { type: 'activity_boost', activity: 'cook', value: 2 },
-    icon: '🍳',
+    icon: 'ChefHat',
     category: 'equipment'
   },
   garden_tools: {
@@ -169,7 +169,7 @@ export const UPGRADES = {
     description: 'Double XP gain in Garden activity',
     cost: 2500,
     effect: { type: 'activity_boost', activity: 'garden', value: 2 },
-    icon: '🌱',
+    icon: 'Sprout',
     category: 'equipment'
   }
 };

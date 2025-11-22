@@ -287,8 +287,14 @@ const Contact = () => {
                   {office.address}
                 </p>
                 <div className="space-y-1 text-sm text-audible-text-secondary">
-                  <p>📞 {office.phone}</p>
-                  <p>📧 {office.email}</p>
+                  <p className="flex items-center gap-2">
+                    <Phone className="w-4 h-4" />
+                    {office.phone}
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Mail className="w-4 h-4" />
+                    {office.email}
+                  </p>
                 </div>
               </Card>
             ))}

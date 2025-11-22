@@ -3,7 +3,7 @@
     "id": "first_battle",
     "name": "Battle Initiate",
     "description": "Joined your first battle",
-    "icon": "⚔️",
+    "icon": "Swords",
     "rarity": "common",
     "requirements": {
       "battlesJoined": 1
@@ -14,7 +14,7 @@
     "id": "speed_demon",
     "name": "Speed Demon",
     "description": "Completed a speed reading battle in under 7 days",
-    "icon": "💨",
+    "icon": "Wind",
     "rarity": "rare",
     "requirements": {
       "speedBattleCompleted": true,
@@ -25,7 +25,7 @@
     "id": "streak_master",
     "name": "Streak Master",
     "description": "Maintained a 30-day listening streak",
-    "icon": "🔥",
+    "icon": "Flame",
     "rarity": "epic",
     "requirements": {
       "longestStreak": 30
@@ -35,7 +35,7 @@
     "id": "victory_champion",
     "name": "Victory Champion",
     "description": "Won 5 battles",
-    "icon": "🏆",
+    "icon": "Trophy",
     "rarity": "rare",
     "requirements": {
       "battlesWon": 5
@@ -45,7 +45,7 @@
     "id": "social_butterfly",
     "name": "Social Butterfly",
     "description": "Battled with 10 different friends",
-    "icon": "🦋",
+    "icon": "Users",
     "rarity": "uncommon",
     "requirements": {
       "uniqueOpponents": 10
@@ -55,7 +55,7 @@
     "id": "book_warrior",
     "name": "Book Warrior",
     "description": "Completed 50 battles",
-    "icon": "⚔️",
+    "icon": "Swords",
     "rarity": "legendary",
     "requirements": {
       "totalBattles": 50
@@ -65,7 +65,7 @@
     "id": "perfect_score",
     "name": "Perfect Score",
     "description": "Achieved 100% progress in a battle",
-    "icon": "💯",
+    "icon": "Target",
     "rarity": "epic",
     "requirements": {
       "perfectCompletion": true
@@ -75,7 +75,7 @@
     "id": "comeback_kid",
     "name": "Comeback Kid",
     "description": "Won a battle after being 20+ points behind",
-    "icon": "🔄",
+    "icon": "RotateCcw",
     "rarity": "rare",
     "requirements": {
       "comebackWin": true
@@ -85,7 +85,7 @@
     "id": "genre_master",
     "name": "Genre Master",
     "description": "Won battles in 5 different genres",
-    "icon": "📚",
+    "icon": "Library",
     "rarity": "epic",
     "requirements": {
       "genresWon": 5
@@ -95,7 +95,7 @@
     "id": "early_bird",
     "name": "Early Bird",
     "description": "Joined a battle within 24 hours of launch",
-    "icon": "🐦",
+    "icon": "Bird",
     "rarity": "uncommon",
     "requirements": {
       "joinedEarly": true

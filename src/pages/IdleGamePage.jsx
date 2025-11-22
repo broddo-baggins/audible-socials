@@ -1,21 +1,70 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Play, Pause, Trophy, Star, Clock, Award, Zap, Lock } from 'lucide-react';
+import { ArrowLeft, Play, Pause, Trophy, Star, Clock, Award, Zap, Lock, Ear, Sofa, Fish, Landmark, Compass, Globe, Library, Target, Sparkles, Castle, Scroll, Hourglass, Sprout, Mountain, Circle, Shield, Flame, Palette, Hammer, Cat, Footprints, Scissors, BookOpen, Glasses, Coins, Briefcase, DollarSign, TrendingUp, ShoppingBag, Crown, Hand, Heart, Moon, Sun, ChefHat } from 'lucide-react';
 import IdleGame from '../components/idle/IdleGame';
 import { Card, Button } from '../components/ui';
 import { getIdleGameState, ACHIEVEMENTS, updateIdleGameState } from '../utils/idleGame';
 
-// Achievement Icon Component - now using emoji icons
+// Icon mapping for achievements
+const ACHIEVEMENT_ICON_MAP = {
+  'Ear': Ear,
+  'Sofa': Sofa,
+  'Star': Star,
+  'Fish': Fish,
+  'Landmark': Landmark,
+  'Compass': Compass,
+  'Globe': Globe,
+  'Library': Library,
+  'Target': Target,
+  'Sparkles': Sparkles,
+  'Castle': Castle,
+  'Scroll': Scroll,
+  'Hourglass': Hourglass,
+  'Sprout': Sprout,
+  'Mountain': Mountain,
+  'Circle': Circle,
+  'Shield': Shield,
+  'Flame': Flame,
+  'Palette': Palette,
+  'Hammer': Hammer,
+  'Cat': Cat,
+  'Footprints': Footprints,
+  'Scissors': Scissors,
+  'Candle': Flame,
+  'Tree': Sprout,
+  'BookOpen': BookOpen,
+  'Glasses': Glasses,
+  'Coins': Coins,
+  'Pig': Coins,
+  'Briefcase': Briefcase,
+  'DollarSign': DollarSign,
+  'TrendingUp': TrendingUp,
+  'ShoppingBag': ShoppingBag,
+  'Trophy': Trophy,
+  'Crown': Crown,
+  'Hand': Hand,
+  'Heart': Heart,
+  'Moon': Moon,
+  'Sun': Sun,
+  'ChefHat': ChefHat
+};
+
+// Achievement Icon Component - using Lucide icons
 const AchievementIcon = ({ icon, unlocked = true }) => {
   if (!unlocked) {
     return <Lock className="w-6 h-6 text-gray-400" />;
   }
 
-  // Icons are now emoji strings
+  // Render Lucide icon if available, otherwise show text
+  const IconComponent = ACHIEVEMENT_ICON_MAP[icon];
+  if (IconComponent) {
+    return <IconComponent className="w-6 h-6 text-purple-500" />;
+  }
+
   return (
-    <div className="text-2xl">
-      {icon}
+    <div className="w-6 h-6 flex items-center justify-center text-purple-500 text-sm font-bold">
+      {icon?.charAt(0) || '?'}
     </div>
   );
 };

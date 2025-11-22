@@ -11,17 +11,18 @@
 
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { lazy, Suspense } from 'react';
 
 import { PlayerProvider } from './contexts/PlayerContext';
 import { pageVariants, pageTransition } from './utils/animationVariants';
 
-// Layout Components - Responsive headers and navigation
+// Layout Components - Responsive headers and navigation (not lazy loaded - needed immediately)
 import DesktopHeader from './components/layout/DesktopHeader';
 import TabletHeader from './components/layout/TabletHeader';
 import MobileBottomNav from './components/layout/MobileBottomNav';
 import Footer from './components/layout/Footer';
 
-// Audio Player Components
+// Audio Player Components (not lazy loaded - needed immediately)
 import AudioPlayer from './components/player/AudioPlayer';
 import MiniPlayer from './components/player/MiniPlayer';
 
@@ -31,43 +32,52 @@ import ScrollToTop from './components/shared/ScrollToTop';
 // AI Assistant
 import AIAssistant from './components/ai/AIAssistant';
 
-// Pages
+// Home page - not lazy loaded for immediate access
 import Home from './pages/Home';
-import Library from './pages/Library';
-import Browse from './pages/Browse';
-import BookDetail from './pages/BookDetail';
-import Search from './pages/Search';
-import Account from './pages/Account';
-import Social from './pages/Social';
-import IdleGamePage from './pages/IdleGamePage';
-import MyBookClubs from './pages/MyBookClubs';
-import ClubDetailPage from './pages/ClubDetailPage';
-import Battles from './pages/Battles';
-import Profile from './pages/Profile';
-import FriendLibrary from './pages/FriendLibrary';
 
-// Company Pages
-import About from './pages/About';
-import Careers from './pages/Careers';
-import Press from './pages/Press';
-import Blog from './pages/Blog';
+// Lazy-loaded Pages - loaded on demand for better performance
+const Library = lazy(() => import('./pages/Library'));
+const Browse = lazy(() => import('./pages/Browse'));
+const BookDetail = lazy(() => import('./pages/BookDetail'));
+const Search = lazy(() => import('./pages/Search'));
+const Account = lazy(() => import('./pages/Account'));
+const Social = lazy(() => import('./pages/Social'));
+const IdleGamePage = lazy(() => import('./pages/IdleGamePage'));
+const MyBookClubs = lazy(() => import('./pages/MyBookClubs'));
+const ClubDetailPage = lazy(() => import('./pages/ClubDetailPage'));
+const Battles = lazy(() => import('./pages/Battles'));
+const Profile = lazy(() => import('./pages/Profile'));
+const FriendLibrary = lazy(() => import('./pages/FriendLibrary'));
 
-// Help Pages
-import Support from './pages/Support';
-import FAQ from './pages/FAQ';
-import Contact from './pages/Contact';
-import Accessibility from './pages/Accessibility';
+// Company Pages - lazy loaded
+const About = lazy(() => import('./pages/About'));
+const Careers = lazy(() => import('./pages/Careers'));
+const Press = lazy(() => import('./pages/Press'));
+const Blog = lazy(() => import('./pages/Blog'));
 
-// Legal Pages
-import Terms from './pages/Terms';
-import Privacy from './pages/Privacy';
-import Cookies from './pages/Cookies';
-import ContentPolicy from './pages/ContentPolicy';
+// Help Pages - lazy loaded
+const Support = lazy(() => import('./pages/Support'));
+const FAQ = lazy(() => import('./pages/FAQ'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Accessibility = lazy(() => import('./pages/Accessibility'));
 
-// App Pages
-import IOSApp from './pages/IOSApp';
-import AndroidApp from './pages/AndroidApp';
-import DesktopApp from './pages/DesktopApp';
+// Legal Pages - lazy loaded
+const Terms = lazy(() => import('./pages/Terms'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Cookies = lazy(() => import('./pages/Cookies'));
+const ContentPolicy = lazy(() => import('./pages/ContentPolicy'));
+
+// App Pages - lazy loaded
+const IOSApp = lazy(() => import('./pages/IOSApp'));
+const AndroidApp = lazy(() => import('./pages/AndroidApp'));
+const DesktopApp = lazy(() => import('./pages/DesktopApp'));
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+);
 
 
 /**
@@ -91,51 +101,53 @@ const AnimatedRoutes = () => {
         transition={pageTransition}
         className="flex-1 pb-20 tablet:pb-16 lg:pb-0"
       >
-        <Routes location={location}>
-          <Route path="/" element={<Home />} />
-          <Route path="/library" element={<Library />} />
-          <Route path="/browse" element={<Browse />} />
-          <Route path="/originals" element={<Browse />} />
-          <Route path="/podcasts" element={<Browse />} />
-          <Route path="/book/:bookId" element={<BookDetail />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/account" element={<Account />} />
-          <Route path="/settings" element={<Account />} />
-          <Route path="/help" element={<Account />} />
-          <Route path="/notifications" element={<Account />} />
-          <Route path="/social" element={<Social />} />
-          <Route path="/idle" element={<IdleGamePage />} />
-          <Route path="/battles" element={<Battles />} />
-          <Route path="/clubs" element={<MyBookClubs />} />
-          <Route path="/clubs/friends" element={<MyBookClubs />} />
-          <Route path="/clubs/activity" element={<MyBookClubs />} />
-          <Route path="/club/:clubId" element={<ClubDetailPage />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/friend/:friendId/library" element={<FriendLibrary />} />
+        <Suspense fallback={<PageLoader />}>
+          <Routes location={location}>
+            <Route path="/" element={<Home />} />
+            <Route path="/library" element={<Library />} />
+            <Route path="/browse" element={<Browse />} />
+            <Route path="/originals" element={<Browse />} />
+            <Route path="/podcasts" element={<Browse />} />
+            <Route path="/book/:bookId" element={<BookDetail />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/settings" element={<Account />} />
+            <Route path="/help" element={<Account />} />
+            <Route path="/notifications" element={<Account />} />
+            <Route path="/social" element={<Social />} />
+            <Route path="/idle" element={<IdleGamePage />} />
+            <Route path="/battles" element={<Battles />} />
+            <Route path="/clubs" element={<MyBookClubs />} />
+            <Route path="/clubs/friends" element={<MyBookClubs />} />
+            <Route path="/clubs/activity" element={<MyBookClubs />} />
+            <Route path="/club/:clubId" element={<ClubDetailPage />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/friend/:friendId/library" element={<FriendLibrary />} />
 
-          {/* Company Pages */}
-          <Route path="/about" element={<About />} />
-          <Route path="/careers" element={<Careers />} />
-          <Route path="/press" element={<Press />} />
-          <Route path="/blog" element={<Blog />} />
+            {/* Company Pages */}
+            <Route path="/about" element={<About />} />
+            <Route path="/careers" element={<Careers />} />
+            <Route path="/press" element={<Press />} />
+            <Route path="/blog" element={<Blog />} />
 
-          {/* Help Pages */}
-          <Route path="/support" element={<Support />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/accessibility" element={<Accessibility />} />
+            {/* Help Pages */}
+            <Route path="/support" element={<Support />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/accessibility" element={<Accessibility />} />
 
-          {/* Legal Pages */}
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/cookies" element={<Cookies />} />
-          <Route path="/content-policy" element={<ContentPolicy />} />
+            {/* Legal Pages */}
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/cookies" element={<Cookies />} />
+            <Route path="/content-policy" element={<ContentPolicy />} />
 
-          {/* App Pages */}
-          <Route path="/apps/ios" element={<IOSApp />} />
-          <Route path="/apps/android" element={<AndroidApp />} />
-          <Route path="/apps/desktop" element={<DesktopApp />} />
-        </Routes>
+            {/* App Pages */}
+            <Route path="/apps/ios" element={<IOSApp />} />
+            <Route path="/apps/android" element={<AndroidApp />} />
+            <Route path="/apps/desktop" element={<DesktopApp />} />
+          </Routes>
+        </Suspense>
       </motion.main>
     </AnimatePresence>
   );

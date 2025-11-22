@@ -1,4 +1,4 @@
-import { Trophy, Medal, Award, Crown, Star } from 'lucide-react';
+import { Trophy, Medal, Award, Crown, Star, BookOpen, Flame, Clock } from 'lucide-react';
 
 export default function BattleLeaderboard({ leaderboard, battleType, showFull = false }) {
   const getRankIcon = (rank) => {
@@ -81,13 +81,22 @@ export default function BattleLeaderboard({ leaderboard, battleType, showFull = 
                     <h4 className="font-semibold text-gray-900">{participant.username}</h4>
                     <div className="flex items-center space-x-2 text-xs text-gray-600">
                       {participant.progress && (
-                        <span>📖 {participant.progress}% complete</span>
+                        <span className="flex items-center gap-1">
+                          <BookOpen className="w-3 h-3" />
+                          {participant.progress}% complete
+                        </span>
                       )}
                       {participant.currentStreak && (
-                        <span>🔥 {participant.currentStreak} day streak</span>
+                        <span className="flex items-center gap-1">
+                          <Flame className="w-3 h-3" />
+                          {participant.currentStreak} day streak
+                        </span>
                       )}
                       {participant.totalMinutes && (
-                        <span>⏰ {participant.totalMinutes} min total</span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {participant.totalMinutes} min total
+                        </span>
                       )}
                     </div>
                   </div>

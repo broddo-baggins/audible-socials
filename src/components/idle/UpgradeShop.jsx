@@ -1,6 +1,19 @@
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Check, Lock, Sparkles } from 'lucide-react';
+import { ShoppingCart, Check, Lock, Sparkles, Headphones, Armchair, Coffee, Library, Circle, ChefHat, Sprout, Sofa } from 'lucide-react';
 import { UPGRADES, isUpgradeAvailable } from '../../utils/idleGame';
+
+// Icon mapping for dynamic rendering
+const ICON_MAP = {
+  'Headphones': Headphones,
+  'Armchair': Armchair,
+  'Coffee': Coffee,
+  'Library': Library,
+  'Circle': Circle,
+  'ChefHat': ChefHat,
+  'Sprout': Sprout,
+  'Sofa': Sofa
+};
 
 /**
  * UpgradeShop - Interface for purchasing upgrades with Focus Points
@@ -26,9 +39,9 @@ const UpgradeShop = ({ gameState, onPurchase, showShop, onToggleShop }) => {
   });
 
   const categoryNames = {
-    equipment: '🎧 Equipment',
-    furniture: '🪑 Furniture',
-    consumable: '☕ Consumables'
+    equipment: 'Equipment',
+    furniture: 'Furniture',
+    consumable: 'Consumables'
   };
 
   return (
@@ -90,7 +103,13 @@ const UpgradeShop = ({ gameState, onPurchase, showShop, onToggleShop }) => {
                         layout
                       >
                         {/* Icon */}
-                        <div className="text-3xl">{upgrade.icon}</div>
+                        <div className="w-8 h-8 flex items-center justify-center">
+                          {ICON_MAP[upgrade.icon] ? (
+                            React.createElement(ICON_MAP[upgrade.icon], { className: "w-6 h-6 text-white" })
+                          ) : (
+                            <span className="text-white text-sm">{upgrade.icon}</span>
+                          )}
+                        </div>
 
                         {/* Details */}
                         <div className="flex-1 text-left">
