@@ -1,141 +1,71 @@
 /**
- * Button Component - Reusable UI Button with Multiple Variants
+ * Button: the one button of the system (DESIGN.md, "Buttons").
  *
- * A highly customizable button component built with React.forwardRef for proper
- * accessibility and ref handling. Supports multiple variants, sizes, loading states,
- * and animations using Framer Motion.
- *
- * Features:
- * - 6 variants: primary, secondary, outline, ghost, link, dark
- * - 4 sizes: sm, md, lg, xl
- * - Loading state with spinner animation
- * - Icon support (left/right positioning)
- * - Smooth animations and transitions
- * - Full accessibility support
- * - Responsive design with Tailwind CSS
+ * - primary: ink fill, paper label. The default action.
+ * - highlight: highlighter fill, ink label. At most one per screen, for the moment that matters.
+ * - secondary / outline: surface with a 3:1 edge.
+ * - ghost: no fill until hover. link: underlined ink text.
+ * - dark: kept as an alias of primary for older call sites.
+ * Every button is a pill. Pressing scales to 0.98; nothing grows on hover.
  */
 
 import { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 
+const variants = {
+  primary: 'bg-ink text-paper hover:bg-gray-800',
+  dark: 'bg-ink text-paper hover:bg-gray-800',
+  highlight: 'bg-hl text-ink hover:bg-[#D6E43F]',
+  secondary: 'bg-surface text-ink border border-line-strong hover:bg-paper',
+  outline: 'bg-transparent text-ink border border-line-strong hover:bg-surface',
+  ghost: 'bg-transparent text-ink-2 hover:bg-surface-sunk hover:text-ink',
+  link: 'bg-transparent text-ink underline underline-offset-4 decoration-1 hover:decoration-2 px-0',
+  onNight: 'bg-ink-on-night text-ink hover:bg-white',
+};
+
+const sizes = {
+  sm: 'h-9 px-4 text-sm gap-1.5',
+  md: 'h-11 px-5 text-[0.9375rem] gap-2',
+  lg: 'h-12 px-6 text-base gap-2',
+  xl: 'h-14 px-7 text-base gap-2.5',
+};
+
 const Button = forwardRef(({
   children,
-  variant = 'primary',        // Button style variant
-  size = 'md',                // Button size
-  fullWidth = false,          // Whether button should take full width
-  disabled = false,           // Disabled state
-  loading = false,            // Loading state with spinner
-  leftIcon = null,            // Icon to display on the left
-  rightIcon = null,           // Icon to display on the right
-  animated = true,            // Whether to use animations
-  className = '',             // Additional CSS classes
-  ...props                    // Other button props (onClick, type, etc.)
+  variant = 'primary',
+  size = 'md',
+  fullWidth = false,
+  disabled = false,
+  loading = false,
+  leftIcon = null,
+  rightIcon = null,
+  animated = true,
+  className = '',
+  type = 'button',
+  ...props
 }, ref) => {
-  // Base styles applied to all button variants
-  const baseStyles = 'inline-flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden';
-
-  // Style variants for different button appearances
-  const variants = {
-    primary: 'bg-audible-orange text-white focus:ring-2 focus:ring-audible-orange focus:ring-offset-2',
-    secondary: 'bg-white text-audible-text-primary border border-audible-gray-300 focus:ring-2 focus:ring-audible-orange focus:ring-offset-2',
-    outline: 'bg-transparent text-audible-orange border border-audible-orange focus:ring-2 focus:ring-audible-orange focus:ring-offset-2',
-    ghost: 'bg-transparent text-audible-gray-600',
-    link: 'bg-transparent text-audible-orange underline',
-    dark: 'bg-audible-gray-800 text-white focus:ring-2 focus:ring-audible-orange focus:ring-offset-2',
-  };
-
-  // Size configurations with responsive padding and typography
-  const sizes = {
-    sm: 'px-3 py-1.5 text-sm rounded-lg gap-1.5',
-    md: 'px-5 py-2.5 text-base rounded-lg gap-2',
-    lg: 'px-6 py-3 text-base rounded-lg gap-2.5',
-    xl: 'px-8 py-4 text-lg rounded-xl gap-3',
-  };
-
-  // Dynamic class assignments
-  const widthClass = fullWidth ? 'w-full' : '';
-  const variantClass = disabled ? 'bg-echo-bg-tertiary text-echo-text-disabled cursor-not-allowed border border-echo-border' : variants[variant];
-
-  // Framer Motion animation variants for smooth interactions
-  const buttonVariants = {
-    initial: { scale: 1 },
-    hover: !disabled && !loading && animated ? {
-      scale: 1.02,
-      transition: { duration: 0.2, ease: "easeOut" }
-    } : {},
-    tap: !disabled && !loading && animated ? {
-      scale: 0.98,
-      transition: { duration: 0.1 }
-    } : {}
-  };
-
-  const MotionComponent = animated ? motion.button : 'button';
-  const motionProps = animated ? {
-    variants: buttonVariants,
-    initial: "initial",
-    whileHover: "hover",
-    whileTap: "tap"
-  } : {};
+  const base = 'inline-flex items-center justify-center rounded-full font-medium whitespace-nowrap select-none transition-colors duration-150 disabled:opacity-45 disabled:cursor-not-allowed';
+  const Comp = animated ? motion.button : 'button';
+  const motionProps = animated && !disabled && !loading ? { whileTap: { scale: 0.98 } } : {};
 
   return (
-    <MotionComponent
+    <Comp
       ref={ref}
+      type={type}
       disabled={disabled || loading}
-      className={`${baseStyles} ${variantClass} ${sizes[size]} ${widthClass} ${className}`}
+      aria-busy={loading || undefined}
+      className={`${base} ${variants[variant] || variants.primary} ${variant === 'link' ? 'h-auto text-[0.9375rem]' : sizes[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
       {...motionProps}
       {...props}
     >
       {loading && (
-        <motion.svg
-          className="h-5 w-5"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          />
-        </motion.svg>
+        <span className="h-4 w-4 rounded-full border-2 border-current border-r-transparent animate-spin" aria-hidden="true" />
       )}
-      {!loading && leftIcon && (
-        <motion.span
-          className="inline-flex"
-          whileHover={{ scale: animated ? 1.1 : 1 }}
-          transition={{ duration: 0.2 }}
-        >
-          {leftIcon}
-        </motion.span>
-      )}
-      <motion.span
-        layout
-        transition={{ duration: 0.2 }}
-      >
-        {children}
-      </motion.span>
-      {!loading && rightIcon && (
-        <motion.span
-          className="inline-flex"
-          whileHover={{ scale: animated ? 1.1 : 1 }}
-          transition={{ duration: 0.2 }}
-        >
-          {rightIcon}
-        </motion.span>
-      )}
-    </MotionComponent>
+      {!loading && leftIcon && <span className="inline-flex shrink-0" aria-hidden="true">{leftIcon}</span>}
+      <span>{children}</span>
+      {!loading && rightIcon && <span className="inline-flex shrink-0" aria-hidden="true">{rightIcon}</span>}
+    </Comp>
   );
 });
 
@@ -143,7 +73,7 @@ Button.displayName = 'Button';
 
 Button.propTypes = {
   children: PropTypes.node.isRequired,
-  variant: PropTypes.oneOf(['primary', 'secondary', 'outline', 'ghost', 'link', 'dark']),
+  variant: PropTypes.oneOf(['primary', 'secondary', 'outline', 'ghost', 'link', 'dark', 'highlight', 'onNight']),
   size: PropTypes.oneOf(['sm', 'md', 'lg', 'xl']),
   fullWidth: PropTypes.bool,
   disabled: PropTypes.bool,
@@ -152,6 +82,7 @@ Button.propTypes = {
   rightIcon: PropTypes.node,
   animated: PropTypes.bool,
   className: PropTypes.string,
+  type: PropTypes.string,
 };
 
 export default Button;
