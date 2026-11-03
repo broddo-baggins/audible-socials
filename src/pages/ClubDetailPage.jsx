@@ -5,11 +5,13 @@ import { Users, Calendar, Clock, Crown, Gift, Award, Check, X, Star, TrendingUp,
 import clubsData from '../data/clubs.json';
 import booksData from '../data/books.json';
 import usersData from '../data/users.json';
-import { getUserData, joinClub, leaveClub, getJoinedClubs, getFriends } from '../utils/localStorage';
+import { getUserData, joinClub, leaveClub, getJoinedClubs, getFriends, purchaseBook } from '../utils/localStorage';
 import { fetchGoogleImagesCover } from '../utils/googleImages';
 import { getClubFriends } from '../utils/friendManagement';
 import EventRSVP from '../components/events/EventRSVP';
 import ClubTimeline from '../components/clubs/ClubTimeline';
+import MeetingsSummary from '../components/clubs/MeetingsSummary';
+import DiscountDisplay from '../components/clubs/DiscountDisplay';
 
 export default function ClubDetailPage() {
   const { clubId } = useParams();
@@ -89,31 +91,31 @@ export default function ClubDetailPage() {
   };
 
   const handlePurchaseBook = () => {
-    // Mock purchase - add book to user's library
-    const currentUser = getUserData();
-    if (!currentUser.library.includes(club.currentBook)) {
-      currentUser.library.push(club.currentBook);
-      localStorage.setItem('userData', JSON.stringify(currentUser));
-      
-      // Deduct credit
-      if (currentUser.credits > 0) {
-        currentUser.credits -= 1;
-        localStorage.setItem('userData', JSON.stringify(currentUser));
-      }
-      
-      setPurchaseSuccess(true);
-      setUserData(currentUser);
-      
-      // Auto-close modal after 2 seconds
-      setTimeout(() => {
-        setShowPurchaseModal(false);
-        setPurchaseSuccess(false);
-      }, 2000);
+    // Mock purchase: one credit buys the book, then the bundle joins the club
+    const result = purchaseBook(club.currentBook);
+    if (!result.success) {
+      alert(result.error);
+      return;
     }
+    const joined = !club.isPremium || result.user.isPremium ? joinClub(clubId) : { success: false };
+    setIsMember(joined.success || getJoinedClubs().includes(clubId));
+    setPurchaseSuccess(true);
+    setUserData(getUserData());
+
+    // Auto-close modal after 2 seconds
+    setTimeout(() => {
+      setShowPurchaseModal(false);
+      setPurchaseSuccess(false);
+    }, 2000);
   };
 
   if (!club || !currentBook) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center h-screen gap-4">
+        <h1 className="text-2xl font-bold">Club not found</h1>
+        <Link to="/clubs" className="text-audible-orange underline">Browse book clubs</Link>
+      </div>
+    );
   }
 
   const maxClubs = userData?.isPremium ? 3 : 2;
@@ -134,7 +136,7 @@ export default function ClubDetailPage() {
               className="flex justify-center md:justify-start"
             >
               <img
-                src={coverUrl || 'https://via.placeholder.com/400x600'}
+                src={currentBook.cover || coverUrl}
                 alt={currentBook.title}
                 className="w-64 md:w-80 rounded-lg shadow-2xl"
               />
@@ -351,7 +353,7 @@ export default function ClubDetailPage() {
               <Link to={`/book/${currentBook.id}`} className="block group">
                 <div className="flex items-start space-x-4">
                   <img
-                    src={coverUrl || 'https://via.placeholder.com/200x300'}
+                    src={currentBook.cover || coverUrl}
                     alt={currentBook.title}
                     className="w-24 h-36 object-cover rounded-lg shadow-md group-hover:shadow-xl transition-shadow"
                   />
@@ -426,7 +428,7 @@ export default function ClubDetailPage() {
                     <Link key={book.id} to={`/book/${book.id}`} className="group">
                       <div className="relative overflow-hidden rounded-lg shadow-md group-hover:shadow-xl transition-all">
                         <img
-                          src={`https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=450&fit=crop&sig=${book.id}`}
+                          src={book.cover}
                           alt={book.title}
                           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
@@ -623,7 +625,7 @@ export default function ClubDetailPage() {
                 <div className="p-6">
                   <div className="flex gap-6 mb-6">
                     <img
-                      src={coverUrl || currentBook.cover}
+                      src={currentBook.cover || coverUrl}
                       alt={currentBook.title}
                       className="w-32 h-48 object-cover rounded-lg shadow-lg flex-shrink-0"
                     />

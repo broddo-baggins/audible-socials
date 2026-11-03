@@ -129,6 +129,7 @@ const IdleGame = ({ isPlaying: externalIsPlaying, currentBook: externalBook }) =
              <div className="bg-black/30 backdrop-blur-md rounded-lg p-2 border border-white/10 flex items-center gap-2">
                 <button 
                   onClick={() => player.togglePlay()}
+                  aria-label={isPlaying ? 'Pause' : 'Play'}
                   className={`p-3 rounded-full transition-all ${
                     isPlaying 
                       ? 'bg-yellow-500 hover:bg-yellow-600 text-white shadow-lg shadow-yellow-500/20' 

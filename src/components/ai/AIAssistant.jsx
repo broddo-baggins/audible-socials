@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Bot, X, Sparkles, BookOpen, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card } from '../ui';
 import AIRecommendations from './AIRecommendations';
 import AIBookChat from './AIBookChat';
+import { OPEN_ASSISTANT_EVENT } from '../../utils/assistant';
 
 /**
  * AI Assistant Component
@@ -15,6 +16,17 @@ const AIAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('recommendations'); // 'recommendations' or 'chat'
   const [isMinimized, setIsMinimized] = useState(false);
+
+  // Other parts of the app open the assistant with openAIAssistant(tab)
+  useEffect(() => {
+    const open = (event) => {
+      setActiveTab(event.detail?.tab || 'recommendations');
+      setIsMinimized(false);
+      setIsOpen(true);
+    };
+    window.addEventListener(OPEN_ASSISTANT_EVENT, open);
+    return () => window.removeEventListener(OPEN_ASSISTANT_EVENT, open);
+  }, []);
 
   const tabs = [
     { id: 'recommendations', label: 'Next Listen', icon: BookOpen },

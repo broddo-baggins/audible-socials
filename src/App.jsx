@@ -41,11 +41,13 @@ const Browse = lazy(() => import('./pages/Browse'));
 const BookDetail = lazy(() => import('./pages/BookDetail'));
 const Search = lazy(() => import('./pages/Search'));
 const Account = lazy(() => import('./pages/Account'));
+const Notifications = lazy(() => import('./pages/Notifications'));
 const Social = lazy(() => import('./pages/Social'));
 const IdleGamePage = lazy(() => import('./pages/IdleGamePage'));
 const MyBookClubs = lazy(() => import('./pages/MyBookClubs'));
 const ClubDetailPage = lazy(() => import('./pages/ClubDetailPage'));
 const Battles = lazy(() => import('./pages/Battles'));
+const BattleDetail = lazy(() => import('./pages/BattleDetail'));
 const Profile = lazy(() => import('./pages/Profile'));
 const FriendLibrary = lazy(() => import('./pages/FriendLibrary'));
 
@@ -71,6 +73,7 @@ const ContentPolicy = lazy(() => import('./pages/ContentPolicy'));
 const IOSApp = lazy(() => import('./pages/IOSApp'));
 const AndroidApp = lazy(() => import('./pages/AndroidApp'));
 const DesktopApp = lazy(() => import('./pages/DesktopApp'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -113,10 +116,11 @@ const AnimatedRoutes = () => {
             <Route path="/account" element={<Account />} />
             <Route path="/settings" element={<Account />} />
             <Route path="/help" element={<Account />} />
-            <Route path="/notifications" element={<Account />} />
+            <Route path="/notifications" element={<Notifications />} />
             <Route path="/social" element={<Social />} />
             <Route path="/idle" element={<IdleGamePage />} />
             <Route path="/battles" element={<Battles />} />
+            <Route path="/battle/:battleId" element={<BattleDetail />} />
             <Route path="/clubs" element={<MyBookClubs />} />
             <Route path="/clubs/friends" element={<MyBookClubs />} />
             <Route path="/clubs/activity" element={<MyBookClubs />} />
@@ -146,6 +150,8 @@ const AnimatedRoutes = () => {
             <Route path="/apps/ios" element={<IOSApp />} />
             <Route path="/apps/android" element={<AndroidApp />} />
             <Route path="/apps/desktop" element={<DesktopApp />} />
+
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </motion.main>

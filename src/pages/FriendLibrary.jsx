@@ -32,14 +32,14 @@ export default function FriendLibrary() {
     setFriend(foundFriend);
 
     // Get friend's books with details
-    const books = foundFriend.library
+    const books = (foundFriend.library || [])
       .map(bookId => {
         const book = booksData.find(b => b.id === bookId);
         if (!book) return null;
         
         return {
           ...book,
-          userRating: foundFriend.ratings[bookId] || null,
+          userRating: foundFriend.ratings?.[bookId] || null,
           isCompleted: foundFriend.completedBooks?.includes(bookId),
           isInProgress: foundFriend.inProgressBooks?.includes(bookId),
           isCurrentlyReading: foundFriend.currentlyReading === bookId,
@@ -310,6 +310,7 @@ export default function FriendLibrary() {
             <div className="flex items-center space-x-2">
               <Filter className="w-5 h-5 text-gray-600" />
               <select
+                aria-label="Filter books"
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 bg-white"
@@ -333,6 +334,7 @@ export default function FriendLibrary() {
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-600 font-semibold">Sort by:</span>
               <select
+                aria-label="Sort books"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 bg-white"

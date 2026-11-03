@@ -1,8 +1,31 @@
-import React from 'react';
+import { useState } from 'react';
 import { Card } from '../components/ui';
 import { Cookie, Settings, Eye, BarChart, Calendar } from 'lucide-react';
 
+const COOKIE_PREFS_KEY = 'cookie_preferences';
+const DEFAULT_PREFS = { performance: true, functional: true, marketing: false };
+
+const loadPrefs = () => {
+  try {
+    return { ...DEFAULT_PREFS, ...JSON.parse(localStorage.getItem(COOKIE_PREFS_KEY) || '{}') };
+  } catch {
+    return DEFAULT_PREFS;
+  }
+};
+
 const Cookies = () => {
+  const [prefs, setPrefs] = useState(loadPrefs);
+  const togglePref = (key) => {
+    setPrefs((prev) => {
+      const next = { ...prev, [key]: !prev[key] };
+      try {
+        localStorage.setItem(COOKIE_PREFS_KEY, JSON.stringify(next));
+      } catch {
+        // Storage can be unavailable (private mode); the toggle still works for this visit
+      }
+      return next;
+    });
+  };
   const lastUpdated = 'January 15, 2025';
 
   const cookieTypes = [
@@ -269,22 +292,22 @@ const Cookies = () => {
                 Changes will take effect on your next visit.
               </p>
               <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <input type="checkbox" defaultChecked className="w-4 h-4 text-audible-orange" />
+                <label className="flex items-center gap-3">
+                  <input type="checkbox" checked disabled className="w-4 h-4 text-audible-orange" />
                   <span className="text-sm text-audible-text-secondary">Essential cookies (required)</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <input type="checkbox" defaultChecked className="w-4 h-4 text-audible-orange" />
+                </label>
+                <label className="flex items-center gap-3">
+                  <input type="checkbox" checked={prefs.performance} onChange={() => togglePref('performance')} className="w-4 h-4 text-audible-orange" />
                   <span className="text-sm text-audible-text-secondary">Performance cookies</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <input type="checkbox" defaultChecked className="w-4 h-4 text-audible-orange" />
+                </label>
+                <label className="flex items-center gap-3">
+                  <input type="checkbox" checked={prefs.functional} onChange={() => togglePref('functional')} className="w-4 h-4 text-audible-orange" />
                   <span className="text-sm text-audible-text-secondary">Functional cookies</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <input type="checkbox" className="w-4 h-4 text-audible-orange" />
+                </label>
+                <label className="flex items-center gap-3">
+                  <input type="checkbox" checked={prefs.marketing} onChange={() => togglePref('marketing')} className="w-4 h-4 text-audible-orange" />
                   <span className="text-sm text-audible-text-secondary">Marketing cookies</span>
-                </div>
+                </label>
               </div>
             </Card>
 

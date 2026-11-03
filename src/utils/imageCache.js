@@ -38,24 +38,6 @@ export function cacheImage(bookId, url) {
   }
 }
 
-export function clearImageCache() {
-  try {
-    localStorage.removeItem(CACHE_KEY);
-  } catch (error) {
-    console.error('Error clearing image cache:', error);
-  }
-}
-
-export function getCacheSize() {
-  try {
-    const cache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
-    return Object.keys(cache).length;
-  } catch (error) {
-    console.error('Error calculating image cache size:', error);
-    return 0;
-  }
-}
-
 // Fallback placeholder images
 const FALLBACK_IMAGES = {
   'Science Fiction': 'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=400&h=600&fit=crop',
@@ -71,15 +53,3 @@ const FALLBACK_IMAGES = {
   'default': 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop'
 };
 
-/**
- * Get image URL for a book cover
- * Returns a placeholder image URL for demo purposes
- */
-export async function getImageUrl(query, genre = 'default') {
-  // For demo purposes, return a fallback image based on genre or default
-  // In a real implementation, this would fetch from an API
-  await new Promise(resolve => setTimeout(resolve, 10));
-  
-  const fallbackUrl = FALLBACK_IMAGES[genre] || FALLBACK_IMAGES.default;
-  return fallbackUrl + '&sig=' + Math.random().toString(36).substring(7);
-}

@@ -8,6 +8,7 @@ import booksData from '../../data/books.json';
 import { getFriends } from '../../utils/localStorage';
 
 const SocialNudges = ({ limit = 3 }) => {
+  const [liked, setLiked] = useState({});
   const [nudges, setNudges] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -218,15 +219,19 @@ const SocialNudges = ({ limit = 3 }) => {
                 
                 <div className="flex items-center gap-2 mt-2">
                   <Link
-                    to={nudge.book ? `/book/${nudge.book.id}` : '#'}
+                    to={nudge.book ? `/book/${nudge.book.id}` : '/social'}
                     className="text-xs font-semibold text-audible-orange hover:text-audible-orange-dark transition-colors"
                   >
                     {nudge.action}
                   </Link>
                   {nudge.type === 'friend_rating' && (
-                    <button className="text-xs text-audible-text-tertiary hover:text-audible-text-secondary transition-colors flex items-center gap-1">
+                    <button
+                      onClick={() => setLiked(prev => ({ ...prev, [index]: !prev[index] }))}
+                      aria-pressed={Boolean(liked[index])}
+                      className={`text-xs hover:text-audible-text-secondary transition-colors flex items-center gap-1 ${liked[index] ? 'text-audible-orange' : 'text-audible-text-tertiary'}`}
+                    >
                       <ThumbsUp className="w-3 h-3" />
-                      Like
+                      {liked[index] ? 'Liked' : 'Like'}
                     </button>
                   )}
                 </div>

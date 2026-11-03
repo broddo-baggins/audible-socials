@@ -18,19 +18,32 @@ const STORAGE_KEYS = {
   CLUB_EVENTS: 'audible_club_events',
 };
 
+// Parse a stored JSON value; corrupt or unreadable entries fall back instead of crashing the app.
+function readJSON(key, fallback) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : fallback;
+  } catch (error) {
+    console.warn(`Ignoring unreadable localStorage value for key: ${key}`, error);
+    return fallback;
+  }
+}
+
 // User Data
 export function getUserData() {
-  const data = localStorage.getItem(STORAGE_KEYS.USER_DATA);
-  if (data) {
-    return JSON.parse(data);
+  const stored = readJSON(STORAGE_KEYS.USER_DATA, null);
+  if (stored && typeof stored === 'object') {
+    return { joinedClubs: [], library: [], friends: [], ...stored };
   }
-  
-  // Initialize from users.json if available
+
+  // Initialize from users.json if available. Clone it so callers that mutate
+  // the returned object never change the imported users.json module data.
   const defaultUser = usersData.find(u => u.id === 'user-me');
-  
+
   if (defaultUser) {
-    saveUserData(defaultUser);
-    return defaultUser;
+    const user = structuredClone(defaultUser);
+    saveUserData(user);
+    return user;
   }
   
   // Fallback default user data if users.json is missing 'user-me'
@@ -98,8 +111,7 @@ export function leaveClub(clubId) {
 
 // Private Club Management
 export function getPrivateClubs() {
-  const data = localStorage.getItem(STORAGE_KEYS.PRIVATE_CLUBS);
-  return data ? JSON.parse(data) : [];
+  return readJSON(STORAGE_KEYS.PRIVATE_CLUBS, []);
 }
 
 export function savePrivateClubs(clubs) {
@@ -124,153 +136,9 @@ export function createPrivateClub(clubData) {
   return { success: true, club: newClub };
 }
 
-export function updatePrivateClub(clubId, updates) {
-  const clubs = getPrivateClubs();
-  const clubIndex = clubs.findIndex(c => c.id === clubId);
-
-  if (clubIndex === -1) {
-    return { success: false, error: 'Club not found' };
-  }
-
-  clubs[clubIndex] = {
-    ...clubs[clubIndex],
-    ...updates,
-    updatedAt: new Date().toISOString()
-  };
-
-  savePrivateClubs(clubs);
-  return { success: true, club: clubs[clubIndex] };
-}
-
-export function deletePrivateClub(clubId) {
-  const clubs = getPrivateClubs();
-  const filteredClubs = clubs.filter(c => c.id !== clubId);
-  savePrivateClubs(filteredClubs);
-
-  // Remove from joined clubs
-  leaveClub(clubId);
-
-  return { success: true };
-}
-
-// Club Discussions
-export function getClubDiscussions(clubId) {
-  const data = localStorage.getItem(`${STORAGE_KEYS.CLUB_DISCUSSIONS}_${clubId}`);
-  return data ? JSON.parse(data) : [];
-}
-
-export function addClubDiscussion(clubId, discussion) {
-  const discussions = getClubDiscussions(clubId);
-  const newDiscussion = {
-    id: `disc-${Date.now()}`,
-    timestamp: new Date().toISOString(),
-    replies: [],
-    ...discussion
-  };
-
-  discussions.unshift(newDiscussion);
-  localStorage.setItem(`${STORAGE_KEYS.CLUB_DISCUSSIONS}_${clubId}`, JSON.stringify(discussions));
-
-  return { success: true, discussion: newDiscussion };
-}
-
-export function addDiscussionReply(clubId, discussionId, reply) {
-  const discussions = getClubDiscussions(clubId);
-  const discussionIndex = discussions.findIndex(d => d.id === discussionId);
-
-  if (discussionIndex === -1) {
-    return { success: false, error: 'Discussion not found' };
-  }
-
-  const newReply = {
-    id: `reply-${Date.now()}`,
-    timestamp: new Date().toISOString(),
-    ...reply
-  };
-
-  discussions[discussionIndex].replies = discussions[discussionIndex].replies || [];
-  discussions[discussionIndex].replies.push(newReply);
-
-  localStorage.setItem(`${STORAGE_KEYS.CLUB_DISCUSSIONS}_${clubId}`, JSON.stringify(discussions));
-
-  return { success: true, reply: newReply };
-}
-
-// Club Voting
-export function getClubVotes(clubId) {
-  const data = localStorage.getItem(`${STORAGE_KEYS.CLUB_VOTES}_${clubId}`);
-  return data ? JSON.parse(data) : {};
-}
-
-export function castClubVote(clubId, bookId, userId) {
-  const votes = getClubVotes(clubId);
-
-  // Remove previous vote if exists
-  Object.keys(votes).forEach(book => {
-    votes[book] = votes[book].filter(id => id !== userId);
-  });
-
-  // Add new vote
-  if (!votes[bookId]) {
-    votes[bookId] = [];
-  }
-
-  if (!votes[bookId].includes(userId)) {
-    votes[bookId].push(userId);
-  }
-
-  localStorage.setItem(`${STORAGE_KEYS.CLUB_VOTES}_${clubId}`, JSON.stringify(votes));
-
-  return { success: true, votes };
-}
-
-// Club Events
-export function getClubEvents(clubId) {
-  const data = localStorage.getItem(`${STORAGE_KEYS.CLUB_EVENTS}_${clubId}`);
-  return data ? JSON.parse(data) : [];
-}
-
-export function createClubEvent(clubId, eventData) {
-  const events = getClubEvents(clubId);
-  const newEvent = {
-    id: `event-${Date.now()}`,
-    createdAt: new Date().toISOString(),
-    attendees: [eventData.host],
-    ...eventData
-  };
-
-  events.push(newEvent);
-  localStorage.setItem(`${STORAGE_KEYS.CLUB_EVENTS}_${clubId}`, JSON.stringify(events));
-
-  return { success: true, event: newEvent };
-}
-
-export function rsvpClubEvent(clubId, eventId, userId, attending) {
-  const events = getClubEvents(clubId);
-  const eventIndex = events.findIndex(e => e.id === eventId);
-
-  if (eventIndex === -1) {
-    return { success: false, error: 'Event not found' };
-  }
-
-  const event = events[eventIndex];
-
-  if (attending && !event.attendees.includes(userId)) {
-    event.attendees.push(userId);
-  } else if (!attending) {
-    event.attendees = event.attendees.filter(id => id !== userId);
-  }
-
-  event.rsvpCount = event.attendees.length;
-  localStorage.setItem(`${STORAGE_KEYS.CLUB_EVENTS}_${clubId}`, JSON.stringify(events));
-
-  return { success: true, event };
-}
-
 // Battle Management
 export function getJoinedBattles() {
-  const data = localStorage.getItem(STORAGE_KEYS.JOINED_BATTLES);
-  return data ? JSON.parse(data) : [];
+  return readJSON(STORAGE_KEYS.JOINED_BATTLES, []);
 }
 
 export function joinBattle(battleId) {
@@ -281,32 +149,6 @@ export function joinBattle(battleId) {
     return { success: true };
   }
   return { success: false, error: 'Already in this battle' };
-}
-
-export function leaveBattle(battleId) {
-  const joinedBattles = getJoinedBattles();
-  const updated = joinedBattles.filter(id => id !== battleId);
-  localStorage.setItem(STORAGE_KEYS.JOINED_BATTLES, JSON.stringify(updated));
-  return { success: true };
-}
-
-export function getBattleProgress(battleId) {
-  const data = localStorage.getItem(`${STORAGE_KEYS.BATTLE_PROGRESS}_${battleId}`);
-  return data ? JSON.parse(data) : {
-    progress: 0,
-    score: 0,
-    lastUpdated: null,
-    completed: false
-  };
-}
-
-export function updateBattleProgress(battleId, progress) {
-  const key = `${STORAGE_KEYS.BATTLE_PROGRESS}_${battleId}`;
-  localStorage.setItem(key, JSON.stringify({
-    ...progress,
-    lastUpdated: new Date().toISOString()
-  }));
-  return { success: true };
 }
 
 // Friends Management
@@ -337,12 +179,6 @@ export function removeFriend(friendId) {
   return { success: true };
 }
 
-// Library Management
-export function getLibrary() {
-  const userData = getUserData();
-  return userData.library || [];
-}
-
 export function addToLibrary(bookId) {
   const userData = getUserData();
   if (!userData.library.includes(bookId)) {
@@ -353,56 +189,29 @@ export function addToLibrary(bookId) {
   return { success: false, error: 'Already in library' };
 }
 
-// Credits
-export function getCredits() {
+// Add or remove a book; returns whether it is now on the wishlist.
+export function toggleWishlist(bookId) {
   const userData = getUserData();
-  return userData.credits || 0;
+  const wishlist = userData.wishlist || [];
+  const onList = wishlist.includes(bookId);
+  userData.wishlist = onList ? wishlist.filter(id => id !== bookId) : [...wishlist, bookId];
+  saveUserData(userData);
+  return !onList;
 }
 
-export function spendCredit() {
+// Buy a book with one credit: adds it to the library and spends the credit together.
+export function purchaseBook(bookId) {
   const userData = getUserData();
-  if (userData.credits > 0) {
-    userData.credits--;
-    saveUserData(userData);
-    return { success: true, remaining: userData.credits };
+  if (userData.library.includes(bookId)) {
+    return { success: false, error: 'Already in library' };
   }
-  return { success: false, error: 'No credits available' };
-}
-
-export function addCredits(amount) {
-  const userData = getUserData();
-  userData.credits = (userData.credits || 0) + amount;
-  saveUserData(userData);
-  return { success: true, total: userData.credits };
-}
-
-// Ratings
-export function getRatings() {
-  const userData = getUserData();
-  return userData.ratings || {};
-}
-
-export function rateBook(bookId, rating) {
-  const userData = getUserData();
-  if (!userData.ratings) {
-    userData.ratings = {};
+  if (!(userData.credits > 0)) {
+    return { success: false, error: 'No credits available' };
   }
-  userData.ratings[bookId] = rating;
+  userData.library.push(bookId);
+  userData.credits--;
   saveUserData(userData);
-  return { success: true };
-}
-
-// Currently Reading
-export function getCurrentlyReading() {
-  const userData = getUserData();
-  return userData.currentlyReading || null;
-}
-
-export function setCurrentlyReading(bookId) {
-  const userData = getUserData();
-  userData.currentlyReading = bookId;
-  saveUserData(userData);
-  return { success: true };
+  return { success: true, user: userData };
 }
 
 // Premium Status
@@ -418,55 +227,13 @@ export function setPremium(status) {
   return { success: true };
 }
 
-// Notifications
-export function getNotifications() {
-  const data = localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS);
-  return data ? JSON.parse(data) : [];
-}
-
-export function addNotification(notification) {
-  const notifications = getNotifications();
-  const newNotification = {
-    id: Date.now().toString(),
-    timestamp: new Date().toISOString(),
-    read: false,
-    ...notification
-  };
-  notifications.unshift(newNotification);
-  localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(notifications));
-  return newNotification;
-}
-
-export function markNotificationAsRead(notificationId) {
-  const notifications = getNotifications();
-  const updated = notifications.map(n => 
-    n.id === notificationId ? { ...n, read: true } : n
-  );
-  localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(updated));
-}
-
-export function clearNotifications() {
-  localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify([]));
-}
-
 // Generic localStorage getter
-export function getFromLocalStorage(key) {
-  try {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : null;
-  } catch (error) {
-    console.warn(`Error getting data from localStorage for key: ${key}`, error);
-    return null;
-  }
+// Demo sign-out: forget this browser's user so the next visit starts from the default demo user.
+export function signOut() {
+  localStorage.removeItem(STORAGE_KEYS.USER_DATA);
 }
 
-// Generic localStorage setter
-export function saveToLocalStorage(key, data) {
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-    return { success: true };
-  } catch (error) {
-    console.warn(`Error saving data to localStorage for key: ${key}`, error);
-    return { success: false, error: error.message };
-  }
+export function getFromLocalStorage(key) {
+  return readJSON(key, null);
 }
+

@@ -162,6 +162,7 @@ export default function NotificationCenter({ isOpen, onClose }) {
                           </h4>
                           <button
                             onClick={() => handleDelete(notification.id)}
+                            aria-label={`Delete notification: ${notification.title}`}
                             className="p-1 text-gray-400 hover:text-red-600 transition-colors"
                           >
                             <X className="w-4 h-4" />

@@ -1,11 +1,15 @@
 import { Play, Plus, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { getUserData, addToLibrary, toggleWishlist } from '../../utils/localStorage';
 import { Button, Rating, Badge } from '../ui';
 import { usePlayer } from '../../contexts/usePlayer';
 
 const HeroBanner = ({ book }) => {
   const { loadBook, play } = usePlayer();
+  const [owned, setOwned] = useState(() => Boolean(book && getUserData().library.includes(book.id)));
+  const [wishlisted, setWishlisted] = useState(() => Boolean(book && getUserData().wishlist?.includes(book.id)));
   
   if (!book) return null;
   
@@ -107,14 +111,21 @@ const HeroBanner = ({ book }) => {
               <Button
                 size="lg"
                 variant="outline"
+                onClick={() => { addToLibrary(book.id); setOwned(true); }}
+                disabled={owned}
                 leftIcon={<Plus className="w-5 h-5" />}
                 className="border-audible-gray-300 text-audible-text-primary hover:bg-audible-gray-50 px-6 py-3"
               >
-                Add to Library
+                {owned ? 'In Library' : 'Add to Library'}
               </Button>
 
-              <button className="p-3 text-audible-gray-600 hover:text-audible-orange transition-colors" aria-label="Add to wishlist">
-                <Heart className="w-6 h-6" />
+              <button
+                onClick={() => setWishlisted(toggleWishlist(book.id))}
+                aria-pressed={wishlisted}
+                className="p-3 text-audible-gray-600 hover:text-audible-orange transition-colors"
+                aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+              >
+                <Heart className="w-6 h-6" fill={wishlisted ? 'currentColor' : 'none'} />
               </button>
             </div>
           </div>

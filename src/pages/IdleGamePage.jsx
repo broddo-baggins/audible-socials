@@ -125,6 +125,7 @@ const IdleGamePage = () => {
             <div className="flex items-center gap-4">
               <Link
                 to="/"
+                aria-label="Back to home"
                 className="p-2 hover:bg-white/10 rounded-lg transition-colors"
               >
                 <ArrowLeft className="w-6 h-6" />
@@ -250,7 +251,7 @@ const IdleGamePage = () => {
                 </span>
               </div>
 
-                <div className="space-y-3 max-h-96 overflow-y-auto">
+                <div className="space-y-3 max-h-96 overflow-y-auto" tabIndex={0} role="region" aria-label="Achievements">
                 {/* Unlocked Achievements */}
                 {unlockedAchievements.map((achievement, index) => (
                   <motion.div

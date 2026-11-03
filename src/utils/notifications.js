@@ -72,17 +72,6 @@ export const createNotification = (notification) => {
   return { success: true, notification: newNotification };
 };
 
-export const createFriendRequestNotification = (fromUserId, toUserId, fromUserName) => {
-  return createNotification({
-    userId: toUserId,
-    type: 'friend_request',
-    title: 'New Friend Request',
-    message: `${fromUserName} wants to connect with you`,
-    actionUrl: '/clubs/friends',
-    actionData: { fromUserId }
-  });
-};
-
 export const createFriendAcceptedNotification = (userId, acceptedUserName) => {
   return createNotification({
     userId,
@@ -100,49 +89,6 @@ export const createFriendRejectedNotification = (userId, rejectedUserName) => {
     title: 'Friend Request Declined',
     message: `${rejectedUserName} declined your friend request`,
     actionUrl: '/clubs/friends'
-  });
-};
-
-export const createRecommendationNotification = (userId, friendName, bookId, bookTitle, rating) => {
-  return createNotification({
-    userId,
-    type: 'friend_recommendation',
-    title: 'Your Friend Recommends a Book',
-    message: `${friendName} rated '${bookTitle}' ${rating} stars`,
-    actionUrl: `/book/${bookId}`,
-    actionData: { bookId, rating }
-  });
-};
-
-export const createEventReminderNotification = (userId, clubId, eventTitle, minutesUntil) => {
-  return createNotification({
-    userId,
-    type: 'club_event_reminder',
-    title: 'Event Starting Soon',
-    message: `${eventTitle} starts in ${minutesUntil} minutes`,
-    actionUrl: `/club/${clubId}`,
-    actionData: { clubId }
-  });
-};
-
-export const createTrendingNotification = (userId, bookTitle, friendCount) => {
-  return createNotification({
-    userId,
-    type: 'trending_among_friends',
-    title: 'Trending with Friends',
-    message: `${friendCount} of your friends are listening to '${bookTitle}'`,
-    actionUrl: '/clubs/activity'
-  });
-};
-
-export const createBadgeNotification = (userId, badgeName, badgeId) => {
-  return createNotification({
-    userId,
-    type: 'badge_earned',
-    title: 'Badge Unlocked',
-    message: `You earned the '${badgeName}' badge`,
-    actionUrl: '/profile',
-    actionData: { badgeId }
   });
 };
 

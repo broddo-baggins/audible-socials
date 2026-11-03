@@ -286,19 +286,3 @@ IMPORTANT: You have access to real books in the Listenable catalog. Reference th
   }
 };
 
-/**
- * Health check for Grok API
- * @returns {Promise<boolean>} True if API is accessible
- */
-export const checkGrokAPIHealth = async () => {
-  try {
-    await callGrokAPI([
-      { role: 'user', content: 'Hi' }
-    ], { maxTokens: 10 });
-    return true;
-  } catch (error) {
-    console.error('Grok API health check failed:', error);
-    return false;
-  }
-};
-

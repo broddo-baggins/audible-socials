@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Users, Trophy, Clock, Target, Zap, Sword, BookOpen } from 'lucide-react';
 import { joinBattle, getUserData } from '../../utils/localStorage';
+import { hasJoinedBattle } from '../../utils/battles';
 
-export default function BattleCard({ battle, compact = false }) {
+export default function BattleCard({ battle, compact = false, showDetailsLink = true }) {
   const [isJoining, setIsJoining] = useState(false);
   const userData = getUserData();
-  const isParticipant = battle.participants?.includes(userData?.id);
+  const [isParticipant, setIsParticipant] = useState(() => hasJoinedBattle(battle, userData?.id));
   const isActive = battle.status === 'active';
   const isUpcoming = battle.status === 'upcoming';
 
@@ -38,7 +39,7 @@ export default function BattleCard({ battle, compact = false }) {
       // Mock API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       joinBattle(battle.id);
-      // Update local state would happen here
+      setIsParticipant(true);
     } catch (error) {
       console.error('Failed to join battle:', error);
     } finally {
@@ -209,12 +210,12 @@ export default function BattleCard({ battle, compact = false }) {
 
         {/* Action Button */}
         <div className="flex space-x-3">
-          <Link
+          {showDetailsLink && <Link
             to={`/battle/${battle.id}`}
             className="flex-1 bg-gray-100 text-gray-700 px-4 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-center"
           >
             View Details
-          </Link>
+          </Link>}
           <button
             onClick={handleJoinBattle}
             disabled={isParticipant || !isActive || isJoining}

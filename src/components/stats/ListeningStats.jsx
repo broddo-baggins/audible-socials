@@ -1,8 +1,20 @@
 import { Clock, BookOpen, TrendingUp, Award, Calendar, Flame } from 'lucide-react';
 import { Card, Badge } from '../ui';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
+// Sample listening hours per period for the activity chart
+const ACTIVITY = {
+  week: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], hours: [3.2, 4.5, 2.8, 5.1, 4.2, 6.3, 5.8] },
+  month: { labels: ['Wk 1', 'Wk 2', 'Wk 3', 'Wk 4'], hours: [24.5, 31.2, 19.8, 27.4] },
+  year: { labels: ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'], hours: [92, 85, 110, 98, 120, 134, 141, 128, 105, 99, 87, 115] },
+};
+const PERIODS = [['week', 'Week'], ['month', 'Month'], ['year', 'Year']];
+
 const ListeningStats = ({ stats }) => {
+  const [period, setPeriod] = useState('week');
+  const activity = ACTIVITY[period];
+  const maxHours = Math.max(...activity.hours);
   const {
     hoursListened = 0,
     booksFinished = 0,
@@ -83,23 +95,23 @@ const ListeningStats = ({ stats }) => {
             Listening Activity
           </h3>
           <div className="flex gap-2">
-            <button className="px-3 py-1 text-sm rounded-lg bg-echo-orange text-white">
-              Week
-            </button>
-            <button className="px-3 py-1 text-sm rounded-lg text-echo-text-secondary hover:bg-echo-beige">
-              Month
-            </button>
-            <button className="px-3 py-1 text-sm rounded-lg text-echo-text-secondary hover:bg-echo-beige">
-              Year
-            </button>
+            {PERIODS.map(([id, label]) => (
+              <button
+                key={id}
+                onClick={() => setPeriod(id)}
+                aria-pressed={period === id}
+                className={`px-3 py-1 text-sm rounded-lg ${period === id ? 'bg-echo-orange text-white' : 'text-echo-text-secondary hover:bg-echo-beige'}`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
         
         {/* Simple bar chart visualization */}
         <div className="h-48 flex items-end justify-between gap-2">
-          {[3.2, 4.5, 2.8, 5.1, 4.2, 6.3, 5.8].map((hours, index) => {
-            const height = (hours / 7) * 100;
-            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+          {activity.hours.map((hours, index) => {
+            const height = (hours / maxHours) * 100;
             return (
               <div key={index} className="flex-1 flex flex-col items-center gap-2">
                 <div className="w-full bg-echo-beige rounded-t-lg relative" style={{ height: `${height}%`, minHeight: '20px' }}>
@@ -109,7 +121,7 @@ const ListeningStats = ({ stats }) => {
                   />
                 </div>
                 <div className="text-xs text-echo-text-tertiary">
-                  {days[index]}
+                  {activity.labels[index]}
                 </div>
               </div>
             );

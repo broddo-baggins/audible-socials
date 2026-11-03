@@ -1,19 +1,16 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Sword, Trophy, Users, Zap, Target, Plus, Filter, Search } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Sword, Trophy, Users, Zap, Target, Filter, Search } from 'lucide-react';
 import BattleCard from '../components/battles/BattleCard';
 import BattleLeaderboard from '../components/battles/BattleLeaderboard';
-import bookBattlesData from '../data/bookBattles.json';
+import { getBattles } from '../utils/battles';
 
 export default function Battles() {
-  const [battles, setBattles] = useState([]);
+  const navigate = useNavigate();
+  const [battles] = useState(() => getBattles());
   const [activeTab, setActiveTab] = useState('active');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
-
-  useEffect(() => {
-    setBattles(bookBattlesData);
-  }, []);
 
   const filteredBattles = battles.filter(battle => {
     const matchesTab =
@@ -82,14 +79,7 @@ export default function Battles() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/create-battle"
-              className="bg-white text-purple-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
-            >
-              <Plus className="w-6 h-6 mr-2" />
-              Create Battle
-            </Link>
-            <button className="bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-colors border-2 border-white/30">
+            <button onClick={() => navigate('/clubs/friends')} className="bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-colors border-2 border-white/30">
               Find Friends to Battle
             </button>
           </div>
@@ -162,12 +152,12 @@ export default function Battles() {
             <Sword className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-600 mb-2">No battles found</h3>
             <p className="text-gray-500 mb-6">Try adjusting your search or filter criteria</p>
-            <Link
-              to="/create-battle"
+            <button
+              onClick={() => { setActiveTab('all'); setSearchQuery(''); setFilterType('all'); }}
               className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
             >
-              Create Your First Battle
-            </Link>
+              Show all battles
+            </button>
           </div>
         )}
 

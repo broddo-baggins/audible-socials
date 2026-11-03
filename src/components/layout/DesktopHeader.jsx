@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { getUserData, signOut } from '../../utils/localStorage';
 import { Search, Bell, ChevronDown, User, Settings, HelpCircle, LogOut } from 'lucide-react';
 
 const DesktopHeader = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef(null);
@@ -29,7 +31,7 @@ const DesktopHeader = () => {
     name: 'Alex Morgan',
     email: 'alex@example.com',
     avatar: null,
-    credits: 2,
+    credits: getUserData().credits ?? 0,
   };
   
   
@@ -47,7 +49,7 @@ const DesktopHeader = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
   
@@ -91,6 +93,7 @@ const DesktopHeader = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-audible-gray-400" />
                 <input
                   type="search"
+                  aria-label="Search"
                   placeholder="Search Audible"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -105,7 +108,7 @@ const DesktopHeader = () => {
             </div>
 
             {/* Mobile Search Button */}
-            <button className="md:hidden p-2 text-audible-gray-600 hover:text-audible-orange">
+            <button onClick={() => navigate('/search')} aria-label="Search" className="md:hidden p-2 text-audible-gray-600 hover:text-audible-orange">
               <Search className="w-5 h-5" />
             </button>
 
@@ -113,6 +116,8 @@ const DesktopHeader = () => {
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
+                aria-label="Account menu"
+                aria-expanded={showUserMenu}
                 className="flex items-center space-x-1 p-2 rounded-md hover:bg-audible-gray-50 transition-colors"
               >
                 <div className="w-8 h-8 bg-audible-orange rounded-full flex items-center justify-center text-white font-medium text-sm">
@@ -144,7 +149,10 @@ const DesktopHeader = () => {
                   </div>
 
                   <div className="border-t border-audible-gray-200 py-1">
-                    <button className="flex items-center w-full px-4 py-2 text-sm text-audible-text-primary hover:bg-audible-gray-50 transition-colors">
+                    <button
+                      onClick={() => { signOut(); setShowUserMenu(false); navigate('/'); }}
+                      className="flex items-center w-full px-4 py-2 text-sm text-audible-text-primary hover:bg-audible-gray-50 transition-colors"
+                    >
                       <LogOut className="w-4 h-4 mr-3" />
                       Sign Out
                     </button>

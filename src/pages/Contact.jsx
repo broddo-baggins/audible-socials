@@ -22,8 +22,7 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // In a real app, this would submit to an API
-    console.log('Form submitted:', formData);
+    // Mock project: there is no backend to submit to
     setIsSubmitted(true);
     setTimeout(() => {
       setFormData({
@@ -140,11 +139,12 @@ const Contact = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-audible-text-primary mb-2">
+                    <label htmlFor="contact-name" className="block text-sm font-medium text-audible-text-primary mb-2">
                       Full Name *
                     </label>
                     <input
                       type="text"
+                      id="contact-name"
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
@@ -153,11 +153,12 @@ const Contact = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-audible-text-primary mb-2">
+                    <label htmlFor="contact-email" className="block text-sm font-medium text-audible-text-primary mb-2">
                       Email Address *
                     </label>
                     <input
                       type="email"
+                      id="contact-email"
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
@@ -168,10 +169,11 @@ const Contact = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-audible-text-primary mb-2">
+                  <label htmlFor="contact-category" className="block text-sm font-medium text-audible-text-primary mb-2">
                     Category *
                   </label>
                   <select
+                    id="contact-category"
                     name="category"
                     value={formData.category}
                     onChange={handleInputChange}
@@ -188,11 +190,12 @@ const Contact = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-audible-text-primary mb-2">
+                  <label htmlFor="contact-subject" className="block text-sm font-medium text-audible-text-primary mb-2">
                     Subject *
                   </label>
                   <input
                     type="text"
+                    id="contact-subject"
                     name="subject"
                     value={formData.subject}
                     onChange={handleInputChange}
@@ -202,10 +205,11 @@ const Contact = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-audible-text-primary mb-2">
+                  <label htmlFor="contact-message" className="block text-sm font-medium text-audible-text-primary mb-2">
                     Message *
                   </label>
                   <textarea
+                    id="contact-message"
                     name="message"
                     value={formData.message}
                     onChange={handleInputChange}
@@ -252,7 +256,11 @@ const Contact = () => {
                       <p className="text-sm text-audible-text-secondary mb-4">
                         {method.response}
                       </p>
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => document.getElementById('contact-name')?.focus()}
+                      >
                         {method.action}
                       </Button>
                     </div>

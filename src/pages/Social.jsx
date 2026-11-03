@@ -5,13 +5,20 @@ import SocialNudges from '../components/social/SocialNudges';
 import BadgeDisplay from '../components/badges/BadgeDisplay';
 import { Card } from '../components/ui';
 import { getUserData, getFriends, getJoinedClubs } from '../utils/localStorage';
-import { getFriendsOfFriends } from '../utils/friendManagement';
+import { getFriendsOfFriends, getSentRequests, sendFriendRequest } from '../utils/friendManagement';
 import usersData from '../data/users.json';
 import clubsData from '../data/clubs.json';
 import booksData from '../data/books.json';
 
 const Social = () => {
   const [userData, setUserData] = useState(null);
+  const [requested, setRequested] = useState(() => new Set(getSentRequests().map(r => r.toUserId)));
+  const handleAddFriend = (userId) => {
+    const result = sendFriendRequest(userId, '', 'friends_of_friends');
+    if (result.success || result.error === 'Request already exists') {
+      setRequested(prev => new Set(prev).add(userId));
+    }
+  };
   const [friends, setFriends] = useState([]);
   const [friendsOfFriends, setFriendsOfFriends] = useState([]);
   const [featuredClubs, setFeaturedClubs] = useState([]);
@@ -223,8 +230,12 @@ const Social = () => {
                           </p>
                         </div>
                       </div>
-                      <button className="w-full bg-indigo-600 text-white text-xs font-semibold py-2 rounded hover:bg-indigo-700 transition-colors">
-                        Add Friend
+                      <button
+                        onClick={() => handleAddFriend(user.id)}
+                        disabled={requested.has(user.id)}
+                        className="w-full bg-indigo-600 text-white text-xs font-semibold py-2 rounded hover:bg-indigo-700 transition-colors disabled:opacity-60"
+                      >
+                        {requested.has(user.id) ? 'Request Sent' : 'Add Friend'}
                       </button>
                     </div>
                   ))}

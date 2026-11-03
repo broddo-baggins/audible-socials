@@ -52,7 +52,7 @@ const Rating = ({
         onKeyDown={(e) => handleKeyDown(e, starValue)}
         role={interactive ? 'button' : undefined}
         tabIndex={interactive ? 0 : undefined}
-        aria-label={`${starValue} star${starValue > 1 ? 's' : ''}`}
+        aria-label={interactive ? `${starValue} star${starValue > 1 ? 's' : ''}` : undefined}
       >
         {halfFilled ? (
           <div className="relative">
@@ -72,13 +72,13 @@ const Rating = ({
   
   return (
     <div className={`flex items-center gap-1.5 ${className}`}>
-      <div className="flex items-center gap-0.5" role="img" aria-label={`Rating: ${value} out of ${max} stars`}>
+      <div className="flex items-center gap-0.5" role={interactive ? 'group' : 'img'} aria-label={`Rating: ${value} out of ${max} stars`}>
         {Array.from({ length: max }, (_, i) => renderStar(i))}
       </div>
       
       {showValue && (
         <span className={`${textSizes[size]} font-medium text-audible-text-primary ml-1`}>
-          {value.toFixed(1)}
+          {Number(value).toFixed(1)}
         </span>
       )}
 

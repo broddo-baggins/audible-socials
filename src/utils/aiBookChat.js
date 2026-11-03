@@ -160,22 +160,6 @@ const getRandomThemes = () => {
 };
 
 /**
- * Check if question might contain spoilers
- * @param {string} question - User's question
- * @returns {boolean} True if question might reveal spoilers
- */
-export const hasSpoilerRisk = (question) => {
-  const spoilerKeywords = [
-    'dies', 'death', 'killed', 'ending', 'end', 'final', 'conclusion',
-    'reveal', 'twist', 'surprise', 'happens', 'what if', 'why did',
-    'spoiler', 'plot', 'outcome', 'result', 'fate', 'becomes',
-  ];
-
-  const lowerQuestion = question.toLowerCase();
-  return spoilerKeywords.some(keyword => lowerQuestion.includes(keyword));
-};
-
-/**
  * Get reading progress for a book
  * @param {string} bookId - Book ID
  * @returns {number} Progress percentage (0-100)
@@ -183,18 +167,5 @@ export const hasSpoilerRisk = (question) => {
 export const getReadingProgress = (bookId) => {
   const userProgress = getFromLocalStorage('userProgress') || {};
   return userProgress[bookId]?.progress || 0;
-};
-
-/**
- * Determine if spoilers are safe based on progress
- * @param {string} bookId - Book ID
- * @param {number} spoilerChapter - Chapter where spoiler occurs
- * @returns {boolean} True if user has passed spoiler point
- */
-export const isSpoilerSafe = (bookId, spoilerChapter) => {
-  const progress = getReadingProgress(bookId);
-  // Assume book has 20 chapters, calculate percentage
-  const chapterProgress = (spoilerChapter / 20) * 100;
-  return progress >= chapterProgress;
 };
 

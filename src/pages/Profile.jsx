@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { User, Crown, CreditCard, Users, BookOpen, Settings, LogOut, Trophy, TrendingUp } from 'lucide-react';
-import { getUserData, getJoinedClubs, getFriends } from '../utils/localStorage';
+import { getUserData, getJoinedClubs, getFriends, setPremium, signOut } from '../utils/localStorage';
 import clubsData from '../data/clubs.json';
 import usersData from '../data/users.json';
 import PrivacySettings from '../components/settings/PrivacySettings';
@@ -12,7 +12,20 @@ export default function Profile() {
   const [userData, setUserData] = useState(null);
   const [joinedClubs, setJoinedClubs] = useState([]);
   const [friends, setFriends] = useState([]);
-  const [activeTab, setActiveTab] = useState('overview');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState(location.hash === '#privacy' ? 'settings' : 'overview');
+
+  const changePlan = (premium) => {
+    if (!premium && !window.confirm('Cancel your Premium membership?')) return;
+    setPremium(premium);
+    setUserData(getUserData());
+  };
+
+  const handleSignOut = () => {
+    signOut();
+    navigate('/');
+  };
 
   useEffect(() => {
     const user = getUserData();
@@ -99,9 +112,9 @@ export default function Profile() {
             </div>
 
             {/* Settings Button */}
-            <button className="p-2 text-gray-600 hover:text-audible-orange transition-colors">
+            <Link to="/settings" aria-label="Settings" className="p-2 text-gray-600 hover:text-audible-orange transition-colors">
               <Settings className="w-6 h-6" />
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -177,7 +190,7 @@ export default function Profile() {
                     Unlimited access to premium book clubs and exclusive content
                   </p>
                 </div>
-                <button className="bg-white text-audible-gold px-4 py-2 rounded-full font-semibold hover:bg-gray-100 transition-colors">
+                <button onClick={() => changePlan(false)} className="bg-white text-audible-gold px-4 py-2 rounded-full font-semibold hover:bg-gray-100 transition-colors">
                   Manage
                 </button>
               </div>
@@ -204,7 +217,7 @@ export default function Profile() {
                   Exclusive author events
                 </li>
               </ul>
-              <button className="bg-audible-orange text-white px-6 py-3 rounded-full font-semibold hover:bg-audible-orange-dark transition-colors">
+              <button onClick={() => changePlan(true)} className="bg-audible-orange text-white px-6 py-3 rounded-full font-semibold hover:bg-audible-orange-dark transition-colors">
                 Upgrade Now
               </button>
             </div>
@@ -341,7 +354,7 @@ export default function Profile() {
           <div className="space-y-6">
             <PrivacySettings />
             
-            <button className="w-full bg-white rounded-xl border border-gray-200 shadow-sm p-4 text-red-500 font-semibold hover:bg-red-50 transition-colors flex items-center justify-center space-x-2">
+            <button onClick={handleSignOut} className="w-full bg-white rounded-xl border border-gray-200 shadow-sm p-4 text-red-500 font-semibold hover:bg-red-50 transition-colors flex items-center justify-center space-x-2">
               <LogOut className="w-5 h-5" />
               <span>Sign Out</span>
             </button>

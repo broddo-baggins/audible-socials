@@ -70,7 +70,7 @@ const IdleAchievements = ({ gameState, showAchievements, onToggleAchievements })
             </div>
 
             {/* Achievement Grid */}
-            <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto pr-2">
+            <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto pr-2" tabIndex={0} role="region" aria-label="Achievement list">
               {Object.entries(ACHIEVEMENTS).map(([id, achievement]) => {
                 const isEarned = gameState.achievements.includes(id);
 

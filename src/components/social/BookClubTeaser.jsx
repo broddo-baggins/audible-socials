@@ -1,63 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { Users, Calendar, MessageCircle, BookOpen } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, Badge, Button } from '../ui';
 import PropTypes from 'prop-types';
+import clubsData from '../../data/clubs.json';
+import booksData from '../../data/books.json';
 
 const BookClubTeaser = ({ bookId }) => {
-  const [clubs, setClubs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  
-  useEffect(() => {
-    const loadClubs = async () => {
-      try {
-        // Load book clubs data
-        const clubsResponse = await fetch('/src/data/clubs.json');
-        const clubsData = await clubsResponse.json();
-        
-        // Load books to find the current one
-        const booksResponse = await fetch('/src/data/books.json');
-        const booksData = await booksResponse.json();
-        const currentBook = booksData.find(b => b.id === bookId);
-        
-        if (!currentBook) {
-          setClubs([]);
-          setLoading(false);
-          return;
-        }
-        
-        // Filter clubs that are reading this book or match the genre
-        const relevantClubs = clubsData
-          .filter(club => 
-            club.currentBook === bookId || 
-            club.genre === currentBook.genre ||
-            (currentBook.clubs && currentBook.clubs.includes(club.id))
-          )
-          .slice(0, 3);
-        
-        setClubs(relevantClubs);
-      } catch (error) {
-        console.error('Failed to load book clubs:', error);
-        setClubs([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadClubs();
+  const navigate = useNavigate();
+  const clubs = useMemo(() => {
+    const currentBook = booksData.find(b => b.id === bookId);
+    if (!currentBook) return [];
+
+    // Clubs that are reading this book or match the genre
+    return clubsData
+      .filter(club =>
+        club.currentBook === bookId ||
+        club.genre === currentBook.genre ||
+        (currentBook.clubs && currentBook.clubs.includes(club.id))
+      )
+      .slice(0, 3);
   }, [bookId]);
-  
-  if (loading) {
-    return (
-      <Card className="p-4">
-        <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-echo-beige rounded w-1/3" />
-          <div className="h-20 bg-echo-beige rounded" />
-        </div>
-      </Card>
-    );
-  }
-  
+
   if (clubs.length === 0) {
     return null;
   }
@@ -78,7 +42,7 @@ const BookClubTeaser = ({ bookId }) => {
             <div className="flex items-start justify-between gap-3 mb-2">
               <div className="flex-1 min-w-0">
                 <Link
-                  to={`/clubs/${club.id}`}
+                  to={`/club/${club.id}`}
                   className="text-base font-semibold text-echo-text-primary hover:text-echo-orange transition-colors block"
                 >
                   {club.name}
@@ -119,8 +83,7 @@ const BookClubTeaser = ({ bookId }) => {
             <Button
               variant="outline"
               size="sm"
-              as={Link}
-              to={`/clubs/${club.id}`}
+              onClick={() => navigate(`/club/${club.id}`)}
             >
               Join Discussion
             </Button>

@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Trophy, Medal, Award, Crown, Star, BookOpen, Flame, Clock } from 'lucide-react';
 
-export default function BattleLeaderboard({ leaderboard, battleType, showFull = false }) {
+export default function BattleLeaderboard({ leaderboard, battleType, showFull: showFullInitially = false }) {
+  const [showFull, setShowFull] = useState(showFullInitially);
   const getRankIcon = (rank) => {
     switch (rank) {
       case 1:
@@ -160,7 +162,7 @@ export default function BattleLeaderboard({ leaderboard, battleType, showFull = 
       {/* Footer */}
       {!showFull && leaderboard && leaderboard.length > 10 && (
         <div className="p-4 bg-gray-50 border-t border-gray-200 text-center">
-          <button className="text-purple-600 hover:text-purple-700 font-semibold text-sm">
+          <button onClick={() => setShowFull(true)} className="text-purple-600 hover:text-purple-700 font-semibold text-sm">
             View Full Leaderboard ({leaderboard.length - 10} more participants)
           </button>
         </div>

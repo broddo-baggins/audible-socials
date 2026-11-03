@@ -280,21 +280,12 @@ export const updateIdleGameState = (updates) => {
   return newState;
 };
 
-export const getExperienceToNextLevel = (currentLevel) => {
-  return currentLevel * 1000; // 1000 XP per level
-};
-
 export const getExperienceProgress = (currentExperience, currentLevel) => {
   const currentLevelXP = (currentLevel - 1) * 1000;
   const nextLevelXP = currentLevel * 1000;
   const progressXP = currentExperience - currentLevelXP;
   const neededXP = nextLevelXP - currentLevelXP;
   return Math.min((progressXP / neededXP) * 100, 100);
-};
-
-// Get upgrades by category
-export const getUpgradesByCategory = (category) => {
-  return Object.values(UPGRADES).filter(u => u.category === category);
 };
 
 // Check if upgrade is available for purchase

@@ -52,34 +52,3 @@ export async function fetchGoogleImagesCover(bookId, coverQuery, genre) {
   }
 }
 
-/**
- * Preload covers for multiple books
- */
-export async function preloadBookCovers(books) {
-  const promises = books.map(book => 
-    fetchGoogleImagesCover(book.id, book.coverQuery, book.genre)
-  );
-  
-  try {
-    await Promise.all(promises);
-  } catch (error) {
-    console.error('Error preloading book covers:', error);
-  }
-}
-
-/**
- * Get optimized image URL for mobile
- */
-export function getOptimizedImageUrl(url, isMobile = false) {
-  if (!url) return FALLBACK_IMAGES.default;
-  
-  // For Unsplash images, we can adjust the size
-  if (url.includes('unsplash.com')) {
-    const width = isMobile ? 300 : 400;
-    const height = isMobile ? 450 : 600;
-    return url.replace(/w=\d+/, `w=${width}`).replace(/h=\d+/, `h=${height}`);
-  }
-  
-  return url;
-}
-

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, Bell, User, Menu } from 'lucide-react';
 import { getUserData } from '../../utils/localStorage';
 import { getUnreadCount } from '../../utils/notifications';
@@ -7,29 +7,28 @@ import NotificationCenter from '../notifications/NotificationCenter';
 
 export default function TabletHeader() {
   const location = useLocation();
-  const [userData, setUserData] = useState(null);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const navigate = useNavigate();
+  const [userData] = useState(getUserData);
+  const [unreadCount, setUnreadCount] = useState(getUnreadCount);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-
-  React.useEffect(() => {
-    setUserData(getUserData());
-    updateUnreadCount();
-    const interval = setInterval(updateUnreadCount, 30000);
-    return () => clearInterval(interval);
-  }, []);
 
   const updateUnreadCount = () => {
     setUnreadCount(getUnreadCount());
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => setUnreadCount(getUnreadCount()), 30000);
+    return () => clearInterval(interval);
+  }, []);
+
   const isActive = (path) => {
-    return location.pathname === path || location.pathname.startsWith(path);
+    return path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
   };
 
   const navItems = [
     { path: '/', label: 'Home' },
     { path: '/library', label: 'Library' },
-    { path: '/discover', label: 'Discover' },
+    { path: '/browse', label: 'Discover' },
     { path: '/battles', label: 'Battles' },
     { path: '/clubs', label: 'Socials' },
   ];
@@ -65,7 +64,7 @@ export default function TabletHeader() {
           {/* Right Side Actions - Compact for Tablet */}
           <div className="flex items-center space-x-3">
             {/* Search Icon */}
-            <button className="p-2 text-gray-700 hover:text-audible-orange transition-colors">
+            <button onClick={() => navigate('/search')} aria-label="Search" className="p-2 text-gray-700 hover:text-audible-orange transition-colors">
               <Search className="w-5 h-5" />
             </button>
 
@@ -84,6 +83,7 @@ export default function TabletHeader() {
             {/* Notifications */}
             <button
               onClick={() => setIsNotificationsOpen(true)}
+              aria-label={unreadCount > 0 ? `Notifications (${unreadCount} unread)` : 'Notifications'}
               className="relative p-2 text-gray-700 hover:text-audible-orange transition-colors"
             >
               <Bell className="w-5 h-5" />
@@ -97,6 +97,7 @@ export default function TabletHeader() {
             {/* Profile */}
             <Link
               to="/profile"
+              aria-label="Profile"
               className="p-2 text-gray-700 hover:text-audible-orange transition-colors"
             >
               <User className="w-5 h-5" />

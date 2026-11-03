@@ -1,81 +1,56 @@
-import { useState, useEffect } from 'react';
-import { Users, ThumbsUp, MessageCircle } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Users, ThumbsUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, Badge, Rating } from '../ui';
 import PropTypes from 'prop-types';
+import users from '../../data/users.json';
+import books from '../../data/books.json';
+import { getFriends } from '../../utils/localStorage';
+
+// Stable pseudo-random number per (user, book) so ratings don't change on re-render.
+const seeded = (...parts) => {
+  let h = 0;
+  for (const ch of parts.join(':')) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return (h % 1000) / 1000;
+};
+
+const generateComment = (user, book) => {
+  const comments = [
+    `Amazing ${book.genre.toLowerCase()} story! Couldn't stop listening.`,
+    `The narrator really brings this one to life. Highly recommend!`,
+    `One of the best ${book.genre.toLowerCase()} books I've listened to this year.`,
+    `Fantastic world-building and character development.`,
+    `This book kept me hooked from start to finish!`,
+    `Perfect for fans of ${book.genre.toLowerCase()}. You won't be disappointed.`,
+    `The plot twists in this one are incredible!`,
+    `Been recommending this to everyone. A must-listen!`,
+  ];
+  return comments[Math.floor(seeded(user.id, book.id, 'comment') * comments.length)];
+};
 
 const FriendRecommendations = ({ bookId, limit = 5 }) => {
-  const [recommendations, setRecommendations] = useState([]);
-  const [loading, setLoading] = useState(true);
-  
-  useEffect(() => {
-    const loadRecommendations = async () => {
-      try {
-        // Load mock users and books
-        const usersResponse = await fetch('/src/data/mockUsers.json');
-        const users = await usersResponse.json();
-        
-        const booksResponse = await fetch('/src/data/books.json');
-        const books = await booksResponse.json();
-        
-        // Find the current book
-        const currentBook = books.find(b => b.id === bookId);
-        
-        if (!currentBook) {
-          setRecommendations([]);
-          setLoading(false);
-          return;
-        }
-        
-        // Simulate friend recommendations based on genre preferences
-        const friendRecs = users
-          .filter(user => user.favoriteGenres.includes(currentBook.genre))
-          .filter(user => user.currentlyReading.includes(bookId))
-          .slice(0, limit)
-          .map(user => ({
-            ...user,
-            rating: (4.0 + Math.random() * 1).toFixed(1),
-            comment: generateComment(user, currentBook),
-            daysAgo: Math.floor(Math.random() * 14) + 1,
-          }));
-        
-        setRecommendations(friendRecs);
-      } catch (error) {
-        console.error('Failed to load recommendations:', error);
-        setRecommendations([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadRecommendations();
-  }, [bookId, limit]);
-  
-  const generateComment = (user, book) => {
-    const comments = [
-      `Amazing ${book.genre.toLowerCase()} story! Couldn't stop listening.`,
-      `The narrator really brings this one to life. Highly recommend!`,
-      `One of the best ${book.genre.toLowerCase()} books I've listened to this year.`,
-      `Fantastic world-building and character development.`,
-      `This book kept me hooked from start to finish!`,
-      `Perfect for fans of ${book.genre.toLowerCase()}. You won't be disappointed.`,
-      `The plot twists in this one are incredible!`,
-      `Been recommending this to everyone. A must-listen!`,
-    ];
-    return comments[Math.floor(Math.random() * comments.length)];
-  };
-  
-  if (loading) {
-    return (
-      <Card className="p-4">
-        <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-echo-beige rounded w-1/3" />
-          <div className="h-12 bg-echo-beige rounded" />
-        </div>
-      </Card>
-    );
-  }
-  
+  const [showAll, setShowAll] = useState(false);
+  const [liked, setLiked] = useState({});
+
+  const allRecommendations = useMemo(() => {
+    const currentBook = books.find(b => b.id === bookId);
+    if (!currentBook) return [];
+    const friendIds = getFriends();
+
+    // Friends who own or are listening to this book
+    return users
+      .filter(user => friendIds.includes(user.id))
+      .filter(user => user.library?.includes(bookId) || user.currentlyReading === bookId)
+      .map(user => ({
+        ...user,
+        rating: Number(user.ratings?.[bookId] ?? 4.0 + seeded(user.id, bookId, 'rating')).toFixed(1),
+        likes: Math.floor(seeded(user.id, bookId, 'likes') * 20) + 5,
+        comment: generateComment(user, currentBook),
+        daysAgo: Math.floor(seeded(user.id, bookId, 'days') * 14) + 1,
+      }));
+  }, [bookId]);
+  const recommendations = showAll ? allRecommendations : allRecommendations.slice(0, limit);
+
   if (recommendations.length === 0) {
     return null;
   }
@@ -105,13 +80,13 @@ const FriendRecommendations = ({ bookId, limit = 5 }) => {
               <div className="flex items-start justify-between gap-2 mb-1">
                 <div className="min-w-0">
                   <Link 
-                    to={`/profile/${friend.id}`}
+                    to={`/friend/${friend.id}/library`}
                     className="font-medium text-echo-text-primary hover:text-echo-orange transition-colors"
                   >
                     {friend.name}
                   </Link>
                   <p className="text-xs text-echo-text-tertiary">
-                    @{friend.username}
+                    Your friend
                   </p>
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
@@ -128,13 +103,14 @@ const FriendRecommendations = ({ bookId, limit = 5 }) => {
               
               <div className="flex items-center gap-4 text-xs text-echo-text-tertiary">
                 <span>{friend.daysAgo}d ago</span>
-                <button className="flex items-center gap-1 hover:text-echo-orange transition-colors">
+                <button
+                  onClick={() => setLiked(prev => ({ ...prev, [friend.id]: !prev[friend.id] }))}
+                  aria-pressed={Boolean(liked[friend.id])}
+                  aria-label={`Like ${friend.name}'s review`}
+                  className={`flex items-center gap-1 hover:text-echo-orange transition-colors ${liked[friend.id] ? 'text-echo-orange' : ''}`}
+                >
                   <ThumbsUp className="w-3 h-3" />
-                  <span>{Math.floor(Math.random() * 20) + 5}</span>
-                </button>
-                <button className="flex items-center gap-1 hover:text-echo-orange transition-colors">
-                  <MessageCircle className="w-3 h-3" />
-                  <span>Reply</span>
+                  <span>{friend.likes + (liked[friend.id] ? 1 : 0)}</span>
                 </button>
               </div>
             </div>
@@ -142,9 +118,9 @@ const FriendRecommendations = ({ bookId, limit = 5 }) => {
         ))}
       </div>
       
-      {recommendations.length >= limit && (
-        <button className="mt-4 w-full text-sm text-echo-orange hover:text-echo-orange-dark font-medium transition-colors">
-          View all {recommendations.length + 5} friend reviews
+      {!showAll && allRecommendations.length > limit && (
+        <button onClick={() => setShowAll(true)} className="mt-4 w-full text-sm text-echo-orange hover:text-echo-orange-dark font-medium transition-colors">
+          View all {allRecommendations.length} friend reviews
         </button>
       )}
     </Card>

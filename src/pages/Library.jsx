@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import BookGrid from '../components/books/BookGrid';
 import { BookCardSkeleton } from '../components/ui/Skeleton';
 import booksData from '../data/books.json';
+import { getUserData } from '../utils/localStorage';
 
-const getBookProgress = (bookId) => {
+const getBookProgress = (bookId, user) => {
   const progressKey = `echoread_progress_${bookId}`;
   const saved = localStorage.getItem(progressKey);
   if (saved) {
@@ -11,15 +12,15 @@ const getBookProgress = (bookId) => {
       const progress = JSON.parse(saved);
       return progress.progress || 0;
     } catch (error) {
-      console.error('Error parsing saved progress:', error);
-      return 0;
+      console.warn('Ignoring unreadable saved progress:', error);
     }
   }
-  return Math.floor(Math.random() * 100);
+  if (user.completedBooks?.includes(bookId)) return 100;
+  if (user.currentlyReading === bookId) return user.currentProgress || 0;
+  return 0;
 };
 
-const getBookStatus = (bookId) => {
-  const progress = getBookProgress(bookId);
+const getBookStatus = (progress) => {
   if (progress === 0) return 'Not started';
   if (progress === 100) return 'Finished';
   return 'In progress';
@@ -42,6 +43,7 @@ const getLastListened = (bookId) => {
 
 const Library = () => {
   const [books, setBooks] = useState([]);
+  const [wishlistBooks, setWishlistBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
   const [viewMode, setViewMode] = useState('grid');
@@ -56,15 +58,21 @@ const Library = () => {
   useEffect(() => {
     const loadLibrary = async () => {
       try {
+        const user = getUserData();
+        const byId = (ids = []) => ids.map(id => booksData.find(b => b.id === id)).filter(Boolean);
         // Books already have cover paths in books.json
-        const booksWithProgress = booksData.slice(0, 20).map((book) => ({
-          ...book,
-          progress: getBookProgress(book.id),
-          status: getBookStatus(book.id),
-          lastListened: getLastListened(book.id),
-        }));
-        
+        const booksWithProgress = byId(user.library).map((book) => {
+          const progress = getBookProgress(book.id, user);
+          return {
+            ...book,
+            progress,
+            status: getBookStatus(progress),
+            lastListened: getLastListened(book.id),
+          };
+        });
+
         setBooks(booksWithProgress);
+        setWishlistBooks(byId(user.wishlist));
         setLoading(false);
       } catch (error) {
         console.error('Error loading library:', error);
@@ -82,8 +90,7 @@ const Library = () => {
       case 'podcasts':
         return books.filter(b => b.contentType === 'podcast');
       case 'wishlist':
-        // In a real app, this would filter by wishlist status
-        return books.filter((_, i) => i % 3 === 0);
+        return wishlistBooks;
       default:
         return books;
     }

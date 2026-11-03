@@ -1,21 +1,32 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { User, CreditCard, Settings, Bell, Globe, Shield, HelpCircle, BookOpen, TrendingUp, Award, Users } from 'lucide-react';
 import { Card, Button, Badge } from '../components/ui';
 import ListeningStats from '../components/stats/ListeningStats';
 import BadgeDisplay from '../components/badges/BadgeDisplay';
 import SocialDashboard from '../components/social/SocialDashboard';
+import { getUserData } from '../utils/localStorage';
+
+// Every localStorage key this app writes; used by Download Data and Delete Account.
+const APP_KEY = /^(audible_|echoread_|cookie_preferences|idle)/;
+
+const appStorageEntries = () =>
+  Object.keys(localStorage).filter(key => APP_KEY.test(key)).map(key => [key, localStorage.getItem(key)]);
 
 const Account = () => {
-  const [activeTab, setActiveTab] = useState('profile');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState(location.pathname === '/settings' ? 'settings' : 'profile');
+  const storedUser = getUserData();
 
-  // Mock user data - replace with actual user context
+  // Mock profile details; plan and credits come from the stored user
   const user = {
     name: 'Alex Morgan',
     email: 'alex@example.com',
     avatar: null,
     memberSince: '2023-01-15',
-    plan: 'Premium',
-    credits: 2,
+    plan: storedUser.isPremium ? 'Premium' : 'Standard',
+    credits: storedUser.credits ?? 0,
     creditsUsed: 10,
     renewalDate: '2025-12-12',
     hoursListened: 147,
@@ -80,6 +91,28 @@ const Account = () => {
     },
   ];
   
+  const handleDownloadData = () => {
+    const data = Object.fromEntries(appStorageEntries().map(([key, value]) => {
+      try {
+        return [key, JSON.parse(value)];
+      } catch {
+        return [key, value];
+      }
+    }));
+    const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'listenable-data.json';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDeleteAccount = () => {
+    if (!window.confirm('Delete all your Listenable data from this browser? This cannot be undone.')) return;
+    appStorageEntries().forEach(([key]) => localStorage.removeItem(key));
+    navigate('/');
+  };
+
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'social', label: 'Social', icon: Users },
@@ -143,7 +176,7 @@ const Account = () => {
                       Member since {new Date(user.memberSince).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}
                     </Badge>
                   </div>
-                  <Button variant="outline" leftIcon={<Settings className="w-4 h-4" />}>
+                  <Button variant="outline" onClick={() => navigate('/profile')} leftIcon={<Settings className="w-4 h-4" />}>
                     Edit Profile
                   </Button>
                 </div>
@@ -193,16 +226,16 @@ const Account = () => {
                 Help & Support
               </h2>
               <div className="space-y-3">
-                <Button variant="ghost" fullWidth className="justify-start">
+                <Button variant="ghost" fullWidth className="justify-start" onClick={() => navigate('/faq')}>
                   FAQ
                 </Button>
-                <Button variant="ghost" fullWidth className="justify-start">
+                <Button variant="ghost" fullWidth className="justify-start" onClick={() => navigate('/contact')}>
                   Contact Support
                 </Button>
-                <Button variant="ghost" fullWidth className="justify-start">
+                <Button variant="ghost" fullWidth className="justify-start" onClick={() => navigate('/terms')}>
                   Terms of Service
                 </Button>
-                <Button variant="ghost" fullWidth className="justify-start">
+                <Button variant="ghost" fullWidth className="justify-start" onClick={() => navigate('/privacy')}>
                   Privacy Policy
                 </Button>
               </div>
@@ -237,10 +270,10 @@ const Account = () => {
               </div>
               
               <div className="space-y-3">
-                <Button fullWidth variant="primary">
+                <Button fullWidth variant="primary" onClick={() => navigate('/profile')}>
                   Upgrade Plan
                 </Button>
-                <Button fullWidth variant="outline">
+                <Button fullWidth variant="outline" onClick={() => navigate('/profile')}>
                   Manage Subscription
                 </Button>
               </div>
@@ -341,16 +374,16 @@ const Account = () => {
                   Account Actions
                 </h3>
                 <div className="space-y-3">
-                  <Button fullWidth variant="primary">
+                  <Button fullWidth variant="primary" onClick={() => navigate('/profile')}>
                     Edit Profile
                   </Button>
-                  <Button fullWidth variant="outline">
+                  <Button fullWidth variant="outline" onClick={() => navigate('/profile#privacy')}>
                     Privacy Settings
                   </Button>
-                  <Button fullWidth variant="outline">
+                  <Button fullWidth variant="outline" onClick={handleDownloadData}>
                     Download Data
                   </Button>
-                  <Button fullWidth variant="outline" className="text-red-600 hover:text-red-700">
+                  <Button fullWidth variant="outline" className="text-red-600 hover:text-red-700" onClick={handleDeleteAccount}>
                     Delete Account
                   </Button>
                 </div>
