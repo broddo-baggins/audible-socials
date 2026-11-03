@@ -1,160 +1,232 @@
+/**
+ * AppHeader (file kept as DesktopHeader for its importers): the one header at every width.
+ *
+ * - lg and up: wordmark, the primary nav, search, notifications, credits, account menu.
+ * - below lg: wordmark, search, notifications and a menu button that opens every destination,
+ *   so nothing the old desktop and tablet headers linked to is out of reach.
+ * The active page is marked with a highlighter bar under its label.
+ */
 import { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Search, Bell, ChevronDown, User, Settings, HelpCircle, LogOut } from 'lucide-react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Search, Bell, ChevronDown, User, Settings, HelpCircle, LogOut, Menu, X, UserCircle } from 'lucide-react';
+import { getUserData } from '../../utils/localStorage';
+import { getUnreadCount } from '../../utils/notifications';
+import NotificationCenter from '../notifications/NotificationCenter';
+import Logo from '../ui/Logo';
+
+const primaryNav = [
+  { label: 'Home', path: '/' },
+  { label: 'Browse', path: '/browse' },
+  { label: 'Library', path: '/library' },
+  { label: 'Clubs', path: '/clubs' },
+  { label: 'Social', path: '/social' },
+  { label: 'Battles', path: '/battles' },
+  { label: 'Idle game', path: '/idle' },
+];
+
+const moreNav = [
+  { label: 'Originals', path: '/originals' },
+  { label: 'Podcasts', path: '/podcasts' },
+  { label: 'Discover', path: '/discover' },
+  { label: 'Search', path: '/search' },
+  { label: 'Profile', path: '/profile' },
+  { label: 'Notifications', path: '/notifications' },
+  { label: 'Account', path: '/account' },
+];
+
+const userMenuItems = [
+  { label: 'Profile', path: '/profile', icon: UserCircle },
+  { label: 'Account', path: '/account', icon: User },
+  { label: 'Settings', path: '/settings', icon: Settings },
+  { label: 'Help', path: '/help', icon: HelpCircle },
+];
+
+const iconButton = 'relative inline-flex h-10 w-10 items-center justify-center rounded-full text-ink-2 hover:bg-surface-sunk hover:text-ink';
 
 const DesktopHeader = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [unread, setUnread] = useState(0);
+  const [user, setUser] = useState({ name: 'You', credits: 2 });
   const userMenuRef = useRef(null);
-  
-  const navItems = [
-    { label: 'Home', path: '/' },
-    { label: 'Browse', path: '/browse' },
-    { label: 'Library', path: '/library' },
-    { label: 'Social', path: '/social' },
-    { label: 'Idle Game', path: '/idle' },
-    { label: 'Originals', path: '/originals' },
-    { label: 'Podcasts', path: '/podcasts' },
-  ];
-  
-  const userMenuItems = [
-    { label: 'Account', path: '/account', icon: User },
-    { label: 'Settings', path: '/settings', icon: Settings },
-    { label: 'Help', path: '/help', icon: HelpCircle },
-  ];
-  
-  // Mock user data - replace with actual user context
-  const user = {
-    name: 'Alex Morgan',
-    email: 'alex@example.com',
-    avatar: null,
-    credits: 2,
-  };
-  
-  
+
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
-        setShowUserMenu(false);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    const data = getUserData();
+    if (data) setUser({ name: data.name || 'You', email: data.email, credits: data.credits ?? 0, avatar: data.avatar });
+    const refresh = () => setUnread(getUnreadCount());
+    refresh();
+    const interval = setInterval(refresh, 30000);
+    return () => clearInterval(interval);
   }, []);
-  
+
+  useEffect(() => {
+    const onDown = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) setShowUserMenu(false);
+    };
+    const onKey = (event) => {
+      if (event.key === 'Escape') { setShowUserMenu(false); setMenuOpen(false); }
+    };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('mousedown', onDown); document.removeEventListener('keydown', onKey); };
+  }, []);
+
+  // close the sheet on navigation
+  useEffect(() => { setMenuOpen(false); setShowUserMenu(false); }, [location.pathname]);
+
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
-    }
+    if (searchQuery.trim()) navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
   };
-  
-  const isActive = (path) => location.pathname === path;
-  
-  return (
-    <header className="bg-white border-b border-audible-gray-200 sticky top-0 z-50">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-             {/* Logo */}
-             <Link to="/" className="flex items-center">
-               <img
-                 src="/images/listenable-logo.svg"
-                 alt="Listenable"
-                 className="h-8 w-auto"
-               />
-             </Link>
 
-          {/* Main Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
+  const isActive = (path) => (path === '/' ? location.pathname === '/' : location.pathname.startsWith(path));
+
+  return (
+    <header className="sticky top-0 z-50 border-b border-line bg-paper">
+      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-paper">
+        Skip to content
+      </a>
+      <nav className="page flex h-16 items-center gap-6" aria-label="Main">
+        <Link to="/" className="shrink-0 rounded-md" aria-label="Listenable home">
+          <Logo />
+        </Link>
+
+        <ul className="hidden lg:flex items-center gap-1 xl:gap-2">
+          {primaryNav.map((item) => (
+            <li key={item.path}>
+              <NavLink
                 to={item.path}
-                className={`text-sm font-medium transition-colors ${
-                  isActive(item.path)
-                    ? 'text-audible-orange'
-                    : 'text-audible-text-primary hover:text-audible-orange'
+                end={item.path === '/'}
+                className={`relative inline-flex h-10 items-center whitespace-nowrap rounded-full px-3 text-[0.9375rem] font-medium ${
+                  isActive(item.path) ? 'text-ink' : 'text-ink-2 hover:text-ink hover:bg-surface-sunk'
                 }`}
               >
                 {item.label}
-              </Link>
-            ))}
+                {isActive(item.path) && <span className="absolute inset-x-3 bottom-1 h-[3px] rounded-full bg-hl" aria-hidden="true" />}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+
+        <div className="ml-auto flex items-center gap-1 md:gap-2">
+          <form onSubmit={handleSearch} role="search" className="hidden xl:block">
+            <label htmlFor="header-search" className="sr-only">Search books, authors and narrators</label>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-3" strokeWidth={1.75} aria-hidden="true" />
+              <input
+                id="header-search"
+                type="search"
+                placeholder="Search titles, authors"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-10 w-60 rounded-full border border-line-strong bg-surface pl-10 pr-4 text-sm text-ink focus:border-ink focus:outline-none focus:shadow-[0_0_0_3px_var(--hl)]"
+              />
+            </div>
+          </form>
+          <Link to="/search" className={`${iconButton} xl:hidden`} aria-label="Search">
+            <Search className="h-5 w-5" strokeWidth={1.75} />
+          </Link>
+
+          <button type="button" onClick={() => setNotificationsOpen(true)} className={iconButton} aria-label={unread ? `Notifications, ${unread} unread` : 'Notifications'}>
+            <Bell className="h-5 w-5" strokeWidth={1.75} />
+            {unread > 0 && (
+              <span className="absolute right-1 top-1 min-w-[18px] rounded-full bg-hl px-1 text-center text-[0.6875rem] font-semibold leading-[18px] text-ink ring-2 ring-paper tabular">
+                {unread > 9 ? '9+' : unread}
+              </span>
+            )}
+          </button>
+
+          <Link to="/account" className="hidden md:inline-flex h-10 items-center gap-1.5 rounded-full border border-line px-3.5 text-sm text-ink-2 hover:border-line-strong" title="Credits you can spend on any title">
+            <span className="font-semibold text-ink tabular">{user.credits}</span> credit{user.credits === 1 ? '' : 's'}
+          </Link>
+
+          <div className="relative hidden lg:block" ref={userMenuRef}>
+            <button
+              type="button"
+              onClick={() => setShowUserMenu((v) => !v)}
+              className="flex h-10 items-center gap-1 rounded-full pl-1 pr-2 hover:bg-surface-sunk"
+              aria-haspopup="menu"
+              aria-expanded={showUserMenu}
+              aria-label="Account menu"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-sm font-semibold text-paper">
+                {user.name.charAt(0)}
+              </span>
+              <ChevronDown className={`h-4 w-4 text-ink-3 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} aria-hidden="true" />
+            </button>
+            {showUserMenu && (
+              <div role="menu" className="absolute right-0 mt-2 w-60 rounded-lg border border-line bg-surface py-1 shadow-md">
+                <div className="border-b border-line px-4 py-3">
+                  <p className="text-sm font-semibold text-ink">{user.name}</p>
+                  {user.email && <p className="text-[0.8125rem] text-ink-3">{user.email}</p>}
+                </div>
+                <div className="py-1">
+                  {userMenuItems.map((item) => (
+                    <Link key={item.path} to={item.path} role="menuitem" className="flex items-center gap-3 px-4 py-2.5 text-sm text-ink hover:bg-paper">
+                      <item.icon className="h-4 w-4 text-ink-3" strokeWidth={1.75} aria-hidden="true" />
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+                <div className="border-t border-line py-1">
+                  <button type="button" role="menuitem" className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-ink hover:bg-paper">
+                    <LogOut className="h-4 w-4 text-ink-3" strokeWidth={1.75} aria-hidden="true" />
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Right Section */}
-          <div className="flex items-center space-x-4">
-            {/* Search Bar */}
-            <form onSubmit={handleSearch} className="hidden md:block">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-audible-gray-400" />
-                <input
-                  type="search"
-                  placeholder="Search Audible"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-64 pl-10 pr-4 py-2 border border-audible-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-audible-orange focus:border-audible-orange bg-white"
-                />
-              </div>
-            </form>
+          <button type="button" onClick={() => setMenuOpen(true)} className={`${iconButton} lg:hidden`} aria-label="Open menu" aria-expanded={menuOpen}>
+            <Menu className="h-5 w-5" strokeWidth={1.75} />
+          </button>
+        </div>
+      </nav>
 
-            {/* Credits */}
-            <div className="hidden md:flex items-center px-3 py-1 bg-audible-orange/10 text-audible-orange rounded text-sm font-medium">
-              {user.credits} Credit{user.credits !== 1 ? 's' : ''}
-            </div>
-
-            {/* Mobile Search Button */}
-            <button className="md:hidden p-2 text-audible-gray-600 hover:text-audible-orange">
-              <Search className="w-5 h-5" />
-            </button>
-
-            {/* Account Menu */}
-            <div className="relative" ref={userMenuRef}>
-              <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center space-x-1 p-2 rounded-md hover:bg-audible-gray-50 transition-colors"
-              >
-                <div className="w-8 h-8 bg-audible-orange rounded-full flex items-center justify-center text-white font-medium text-sm">
-                  {user.name.charAt(0)}
-                </div>
-                <ChevronDown className={`w-4 h-4 text-audible-gray-600 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
+      {menuOpen && (
+        <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+          <button type="button" className="absolute inset-0 bg-ink/40" onClick={() => setMenuOpen(false)} aria-label="Close menu" />
+          <div className="absolute right-0 top-0 flex h-full w-[min(88vw,360px)] flex-col bg-paper shadow-md">
+            <div className="flex h-16 items-center justify-between border-b border-line px-5">
+              <Logo />
+              <button type="button" onClick={() => setMenuOpen(false)} className={iconButton} aria-label="Close menu" autoFocus>
+                <X className="h-5 w-5" strokeWidth={1.75} />
               </button>
-
-              {/* Dropdown Menu */}
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-audible-gray-200 py-1 z-50">
-                  <div className="px-4 py-3 border-b border-audible-gray-200">
-                    <p className="text-sm font-medium text-audible-text-primary">{user.name}</p>
-                    <p className="text-xs text-audible-text-secondary">{user.email}</p>
-                  </div>
-
-                  <div className="py-1">
-                    {userMenuItems.map((item) => (
-                      <Link
-                        key={item.path}
-                        to={item.path}
-                        className="flex items-center px-4 py-2 text-sm text-audible-text-primary hover:bg-audible-gray-50 transition-colors"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        <item.icon className="w-4 h-4 mr-3" />
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-
-                  <div className="border-t border-audible-gray-200 py-1">
-                    <button className="flex items-center w-full px-4 py-2 text-sm text-audible-text-primary hover:bg-audible-gray-50 transition-colors">
-                      <LogOut className="w-4 h-4 mr-3" />
-                      Sign Out
-                    </button>
-                  </div>
-                </div>
-              )}
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 py-4">
+              <ul>
+                {primaryNav.map((item) => (
+                  <li key={item.path}>
+                    <Link to={item.path} className={`flex h-12 items-center rounded-lg px-3 font-serif text-xl ${isActive(item.path) ? 'bg-hl text-ink' : 'text-ink hover:bg-surface-sunk'}`}>
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <ul className="mt-4 border-t border-line pt-4">
+                {moreNav.map((item) => (
+                  <li key={item.path}>
+                    <Link to={item.path} className="flex h-11 items-center rounded-lg px-3 text-[0.9375rem] text-ink-2 hover:bg-surface-sunk hover:text-ink">{item.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="border-t border-line px-5 py-4 text-sm text-ink-2">
+              <span className="font-semibold text-ink tabular">{user.credits}</span> credit{user.credits === 1 ? '' : 's'} to spend
             </div>
           </div>
         </div>
-      </nav>
+      )}
+
+      <NotificationCenter
+        isOpen={notificationsOpen}
+        onClose={() => { setNotificationsOpen(false); setUnread(getUnreadCount()); }}
+      />
     </header>
   );
 };

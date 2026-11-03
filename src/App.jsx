@@ -10,15 +10,14 @@
  */
 
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, MotionConfig, motion as Motion } from 'framer-motion';
 import { lazy, Suspense } from 'react';
 
 import { PlayerProvider } from './contexts/PlayerContext';
 import { pageVariants, pageTransition } from './utils/animationVariants';
 
-// Layout Components - Responsive headers and navigation (not lazy loaded - needed immediately)
+// Layout Components - one responsive header and the mobile bottom nav (not lazy loaded - needed immediately)
 import DesktopHeader from './components/layout/DesktopHeader';
-import TabletHeader from './components/layout/TabletHeader';
 import MobileBottomNav from './components/layout/MobileBottomNav';
 import Footer from './components/layout/Footer';
 
@@ -48,6 +47,8 @@ const ClubDetailPage = lazy(() => import('./pages/ClubDetailPage'));
 const Battles = lazy(() => import('./pages/Battles'));
 const Profile = lazy(() => import('./pages/Profile'));
 const FriendLibrary = lazy(() => import('./pages/FriendLibrary'));
+const Discover = lazy(() => import('./pages/Discover'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Company Pages - lazy loaded
 const About = lazy(() => import('./pages/About'));
@@ -73,9 +74,20 @@ const AndroidApp = lazy(() => import('./pages/AndroidApp'));
 const DesktopApp = lazy(() => import('./pages/DesktopApp'));
 
 // Loading fallback component
+// Loading fallback: the shape of a page (header block and a shelf), not a spinner
 const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  <div className="page py-12" role="status" aria-label="Loading page">
+    <div className="shimmer h-10 w-72 max-w-full rounded-sm" />
+    <div className="shimmer mt-4 h-5 w-96 max-w-full rounded-sm" />
+    <div className="mt-10 flex gap-5 overflow-hidden">
+      {Array.from({ length: 6 }, (_, i) => (
+        <div key={i} className="w-36 md:w-40 shrink-0">
+          <div className="shimmer aspect-book rounded-sm" />
+          <div className="shimmer mt-3 h-4 rounded-sm" />
+          <div className="shimmer mt-2 h-4 w-1/2 rounded-sm" />
+        </div>
+      ))}
+    </div>
   </div>
 );
 
@@ -92,14 +104,16 @@ const AnimatedRoutes = () => {
 
   return (
     <AnimatePresence mode="wait" initial={false}>
-      <motion.main
+      <Motion.main
         key={location.pathname}
         initial="initial"
         animate="in"
         exit="out"
         variants={pageVariants}
         transition={pageTransition}
-        className="flex-1 pb-20 tablet:pb-16 lg:pb-0"
+        id="main"
+        tabIndex={-1}
+        className="flex-1 pb-24 md:pb-8 focus:outline-none"
       >
         <Suspense fallback={<PageLoader />}>
           <Routes location={location}>
@@ -123,6 +137,7 @@ const AnimatedRoutes = () => {
             <Route path="/club/:clubId" element={<ClubDetailPage />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/friend/:friendId/library" element={<FriendLibrary />} />
+            <Route path="/discover" element={<Discover />} />
 
             {/* Company Pages */}
             <Route path="/about" element={<About />} />
@@ -146,9 +161,11 @@ const AnimatedRoutes = () => {
             <Route path="/apps/ios" element={<IOSApp />} />
             <Route path="/apps/android" element={<AndroidApp />} />
             <Route path="/apps/desktop" element={<DesktopApp />} />
+
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
-      </motion.main>
+      </Motion.main>
     </AnimatePresence>
   );
 };
@@ -164,22 +181,18 @@ const AnimatedRoutes = () => {
  * - Page transitions: Smooth animations between routes
  *
  * Layout Structure:
- * - Desktop: Header + Main Content + Footer + Audio Player
- * - Tablet: Header + Main Content + Audio Player
- * - Mobile: Main Content + Bottom Nav + Audio Player
+ * - Every width: Header + Main Content + Audio Player
+ * - 768 px and up: Footer
+ * - Below 768 px: Bottom Nav (the header's menu holds every other destination)
  */
 function App() {
   return (
+    <MotionConfig reducedMotion="user">
     <PlayerProvider>
       <Router>
-        <div className="flex flex-col min-h-screen bg-audible-white">
-          {/* Desktop Header - visible only on large screens */}
-          <div className="hidden lg:block">
-            <DesktopHeader />
-          </div>
-
-          {/* Tablet Header - shown on tablet and desktop */}
-          <TabletHeader />
+        <div className="flex flex-col min-h-screen bg-paper">
+          {/* One responsive header for every width */}
+          <DesktopHeader />
 
           {/* Main Content with Page Transitions */}
           <AnimatedRoutes />
@@ -204,6 +217,7 @@ function App() {
         </div>
       </Router>
     </PlayerProvider>
+    </MotionConfig>
   );
 }
 
