@@ -275,7 +275,7 @@
   .t-h3 { font-family: var(--font-sans); font-weight: 600; font-size: 1.125rem; line-height: 1.35; }
   .t-body { font-size: 1rem; line-height: 1.6; }
   .t-small { font-size: 0.875rem; line-height: 1.5; }
-  .t-meta { font-size: 0.8125rem; line-height: 1.45; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .t-meta { font-size: 0.8125rem; line-height: 1.45; color: var(--ink-3); }
   .t-label { font-size: 0.75rem; line-height: 1.3; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
   .t-title-book { font-family: var(--font-serif); font-weight: 500; line-height: 1.25; }
 
@@ -310,7 +310,8 @@
   }
   .aspect-book { aspect-ratio: 2 / 3; }
   .cover-shadow { box-shadow: var(--shadow-cover); }
-  .tabular { font-variant-numeric: tabular-nums; }
+  /* Schibsted's tabular figures widen commas and periods too, so .tabular keeps lining figures only */
+  .tabular { font-variant-numeric: lining-nums; }
 
   .player-dark-bg { background: var(--night); }
   .player-control-shadow { box-shadow: 0 2px 8px rgb(15 16 19 / 0.5); }
