@@ -106,7 +106,8 @@ const FriendRecommendations = ({ bookId, limit = 5 }) => {
                 <button
                   onClick={() => setLiked(prev => ({ ...prev, [friend.id]: !prev[friend.id] }))}
                   aria-pressed={Boolean(liked[friend.id])}
-                  aria-label={`Like ${friend.name}'s review`}
+                  // The visible count is part of the name, so voice users can say what they see
+                  aria-label={`${friend.likes + (liked[friend.id] ? 1 : 0)} likes, like ${friend.name}'s review`}
                   className={`flex items-center gap-1 hover:text-echo-orange transition-colors ${liked[friend.id] ? 'text-echo-orange' : ''}`}
                 >
                   <ThumbsUp className="w-3 h-3" />

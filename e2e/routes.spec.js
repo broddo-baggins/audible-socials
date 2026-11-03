@@ -4,7 +4,7 @@ import { test, expect, expectAccessible, freshStart } from './fixtures.js';
 // Every route declared in src/App.jsx, with a real id where the route takes one.
 export const ROUTES = [
   '/', '/library', '/browse', '/originals', '/podcasts', '/book/1', '/search', '/search?q=hail',
-  '/account', '/settings', '/help', '/notifications', '/social', '/idle', '/battles',
+  '/account', '/settings', '/help', '/notifications', '/social', '/idle', '/battles', '/battle/battle_1',
   '/clubs', '/clubs/friends', '/clubs/activity', '/club/1', '/profile', '/friend/1/library',
   '/about', '/careers', '/press', '/blog',
   '/support', '/faq', '/contact', '/accessibility',
@@ -43,7 +43,7 @@ test.describe('not-found and bad ids', () => {
     await expect(page).toHaveURL(/\/clubs\/friends$/);
   });
 
-  for (const path of ['/book/999999', '/club/999999']) {
+  for (const path of ['/book/999999', '/club/999999', '/battle/nope']) {
     test(`unknown id ${path} shows a friendly empty state`, async ({ page }) => {
       await page.goto(path);
       await expect(page.locator('main')).toContainText(/not found/i);
