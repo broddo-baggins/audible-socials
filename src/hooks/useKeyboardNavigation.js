@@ -13,7 +13,7 @@ export function useKeyboardNavigation(options = {}) {
     onArrowLeft,
     onArrowRight,
     enabled = true,
-    loop = true
+    loop: _loop = true
   } = options;
 
   const containerRef = useRef(null);

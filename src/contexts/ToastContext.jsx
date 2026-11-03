@@ -1,10 +1,11 @@
 import { createContext, useContext, useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 import PropTypes from 'prop-types';
 
 const ToastContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useToast = () => {
   const context = useContext(ToastContext);
   if (!context) {
@@ -16,51 +17,49 @@ export const useToast = () => {
 const TOAST_TYPES = {
   success: {
     icon: CheckCircle,
-    bgColor: 'bg-green-500',
-    textColor: 'text-white'
+    iconColor: 'text-success'
   },
   error: {
     icon: AlertCircle,
-    bgColor: 'bg-red-500',
-    textColor: 'text-white'
+    iconColor: 'text-danger'
   },
   warning: {
     icon: AlertTriangle,
-    bgColor: 'bg-yellow-500',
-    textColor: 'text-white'
+    iconColor: 'text-ink'
   },
   info: {
     icon: Info,
-    bgColor: 'bg-blue-500',
-    textColor: 'text-white'
+    iconColor: 'text-ink-2'
   }
 };
 
 const Toast = ({ toast, onClose }) => {
-  const { icon: Icon, bgColor, textColor } = TOAST_TYPES[toast.type] || TOAST_TYPES.info;
+  const { icon: Icon, iconColor } = TOAST_TYPES[toast.type] || TOAST_TYPES.info;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -50, scale: 0.3 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
-      className={`${bgColor} ${textColor} rounded-lg shadow-lg p-4 mb-2 max-w-md w-full flex items-start gap-3`}
+    <Motion.div
+      role={toast.type === 'error' ? 'alert' : 'status'}
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, transition: { duration: 0.15 } }}
+      className="mb-2 flex w-full max-w-md items-start gap-3 rounded-lg border border-line bg-surface p-4 text-ink shadow-md"
     >
-      <Icon className="w-5 h-5 flex-shrink-0 mt-0.5" />
+      <Icon className={`mt-0.5 h-5 w-5 shrink-0 ${iconColor}`} strokeWidth={1.75} aria-hidden="true" />
       <div className="flex-1 min-w-0">
         {toast.title && (
-          <h4 className="font-semibold mb-1">{toast.title}</h4>
+          <h4 className="mb-1 font-semibold">{toast.title}</h4>
         )}
-        <p className="text-sm">{toast.message}</p>
+        <p className="text-sm text-ink-2">{toast.message}</p>
       </div>
       <button
         onClick={() => onClose(toast.id)}
-        className="flex-shrink-0 hover:opacity-70 transition-opacity"
+        type="button"
+        className="-m-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-2 hover:bg-surface-sunk"
         aria-label="Close notification"
       >
         <X className="w-4 h-4" />
       </button>
-    </motion.div>
+    </Motion.div>
   );
 };
 

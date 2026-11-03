@@ -33,7 +33,7 @@ function getRandomDelay(minSeconds = 5, maxSeconds = 30) {
  * @param {string} originalMessage - The message being replied to
  * @returns {string} Bot reply
  */
-function generateBotReply(originalMessage) {
+function generateBotReply(_originalMessage) {
   const replies = [
     "I totally agree with this perspective!",
     "That's an interesting take. I hadn't thought of it that way.",
@@ -206,21 +206,23 @@ export function triggerBotReactions(actionType, context) {
   }
 
   switch (actionType) {
-    case 'discussion_post':
+    case 'discussion_post': {
       // 1-2 bots might reply
       const replyCount = Math.random() > 0.5 ? 2 : 1;
       for (let i = 0; i < replyCount; i++) {
         simulateBotReply(clubId, discussionId, message);
       }
       break;
+    }
       
-    case 'vote_cast':
+    case 'vote_cast': {
       // 1-3 bots might also vote
       const voteCount = Math.floor(Math.random() * 3) + 1;
       for (let i = 0; i < voteCount; i++) {
         simulateBotVote(clubId, bookId);
       }
       break;
+    }
       
     default:
       break;
