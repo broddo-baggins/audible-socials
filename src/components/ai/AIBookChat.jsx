@@ -3,7 +3,7 @@ import { Send, BookOpen, AlertTriangle, Sparkles, RotateCcw, Eye, EyeOff, AlertC
 import { getAIBookResponse } from '../../utils/aiBookChat';
 import { getAIBookAnswer } from '../../utils/grokAPI';
 import { FEATURES } from '../../config/api';
-import { getAllBooks, getBookByTitle, detectBookMentions, getBookContextForAI } from '../../utils/bookContext';
+import { getAllBooks, detectBookMentions } from '../../utils/bookContext';
 import { getFromLocalStorage } from '../../utils/localStorage';
 
 /**
@@ -15,7 +15,7 @@ import { getFromLocalStorage } from '../../utils/localStorage';
  * - Users can explicitly request spoilers
  * - Tracks reading progress to avoid spoilers
  */
-const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
+const AIBookChat = ({ contextBook, playbackState }) => {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
@@ -37,15 +37,13 @@ const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
   const inputRef = useRef(null);
   const allBooks = getAllBooks();
 
-  // Sync with contextBook if provided
-  useEffect(() => {
-    if (contextBook) {
-      setCurrentBook(contextBook);
-      // Only reset messages if it's a different book than what we might have been chatting about
-      // But for simplicity, let's just reset if the prop changes significantly or if we want to force it.
-      // Actually, we should probably not wipe history if it's the same book.
-    }
-  }, [contextBook]);
+  // Follow contextBook when the parent switches to another book (adjusting
+  // state during render, so there is no extra effect pass)
+  const [prevContextBook, setPrevContextBook] = useState(contextBook);
+  if (contextBook !== prevContextBook) {
+    setPrevContextBook(contextBook);
+    if (contextBook) setCurrentBook(contextBook);
+  }
 
   const filteredBooks = allBooks.filter(book => 
     book.title.toLowerCase().includes(bookSearch.toLowerCase()) ||
@@ -90,16 +88,19 @@ const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
       let response;
 
       // Auto-detect book mentions if no book selected
-      if (!currentBook && useRealAI) {
+      let book = currentBook;
+      if (!book && useRealAI) {
         const mentions = detectBookMentions(currentInput);
         if (mentions.length > 0) {
-          setCurrentBook(mentions[0]);
+          book = mentions[0];
+          setCurrentBook(book);
         }
       }
 
       if (useRealAI) {
         // Use real Grok API
         const conversationHistory = messages
+          .filter(msg => !msg.isError)
           .slice(-6) // Keep last 6 messages for context
           .map(msg => ({
             role: msg.role === 'user' ? 'user' : 'assistant',
@@ -107,17 +108,17 @@ const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
           }));
 
         // Get user progress if book is selected
-        const userProgress = currentBook ? getFromLocalStorage('userProgress')?.[currentBook.id]?.progress || 0 : 0;
+        const userProgress = book ? getFromLocalStorage('userProgress')?.[book.id]?.progress || 0 : 0;
         
         // Calculate real-time progress if playbackState is available and matching current book
-        const realTimeProgress = (playbackState && currentBook)
-          ? (playbackState.currentTime / playbackState.duration * 100) 
+        const realTimeProgress = (playbackState?.duration > 0 && book)
+          ? Math.round(playbackState.currentTime / playbackState.duration * 100)
           : userProgress;
 
         response = await getAIBookAnswer(currentInput, {
           allowSpoilers,
           conversationHistory,
-          currentBook,
+          currentBook: book,
           userProgress: realTimeProgress,
           currentChapter: playbackState?.currentChapter,
           currentTime: playbackState?.currentTime,
@@ -186,36 +187,45 @@ const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
       <div className="p-3 bg-audible-gray-50 border-b border-audible-gray-200">
         {/* Book Selector */}
         <div className="mb-2 relative">
-          <button
-            onClick={() => !contextBook && setShowBookSelector(!showBookSelector)}
+          {/* A div, not a button: it holds two separate buttons (pick, clear) */}
+          <div
             className={`w-full flex items-center justify-between px-3 py-2 bg-white border border-audible-gray-300 rounded-lg text-sm ${!contextBook ? 'hover:border-purple-600' : 'cursor-default'} transition-colors`}
           >
-            {currentBook ? (
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <BookOpen className="w-4 h-4 text-purple-600 flex-shrink-0" />
-                <span className="truncate text-audible-text-primary">
-                  {currentBook.title}
-                </span>
-                {!contextBook && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCurrentBook(null);
-                    handleReset();
-                  }}
-                  className="ml-auto p-1 hover:bg-audible-gray-100 rounded transition-colors flex-shrink-0"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-                )}
-              </div>
-            ) : (
-              <>
-                <span className="text-audible-text-secondary text-xs">Select a book to discuss...</span>
-                <ChevronDown className="w-4 h-4 text-audible-text-tertiary" />
-              </>
+            <button
+              type="button"
+              onClick={() => !contextBook && setShowBookSelector(!showBookSelector)}
+              disabled={!!contextBook}
+              aria-expanded={showBookSelector}
+              className={`flex items-center gap-2 flex-1 min-w-0 text-left ${currentBook ? '' : 'justify-between'} disabled:cursor-default`}
+            >
+              {currentBook ? (
+                <>
+                  <BookOpen className="w-4 h-4 text-purple-600 flex-shrink-0" />
+                  <span className="truncate text-audible-text-primary">
+                    {currentBook.title}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="text-audible-text-secondary text-xs">Select a book to discuss...</span>
+                  <ChevronDown className="w-4 h-4 text-audible-text-tertiary" />
+                </>
+              )}
+            </button>
+            {currentBook && !contextBook && (
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentBook(null);
+                  handleReset();
+                }}
+                aria-label="Clear selected book"
+                className="ml-auto p-1 hover:bg-audible-gray-100 rounded transition-colors flex-shrink-0"
+              >
+                <X className="w-3 h-3" />
+              </button>
             )}
-          </button>
+          </div>
 
           {/* Book Dropdown */}
           {showBookSelector && (
@@ -226,6 +236,7 @@ const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
                   value={bookSearch}
                   onChange={(e) => setBookSearch(e.target.value)}
                   placeholder="Search books..."
+                  aria-label="Search books"
                   className="w-full px-2 py-1 text-xs border border-audible-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-purple-600"
                 />
               </div>
@@ -382,6 +393,7 @@ const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Ask about any book..."
+            aria-label="Ask about any book"
             className="flex-1 px-4 py-2.5 text-sm border border-audible-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
             disabled={loading}
           />

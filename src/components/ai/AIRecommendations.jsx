@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TrendingUp, Clock, Users, Star, ChevronRight, Sparkles, RefreshCw, AlertCircle } from 'lucide-react';
-import { getAIRecommendations } from '../../utils/aiRecommendations';
+import { getAIRecommendations, getListeningContext } from '../../utils/aiRecommendations';
 import { getAIBookRecommendations } from '../../utils/grokAPI';
 import { FEATURES } from '../../config/api';
-import { getFromLocalStorage } from '../../utils/localStorage';
 import booksData from '../../data/books.json';
 
 /**
@@ -16,83 +15,95 @@ import booksData from '../../data/books.json';
  * - Friends' activity and ratings
  * - Current trends in book clubs
  */
+/**
+ * Load recommendations from Grok (live) or the local engine (offline).
+ * Resolves to { recs, error }; never rejects.
+ */
+const fetchRecommendations = async (live) => {
+  try {
+    if (!live) {
+      // Brief pause so offline mode still shows the loading state
+      await new Promise(resolve => setTimeout(resolve, 800));
+      return { recs: getAIRecommendations(), error: null };
+    }
+
+    const { libraryBooks, friends, clubs } = getListeningContext();
+
+    // Extract context
+    const recentBooks = libraryBooks.slice(-5).map(b => b.title);
+    const favoriteGenres = [...new Set(libraryBooks.map(b => b.genre).filter(Boolean))].slice(0, 3);
+    const friendsReading = friends
+      .slice(0, 3)
+      .map(f => booksData.find(b => b.id === f.currentlyReading)?.title)
+      .filter(Boolean);
+    const clubNames = clubs.map(c => c.name).filter(Boolean);
+
+    const apiRecs = await getAIBookRecommendations({
+      recentBooks: recentBooks.length > 0 ? recentBooks : ['Science Fiction classics', 'Fantasy epics'],
+      favoriteGenres: favoriteGenres.length > 0 ? favoriteGenres : ['Science Fiction', 'Fantasy'],
+      friendsReading: friendsReading.length > 0 ? friendsReading : ['Popular titles'],
+      bookClubs: clubNames.length > 0 ? clubNames : ['General reading club'],
+    });
+
+    // Match AI recommendations with actual books from catalog; drop any the
+    // catalog doesn't have, since a card links to the book's page.
+    const enrichedRecs = (Array.isArray(apiRecs) ? apiRecs : [])
+      .filter(rec => typeof rec?.title === 'string' && typeof rec?.author === 'string')
+      .map(rec => {
+        const titleStart = rec.title.toLowerCase().split(' ').slice(0, 3).join(' ');
+        const matchedBook = booksData.find(b =>
+          b.title.toLowerCase().includes(titleStart) ||
+          b.author.toLowerCase().includes(rec.author.toLowerCase())
+        );
+        return matchedBook && {
+          book: matchedBook,
+          reason: rec.reason,
+          reason_type: rec.reason_type || 'listening_history',
+          match_score: Number(rec.match_score) || 85,
+        };
+      })
+      .filter(Boolean)
+      .filter((rec, i, all) => all.findIndex(r => r.book.id === rec.book.id) === i);
+
+    // Offline/mock AI replies are plain text, not a JSON list: use the local engine
+    return { recs: enrichedRecs.length > 0 ? enrichedRecs : getAIRecommendations(), error: null };
+  } catch (err) {
+    console.warn('Failed to load recommendations:', err);
+    return {
+      recs: getAIRecommendations(),
+      error: 'Failed to load recommendations. Using offline suggestions.',
+    };
+  }
+};
+
 const AIRecommendations = () => {
   const navigate = useNavigate();
   const [recommendations, setRecommendations] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [useRealAI, setUseRealAI] = useState(FEATURES.useRealAI);
-
-  const loadRecommendations = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      if (useRealAI) {
-        // Use real Grok API for recommendations
-        const userLibrary = getFromLocalStorage('userLibrary') || [];
-        const friends = getFromLocalStorage('friends') || [];
-        const bookClubs = getFromLocalStorage('userClubs') || [];
-
-        // Extract context
-        const recentBooks = userLibrary.slice(-5).map(b => b.title || 'Unknown');
-        const favoriteGenres = [...new Set(userLibrary.map(b => b.genre).filter(Boolean))].slice(0, 3);
-        const friendsReading = friends.slice(0, 3).map(f => f.currentBook || 'Unknown').filter(b => b !== 'Unknown');
-        const clubNames = bookClubs.map(c => c.name || 'Book Club');
-
-        const apiRecs = await getAIBookRecommendations({
-          recentBooks: recentBooks.length > 0 ? recentBooks : ['Science Fiction classics', 'Fantasy epics'],
-          favoriteGenres: favoriteGenres.length > 0 ? favoriteGenres : ['Science Fiction', 'Fantasy'],
-          friendsReading: friendsReading.length > 0 ? friendsReading : ['Popular titles'],
-          bookClubs: clubNames.length > 0 ? clubNames : ['General reading club'],
-        });
-
-        // Match AI recommendations with actual books from catalog
-        const enrichedRecs = apiRecs.map(rec => {
-          // Try to find matching book in catalog
-          const matchedBook = booksData.books.find(b => 
-            b.title.toLowerCase().includes(rec.title.toLowerCase().split(' ').slice(0, 3).join(' ')) ||
-            b.author.toLowerCase().includes(rec.author.toLowerCase())
-          );
-
-          return {
-            book: matchedBook || {
-              id: `ai-${Math.random()}`,
-              title: rec.title,
-              author: rec.author,
-              cover: '/images/covers/placeholder.jpg',
-              rating: 4.5,
-              length: '8 hrs',
-              genre: favoriteGenres[0] || 'Fiction',
-            },
-            reason: rec.reason,
-            reason_type: rec.reason_type || 'listening_history',
-            match_score: rec.match_score || 85,
-          };
-        });
-
-        setRecommendations(enrichedRecs);
-      } else {
-        // Fallback to local recommendations
-        await new Promise(resolve => setTimeout(resolve, 800));
-        const recs = getAIRecommendations();
-        setRecommendations(recs);
-      }
-    } catch (err) {
-      console.error('Failed to load recommendations:', err);
-      setError('Failed to load recommendations. Using offline suggestions.');
-      
-      // Fallback to local recommendations
-      const recs = getAIRecommendations();
-      setRecommendations(recs);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
-    loadRecommendations();
-  }, []);
+    let active = true;
+    fetchRecommendations(useRealAI).then(({ recs, error: loadError }) => {
+      if (!active) return;
+      setRecommendations(recs);
+      setError(loadError);
+      setLoading(false);
+    });
+    return () => { active = false; };
+  }, [useRealAI, reloadKey]);
+
+  const reload = () => {
+    setLoading(true);
+    setReloadKey(k => k + 1);
+  };
+
+  const toggleRealAI = () => {
+    setLoading(true);
+    setUseRealAI(live => !live);
+  };
 
   const reasonIcons = {
     'listening_history': TrendingUp,
@@ -137,7 +148,7 @@ const AIRecommendations = () => {
           </div>
           <div className="flex items-center gap-1">
             <button
-              onClick={() => setUseRealAI(!useRealAI)}
+              onClick={toggleRealAI}
               className="p-2 hover:bg-audible-gray-100 rounded-lg transition-colors"
               aria-label={useRealAI ? 'Switch to offline mode' : 'Switch to live AI'}
               title={useRealAI ? 'Using Grok AI' : 'Offline mode'}
@@ -145,7 +156,7 @@ const AIRecommendations = () => {
               <Sparkles className={`w-4 h-4 ${useRealAI ? 'text-purple-600' : 'text-gray-400'}`} />
             </button>
             <button
-              onClick={loadRecommendations}
+              onClick={reload}
               className="p-2 hover:bg-audible-gray-100 rounded-lg transition-colors"
               aria-label="Refresh recommendations"
             >
@@ -169,7 +180,15 @@ const AIRecommendations = () => {
           return (
             <div
               key={rec.book.id}
+              role="link"
+              tabIndex={0}
               onClick={() => navigate(`/book/${rec.book.id}`)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  navigate(`/book/${rec.book.id}`);
+                }
+              }}
               className="group cursor-pointer bg-audible-gray-50 hover:bg-audible-gray-100 rounded-xl p-3 transition-all duration-200 hover:shadow-md"
             >
               <div className="flex gap-3">
@@ -212,7 +231,7 @@ const AIRecommendations = () => {
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      <span>{rec.book.length}</span>
+                      <span>{rec.book.duration}</span>
                     </div>
                   </div>
                 </div>

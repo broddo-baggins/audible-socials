@@ -10,6 +10,7 @@
 
 import booksData from '../data/books.json';
 import { getFromLocalStorage } from './localStorage';
+import { getListeningContext } from './aiRecommendations';
 
 /**
  * Get AI response to user's book question
@@ -18,8 +19,6 @@ import { getFromLocalStorage } from './localStorage';
  * @returns {Object} Response object with content and metadata
  */
 export const getAIBookResponse = (question, allowSpoilers = false) => {
-  const lowerQuestion = question.toLowerCase();
-  
   // Detect question type
   const isAboutPlot = /what happens|who dies|ending|plot|spoiler/i.test(question);
   const isAboutRecommendation = /recommend|suggest|next|should i read/i.test(question);
@@ -28,8 +27,8 @@ export const getAIBookResponse = (question, allowSpoilers = false) => {
   const isAboutSimilar = /similar|like|reminds|compared to/i.test(question);
 
   // Get user's library for context
-  const userLibrary = getFromLocalStorage('userLibrary') || [];
-  const books = booksData.books;
+  const userLibrary = getListeningContext().libraryBooks;
+  const books = booksData;
 
   let response = {
     content: '',

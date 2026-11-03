@@ -16,6 +16,9 @@ export const grokReply = (content = 'Mock Grok reply for tests.') => ({
   body: JSON.stringify({ content }),
 });
 
+// Each page's guard, so expectAccessible can discount what axe itself causes.
+const guards = new WeakMap();
+
 /**
  * `guard` records every console error, uncaught exception, failed request and
  * HTTP >= 400 response. Each test fails if any were recorded, unless the test
@@ -39,7 +42,12 @@ export const test = base.extend({
       await page.route('**/api/grok', (route) => route.fulfill(grokReply()));
 
       page.on('console', (msg) => {
-        if (msg.type() === 'error') problems.push(`console.error: ${msg.text()}`);
+        if (msg.type() !== 'error') return;
+        const text = msg.text();
+        const status = text.match(/^Failed to load resource: the server responded with a status of (\d+)/)?.[1];
+        const url = msg.location()?.url || '';
+        if (status && ['GET', 'POST'].some((m) => isAllowed(`http ${status}: ${m} ${url}`))) return;
+        problems.push(`console.error: ${text}`);
       });
       page.on('pageerror', (err) => problems.push(`pageerror: ${err.message}`));
       page.on('requestfailed', (req) => {
@@ -48,6 +56,8 @@ export const test = base.extend({
         if (/ERR_ABORTED|NS_BINDING_ABORTED/.test(reason)) return;
         problems.push(`requestfailed: ${req.method()} ${req.url()} ${reason}`);
       });
+      // Chrome also logs a console error for every HTTP error response; the
+      // response itself is recorded below, so allowing it there covers both.
       page.on('response', (res) => {
         if (res.status() >= 400) problems.push(`http ${res.status()}: ${res.request().method()} ${res.url()}`);
       });
@@ -57,6 +67,7 @@ export const test = base.extend({
         allow: (re) => allowed.push(re),
         clear: () => problems.splice(0),
       };
+      guards.set(page, guard);
       await use(guard);
 
       const real = problems.filter((p) => !isAllowed(p));
@@ -74,7 +85,16 @@ export const expectAccessible = async (page, { exclude = [] } = {}) => {
     // Colour contrast belongs to the visual redesign (branch redesign/2026-11).
     .disableRules(['color-contrast']);
   for (const sel of exclude) builder = builder.exclude(sel);
+  // axe injects inline styles and fetches stylesheets to analyse them, which
+  // the app's CSP blocks. Those reports come from axe, not the app, so drop
+  // the CSP problems raised during the scan (security.spec.js checks the app).
+  const problems = guards.get(page)?.problems;
+  const before = problems?.length ?? 0;
   const { violations } = await builder.analyze();
+  if (problems) {
+    const fromAxe = problems.slice(before).filter((p) => /Content Security Policy|requestfailed: .* csp$/.test(p));
+    for (const p of fromAxe) problems.splice(problems.indexOf(p), 1);
+  }
   const serious = violations
     .filter((v) => ['critical', 'serious'].includes(v.impact))
     .map((v) => `${v.id} (${v.impact}): ${v.help} -> ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(', ')}`);
