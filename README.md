@@ -253,10 +253,10 @@ echo "GROK_API_KEY=xai-your_actual_key_here" > .env.local
 node scripts/test-api-key.js
 
 # Or test manually with curl:
-curl -X POST "https://api.x.ai/v1/chat/completions" \
+curl -X POST "https://api.x.ai/v1/responses" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_KEY" \
-  -d '{"messages": [{"role": "user", "content": "Hello"}], "model": "grok-3-mini"}'
+  -d '{"input": [{"role": "user", "content": "Hello"}], "model": "grok-4.7"}'
 ```
 
 **Expected Success Response:**

@@ -5,7 +5,7 @@
  * Includes error handling, retries, and response formatting
  */
 
-import { GROK_API_CONFIG, API_CONFIG } from '../config/api';
+import { GROK_API_CONFIG, API_CONFIG } from '../config/api.js';
 
 /**
  * Make a request to Grok API
@@ -38,6 +38,11 @@ export const callGrokAPI = async (messages, options = {}) => {
       console.warn('[Grok API] /api/grok not available - using intelligent mock responses');
       return getMockResponse(messages);
     }
+    // The server already tried every configured model; retrying won't help.
+    if (data.error === 'upstream_unavailable') {
+      console.warn('[Grok API] No Grok model available - using intelligent mock responses');
+      return getMockResponse(messages);
+    }
 
     if (!response.ok) {
       const error = new Error(`Grok API Error: ${response.status} - ${data.error || 'Unknown error'}`);
@@ -47,7 +52,8 @@ export const callGrokAPI = async (messages, options = {}) => {
 
     return data.content || 'No response from AI';
   } catch (error) {
-    console.error('Grok API Error:', error);
+    if (!error.status) error.offline = true;
+    console.warn('[Grok API]', error.message);
     throw error;
   }
 };
@@ -113,6 +119,12 @@ export const callGrokAPIWithRetry = async (messages, options = {}) => {
         throw error;
       }
       
+      // Last attempt and the AI is unreachable (network/timeout/5xx): degrade to mock
+      if (attempt === API_CONFIG.retryAttempts - 1 && (error.offline || error.status >= 500)) {
+        console.warn('[Grok API] Unavailable after retries - using intelligent mock responses');
+        return getMockResponse(messages);
+      }
+
       // Wait before retrying
       if (attempt < API_CONFIG.retryAttempts - 1) {
         await new Promise(resolve => setTimeout(resolve, API_CONFIG.retryDelay * (attempt + 1)));

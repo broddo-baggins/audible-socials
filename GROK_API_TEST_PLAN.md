@@ -80,7 +80,7 @@ npm run dev
 **Debug:**
 ```javascript
 // Check network tab for:
-POST https://api.x.ai/v1/chat/completions
+POST https://api.x.ai/v1/responses
 Status: 200 OK
 Response: { choices: [...] }
 ```
@@ -450,7 +450,7 @@ npm run dev
 ```javascript
 // Check grokAPI.js
 // Verify response parsing
-// Check model: 'grok-beta'
+// Check model: 'grok-4.7'
 ```
 
 ### **Issue: "Rate limiting"**

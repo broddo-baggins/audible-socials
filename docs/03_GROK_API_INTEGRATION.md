@@ -47,7 +47,7 @@ Your Listenable platform now features **real AI intelligence** powered by Grok A
 export const GROK_API_CONFIG = {
   apiKey: process.env.GROK_API_KEY || 'YOUR_GROK_API_KEY_HERE',
   baseUrl: 'https://api.x.ai/v1',
-  model: 'grok-beta',
+  model: 'grok-4.7',
   maxTokens: 1000,
   temperature: 0.7,
 };
@@ -223,7 +223,7 @@ WARNING: Add "⚠️ SPOILER WARNING" at start of response
 ### Request Format
 
 ```javascript
-POST https://api.x.ai/v1/chat/completions
+POST https://api.x.ai/v1/responses
 
 Headers:
   Content-Type: application/json
@@ -231,10 +231,10 @@ Headers:
 
 Body:
 {
-  "messages": [...],
-  "model": "grok-beta",
+  "input": [...],
+  "model": "grok-4.7",
   "temperature": 0.7,
-  "max_tokens": 1000,
+  "max_output_tokens": 1000,
   "stream": false
 }
 ```
@@ -455,8 +455,8 @@ and forwards the request to xAI.
 **`.env.local` (local dev, gitignored):**
 ```bash
 GROK_API_KEY=your_api_key_here
-# optional, defaults to grok-3-mini
-GROK_MODEL=grok-3-mini
+# optional, defaults to grok-4.7
+GROK_MODEL=grok-4.7
 ```
 
 Never prefix the key with `VITE_`: Vite inlines every `VITE_*` variable into the

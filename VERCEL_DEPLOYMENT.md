@@ -26,6 +26,15 @@ This is a **server-only** variable read by the `api/grok.js` serverless function
 
 **Where to get your API key**: Visit [x.ai console](https://console.x.ai) → API Keys → Create API Key
 
+### Optional Model Overrides
+
+The function calls xAI's Responses API (`/v1/responses`) with `grok-4.7`. If that model is unavailable it tries each fallback in turn; if none answers, the app falls back to its built-in mock replies.
+
+```bash
+GROK_MODEL=grok-4.7               # primary model (default grok-4.7)
+GROK_FALLBACK_MODELS=grok-4.3     # comma-separated fallbacks (default grok-4.3; empty = none)
+```
+
 ### Adding to Vercel
 
 **Method 1: Vercel Dashboard**

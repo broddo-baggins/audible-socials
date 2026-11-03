@@ -9,6 +9,7 @@
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
+import { DEFAULT_MODEL, extractText } from '../api/grok.js';
 
 // Load environment variables from .env.local (or .env)
 function loadEnv() {
@@ -32,19 +33,20 @@ function loadEnv() {
 }
 
 async function testApiKey(apiKey) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const data = JSON.stringify({
-      messages: [
+      input: [
         { role: 'user', content: 'Hello! Are you Grok from xAI? Please respond with a short greeting.' }
       ],
-      model: process.env.GROK_MODEL || 'grok-3-mini',
+      model: process.env.GROK_MODEL || DEFAULT_MODEL,
+      store: false,
       temperature: 0.7,
-      max_tokens: 50
+      max_output_tokens: 50
     });
 
     const options = {
       hostname: 'api.x.ai',
-      path: '/v1/chat/completions',
+      path: '/v1/responses',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -60,10 +62,11 @@ async function testApiKey(apiKey) {
         try {
           const response = JSON.parse(body);
 
-          if (response.choices && response.choices[0]) {
+          const text = extractText(response);
+          if (text) {
             resolve({
               success: true,
-              message: response.choices[0].message.content,
+              message: text,
               usage: response.usage
             });
           } else if (response.error) {
@@ -79,7 +82,7 @@ async function testApiKey(apiKey) {
               rawResponse: body
             });
           }
-        } catch (e) {
+        } catch {
           resolve({
             success: false,
             error: 'Invalid JSON response',

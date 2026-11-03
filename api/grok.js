@@ -7,10 +7,16 @@
  *
  * Guards: POST + JSON only, same-origin requests only, request body size cap,
  * message count/length limits, and a server-chosen model and token ceiling.
+ *
+ * Upstream is xAI's Responses API (Chat Completions is legacy). The model is
+ * GROK_MODEL (default grok-4.7); if it is unavailable the function tries each
+ * model in GROK_FALLBACK_MODELS (comma separated, default grok-4.3) in turn.
  */
 
-const XAI_URL = 'https://api.x.ai/v1/chat/completions';
-const DEFAULT_MODEL = 'grok-3-mini';
+const XAI_URL = 'https://api.x.ai/v1/responses';
+export const DEFAULT_MODEL = 'grok-4.7';
+export const DEFAULT_FALLBACK_MODELS = ['grok-4.3'];
+const MODEL_ID = /^[a-z0-9][a-z0-9._-]{0,63}$/i;
 
 export const LIMITS = {
   maxBodyBytes: 32 * 1024,
@@ -18,6 +24,7 @@ export const LIMITS = {
   maxMessageChars: 12000,
   maxTotalChars: 24000,
   maxTokens: 1000,
+  // Total time budget across the primary model and its fallbacks.
   upstreamTimeoutMs: 25000,
 };
 
@@ -53,6 +60,35 @@ export const isSameOrigin = (request) => {
 };
 
 /**
+ * Ordered, de-duplicated list of models to try. Malformed ids in the env vars
+ * are ignored rather than sent upstream.
+ */
+export const resolveModels = (env = {}) => {
+  const primary = (env.GROK_MODEL || '').trim() || DEFAULT_MODEL;
+  const fallbacks = env.GROK_FALLBACK_MODELS === undefined
+    ? DEFAULT_FALLBACK_MODELS
+    : env.GROK_FALLBACK_MODELS.split(',').map((m) => m.trim());
+  const models = [...new Set([primary, ...fallbacks])].filter((m) => MODEL_ID.test(m));
+  return models.length ? models : [DEFAULT_MODEL];
+};
+
+/** Text of a Responses API reply: every output_text part of every message item. */
+export const extractText = (data) => {
+  if (typeof data?.output_text === 'string' && data.output_text) return data.output_text;
+  if (!Array.isArray(data?.output)) return null;
+  const text = data.output
+    .filter((item) => item?.type === 'message' && Array.isArray(item.content))
+    .flatMap((item) => item.content)
+    .filter((part) => part?.type === 'output_text' && typeof part.text === 'string')
+    .map((part) => part.text)
+    .join('');
+  return text || null;
+};
+
+// Statuses that mean "this key or client is the problem": another model won't help.
+const NO_FALLBACK = new Set([401, 403, 429]);
+
+/**
  * Validate the client payload and build the upstream request body.
  * @returns {{ body?: Object, error?: string }}
  */
@@ -75,16 +111,19 @@ export const buildUpstreamBody = (payload, model) => {
   }
   if (totalChars > LIMITS.maxTotalChars) return { error: 'Conversation too long' };
 
-  const temp = Number.isFinite(temperature) ? Math.min(Math.max(temperature, 0), 1.5) : 0.7;
+  // xAI samples at most temperature 1, so higher values are clamped here.
+  const temp = Number.isFinite(temperature) ? Math.min(Math.max(temperature, 0), 1) : 0.7;
   const tokens = Number.isInteger(maxTokens) ? Math.min(Math.max(maxTokens, 1), LIMITS.maxTokens) : 500;
 
   return {
     body: {
       model,
-      messages: clean,
+      input: clean,
       stream: false,
+      // The browser resends history each turn; nothing needs to be kept by xAI.
+      store: false,
       temperature: temp,
-      max_tokens: tokens,
+      max_output_tokens: tokens,
     },
   };
 };
@@ -115,40 +154,54 @@ export const handleGrokRequest = async (request, env = process.env) => {
     return json(400, { error: 'Invalid JSON body' });
   }
 
-  const { body, error } = buildUpstreamBody(payload, env.GROK_MODEL || DEFAULT_MODEL);
+  const models = resolveModels(env);
+  const { body, error } = buildUpstreamBody(payload, models[0]);
   if (error) return json(400, { error });
 
   const apiKey = env.GROK_API_KEY;
   if (!apiKey) return json(503, { error: 'not_configured' });
 
-  let upstream;
-  try {
-    upstream = await fetch(XAI_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(LIMITS.upstreamTimeoutMs),
-    });
-  } catch (err) {
-    console.error('[api/grok] upstream request failed:', err.name);
-    return json(504, { error: 'Upstream unavailable' });
+  const deadline = Date.now() + LIMITS.upstreamTimeoutMs;
+  let lastStatus = 504;
+  for (const model of models) {
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) break;
+
+    let upstream;
+    try {
+      upstream = await fetch(XAI_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({ ...body, model }),
+        signal: AbortSignal.timeout(remaining),
+      });
+    } catch (err) {
+      console.error('[api/grok] upstream request failed:', model, err.name);
+      lastStatus = 504;
+      continue;
+    }
+
+    if (!upstream.ok) {
+      // Log the status only; xAI error bodies can echo request details.
+      console.error('[api/grok] upstream status', model, upstream.status);
+      if (NO_FALLBACK.has(upstream.status)) {
+        const status = upstream.status === 429 ? 429 : 502;
+        return json(status, { error: `Upstream error ${upstream.status}` });
+      }
+      lastStatus = upstream.status;
+      continue;
+    }
+
+    const content = extractText(await upstream.json().catch(() => null));
+    if (typeof content === 'string') return json(200, { content, model });
+    console.error('[api/grok] empty upstream response', model);
+    lastStatus = 502;
   }
 
-  if (!upstream.ok) {
-    // Log the status only; xAI error bodies can echo request details.
-    console.error('[api/grok] upstream status', upstream.status);
-    const status = upstream.status === 429 ? 429 : 502;
-    return json(status, { error: `Upstream error ${upstream.status}` });
-  }
-
-  const data = await upstream.json().catch(() => null);
-  const content = data?.choices?.[0]?.message?.content;
-  if (typeof content !== 'string') return json(502, { error: 'Empty upstream response' });
-
-  return json(200, { content });
+  return json(lastStatus === 504 ? 504 : 502, { error: 'upstream_unavailable', status: lastStatus });
 };
 
 export function POST(request) {
