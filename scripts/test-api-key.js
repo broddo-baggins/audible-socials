@@ -10,10 +10,12 @@ import https from 'https';
 import fs from 'fs';
 import path from 'path';
 
-// Load environment variables from .env file
+// Load environment variables from .env.local (or .env)
 function loadEnv() {
-  const envPath = path.join(process.cwd(), '.env');
-  if (fs.existsSync(envPath)) {
+  const envPath = ['.env.local', '.env']
+    .map((name) => path.join(process.cwd(), name))
+    .find((candidate) => fs.existsSync(candidate));
+  if (envPath) {
     const envContent = fs.readFileSync(envPath, 'utf8');
     const envVars = {};
 
@@ -35,7 +37,7 @@ async function testApiKey(apiKey) {
       messages: [
         { role: 'user', content: 'Hello! Are you Grok from xAI? Please respond with a short greeting.' }
       ],
-      model: 'grok-beta',
+      model: process.env.GROK_MODEL || 'grok-3-mini',
       temperature: 0.7,
       max_tokens: 50
     });
@@ -105,12 +107,13 @@ async function main() {
 
   // Load API key from environment
   const envVars = loadEnv();
-  const apiKey = envVars.VITE_GROK_API_KEY;
+  const apiKey = process.env.GROK_API_KEY || envVars.GROK_API_KEY;
 
   if (!apiKey) {
-    console.log('❌ No API key found in .env file');
-    console.log('Please create a .env file with:');
-    console.log('VITE_GROK_API_KEY=your_api_key_here\n');
+    console.log('❌ No API key found in .env.local');
+    console.log('Please create a .env.local file with:');
+    console.log('GROK_API_KEY=your_api_key_here\n');
+    console.log('Do not use a VITE_ prefix: Vite would bundle the key into the public JS.\n');
     process.exit(1);
   }
 
@@ -121,8 +124,8 @@ async function main() {
   }
 
   console.log('🔑 Testing API key format...');
-  if (!apiKey.startsWith('gsk_')) {
-    console.log('❌ API key does not have correct format (should start with gsk_)');
+  if (!apiKey.startsWith('xai-')) {
+    console.log('❌ API key does not have correct format (xAI keys start with xai-)');
     process.exit(1);
   }
 
@@ -150,7 +153,7 @@ async function main() {
     console.log('\n🔧 Troubleshooting:');
     console.log('1. Go to https://console.x.ai');
     console.log('2. Generate a new API key');
-    console.log('3. Update your .env file');
+    console.log('3. Update your .env.local file');
     console.log('4. Run this test again');
 
     console.log('\n📚 Note: Your app will still work with intelligent mock responses');

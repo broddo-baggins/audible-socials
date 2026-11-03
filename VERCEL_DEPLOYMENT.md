@@ -19,8 +19,10 @@
 The application needs **ONE environment variable** to work with the AI features:
 
 ```bash
-VITE_GROK_API_KEY=YOUR_GROK_API_KEY_HERE
+GROK_API_KEY=YOUR_GROK_API_KEY_HERE
 ```
+
+This is a **server-only** variable read by the `api/grok.js` serverless function. Do **not** name it `VITE_GROK_API_KEY`: Vite bundles every `VITE_*` variable into the public JavaScript, which would publish the key.
 
 **Where to get your API key**: Visit [x.ai console](https://console.x.ai) → API Keys → Create API Key
 
@@ -32,7 +34,7 @@ VITE_GROK_API_KEY=YOUR_GROK_API_KEY_HERE
 2. Click **Settings** tab
 3. Click **Environment Variables** in sidebar
 4. Add new variable:
-   - **Name**: `VITE_GROK_API_KEY`
+   - **Name**: `GROK_API_KEY`
    - **Value**: Your Grok API key from [x.ai console](https://console.x.ai)
    - **Environment**: Select all (Production, Preview, Development)
 5. Click **Save**
@@ -48,7 +50,7 @@ npm i -g vercel
 vercel login
 
 # Add environment variable
-vercel env add VITE_GROK_API_KEY
+vercel env add GROK_API_KEY
 # Paste your Grok API key when prompted
 # Select: Production, Preview, Development (all)
 
@@ -75,7 +77,7 @@ vercel env pull
 
 3. **Add Environment Variables**:
    - Click "Environment Variables" section
-   - Add `VITE_GROK_API_KEY` with your key
+   - Add `GROK_API_KEY` with your key
    - Select all environments
 
 4. **Deploy**:
@@ -104,7 +106,7 @@ vercel
 # - Want to override settings? No
 
 # Add environment variable (if not done via dashboard)
-vercel env add VITE_GROK_API_KEY
+vercel env add GROK_API_KEY
 
 # Deploy to production
 vercel --prod
@@ -139,7 +141,7 @@ Your `vercel.json` should have:
 After deploying, verify the environment variable is set:
 
 1. Go to Project → Settings → Environment Variables
-2. You should see `VITE_GROK_API_KEY` listed
+2. You should see `GROK_API_KEY` listed
 3. Value should be masked (hidden for security)
 
 ---
@@ -200,7 +202,7 @@ After deployment, test these features:
    # Via CLI
    vercel env ls
    
-   # Should show VITE_GROK_API_KEY in all environments
+   # Should show GROK_API_KEY in all environments
    ```
 
 2. **Redeploy After Adding Env Var**:
@@ -210,7 +212,7 @@ After deployment, test these features:
 3. **Check Browser Console**:
    - F12 → Console tab
    - Look for errors like "API key not found"
-   - If you see "VITE_GROK_API_KEY not found", env var isn't set
+   - If you see "GROK_API_KEY not found", env var isn't set
 
 4. **Verify Build Output**:
    - Go to Deployments → Click latest
@@ -360,7 +362,7 @@ Test changes before merging to main!
 
 Before going live:
 
-- [ ] Environment variable set (`VITE_GROK_API_KEY`)
+- [ ] Environment variable set (`GROK_API_KEY`)
 - [ ] All pages load correctly
 - [ ] AI features working
 - [ ] Images display
@@ -406,7 +408,7 @@ vercel remove [deployment-url]
 ## ✅ Quick Start Summary
 
 1. **Connect GitHub repo to Vercel**
-2. **Add environment variable**: `VITE_GROK_API_KEY`
+2. **Add environment variable**: `GROK_API_KEY`
 3. **Deploy** (automatic or via CLI)
 4. **Test AI features** on live site
 5. **Monitor** via Vercel dashboard

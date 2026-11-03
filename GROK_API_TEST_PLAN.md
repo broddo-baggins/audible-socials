@@ -9,7 +9,7 @@
 ## 📋 PRE-TEST CHECKLIST
 
 ### **Environment Setup**
-- [ ] `.env` file exists with `VITE_GROK_API_KEY`
+- [ ] `.env` file exists with `GROK_API_KEY`
 - [ ] API key is valid and active
 - [ ] Dev server running (`npm run dev`)
 - [ ] Browser console open for debugging
@@ -17,10 +17,10 @@
 ### **Quick Verification**
 ```bash
 # 1. Check environment variable
-echo $VITE_GROK_API_KEY
+echo $GROK_API_KEY
 
 # 2. Verify config file
-cat src/config/api.js | grep VITE_GROK_API_KEY
+grep GROK_API_KEY api/grok.js
 
 # 3. Start dev server
 npm run dev

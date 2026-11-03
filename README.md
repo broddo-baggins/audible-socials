@@ -201,13 +201,13 @@ To enable the AI features powered by Grok API:
    - Visit https://console.x.ai
    - Sign in to your account
    - Go to API Keys section
-   - Generate a new API key (format: `gsk_...`)
+   - Generate a new API key (format: `xai-...`)
 
 2. **Create a `.env` file** in the project root:
 
 ```bash
 # Create .env file with your fresh API key
-echo "VITE_GROK_API_KEY=gsk_your_actual_key_here" > .env
+echo "GROK_API_KEY=xai-your_actual_key_here" > .env.local
 ```
 
 3. **Restart the development server** to pick up the new environment variable
@@ -245,7 +245,7 @@ echo "VITE_GROK_API_KEY=gsk_your_actual_key_here" > .env
 ### **Step 4: Generate New Key**
 - Click the "Create API Key" or "Generate Key" button
 - **IMPORTANT:** Copy the ENTIRE key immediately (it should be ~100+ characters)
-- **Format should be:** `gsk_` followed by many characters
+- **Format should be:** `xai-` followed by many characters
 
 ### **Step 5: Test Your Key Immediately**
 ```bash
@@ -256,7 +256,7 @@ node scripts/test-api-key.js
 curl -X POST "https://api.x.ai/v1/chat/completions" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_KEY" \
-  -d '{"messages": [{"role": "user", "content": "Hello"}], "model": "grok-beta"}'
+  -d '{"messages": [{"role": "user", "content": "Hello"}], "model": "grok-3-mini"}'
 ```
 
 **Expected Success Response:**
@@ -281,7 +281,7 @@ curl -X POST "https://api.x.ai/v1/chat/completions" \
 
 ### **Step 6: Update Your Application**
 ```bash
-echo "VITE_GROK_API_KEY=YOUR_TESTED_KEY_HERE" > .env
+echo "GROK_API_KEY=YOUR_TESTED_KEY_HERE" > .env.local
 npm run dev
 ```
 

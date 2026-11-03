@@ -160,9 +160,7 @@ Private Club 2 (Fantasy Readers Circle):
 
 **Configuration:**
 ```javascript
-✅ GROK_API_CONFIG.apiKey: import.meta.env.VITE_GROK_API_KEY
-✅ GROK_API_CONFIG.baseUrl: 'https://api.x.ai/v1'
-✅ GROK_API_CONFIG.model: 'grok-beta'
+✅ GROK_API_CONFIG.endpoint: '/api/grok' (server proxy, key in GROK_API_KEY)
 ✅ FEATURES.useRealAI: true
 ```
 
