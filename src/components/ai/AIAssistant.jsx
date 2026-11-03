@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Bot, X, Sparkles, BookOpen, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react';
-import { Card } from '../ui';
+import { Bot, X, BookOpen, MessageSquare, ChevronDown, ChevronUp } from 'lucide-react';
 import AIRecommendations from './AIRecommendations';
 import AIBookChat from './AIBookChat';
+import { usePlayer } from '../../contexts/usePlayer';
 
 /**
  * AI Assistant Component
@@ -15,78 +15,85 @@ const AIAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('recommendations'); // 'recommendations' or 'chat'
   const [isMinimized, setIsMinimized] = useState(false);
+  const { currentBook, isMinimized: playerMinimized } = usePlayer();
+  // the full player has its own book companion
+  const playerOpen = Boolean(currentBook) && !playerMinimized;
 
   const tabs = [
-    { id: 'recommendations', label: 'Next Listen', icon: BookOpen },
-    { id: 'chat', label: 'Ask About Books', icon: MessageSquare },
+    { id: 'recommendations', label: 'Next listen', icon: BookOpen },
+    { id: 'chat', label: 'Ask about books', icon: MessageSquare },
   ];
 
   return (
     <>
-      {/* Floating AI Button */}
-      {!isOpen && (
+      {/* Launcher: a quiet ink pill, not a glowing robot */}
+      {!isOpen && !playerOpen && (
         <button
+          type="button"
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-24 right-6 z-50 w-14 h-14 bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
-          aria-label="Open AI Assistant"
+          className="fixed bottom-24 right-4 z-50 inline-flex h-12 items-center gap-2 rounded-full bg-ink pl-4 pr-5 text-[0.9375rem] font-medium text-paper shadow-md hover:bg-gray-800 md:right-6"
+          aria-label="Open the reading assistant"
         >
-          <Bot className="w-6 h-6 group-hover:scale-110 transition-transform" />
-          <div className="absolute -top-1 -right-1 w-5 h-5 bg-pink-500 rounded-full flex items-center justify-center">
-            <Sparkles className="w-3 h-3 text-white" />
-          </div>
+          <MessageSquare className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+          <span className="hidden sm:inline">Ask about a book</span>
         </button>
       )}
 
-      {/* AI Assistant Panel */}
-      {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-2xl shadow-2xl overflow-hidden transition-all duration-300">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-white" />
-                </div>
+      {isOpen && !playerOpen && (
+        <div
+          role="dialog"
+          aria-label="Reading assistant"
+          className="fixed bottom-24 right-4 z-50 w-[26rem] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-line bg-surface shadow-md md:right-6"
+        >
+          <div className="border-b border-line px-4 pt-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-hl text-ink">
+                  <Bot className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                </span>
                 <div>
-                  <h3 className="text-white font-semibold text-sm">AI Reading Assistant</h3>
-                  <p className="text-white/80 text-xs">Powered by Smart Recommendations</p>
+                  <h2 className="text-[0.9375rem] font-semibold text-ink">Reading assistant</h2>
+                  <p className="text-[0.8125rem] text-ink-3">An AI helper. It keeps your place, and your spoilers.</p>
                 </div>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center">
                 <button
+                  type="button"
                   onClick={() => setIsMinimized(!isMinimized)}
-                  className="w-8 h-8 flex items-center justify-center text-white hover:bg-white/20 rounded-lg transition-colors"
-                  aria-label={isMinimized ? 'Maximize' : 'Minimize'}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-ink-2 hover:bg-surface-sunk hover:text-ink"
+                  aria-label={isMinimized ? 'Expand assistant' : 'Collapse assistant'}
+                  aria-expanded={!isMinimized}
                 >
-                  {isMinimized ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  {isMinimized ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                 </button>
                 <button
+                  type="button"
                   onClick={() => setIsOpen(false)}
-                  className="w-8 h-8 flex items-center justify-center text-white hover:bg-white/20 rounded-lg transition-colors"
-                  aria-label="Close AI Assistant"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-ink-2 hover:bg-surface-sunk hover:text-ink"
+                  aria-label="Close assistant"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             </div>
 
-            {/* Tabs */}
             {!isMinimized && (
-              <div className="flex gap-1 bg-white/10 p-1 rounded-lg">
+              <div className="mt-3 flex gap-5" role="tablist" aria-label="Assistant">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
+                  const selected = activeTab === tab.id;
                   return (
                     <button
                       key={tab.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={selected}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeTab === tab.id
-                          ? 'bg-white text-purple-600'
-                          : 'text-white/80 hover:text-white hover:bg-white/10'
-                      }`}
+                      className={`relative inline-flex h-10 items-center gap-2 text-sm font-medium ${selected ? 'text-ink' : 'text-ink-2 hover:text-ink'}`}
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
                       {tab.label}
+                      {selected && <span className="absolute inset-x-0 bottom-0 h-[3px] rounded-full bg-hl" aria-hidden="true" />}
                     </button>
                   );
                 })}
@@ -94,9 +101,8 @@ const AIAssistant = () => {
             )}
           </div>
 
-          {/* Content */}
           {!isMinimized && (
-            <div className="max-h-[600px] overflow-y-auto">
+            <div className="max-h-[min(600px,60vh)] overflow-y-auto" role="tabpanel">
               {activeTab === 'recommendations' && <AIRecommendations />}
               {activeTab === 'chat' && <AIBookChat />}
             </div>
@@ -108,4 +114,3 @@ const AIAssistant = () => {
 };
 
 export default AIAssistant;
-
