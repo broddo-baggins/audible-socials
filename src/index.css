@@ -44,7 +44,7 @@
   /* Inks */
   --ink: #17181C;            /* headings, body, primary fill: 15.8:1 on paper */
   --ink-2: #43464E;          /* secondary text: 8.4:1 on paper */
-  --ink-3: #5E626B;          /* tertiary, meta: 5.5:1 on paper */
+  --ink-3: #53575F;          /* tertiary, meta: 6.5:1 on paper (small antialiased text measures near 4.8) */
   --ink-on-night: #F2F2EE;   /* 16.3:1 on night */
   --ink-on-night-2: #A3A7AF; /* 7.6:1 on night */
 
@@ -136,11 +136,11 @@
 
   /* Neutral ramp: every grey family resolves here */
   --color-gray-50: #F7F7F4;  --color-gray-100: var(--paper); --color-gray-200: #E6E6E1;
-  --color-gray-300: var(--line); --color-gray-400: #686C74; --color-gray-500: var(--ink-3);
+  --color-gray-300: var(--line); --color-gray-400: #5E626B; --color-gray-500: var(--ink-3);
   --color-gray-600: #4D5058; --color-gray-700: var(--ink-2); --color-gray-800: #2A2C32;
   --color-gray-900: var(--ink); --color-gray-950: #0F1013;
   --color-slate-50: #F7F7F4; --color-slate-100: var(--paper); --color-slate-200: #E6E6E1;
-  --color-slate-300: var(--line); --color-slate-400: #686C74; --color-slate-500: var(--ink-3);
+  --color-slate-300: var(--line); --color-slate-400: #5E626B; --color-slate-500: var(--ink-3);
   --color-slate-600: #4D5058; --color-slate-700: var(--ink-2); --color-slate-800: #2A2C32;
   --color-slate-900: var(--ink); --color-slate-950: #0F1013;
 
@@ -181,7 +181,7 @@
   --color-audible-text-tertiary: var(--ink-3);
   --color-audible-gray: var(--line);
   --color-audible-gray-50: #F7F7F4; --color-audible-gray-100: var(--paper); --color-audible-gray-200: var(--line);
-  --color-audible-gray-300: var(--line); --color-audible-gray-400: #686C74; --color-audible-gray-500: var(--ink-3);
+  --color-audible-gray-300: var(--line); --color-audible-gray-400: #5E626B; --color-audible-gray-500: var(--ink-3);
   --color-audible-gray-600: #4D5058; --color-audible-gray-700: var(--ink-2); --color-audible-gray-800: #2A2C32;
   --color-audible-gray-900: var(--ink);
   --color-audible-blue-500: var(--ink-2); --color-audible-blue-600: var(--ink);

@@ -24,7 +24,7 @@ The source of truth for values is `src/index.css` (CSS custom properties and the
 | `--night` / `--night-raised` | #141519 / #1F2127 | The player and Home's Now playing slab: the one dark surface | |
 | `--ink` | #17181C | Headings, body, primary button fill | 15.8 : 1 |
 | `--ink-2` | #43464E | Secondary text | 8.4 : 1 |
-| `--ink-3` | #5E626B | Meta, captions, placeholders | 5.5 : 1 |
+| `--ink-3` | #53575F | Meta, captions, placeholders | 6.5 : 1 (kept above 6 because 11 to 13 px antialiased text measures about 1.5 lower) |
 | `--ink-on-night` / `--ink-on-night-2` | #F2F2EE / #A3A7AF | Text on night | 16.3 / 7.6 : 1 on night |
 | `--line` | #DCDDD7 | Hairlines and dividers (decorative) | |
 | `--line-strong` | #7E8279 | Edges of inputs and outline buttons | 3.5 : 1 (non-text 3 : 1) |
