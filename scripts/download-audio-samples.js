@@ -95,7 +95,7 @@ async function main() {
   try {
     console.log('\n📥 Trying to download real sample...');
     await downloadAudio(publicDomainSources[0], 'sample-tone.mp3');
-  } catch (error) {
+  } catch {
     console.log('⚠️  Could not download real sample, using placeholders only');
     console.log('💡 To get real audio samples:');
     console.log('   1. Visit librivox.org for public domain audiobooks');

@@ -1,445 +1,276 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, BookOpen, Trophy, TrendingUp, UserPlus, Crown, Calendar, Star, Clock, Award, Sparkles } from 'lucide-react';
+import { ArrowRight, UserPlus, Check, Users, CalendarDays } from 'lucide-react';
 import SocialNudges from '../components/social/SocialNudges';
 import BadgeDisplay from '../components/badges/BadgeDisplay';
-import { Card } from '../components/ui';
+import { PageHeader, Avatar, Cover, Waveform, Badge, EmptyState } from '../components/ui';
 import { getUserData, getFriends, getJoinedClubs } from '../utils/localStorage';
-import { getFriendsOfFriends } from '../utils/friendManagement';
+import { getFriendsOfFriends, getSentRequests, sendFriendRequest } from '../utils/friendManagement';
 import usersData from '../data/users.json';
 import clubsData from '../data/clubs.json';
 import booksData from '../data/books.json';
 
-const Social = () => {
-  const [userData, setUserData] = useState(null);
-  const [friends, setFriends] = useState([]);
-  const [friendsOfFriends, setFriendsOfFriends] = useState([]);
-  const [featuredClubs, setFeaturedClubs] = useState([]);
-  const [stats, setStats] = useState({
-    totalFriends: 0,
-    clubsJoined: 0,
-    booksShared: 0
-  });
+/**
+ * Social: the people side of Listenable. Your numbers, set as type; a feed of
+ * what friends are doing; who is listening right now; clubs worth joining;
+ * what you have earned. No banner, no tiles.
+ */
 
-  useEffect(() => {
-    const user = getUserData();
-    setUserData(user);
+const bookById = (id) => booksData.find((b) => b.id === id);
 
-    const friendIds = getFriends();
-    const friendsList = usersData.filter(u => friendIds.includes(u.id));
-    setFriends(friendsList);
-
-    // Load friends of friends
-    const fofList = getFriendsOfFriends('user-me', usersData).slice(0, 4); // Show top 4
-    setFriendsOfFriends(fofList);
-
-    const joinedClubIds = getJoinedClubs();
-    const featured = clubsData
-      .filter(club => !joinedClubIds.includes(club.id))
-      .sort((a, b) => b.memberCount - a.memberCount)
-      .slice(0, 3);
-    setFeaturedClubs(featured);
-
-    setStats({
-      totalFriends: friendsList.length,
+const loadState = () => {
+  const user = getUserData();
+  const friendIds = getFriends();
+  const friends = usersData.filter((u) => friendIds.includes(u.id));
+  const joinedClubIds = getJoinedClubs();
+  const featuredClubs = clubsData
+    .filter((club) => !joinedClubIds.includes(club.id))
+    .sort((a, b) => b.memberCount - a.memberCount)
+    .slice(0, 3);
+  return {
+    userData: user,
+    friends,
+    friendsOfFriends: getFriendsOfFriends('user-me', usersData).slice(0, 4),
+    featuredClubs,
+    stats: {
+      totalFriends: friends.length,
       clubsJoined: joinedClubIds.length,
-      booksShared: user.library?.length || 0
-    });
-  }, []);
+      booksShared: user.library?.length || 0,
+    },
+  };
+};
+
+const Social = () => {
+  const [{ userData, friends, friendsOfFriends, featuredClubs, stats }] = useState(loadState);
+  // Requests already sent stay marked after a reload
+  const [requested, setRequested] = useState(() => getSentRequests().map((r) => r.toUserId));
+
+  const listeningNow = friends
+    .map((f) => ({ ...f, book: f.currentlyReading ? bookById(f.currentlyReading) : null }))
+    .filter((f) => f.book)
+    .slice(0, 3);
+
+  const handleAddFriend = (user) => {
+    const result = sendFriendRequest(user.id, 'Hi, we have friends in common. I would love to connect and share recommendations.', 'friends_of_friends');
+    if (result.success || result.error === 'Request already exists') setRequested((prev) => [...prev, user.id]);
+  };
+
+  const [leadClub, ...moreClubs] = featuredClubs;
+  const leadBook = leadClub ? bookById(leadClub.currentBook) : null;
 
   return (
-    <div className="min-h-screen bg-audible-white">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 text-white py-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="w-8 h-8" />
-              <h1 className="text-4xl md:text-6xl font-bold font-serif">Social Hub</h1>
-              <Sparkles className="w-8 h-8" />
+    <div className="page pb-20">
+      <PageHeader
+        title="Social"
+        description="What your friends are listening to, the clubs worth joining and what you have earned."
+        actions={
+          <>
+            <Link to="/clubs/friends" className="inline-flex h-11 items-center gap-2 rounded-full bg-ink px-5 text-[0.9375rem] font-medium text-paper hover:bg-gray-800">
+              <UserPlus className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" /> Find friends
+            </Link>
+            <Link to="/clubs" className="inline-flex h-11 items-center rounded-full border border-line-strong px-5 text-[0.9375rem] font-medium text-ink hover:bg-surface">
+              Browse clubs
+            </Link>
+          </>
+        }
+      >
+        <dl className="grid max-w-xl grid-cols-3 gap-6 border-t border-line pt-6">
+          {[
+            [stats.totalFriends === 1 ? 'friend' : 'friends', stats.totalFriends, '/clubs/friends'],
+            [stats.clubsJoined === 1 ? 'book club' : 'book clubs', stats.clubsJoined, '/clubs'],
+            ['books shared', stats.booksShared, '/library'],
+          ].map(([label, value, to]) => (
+            <div key={label} className="flex flex-col-reverse">
+              <dt className="mt-1 text-[0.8125rem] text-ink-3">{label}</dt>
+              <dd className="t-h1 text-ink tabular"><Link to={to} className="hover:underline underline-offset-[6px] decoration-1">{value}</Link></dd>
             </div>
-            <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto">
-              Discover what your friends are reading, join book clubs, and share your literary journey
-            </p>
-          </div>
+          ))}
+        </dl>
+      </PageHeader>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-3 gap-4 max-w-3xl mx-auto">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
-              <Users className="w-8 h-8 mx-auto mb-2" />
-              <p className="text-3xl font-bold">{stats.totalFriends}</p>
-              <p className="text-sm text-white/80">Friends</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
-              <Trophy className="w-8 h-8 mx-auto mb-2" />
-              <p className="text-3xl font-bold">{stats.clubsJoined}</p>
-              <p className="text-sm text-white/80">Book Clubs</p>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
-              <BookOpen className="w-8 h-8 mx-auto mb-2" />
-              <p className="text-3xl font-bold">{stats.booksShared}</p>
-              <p className="text-sm text-white/80">Books Shared</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Friends Activity Feed */}
-          <section>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-bold text-audible-text-primary flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-blue-600" />
-                </div>
-                Friends Activity
-              </h2>
-              <Link
-                to="/clubs/friends"
-                className="text-audible-orange hover:text-audible-orange-dark font-semibold text-sm flex items-center gap-1"
-              >
-                View All
-                <span>→</span>
+      <div className="space-y-16 md:space-y-20">
+        <div className="grid gap-14 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-16">
+          {/* Friend activity */}
+          <section aria-labelledby="activity-title" className="min-w-0">
+            <div className="flex items-baseline justify-between gap-4">
+              <h2 id="activity-title" className="t-h2 text-ink">Friend activity</h2>
+              <Link to="/clubs/activity" className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-ink hover:underline underline-offset-4">
+                All activity <ArrowRight className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
               </Link>
             </div>
-
-            <div className="space-y-4 mb-6">
+            <div className="mt-4">
               <SocialNudges limit={6} />
             </div>
+          </section>
 
-            {/* Friends Reading Right Now */}
-            {friends.length > 0 && (
-              <Card className="p-6 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200">
-                <h3 className="text-lg font-bold text-audible-text-primary mb-4 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-blue-600" />
-                  Friends Reading Right Now
-                </h3>
-                <div className="space-y-3">
-                  {friends.slice(0, 3).map((friend) => {
-                    const currentBook = friend.currentlyReading
-                      ? booksData.find(b => b.id === friend.currentlyReading)
-                      : null;
-                    
-                    if (!currentBook) return null;
-
-                    return (
-                      <div key={friend.id} className="flex items-center gap-3 p-3 bg-white rounded-lg">
-                        <div className="relative">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                            {friend.name.split(' ').map(n => n[0]).join('')}
-                          </div>
-                          {friend.isPremium && (
-                            <div className="absolute -bottom-1 -right-1 bg-audible-gold rounded-full p-0.5">
-                              <Crown className="w-3 h-3 text-white" />
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-audible-text-primary">
-                            {friend.name}
+          <aside className="min-w-0 space-y-12">
+            {friends.length === 0 ? (
+              <EmptyState
+                title="Find people to listen with"
+                description="Add friends to see what they are listening to and swap recommendations."
+                action="Find friends"
+                actionTo="/clubs/friends"
+              />
+            ) : (
+              listeningNow.length > 0 && (
+                <section aria-labelledby="now-title">
+                  <h2 id="now-title" className="t-h3 text-ink">Listening right now</h2>
+                  <ul className="mt-3 divide-y divide-line border-y border-line">
+                    {listeningNow.map((friend) => (
+                      <li key={friend.id} className="flex items-center gap-3 py-3.5">
+                        <Avatar src={friend.avatar} name={friend.name} size="md" />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[0.9375rem] text-ink">
+                            <span className="font-semibold">{friend.name}</span>
+                            {friend.isPremium && <Badge size="sm" variant="outline" className="ml-2 align-middle">Premium</Badge>}
                           </p>
-                          <Link
-                            to={`/book/${currentBook.id}`}
-                            className="text-xs text-audible-text-secondary hover:text-audible-orange truncate block"
-                          >
-                            {currentBook.title}
-                          </Link>
-                          {friend.currentProgress && friend.currentProgress > 0 && (
-                            <div className="mt-2">
-                              <div className="flex items-center justify-between mb-1">
-                                <span className="text-xs font-semibold text-gray-700">Progress</span>
-                                <span className="text-sm font-bold text-green-600">{friend.currentProgress}%</span>
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                                <div
-                                  className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500"
-                                  style={{ width: `${friend.currentProgress}%` }}
-                                />
-                              </div>
-                              {friend.currentProgress < 100 && (
-                                <p className="text-xs text-gray-500 mt-1">
-                                  {100 - friend.currentProgress}% remaining
-                                </p>
-                              )}
+                          <Link to={`/book/${friend.book.id}`} className="t-title-book block text-sm text-ink-2 line-clamp-1 hover:underline underline-offset-4">{friend.book.title}</Link>
+                          {friend.currentProgress > 0 && (
+                            <div className="mt-1.5 flex items-center gap-2">
+                              <Waveform seed={`${friend.id}-${friend.book.id}`} bars={28} height={12} progress={friend.currentProgress / 100} className="h-3 w-24 text-ink" label={`${friend.currentProgress}% listened`} />
+                              <span className="text-xs text-ink-3 tabular">{friend.currentProgress < 100 ? `${100 - friend.currentProgress}% to go` : 'Finished'}</span>
                             </div>
                           )}
                         </div>
-                        <Link
-                          to={`/book/${currentBook.id}`}
-                          className="flex-shrink-0"
-                        >
-                          <img
-                            src={currentBook.cover}
-                            alt={currentBook.title}
-                            className="w-10 h-14 object-cover rounded shadow-sm hover:shadow-md transition-shadow"
-                          />
+                        <Link to={`/book/${friend.book.id}`} className="w-10 shrink-0 rounded-sm" aria-label={`${friend.book.title} details`}>
+                          <Cover src={friend.book.cover} title={friend.book.title} shadow={false} />
                         </Link>
-                      </div>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link to="/clubs/friends" className="mt-3 inline-flex min-h-11 items-center text-sm font-medium text-ink underline decoration-1 underline-offset-4 hover:decoration-2">
+                    All your friends
+                  </Link>
+                </section>
+              )
+            )}
+
+            {friendsOfFriends.length > 0 && (
+              <section aria-labelledby="fof-social">
+                <h2 id="fof-social" className="t-h3 text-ink">Friends of friends</h2>
+                <p className="mt-1 text-sm text-ink-2">People you may know through your friends.</p>
+                <ul className="mt-3 divide-y divide-line border-y border-line">
+                  {friendsOfFriends.map((user) => {
+                    const sent = requested.includes(user.id);
+                    return (
+                      <li key={user.id} className="flex items-center gap-3 py-3">
+                        <Avatar src={user.avatar} name={user.name} size="sm" />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-[0.9375rem] font-medium text-ink">{user.name}</p>
+                          <p className="text-[0.8125rem] text-ink-3 tabular">{user.mutualFriends} mutual friend{user.mutualFriends !== 1 ? 's' : ''}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleAddFriend(user)}
+                          disabled={sent}
+                          className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-line-strong px-3.5 text-sm font-medium text-ink hover:bg-surface disabled:border-transparent disabled:text-success"
+                        >
+                          {sent ? <><Check className="h-4 w-4" strokeWidth={2} aria-hidden="true" /> Requested</> : 'Add friend'}
+                        </button>
+                      </li>
                     );
                   })}
-                </div>
-                <Link
-                  to="/clubs/friends"
-                  className="block mt-4 text-center text-sm text-blue-700 hover:text-blue-800 font-semibold"
-                >
-                  View All Friends
-                </Link>
-              </Card>
+                </ul>
+              </section>
             )}
-
-            {/* Friends of Friends */}
-            {friendsOfFriends.length > 0 && (
-              <Card className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-audible-text-primary flex items-center gap-2">
-                    <Users className="w-5 h-5 text-indigo-600" />
-                    Friends of Friends
-                  </h3>
-                  <Link
-                    to="/clubs/friends"
-                    className="text-indigo-600 hover:text-indigo-700 font-semibold text-sm"
-                  >
-                    View All →
-                  </Link>
-                </div>
-                <p className="text-sm text-audible-text-secondary mb-4">
-                  Discover people through your friends' networks
-                </p>
-                <div className="grid grid-cols-2 gap-3">
-                  {friendsOfFriends.slice(0, 4).map((user) => (
-                    <div key={user.id} className="bg-white rounded-lg p-3 border border-gray-200 hover:border-indigo-300 transition-colors">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">
-                            {user.name.split(' ').map(n => n[0]).join('')}
-                          </span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
-                          <p className="text-xs text-indigo-600">
-                            {user.mutualFriends} mutual friend{user.mutualFriends !== 1 ? 's' : ''}
-                          </p>
-                        </div>
-                      </div>
-                      <button className="w-full bg-indigo-600 text-white text-xs font-semibold py-2 rounded hover:bg-indigo-700 transition-colors">
-                        Add Friend
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            )}
-
-            {/* No Friends CTA */}
-            {friends.length === 0 && (
-              <Card className="p-8 text-center bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200">
-                <Users className="w-16 h-16 mx-auto text-blue-400 mb-4" />
-                <h3 className="text-xl font-bold text-audible-text-primary mb-2">
-                  Find Your Reading Buddies
-                </h3>
-                <p className="text-audible-text-secondary mb-6">
-                  Connect with friends to see what they're reading and share recommendations
-                </p>
-                <Link
-                  to="/clubs/friends"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition-colors"
-                >
-                  <UserPlus className="w-5 h-5" />
-                  Find Friends
-                </Link>
-              </Card>
-            )}
-          </section>
-
-          {/* Book Clubs Discovery */}
-          <section>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-bold text-audible-text-primary flex items-center gap-3">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <Users className="w-6 h-6 text-purple-600" />
-                </div>
-                Featured Book Clubs
-              </h2>
-              <Link
-                to="/clubs"
-                className="text-audible-orange hover:text-audible-orange-dark font-semibold text-sm flex items-center gap-1"
-              >
-                Browse All
-                <span>→</span>
-              </Link>
-            </div>
-
-            <div className="space-y-4">
-              {featuredClubs.map((club) => {
-                const currentBook = booksData.find(b => b.id === club.currentBook);
-                
-                return (
-                  <Link
-                    key={club.id}
-                    to={`/club/${club.id}`}
-                    className="block group"
-                  >
-                    <Card className="p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-purple-300">
-                      <div className="flex gap-4">
-                        {currentBook && (
-                          <img
-                            src={currentBook.cover}
-                            alt={currentBook.title}
-                            className="w-20 h-28 object-cover rounded-lg shadow-md group-hover:shadow-xl transition-shadow flex-shrink-0"
-                          />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2 mb-2">
-                            <h3 className="text-xl font-bold text-audible-text-primary group-hover:text-purple-600 transition-colors">
-                              {club.name}
-                            </h3>
-                            {club.isPremium && (
-                              <span className="flex items-center gap-1 bg-audible-gold text-white px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0">
-                                <Crown className="w-3 h-3" />
-                                Premium
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-sm text-audible-text-secondary mb-3">
-                            Hosted by {club.host}
-                          </p>
-                          
-                          {currentBook && (
-                            <div className="bg-purple-50 rounded-lg p-3 mb-3">
-                              <p className="text-xs text-purple-700 font-semibold mb-1">
-                                Currently Reading:
-                              </p>
-                              <p className="text-sm font-bold text-purple-900 line-clamp-1">
-                                {currentBook.title}
-                              </p>
-                            </div>
-                          )}
-
-                          <div className="flex items-center gap-4 text-xs text-audible-text-tertiary">
-                            <div className="flex items-center gap-1">
-                              <Users className="w-4 h-4 text-purple-500" />
-                              <span className="font-semibold">
-                                {club.memberCount.toLocaleString()} members
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Calendar className="w-4 h-4 text-purple-500" />
-                              <span className="font-semibold">
-                                {club.daysRemaining} days left
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Perks Highlight */}
-                          {club.perks && club.perks.length > 0 && (
-                            <div className="mt-3 flex items-center gap-2">
-                              <Award className="w-4 h-4 text-orange-500" />
-                              <p className="text-xs text-audible-text-secondary line-clamp-1">
-                                <span className="font-semibold text-orange-600">Perks:</span> {club.perks[0]}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
-                  </Link>
-                );
-              })}
-            </div>
-
-            {/* Join More Clubs CTA */}
-            <Card className="p-8 text-center bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 mt-6">
-              <Trophy className="w-16 h-16 mx-auto text-purple-400 mb-4" />
-              <h3 className="text-xl font-bold text-audible-text-primary mb-2">
-                Join a Book Club Today
-              </h3>
-              <p className="text-audible-text-secondary mb-6">
-                Connect with thousands of readers, attend author events, and earn exclusive perks
-              </p>
-              <Link
-                to="/clubs"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white font-semibold rounded-full hover:bg-purple-700 transition-colors"
-              >
-                <Users className="w-5 h-5" />
-                Browse All Clubs
-              </Link>
-            </Card>
-          </section>
+          </aside>
         </div>
 
-        {/* Badges Section */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold text-audible-text-primary flex items-center gap-3">
-              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <Award className="w-6 h-6 text-yellow-600" />
+        {/* Featured clubs: one large, the next two as rows */}
+        {leadClub && (
+          <section aria-labelledby="clubs-social" className="rounded-2xl border border-line bg-surface p-5 md:p-8 lg:p-10">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <h2 id="clubs-social" className="t-h2 text-ink">Clubs to join</h2>
+                <p className="mt-1 text-[0.9375rem] text-ink-2">Thousands of listeners, author events and member perks.</p>
               </div>
-              Your Achievements
-            </h2>
-            <Link
-              to="/account"
-              className="text-audible-orange hover:text-audible-orange-dark font-semibold text-sm flex items-center gap-1"
-            >
-              View All
-              <span>→</span>
+              <Link to="/clubs" className="hidden shrink-0 items-center gap-1 text-sm font-medium text-ink hover:underline underline-offset-4 sm:inline-flex">
+                All clubs <ArrowRight className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+              </Link>
+            </div>
+
+            <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-14">
+              <Link to={`/club/${leadClub.id}`} className="group grid grid-cols-[5rem_minmax(0,1fr)] gap-4 rounded-lg sm:gap-5 md:grid-cols-[9rem_minmax(0,1fr)]">
+                <Cover src={leadBook?.cover} title={leadBook?.title || leadClub.name} author={leadBook?.author} />
+                <div className="min-w-0">
+                  <p className="text-[0.8125rem] text-ink-3">Hosted by {leadClub.host}{leadClub.isPremium && ' · Premium'}</p>
+                  <h3 className="mt-1 font-serif text-2xl font-medium leading-tight text-ink group-hover:underline underline-offset-4 decoration-1 md:text-[1.75rem]">{leadClub.name}</h3>
+                  {leadBook && <p className="mt-3 text-[0.9375rem] text-ink-2">Now reading <span className="t-title-book text-ink">{leadBook.title}</span></p>}
+                  <Waveform seed={`club-${leadClub.id}`} bars={56} height={16} className="mt-4 h-4 w-full max-w-xs text-ink-3" />
+                  <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-2 tabular">
+                    <div className="flex items-center gap-1.5">
+                      <dt><Users className="h-4 w-4" strokeWidth={1.75} aria-label="Members" /></dt>
+                      <dd>{leadClub.memberCount.toLocaleString()} members</dd>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <dt><CalendarDays className="h-4 w-4" strokeWidth={1.75} aria-label="Time left" /></dt>
+                      <dd>{leadClub.daysRemaining} days left</dd>
+                    </div>
+                  </dl>
+                  {leadClub.perks?.[0] && <p className="mt-3 text-sm text-ink-2">Perk: {leadClub.perks[0]}</p>}
+                </div>
+              </Link>
+
+              <ul className="self-start divide-y divide-line border-y border-line">
+                {moreClubs.map((club) => {
+                  const book = bookById(club.currentBook);
+                  return (
+                    <li key={club.id}>
+                      <Link to={`/club/${club.id}`} className="group flex items-center gap-4 py-4">
+                        <div className="w-11 shrink-0"><Cover src={book?.cover} title={book?.title || club.name} shadow={false} /></div>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-semibold text-ink group-hover:underline underline-offset-4">{club.name}</p>
+                          <p className="text-[0.8125rem] text-ink-2 line-clamp-1">
+                            {book ? <>Reading <span className="t-title-book">{book.title}</span></> : `Hosted by ${club.host}`}
+                          </p>
+                          {club.perks?.[0] && <p className="text-[0.8125rem] text-ink-3 line-clamp-1">{club.perks[0]}</p>}
+                        </div>
+                        <span className="shrink-0 text-right text-[0.8125rem] text-ink-3 tabular">
+                          {club.memberCount.toLocaleString()}<br />{club.daysRemaining} days left
+                        </span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+            <Link to="/clubs" className="mt-6 inline-flex min-h-11 items-center gap-1 text-sm font-medium text-ink hover:underline underline-offset-4 sm:hidden">
+              All clubs <ArrowRight className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            </Link>
+          </section>
+        )}
+
+        {/* Achievements */}
+        <section aria-labelledby="achievements-title">
+          <div className="flex items-baseline justify-between gap-4">
+            <h2 id="achievements-title" className="t-h2 text-ink">Your achievements</h2>
+            <Link to="/account" className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-ink hover:underline underline-offset-4">
+              All badges <ArrowRight className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
             </Link>
           </div>
-          <BadgeDisplay 
-            earnedBadges={userData?.badges || []} 
-            showProgress={true}
-          />
+          <div className="mt-5">
+            <BadgeDisplay earnedBadges={userData?.badges || []} showProgress />
+          </div>
         </section>
 
-        {/* Benefits Section */}
-        <section className="bg-gradient-to-r from-orange-50 via-pink-50 to-purple-50 rounded-2xl p-8 md:p-12 border border-orange-200">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-audible-text-primary mb-3">
-              Why Go Social?
-            </h2>
-            <p className="text-lg text-audible-text-secondary">
-              Enhance your audiobook experience with friends and community
-            </p>
+        {/* Why go social */}
+        <section aria-labelledby="why-social" className="grid gap-6 border-t border-line pt-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.7fr)] md:gap-12">
+          <div>
+            <h2 id="why-social" className="t-h2 text-ink">Why listen with others</h2>
+            <p className="mt-2 text-[0.9375rem] text-ink-2">The fastest way to your next book is someone who just finished theirs.</p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-xl p-6 text-center shadow-sm">
-              <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-7 h-7 text-blue-600" />
+          <dl className="divide-y divide-line border-y border-line">
+            {[
+              ['Discover together', 'See what friends listen to and get picks based on how they rate.'],
+              ['Join the conversation', 'Clubs with celebrity hosts, live author events and other listeners to talk with.'],
+              ['Earn rewards', 'Badges, 2-for-1 credit deals and members-only content.'],
+            ].map(([t, d]) => (
+              <div key={t} className="grid gap-1 py-4 sm:grid-cols-[12rem_minmax(0,1fr)] sm:gap-6">
+                <dt className="font-semibold text-ink">{t}</dt>
+                <dd className="text-[0.9375rem] text-ink-2">{d}</dd>
               </div>
-              <h3 className="text-lg font-bold text-audible-text-primary mb-2">
-                Discover Together
-              </h3>
-              <p className="text-sm text-audible-text-secondary">
-                See what friends are reading and get personalized recommendations based on their ratings
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 text-center shadow-sm">
-              <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-7 h-7 text-purple-600" />
-              </div>
-              <h3 className="text-lg font-bold text-audible-text-primary mb-2">
-                Join the Conversation
-              </h3>
-              <p className="text-sm text-audible-text-secondary">
-                Participate in book clubs with celebrity hosts, attend live author events, and discuss with fellow listeners
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 text-center shadow-sm">
-              <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Award className="w-7 h-7 text-orange-600" />
-              </div>
-              <h3 className="text-lg font-bold text-audible-text-primary mb-2">
-                Earn Rewards
-              </h3>
-              <p className="text-sm text-audible-text-secondary">
-                Unlock badges, get 2-for-1 credit deals, and access exclusive member-only content and perks
-              </p>
-            </div>
-          </div>
+            ))}
+          </dl>
         </section>
       </div>
     </div>
@@ -447,4 +278,3 @@ const Social = () => {
 };
 
 export default Social;
-

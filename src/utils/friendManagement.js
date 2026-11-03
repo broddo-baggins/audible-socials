@@ -13,15 +13,6 @@ export const initializeFriendData = () => {
   }
 };
 
-export const getFriendRequests = (userId = 'user-me') => {
-  initializeFriendData();
-  const requests = JSON.parse(localStorage.getItem(FRIEND_REQUESTS_KEY) || '[]');
-  return requests.filter(req => 
-    (req.toUserId === userId && req.status === 'pending') ||
-    (req.fromUserId === userId)
-  );
-};
-
 export const getPendingRequests = (userId = 'user-me') => {
   initializeFriendData();
   const requests = JSON.parse(localStorage.getItem(FRIEND_REQUESTS_KEY) || '[]');
@@ -136,13 +127,6 @@ export const blockUser = (userId, reason = '') => {
   const filteredFriends = friends.filter(id => id !== userId);
   localStorage.setItem('audible_friends', JSON.stringify(filteredFriends));
 
-  return { success: true };
-};
-
-export const unblockUser = (userId) => {
-  const blocked = JSON.parse(localStorage.getItem(BLOCKED_USERS_KEY) || '[]');
-  const filtered = blocked.filter(b => !(b.userId === 'user-me' && b.blockedUserId === userId));
-  localStorage.setItem(BLOCKED_USERS_KEY, JSON.stringify(filtered));
   return { success: true };
 };
 

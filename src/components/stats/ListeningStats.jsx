@@ -1,7 +1,29 @@
-import { Clock, BookOpen, TrendingUp, Award, Calendar, Flame } from 'lucide-react';
-import { Card, Badge } from '../ui';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Badge } from '../ui';
 
+// The week's listening and the genre split this component has always drawn.
+const WEEK_HOURS = [3.2, 4.5, 2.8, 5.1, 4.2, 6.3, 5.8];
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const GENRES = [
+  { genre: 'Science Fiction', count: 23, percentage: 35 },
+  { genre: 'Fantasy', count: 18, percentage: 28 },
+  { genre: 'Mystery', count: 12, percentage: 18 },
+  { genre: 'Self Development', count: 8, percentage: 12 },
+  { genre: 'Other', count: 4, percentage: 7 },
+];
+const RANGES = [
+  { id: 'week', label: 'Week' },
+  { id: 'month', label: 'Month' },
+  { id: 'year', label: 'Year' },
+];
+const YEAR_GOAL = 50;
+
+/**
+ * ListeningStats: four numbers in Literata, then the charts (ink bars on a
+ * line baseline, today or your favourite in highlighter, every value printed),
+ * then the year's goal.
+ */
 const ListeningStats = ({ stats }) => {
   const {
     hoursListened = 0,
@@ -13,179 +35,167 @@ const ListeningStats = ({ stats }) => {
     thisMonthHours = 0,
     thisYearBooks = 0,
   } = stats || {};
-  
-  const statCards = [
-    {
-      icon: Clock,
-      label: 'Hours Listened',
-      value: hoursListened.toLocaleString(),
-      subtext: `${thisMonthHours}h this month`,
-      color: 'text-echo-orange',
-      bgColor: 'bg-echo-orange/10',
-    },
-    {
-      icon: BookOpen,
-      label: 'Books Finished',
-      value: booksFinished.toLocaleString(),
-      subtext: `${thisYearBooks} this year`,
-      color: 'text-echo-success',
-      bgColor: 'bg-echo-success/10',
-    },
-    {
-      icon: Flame,
-      label: 'Current Streak',
-      value: `${currentStreak} days`,
-      subtext: `Longest: ${longestStreak} days`,
-      color: 'text-echo-error',
-      bgColor: 'bg-echo-error/10',
-    },
-    {
-      icon: TrendingUp,
-      label: 'Average Rating',
-      value: averageRating.toFixed(1),
-      subtext: 'Your ratings',
-      color: 'text-echo-info',
-      bgColor: 'bg-echo-info/10',
-    },
+
+  const [range, setRange] = useState('week');
+
+  const statItems = [
+    { label: 'Hours listened', value: hoursListened.toLocaleString(), sub: `${thisMonthHours} h this month` },
+    { label: 'Books finished', value: booksFinished.toLocaleString(), sub: `${thisYearBooks} this year` },
+    { label: 'Current streak', value: currentStreak, unit: currentStreak === 1 ? 'day' : 'days', sub: `Longest ${longestStreak} days` },
+    { label: 'Average rating', value: averageRating.toFixed(1), sub: 'Your ratings' },
   ];
-  
+
+  const todayIndex = (new Date().getDay() + 6) % 7; // Monday first
+  const maxHours = Math.max(...WEEK_HOURS);
+  const weekTotal = WEEK_HOURS.reduce((a, b) => a + b, 0);
+
+  const year = new Date().getFullYear();
+  const goalPct = Math.round((thisYearBooks / YEAR_GOAL) * 100);
+  const onTrack = thisYearBooks >= YEAR_GOAL / 12 * (new Date().getMonth() + 1);
+
+  const isFavorite = (genre) => favoriteGenre && (favoriteGenre === genre || favoriteGenre.startsWith(genre));
+
+  const onRangeKey = (e, i) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    e.preventDefault();
+    const next = (i + (e.key === 'ArrowRight' ? 1 : RANGES.length - 1)) % RANGES.length;
+    setRange(RANGES[next].id);
+    document.getElementById(`ls-range-${RANGES[next].id}`)?.focus();
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Main Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {statCards.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={index} className="p-4 hover:shadow-md transition-shadow">
-              <div className="flex flex-col items-start">
-                <div className={`w-10 h-10 rounded-lg ${stat.bgColor} flex items-center justify-center mb-3`}>
-                  <Icon className={`w-5 h-5 ${stat.color}`} />
-                </div>
-                <div className="text-2xl font-bold text-echo-text-primary mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-sm font-medium text-echo-text-secondary mb-1">
-                  {stat.label}
-                </div>
-                <div className="text-xs text-echo-text-tertiary">
-                  {stat.subtext}
-                </div>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
-      
-      {/* Listening Activity Chart Placeholder */}
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-echo-text-primary">
-            Listening Activity
-          </h3>
-          <div className="flex gap-2">
-            <button className="px-3 py-1 text-sm rounded-lg bg-echo-orange text-white">
-              Week
-            </button>
-            <button className="px-3 py-1 text-sm rounded-lg text-echo-text-secondary hover:bg-echo-beige">
-              Month
-            </button>
-            <button className="px-3 py-1 text-sm rounded-lg text-echo-text-secondary hover:bg-echo-beige">
-              Year
-            </button>
+    <div className="space-y-12">
+      {/* The numbers */}
+      <dl className="grid grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-4">
+        {statItems.map((s) => (
+          <div key={s.label} className="flex flex-col">
+            <dt className="order-2 mt-1 text-sm font-medium text-ink-2">{s.label}</dt>
+            <dd className="order-1 t-h1 text-ink tabular">
+              {s.value}{s.unit && <span className="ml-1.5 font-sans text-base font-normal text-ink-2">{s.unit}</span>}
+            </dd>
+            <dd className="order-3 mt-0.5 t-meta">{s.sub}</dd>
+          </div>
+        ))}
+      </dl>
+
+      {/* Listening activity */}
+      <section aria-labelledby="ls-activity">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h3 id="ls-activity" className="t-h2 text-ink">Listening activity</h3>
+            <p className="mt-1 text-[0.9375rem] text-ink-2 tabular">
+              {range === 'week' && <>{weekTotal.toFixed(1)} hours this week</>}
+              {range === 'month' && <>{thisMonthHours} hours this month</>}
+              {range === 'year' && <>{thisYearBooks} books finished this year</>}
+            </p>
+          </div>
+          <div role="tablist" aria-label="Time range" className="flex gap-5 border-b border-line">
+            {RANGES.map((r, i) => {
+              const selected = range === r.id;
+              return (
+                <button
+                  key={r.id}
+                  id={`ls-range-${r.id}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  aria-controls="ls-range-panel"
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => setRange(r.id)}
+                  onKeyDown={(e) => onRangeKey(e, i)}
+                  className={`relative h-11 text-sm font-medium transition-colors ${selected ? 'text-ink' : 'text-ink-2 hover:text-ink'}`}
+                >
+                  {r.label}
+                  {selected && <span className="absolute inset-x-0 -bottom-px h-[3px] rounded-full bg-hl" aria-hidden="true" />}
+                </button>
+              );
+            })}
           </div>
         </div>
-        
-        {/* Simple bar chart visualization */}
-        <div className="h-48 flex items-end justify-between gap-2">
-          {[3.2, 4.5, 2.8, 5.1, 4.2, 6.3, 5.8].map((hours, index) => {
-            const height = (hours / 7) * 100;
-            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-            return (
-              <div key={index} className="flex-1 flex flex-col items-center gap-2">
-                <div className="w-full bg-echo-beige rounded-t-lg relative" style={{ height: `${height}%`, minHeight: '20px' }}>
-                  <div 
-                    className="absolute inset-0 bg-echo-orange rounded-t-lg transition-all hover:bg-echo-orange-dark"
-                    title={`${hours}h`}
-                  />
-                </div>
-                <div className="text-xs text-echo-text-tertiary">
-                  {days[index]}
-                </div>
+
+        <div id="ls-range-panel" role="tabpanel" aria-labelledby={`ls-range-${range}`} className="mt-6">
+          {range === 'week' ? (
+            <figure>
+              <div className="flex h-52 items-end gap-2 border-b border-line-strong sm:gap-4" role="img" aria-label={`Hours listened each day this week: ${WEEK_HOURS.map((h, i) => `${DAYS[i]} ${h}`).join(', ')}`}>
+                {WEEK_HOURS.map((hours, index) => {
+                  const isToday = index === todayIndex;
+                  return (
+                    <div key={DAYS[index]} className="flex h-full flex-1 flex-col items-center justify-end gap-1.5" aria-hidden="true">
+                      <span className={`text-[0.8125rem] tabular ${isToday ? 'font-semibold text-ink' : 'text-ink-2'}`}>{hours}</span>
+                      <div
+                        className={`w-full max-w-12 rounded-t-[3px] ${isToday ? 'bg-hl ring-1 ring-inset ring-ink' : 'bg-ink'}`}
+                        style={{ height: `${(hours / maxHours) * 82}%` }}
+                      />
+                    </div>
+                  );
+                })}
               </div>
+              <div className="mt-2 flex gap-2 sm:gap-4" aria-hidden="true">
+                {DAYS.map((d, i) => (
+                  <span key={d} className={`flex-1 text-center text-[0.8125rem] ${i === todayIndex ? 'font-semibold text-ink' : 'text-ink-3'}`}>
+                    {i === todayIndex ? 'Today' : d}
+                  </span>
+                ))}
+              </div>
+              <figcaption className="mt-3 t-meta">Hours a day. Today is marked in highlighter.</figcaption>
+            </figure>
+          ) : (
+            <div className="rounded-lg border border-dashed border-line-strong px-5 py-6">
+              <p className="font-serif text-3xl font-medium text-ink tabular">
+                {range === 'month' ? <>{thisMonthHours} <span className="font-sans text-base font-normal text-ink-2">hours</span></> : <>{thisYearBooks} <span className="font-sans text-base font-normal text-ink-2">books</span></>}
+              </p>
+              <p className="mt-1 text-sm text-ink-2">
+                {range === 'month' ? 'Listened this month.' : 'Finished this year.'} Day by day detail is kept for the last seven days.
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Genre breakdown */}
+      <section aria-labelledby="ls-genres">
+        <h3 id="ls-genres" className="t-h2 text-ink">Top genres</h3>
+        <p className="mt-1 text-[0.9375rem] text-ink-2">
+          Favourite genre: <span className="font-semibold text-ink">{favoriteGenre}</span>
+        </p>
+        <ul className="mt-6 space-y-4">
+          {GENRES.map((item) => {
+            const fav = isFavorite(item.genre);
+            return (
+              <li key={item.genre} className="grid grid-cols-[minmax(0,8.5rem)_minmax(0,1fr)_auto] items-center gap-3 sm:grid-cols-[minmax(0,11rem)_minmax(0,1fr)_auto] sm:gap-5">
+                <span className={`truncate text-sm ${fav ? 'font-semibold text-ink' : 'text-ink-2'}`}>{item.genre}</span>
+                <span className="relative h-3 border-l border-line-strong" aria-hidden="true">
+                  <span
+                    className={`absolute inset-y-0 left-0 rounded-r-[3px] ${fav ? 'bg-hl ring-1 ring-inset ring-ink' : 'bg-ink'}`}
+                    style={{ width: `${(item.percentage / GENRES[0].percentage) * 100}%` }}
+                  />
+                </span>
+                <span className="text-right text-[0.8125rem] text-ink-2 tabular">{item.count} books · {item.percentage}%</span>
+              </li>
             );
           })}
+        </ul>
+      </section>
+
+      {/* Reading goal */}
+      <section aria-labelledby="ls-goal" className="rounded-lg border border-line bg-surface p-5 md:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h3 id="ls-goal" className="t-h3 text-ink">{year} reading goal</h3>
+          <Badge variant={onTrack ? 'success' : 'default'}>{onTrack ? 'On track' : 'Behind'}</Badge>
         </div>
-      </Card>
-      
-      {/* Genre Breakdown */}
-      <Card className="p-6">
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold text-echo-text-primary">
-            Top Genres
-          </h3>
-          <p className="text-sm text-echo-text-secondary">
-            Favorite genre: <span className="font-semibold text-echo-text-primary">{favoriteGenre}</span>
+        <div className="mt-4 flex items-baseline justify-between gap-4">
+          <p className="text-sm text-ink-2 tabular">
+            <span className="font-serif text-3xl font-medium text-ink">{thisYearBooks}</span> of {YEAR_GOAL} books
           </p>
+          <span className="text-sm font-semibold text-ink tabular">{goalPct}%</span>
         </div>
-        <div className="space-y-3">
-          {[
-            { genre: 'Science Fiction', count: 23, percentage: 35 },
-            { genre: 'Fantasy', count: 18, percentage: 28 },
-            { genre: 'Mystery', count: 12, percentage: 18 },
-            { genre: 'Self Development', count: 8, percentage: 12 },
-            { genre: 'Other', count: 4, percentage: 7 },
-          ].map((item, index) => (
-            <div key={index}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium text-echo-text-primary">
-                  {item.genre}
-                </span>
-                <span className="text-sm text-echo-text-tertiary">
-                  {item.count} books ({item.percentage}%)
-                </span>
-              </div>
-              <div className="h-2 bg-echo-beige rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-echo-orange rounded-full transition-all"
-                  style={{ width: `${item.percentage}%` }}
-                />
-              </div>
-            </div>
-          ))}
+        <div className="mt-3 h-2 overflow-hidden rounded-full bg-line" role="progressbar" aria-label="Books toward this year's goal" aria-valuemin={0} aria-valuemax={YEAR_GOAL} aria-valuenow={thisYearBooks}>
+          <div className="h-full rounded-full bg-ink" style={{ width: `${Math.min(goalPct, 100)}%` }} />
         </div>
-      </Card>
-      
-      {/* Reading Goals */}
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-echo-text-primary">
-            2025 Reading Goal
-          </h3>
-          <Badge variant="success">On Track</Badge>
-        </div>
-        <div className="space-y-3">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-echo-text-secondary">
-                Books Goal: {thisYearBooks} / 50
-              </span>
-              <span className="text-sm font-medium text-echo-orange">
-                {Math.round((thisYearBooks / 50) * 100)}%
-              </span>
-            </div>
-            <div className="h-3 bg-echo-beige rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-echo-orange rounded-full transition-all"
-                style={{ width: `${Math.min((thisYearBooks / 50) * 100, 100)}%` }}
-              />
-            </div>
-          </div>
-          <p className="text-xs text-echo-text-tertiary">
-            You're {thisYearBooks >= 50 / 12 * (new Date().getMonth() + 1) ? 'ahead of' : 'behind'} schedule. 
-            Keep it up!
-          </p>
-        </div>
-      </Card>
+        <p className="mt-3 t-meta">
+          You are {onTrack ? 'ahead of' : 'behind'} schedule. Keep it up.
+        </p>
+      </section>
     </div>
   );
 };

@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import {
-  Play, Pause, SkipBack, SkipForward, Volume2, VolumeX,
-  X, Maximize2, Minimize2, Bookmark, List, Clock, Sparkles
+  Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, X, Maximize2, Minimize2, Bookmark, List, Clock, MessageSquare
 } from 'lucide-react';
 import { usePlayer } from '../../contexts/usePlayer';
-import { ProgressBar, Button, Badge } from '../ui';
+import { ProgressBar, Button, Badge, Waveform } from '../ui';
 import IdleGame from '../idle/IdleGame';
 import AIBookChat from '../ai/AIBookChat';
 
@@ -72,15 +71,15 @@ const AudioPlayer = () => {
   };
   
   return (
-    <div className="fixed inset-0 z-50 bg-echo-player-bg flex items-center justify-center player-dark-bg">
+    <div className="on-night fixed inset-0 z-50 overflow-y-auto bg-night flex items-start md:items-center justify-center" role="dialog" aria-modal="true" aria-label="Player">
       <div className="w-full h-full max-w-7xl mx-auto flex flex-col md:flex-row gap-8 p-6 md:p-12">
         {/* Left Side - Cover Art */}
         <div className="flex-shrink-0 flex items-center justify-center md:w-2/5">
-          <div className="relative w-full max-w-md aspect-book">
+          <div className="relative w-48 md:w-full md:max-w-sm aspect-book">
             <img
               src={currentBook.cover}
               alt={`${currentBook.title} cover`}
-              className="w-full h-full object-cover rounded-2xl shadow-2xl"
+              className="w-full h-full object-cover rounded-sm shadow-[0_24px_48px_-16px_rgb(0_0_0/0.6)]"
             />
             {currentBook.contentType !== 'audiobook' && (
               <div className="absolute top-4 left-4">
@@ -100,7 +99,7 @@ const AudioPlayer = () => {
           {/* Header Actions */}
           <div className="flex items-start justify-between mb-6">
             <div className="flex-1 min-w-0">
-              <h1 className="text-3xl md:text-4xl font-serif font-bold text-echo-player-text mb-2 line-clamp-2">
+              <h1 className="font-serif text-3xl md:text-[2.75rem] font-medium leading-[1.08] tracking-[-0.02em] text-ink-on-night mb-3 line-clamp-2">
                 {currentBook.title}
               </h1>
               <p className="text-lg text-echo-player-text-muted mb-1">
@@ -134,15 +133,23 @@ const AudioPlayer = () => {
           {/* Chapter Info */}
           {currentBook.chapters && currentBook.chapters[currentChapter] && (
             <div className="mb-6 px-4 py-3 bg-echo-player-surface rounded-lg">
-              <p className="text-sm text-echo-player-text-muted mb-1">Current Chapter</p>
+              <p className="text-sm text-echo-player-text-muted mb-1">Current chapter</p>
               <p className="text-base text-echo-player-text font-medium">
                 {currentBook.chapters[currentChapter].title}
               </p>
             </div>
           )}
           
-          {/* Progress Bar */}
+          {/* Progress: the book's waveform over the scrubber */}
           <div className="mb-8">
+            <Waveform
+              seed={currentBook.id}
+              bars={96}
+              height={48}
+              progress={duration > 0 ? currentTime / duration : 0}
+              className="mb-3 h-12 w-full text-ink-on-night-2"
+              playedClassName="text-hl"
+            />
             <ProgressBar
               value={currentTime}
               max={duration}
@@ -168,7 +175,7 @@ const AudioPlayer = () => {
             
             <button
               onClick={togglePlay}
-              className="w-16 h-16 flex items-center justify-center bg-echo-orange hover:bg-echo-orange-dark rounded-full text-white transition-colors shadow-lg"
+              className="w-16 h-16 flex items-center justify-center bg-hl hover:bg-[#D6E43F] rounded-full text-ink transition-colors"
               aria-label={isPlaying ? 'Pause' : 'Play'}
             >
               {isPlaying ? (
@@ -236,7 +243,7 @@ const AudioPlayer = () => {
                         onClick={() => handleSpeedChange(speed)}
                         className={`w-full px-4 py-2 text-left text-sm transition-colors ${
                           speed === playbackSpeed
-                            ? 'bg-echo-orange text-white'
+                            ? 'bg-hl text-ink'
                             : 'text-echo-player-text hover:bg-echo-player-elevated'
                         }`}
                       >
@@ -256,7 +263,7 @@ const AudioPlayer = () => {
                   onClick={() => setShowSleepTimer(!showSleepTimer)}
                   className={`p-2 rounded-lg transition-colors ${
                     sleepTimer
-                      ? 'bg-echo-orange text-white'
+                      ? 'bg-hl text-ink'
                       : 'text-echo-player-text hover:bg-echo-player-elevated'
                   }`}
                   aria-label="Sleep timer"
@@ -294,12 +301,12 @@ const AudioPlayer = () => {
                 onClick={() => setShowAIChat(!showAIChat)}
                 className={`p-2 rounded-lg transition-colors ${
                   showAIChat 
-                    ? 'bg-purple-600 text-white' 
+                    ? 'bg-hl text-ink' 
                     : 'text-echo-player-text hover:bg-echo-player-elevated'
                 }`}
                 aria-label="Ask AI about this book"
               >
-                <Sparkles className="w-5 h-5" />
+                <MessageSquare className="w-5 h-5" strokeWidth={1.75} />
               </button>
 
               {/* Bookmark */}
@@ -331,20 +338,21 @@ const AudioPlayer = () => {
 
           {/* AI Chat Modal */}
           {showAIChat && (
-            <div className="absolute bottom-20 right-0 z-50 w-full md:w-96 bg-white rounded-xl shadow-2xl overflow-hidden border border-audible-gray-200 flex flex-col max-h-[60vh] md:max-h-[500px]">
-              <div className="flex items-center justify-between px-4 py-3 bg-purple-600 text-white shrink-0">
+            <div className="absolute bottom-20 right-0 z-50 w-full md:w-96 bg-surface rounded-2xl shadow-md overflow-hidden border border-line flex flex-col max-h-[60vh] md:max-h-[500px]">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-line text-ink shrink-0">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4" />
-                  <span className="font-medium text-sm">Book Companion</span>
+                  <MessageSquare className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
+                  <span className="font-semibold text-sm">Book companion</span>
                 </div>
                 <button 
                   onClick={() => setShowAIChat(false)}
-                  className="p-1 hover:bg-purple-500 rounded-lg transition-colors"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full text-ink-2 hover:bg-surface-sunk"
+                  aria-label="Close book companion"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <div className="flex-1 overflow-hidden bg-white">
+              <div className="flex-1 overflow-hidden bg-surface">
                 <AIBookChat 
                   contextBook={currentBook}
                   playbackState={{
@@ -370,7 +378,7 @@ const AudioPlayer = () => {
                     onClick={() => goToChapter(index)}
                     className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors ${
                       index === currentChapter
-                        ? 'bg-echo-orange text-white'
+                        ? 'bg-hl text-ink'
                         : 'text-echo-player-text hover:bg-echo-player-elevated'
                     }`}
                   >

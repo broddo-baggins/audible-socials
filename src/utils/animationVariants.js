@@ -65,18 +65,15 @@ export const cardHoverVariants = {
 export const pageVariants = {
   initial: {
     opacity: 0,
-    y: 20,
-    scale: 0.98
+    y: 6
   },
   in: {
     opacity: 1,
-    y: 0,
-    scale: 1
+    y: 0
   },
   out: {
     opacity: 0,
-    y: -20,
-    scale: 1.02
+    y: 0
   }
 };
 
@@ -87,6 +84,6 @@ export const pageVariants = {
  */
 export const pageTransition = {
   type: "tween",
-  ease: "anticipate",
-  duration: 0.4
+  ease: [0.22, 1, 0.36, 1],
+  duration: 0.22
 };

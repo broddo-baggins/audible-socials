@@ -1,73 +1,68 @@
-import { useState, useEffect } from 'react';
-import { Users, Plus, X, BookOpen, Calendar, Clock, Check } from 'lucide-react';
+import { useState, useEffect, useRef, useId } from 'react';
+import PropTypes from 'prop-types';
+import { X, Check, Search } from 'lucide-react';
 import { getFriends, getUserData, createPrivateClub } from '../../utils/localStorage';
 import usersData from '../../data/users.json';
-import { Card } from '../ui';
+import booksData from '../../data/books.json';
+import { Avatar, Button, Cover, Input } from '../ui';
+
+/**
+ * CreatePrivateClub: a three-step sheet (about the club, who to invite, the
+ * first book). Every choice is a real button; the step you are on is in ink.
+ */
+
+const STEPS = ['About the club', 'Invite friends', 'First book'];
+
+const fieldClass = 'w-full rounded-lg border border-line-strong bg-surface px-3.5 text-base text-ink focus:border-ink focus:shadow-[0_0_0_3px_var(--hl)] focus:outline-none';
 
 export default function CreatePrivateClub({ onClubCreated, onClose }) {
-  const [step, setStep] = useState(1); // 1: Basic Info, 2: Invite Friends, 3: Book Selection
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     invitedFriends: [],
     currentBook: null,
     meetingFrequency: 'monthly',
-    nextMeeting: null
+    nextMeeting: null,
   });
-
-  const [friends, setFriends] = useState([]);
-  const [books, setBooks] = useState([]);
+  const [friends] = useState(() => {
+    const friendIds = getFriends();
+    return usersData.filter((u) => friendIds.includes(u.id));
+  });
+  const [books] = useState(() => booksData.filter((b) => b.contentType === 'audiobook').slice(0, 9));
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const ids = { title: useId(), desc: useId(), freq: useId(), next: useId() };
+  const closeRef = useRef(null);
+  const onCloseRef = useRef(onClose);
 
+  useEffect(() => { onCloseRef.current = onClose; });
   useEffect(() => {
-    // Load friends
-    const friendIds = getFriends();
-    const friendData = usersData.filter(u => friendIds.includes(u.id));
-    setFriends(friendData);
-
-    // Load available books (sample for now)
-    const sampleBooks = [
-      { id: '1', title: 'Project Hail Mary', author: 'Andy Weir', cover: '/images/covers/1-project-hail-mary.jpg' },
-      { id: '2', title: 'Where the Crawdads Sing', author: 'Delia Owens', cover: '/images/covers/2-where-the-crawdads-sing.jpg' },
-      { id: '3', title: 'The Seven Husbands of Evelyn Hugo', author: 'Taylor Jenkins Reid', cover: '/images/covers/3-seven-husbands.jpg' },
-      { id: '4', title: 'The Three-Body Problem', author: 'Liu Cixin', cover: '/images/covers/4-three-body-problem.jpg' },
-      { id: '5', title: 'Dune', author: 'Frank Herbert', cover: '/images/covers/5-dune.jpg' }
-    ];
-    setBooks(sampleBooks);
+    closeRef.current?.focus();
+    const onKey = (e) => { if (e.key === 'Escape') onCloseRef.current(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
   }, []);
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
+  const handleInputChange = (field, value) => setFormData((prev) => ({ ...prev, [field]: value }));
 
   const toggleFriend = (friendId) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       invitedFriends: prev.invitedFriends.includes(friendId)
-        ? prev.invitedFriends.filter(id => id !== friendId)
-        : [...prev.invitedFriends, friendId]
+        ? prev.invitedFriends.filter((id) => id !== friendId)
+        : [...prev.invitedFriends, friendId],
     }));
   };
 
-  const selectBook = (bookId) => {
-    setFormData(prev => ({
-      ...prev,
-      currentBook: bookId
-    }));
-  };
+  const selectBook = (bookId) => setFormData((prev) => ({ ...prev, currentBook: bookId }));
 
   const createClub = async () => {
     setLoading(true);
     setError(null);
-
     try {
       const userData = getUserData();
-
       const clubData = {
         name: formData.name,
         host: userData.id,
@@ -91,15 +86,15 @@ export default function CreatePrivateClub({ onClubCreated, onClose }) {
         discussions: [],
         events: formData.nextMeeting ? [{
           id: `priv-${Date.now()}`,
-          title: `First Meetup: ${formData.name}`,
+          title: `First meetup: ${formData.name}`,
           date: formData.nextMeeting,
           type: 'discussion',
-          description: `Welcome to our new private book club! Let's discuss our first book and plan future reads.`,
+          description: 'Welcome to our new private book club. We will talk about our first book and plan the next ones.',
           rsvpCount: formData.invitedFriends.length + 1,
           maxCapacity: formData.invitedFriends.length + 1,
           isExclusive: true,
-          attendees: [userData.id, ...formData.invitedFriends]
-        }] : []
+          attendees: [userData.id, ...formData.invitedFriends],
+        }] : [],
       };
 
       const result = createPrivateClub(clubData);
@@ -107,10 +102,10 @@ export default function CreatePrivateClub({ onClubCreated, onClose }) {
         onClubCreated(result.club);
         onClose();
       } else {
-        setError(result.error || 'Failed to create club');
+        setError(result.error || 'The club could not be created.');
       }
     } catch (err) {
-      setError('An unexpected error occurred while creating the club');
+      setError('Something went wrong while creating the club. Please try again.');
       console.error('Club creation error:', err);
     } finally {
       setLoading(false);
@@ -119,273 +114,172 @@ export default function CreatePrivateClub({ onClubCreated, onClose }) {
 
   const canProceed = () => {
     switch (step) {
-      case 1:
-        return formData.name.trim() && formData.description.trim();
-      case 2:
-        return formData.invitedFriends.length > 0;
-      case 3:
-        return formData.currentBook !== null;
-      default:
-        return false;
+      case 1: return Boolean(formData.name.trim() && formData.description.trim());
+      case 2: return formData.invitedFriends.length > 0;
+      case 3: return formData.currentBook !== null;
+      default: return false;
     }
   };
 
-  const filteredFriends = friends.filter(friend =>
-    friend.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredFriends = friends.filter((f) => f.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-6 text-white">
-          <div className="flex items-center justify-between mb-4">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/50 sm:items-center sm:p-4" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div role="dialog" aria-modal="true" aria-labelledby="create-club-title" className="flex max-h-[94vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-2xl bg-surface shadow-lg sm:max-h-[90vh] sm:rounded-2xl">
+        <div className="border-b border-line p-5 sm:p-7">
+          <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-bold">Create Private Book Club</h2>
-              <p className="text-purple-100 mt-1">Start a private club for you and your friends</p>
+              <h2 id="create-club-title" className="t-h2 text-ink">Start a private club</h2>
+              <p className="mt-1 text-[0.9375rem] text-ink-2">A club for you and the friends you invite.</p>
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-            >
-              <X className="w-5 h-5" />
+            <button ref={closeRef} type="button" onClick={onClose} className="-mr-2 -mt-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-2 hover:bg-surface-sunk hover:text-ink" aria-label="Close">
+              <X className="h-5 w-5" strokeWidth={1.75} />
             </button>
           </div>
-
-          {/* Progress Steps */}
-          <div className="flex items-center space-x-4">
-            {[1, 2, 3].map((stepNum) => (
-              <div key={stepNum} className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                  stepNum <= step
-                    ? 'bg-white text-purple-600'
-                    : 'bg-white/30 text-white/70'
-                }`}>
-                  {stepNum}
-                </div>
-                <span className="ml-2 text-sm font-medium">
-                  {stepNum === 1 && 'Club Info'}
-                  {stepNum === 2 && 'Invite Friends'}
-                  {stepNum === 3 && 'Choose Book'}
-                </span>
-                {stepNum < 3 && <div className="w-8 h-0.5 bg-white/30 mx-4" />}
-              </div>
-            ))}
-          </div>
+          <ol className="mt-5 flex flex-wrap gap-x-6 gap-y-2" aria-label="Steps">
+            {STEPS.map((label, i) => {
+              const n = i + 1;
+              const state = n < step ? 'done' : n === step ? 'current' : 'todo';
+              return (
+                <li key={label} className="flex items-center gap-2 text-sm" aria-current={state === 'current' ? 'step' : undefined}>
+                  <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold tabular ${state === 'todo' ? 'border border-line-strong text-ink-3' : 'bg-ink text-paper'}`}>
+                    {state === 'done' ? <Check className="h-3.5 w-3.5" strokeWidth={2.25} aria-hidden="true" /> : n}
+                  </span>
+                  <span className={state === 'todo' ? 'text-ink-3' : 'font-medium text-ink'}>{label}</span>
+                </li>
+              );
+            })}
+          </ol>
         </div>
 
-        {/* Error Display */}
         {error && (
-          <div className="mx-6 mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-center space-x-2">
-              <X className="w-5 h-5 text-red-600" />
-              <p className="text-red-800 text-sm">{error}</p>
-            </div>
-          </div>
+          <p role="alert" className="mx-5 mt-4 rounded-lg border border-danger/30 bg-danger-wash px-4 py-3 text-sm text-danger sm:mx-7">{error}</p>
         )}
 
-        {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[60vh]">
+        <div className="min-h-0 flex-1 overflow-y-auto p-5 sm:p-7">
           {step === 1 && (
-            <div className="space-y-6">
+            <div className="space-y-5">
+              <Input label="Club name" value={formData.name} onChange={(e) => handleInputChange('name', e.target.value)} placeholder="For example, Sci-fi book lovers" fullWidth required />
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Club Name *
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="e.g., Sci-Fi Book Lovers"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description *
-                </label>
+                <label htmlFor={ids.desc} className="mb-1.5 block text-sm font-medium text-ink">What the club is about</label>
                 <textarea
+                  id={ids.desc}
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
-                  placeholder="Tell your friends what your club is about..."
+                  placeholder="Tell your friends what you will read and why"
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent resize-none"
+                  required
+                  className={`${fieldClass} resize-none py-3`}
                 />
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Meeting Frequency
-                  </label>
-                  <select
-                    value={formData.meetingFrequency}
-                    onChange={(e) => handleInputChange('meetingFrequency', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  >
+                  <label htmlFor={ids.freq} className="mb-1.5 block text-sm font-medium text-ink">How often you meet</label>
+                  <select id={ids.freq} value={formData.meetingFrequency} onChange={(e) => handleInputChange('meetingFrequency', e.target.value)} className={`${fieldClass} h-11`}>
                     <option value="weekly">Weekly</option>
-                    <option value="biweekly">Bi-weekly</option>
+                    <option value="biweekly">Every two weeks</option>
                     <option value="monthly">Monthly</option>
                   </select>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Next Meeting (Optional)
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={formData.nextMeeting || ''}
-                    onChange={(e) => handleInputChange('nextMeeting', e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  />
+                  <label htmlFor={ids.next} className="mb-1.5 block text-sm font-medium text-ink">First meeting <span className="font-normal text-ink-3">(optional)</span></label>
+                  <input id={ids.next} type="datetime-local" value={formData.nextMeeting || ''} onChange={(e) => handleInputChange('nextMeeting', e.target.value)} className={`${fieldClass} h-11`} />
                 </div>
               </div>
             </div>
           )}
 
           {step === 2 && (
-            <div className="space-y-4">
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Invite Friends</h3>
-                <p className="text-sm text-gray-600">Choose which friends you'd like to invite to your club.</p>
-              </div>
-
-              <div className="mb-4">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search friends..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                />
-              </div>
-
-              <div className="space-y-3 max-h-64 overflow-y-auto">
-                {filteredFriends.map(friend => (
-                  <div
-                    key={friend.id}
-                    onClick={() => toggleFriend(friend.id)}
-                    className={`flex items-center justify-between p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      formData.invitedFriends.includes(friend.id)
-                        ? 'border-purple-600 bg-purple-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <img
-                        src={friend.avatar || '/images/avatars/default.png'}
-                        alt={friend.name}
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <div>
-                        <p className="font-medium text-gray-900">{friend.name}</p>
-                        <p className="text-sm text-gray-600">{friend.currentlyReading ? 'Currently reading' : 'Available'}</p>
-                      </div>
-                    </div>
-                    {formData.invitedFriends.includes(friend.id) && (
-                      <Check className="w-5 h-5 text-purple-600" />
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <p className="text-sm text-blue-800">
-                  <Users className="w-4 h-4 inline mr-1" />
-                  <strong>{formData.invitedFriends.length} friends invited</strong> - You can always invite more later!
+            <div>
+              <p className="text-[0.9375rem] text-ink-2">Choose the friends to invite. You can invite more later.</p>
+              <Input
+                containerClassName="mt-4"
+                label="Search friends"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Name"
+                leftIcon={<Search className="h-4 w-4" strokeWidth={1.75} />}
+                fullWidth
+              />
+              {filteredFriends.length === 0 ? (
+                <p className="mt-4 rounded-lg border border-dashed border-line-strong p-5 text-[0.9375rem] text-ink-2">
+                  {friends.length === 0 ? 'Add friends first, then invite them here.' : 'No friend matches that name.'}
                 </p>
-              </div>
+              ) : (
+                <ul className="mt-4 divide-y divide-line border-y border-line">
+                  {filteredFriends.map((friend) => {
+                    const on = formData.invitedFriends.includes(friend.id);
+                    return (
+                      <li key={friend.id}>
+                        <button
+                          type="button"
+                          onClick={() => toggleFriend(friend.id)}
+                          aria-pressed={on}
+                          className={`flex w-full items-center gap-3 px-2 py-3 text-left transition-colors ${on ? 'bg-hl-wash' : 'hover:bg-paper'}`}
+                        >
+                          <Avatar src={friend.avatar} name={friend.name} size="md" />
+                          <span className="min-w-0 flex-1">
+                            <span className="block font-medium text-ink">{friend.name}</span>
+                            <span className="block text-[0.8125rem] text-ink-3">{friend.currentlyReading ? 'Listening to something now' : 'Free to start a book'}</span>
+                          </span>
+                          <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full ${on ? 'bg-ink text-paper' : 'border border-line-strong'}`} aria-hidden="true">
+                            {on && <Check className="h-3.5 w-3.5" strokeWidth={2.25} />}
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+              <p className="mt-3 text-sm text-ink-2 tabular" aria-live="polite">
+                {formData.invitedFriends.length} friend{formData.invitedFriends.length === 1 ? '' : 's'} invited
+              </p>
             </div>
           )}
 
           {step === 3 && (
-            <div className="space-y-4">
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Choose First Book</h3>
-                <p className="text-sm text-gray-600">Select a book to start your club discussions.</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-                {books.map(book => (
-                  <div
-                    key={book.id}
-                    onClick={() => selectBook(book.id)}
-                    className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                      formData.currentBook === book.id
-                        ? 'border-purple-600 bg-purple-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="flex space-x-3">
-                      <img
-                        src={book.cover}
-                        alt={book.title}
-                        className="w-12 h-16 object-cover rounded shadow-sm"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-gray-900 text-sm line-clamp-2">
-                          {book.title}
-                        </h4>
-                        <p className="text-xs text-gray-600 mt-1">
-                          by {book.author}
-                        </p>
-                        {formData.currentBook === book.id && (
-                          <div className="flex items-center mt-2 text-purple-600">
-                            <Check className="w-4 h-4 mr-1" />
-                            <span className="text-xs font-medium">Selected</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div>
+              <p className="text-[0.9375rem] text-ink-2">Pick the book your club starts with.</p>
+              <ul className="mt-4 grid grid-cols-3 gap-x-4 gap-y-5">
+                {books.map((book) => {
+                  const on = formData.currentBook === book.id;
+                  return (
+                    <li key={book.id}>
+                      <button type="button" onClick={() => selectBook(book.id)} aria-pressed={on} className="group block w-full rounded-sm text-left">
+                        <span className={`relative block rounded-sm ${on ? 'ring-2 ring-ink ring-offset-2 ring-offset-surface' : ''}`}>
+                          <Cover src={book.cover} title={book.title} author={book.author} />
+                          {on && (
+                            <span className="absolute right-1.5 top-1.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-hl text-ink" aria-hidden="true">
+                              <Check className="h-3.5 w-3.5" strokeWidth={2.25} />
+                            </span>
+                          )}
+                        </span>
+                        <span className="mt-2 block t-title-book text-sm text-ink line-clamp-2">{book.title}</span>
+                        <span className="block text-[0.8125rem] text-ink-3 line-clamp-1">{book.author}</span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="border-t border-gray-200 p-6 bg-gray-50">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => setStep(Math.max(1, step - 1))}
-              className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                step === 1
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-gray-600 hover:bg-gray-200'
-              }`}
-              disabled={step === 1}
-            >
-              Back
-            </button>
-
-            <div className="flex items-center space-x-3">
-              {step === 3 && (
-                <button
-                  onClick={onClose}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-              )}
-
-              <button
-                onClick={step === 3 ? createClub : () => setStep(step + 1)}
-                disabled={!canProceed()}
-                className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                  canProceed()
-                    ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
-              >
-                {step === 3 ? 'Create Club' : 'Next'}
-              </button>
-            </div>
+        <div className="flex items-center justify-between gap-3 border-t border-line p-4 sm:px-7">
+          <Button variant="ghost" onClick={() => setStep(Math.max(1, step - 1))} disabled={step === 1}>Back</Button>
+          <div className="flex items-center gap-2">
+            {step === 3 && <Button variant="ghost" onClick={onClose}>Cancel</Button>}
+            <Button variant="primary" onClick={step === 3 ? createClub : () => setStep(step + 1)} disabled={!canProceed()} loading={loading}>
+              {step === 3 ? 'Create club' : 'Next'}
+            </Button>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+CreatePrivateClub.propTypes = {
+  onClubCreated: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+};

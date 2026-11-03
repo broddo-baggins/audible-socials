@@ -10,6 +10,7 @@
 
 import booksData from '../data/books.json';
 import { getFromLocalStorage } from './localStorage';
+import { getListeningContext } from './aiRecommendations';
 
 /**
  * Get AI response to user's book question
@@ -18,8 +19,6 @@ import { getFromLocalStorage } from './localStorage';
  * @returns {Object} Response object with content and metadata
  */
 export const getAIBookResponse = (question, allowSpoilers = false) => {
-  const lowerQuestion = question.toLowerCase();
-  
   // Detect question type
   const isAboutPlot = /what happens|who dies|ending|plot|spoiler/i.test(question);
   const isAboutRecommendation = /recommend|suggest|next|should i read/i.test(question);
@@ -28,8 +27,8 @@ export const getAIBookResponse = (question, allowSpoilers = false) => {
   const isAboutSimilar = /similar|like|reminds|compared to/i.test(question);
 
   // Get user's library for context
-  const userLibrary = getFromLocalStorage('userLibrary') || [];
-  const books = booksData.books;
+  const userLibrary = getListeningContext().libraryBooks;
+  const books = booksData;
 
   let response = {
     content: '',
@@ -160,22 +159,6 @@ const getRandomThemes = () => {
 };
 
 /**
- * Check if question might contain spoilers
- * @param {string} question - User's question
- * @returns {boolean} True if question might reveal spoilers
- */
-export const hasSpoilerRisk = (question) => {
-  const spoilerKeywords = [
-    'dies', 'death', 'killed', 'ending', 'end', 'final', 'conclusion',
-    'reveal', 'twist', 'surprise', 'happens', 'what if', 'why did',
-    'spoiler', 'plot', 'outcome', 'result', 'fate', 'becomes',
-  ];
-
-  const lowerQuestion = question.toLowerCase();
-  return spoilerKeywords.some(keyword => lowerQuestion.includes(keyword));
-};
-
-/**
  * Get reading progress for a book
  * @param {string} bookId - Book ID
  * @returns {number} Progress percentage (0-100)
@@ -183,18 +166,5 @@ export const hasSpoilerRisk = (question) => {
 export const getReadingProgress = (bookId) => {
   const userProgress = getFromLocalStorage('userProgress') || {};
   return userProgress[bookId]?.progress || 0;
-};
-
-/**
- * Determine if spoilers are safe based on progress
- * @param {string} bookId - Book ID
- * @param {number} spoilerChapter - Chapter where spoiler occurs
- * @returns {boolean} True if user has passed spoiler point
- */
-export const isSpoilerSafe = (bookId, spoilerChapter) => {
-  const progress = getReadingProgress(bookId);
-  // Assume book has 20 chapters, calculate percentage
-  const chapterProgress = (spoilerChapter / 20) * 100;
-  return progress >= chapterProgress;
 };
 

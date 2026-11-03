@@ -1,193 +1,141 @@
-import React from 'react';
-import { Card, Button } from '../components/ui';
-import { Users, Heart, Zap, Target, MapPin, Clock } from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, MapPin } from 'lucide-react';
+import { PageHeader, Button } from '../components/ui';
+
+/**
+ * Careers: a jobs board, not a brochure. Numbers sit under the title, open
+ * roles are a ruled table by department, benefits a two-by-two list, offices
+ * a plain column list, and one closing block.
+ */
+const benefits = [
+  { title: 'Work-life balance', description: 'Flexible schedules and remote work options to help you thrive personally and professionally.' },
+  { title: 'Health and wellness', description: 'Comprehensive health benefits, mental health support and wellness programs.' },
+  { title: 'Growth and learning', description: 'Continuous learning, mentorship programs and career development support.' },
+  { title: 'Inclusive culture', description: 'A diverse and inclusive workplace where everyone can bring their whole self to work.' },
+];
+
+const departments = [
+  { name: 'Engineering', openings: 12, description: 'Build the future of audio entertainment' },
+  { name: 'Product', openings: 8, description: 'Shape user experiences and product strategy' },
+  { name: 'Design', openings: 6, description: 'Create clear and intuitive interfaces' },
+  { name: 'Marketing', openings: 10, description: 'Tell our story and grow our community' },
+  { name: 'Content', openings: 15, description: 'Curate and produce audio worth listening to' },
+  { name: 'Operations', openings: 7, description: 'Keep everything running smoothly' },
+];
+
+const locations = [
+  'New York, NY', 'San Francisco, CA', 'Austin, TX', 'Seattle, WA',
+  'London, UK', 'Berlin, Germany', 'Toronto, Canada', 'Sydney, Australia',
+];
+
+const stats = [
+  { value: '500+', label: 'Team members', note: 'Across the globe' },
+  { value: '50+', label: 'Open positions', note: 'Waiting for you' },
+  { value: '95%', label: 'Employee satisfaction', note: 'Love working here' },
+];
+
+const scrollToRoles = () => {
+  document.getElementById('open-positions')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 const Careers = () => {
-  const benefits = [
-    {
-      title: 'Work-Life Balance',
-      description: 'Flexible schedules and remote work options to help you thrive both personally and professionally.',
-      icon: Clock,
-    },
-    {
-      title: 'Health & Wellness',
-      description: 'Comprehensive health benefits, mental health support, and wellness programs.',
-      icon: Heart,
-    },
-    {
-      title: 'Growth & Learning',
-      description: 'Continuous learning opportunities, mentorship programs, and career development support.',
-      icon: Zap,
-    },
-    {
-      title: 'Inclusive Culture',
-      description: 'A diverse and inclusive workplace where everyone can bring their authentic selves to work.',
-      icon: Users,
-    },
-  ];
-
-  const departments = [
-    { name: 'Engineering', openings: 12, description: 'Build the future of audio entertainment' },
-    { name: 'Product', openings: 8, description: 'Shape user experiences and product strategy' },
-    { name: 'Design', openings: 6, description: 'Create beautiful and intuitive interfaces' },
-    { name: 'Marketing', openings: 10, description: 'Tell our story and grow our community' },
-    { name: 'Content', openings: 15, description: 'Curate and produce amazing audio content' },
-    { name: 'Operations', openings: 7, description: 'Keep everything running smoothly' },
-  ];
-
-  const locations = [
-    'New York, NY', 'San Francisco, CA', 'Austin, TX', 'Seattle, WA',
-    'London, UK', 'Berlin, Germany', 'Toronto, Canada', 'Sydney, Australia'
-  ];
+  const [selectedDept, setSelectedDept] = useState(null);
 
   return (
-    <div className="min-h-screen bg-audible-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-audible-text-primary mb-6">
-            Join Our Team
-          </h1>
-          <p className="text-xl text-audible-text-secondary max-w-3xl mx-auto leading-relaxed">
-            Help us revolutionize the way people experience stories. We're looking for passionate,
-            creative, and driven individuals who want to make a real impact in the audio entertainment industry.
-          </p>
-        </div>
-
-        {/* Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <Card padding="lg" className="text-center">
-            <div className="text-4xl font-bold text-audible-orange mb-2">500+</div>
-            <div className="text-lg font-semibold text-audible-text-primary mb-1">Team Members</div>
-            <div className="text-sm text-audible-text-secondary">Across the globe</div>
-          </Card>
-          <Card padding="lg" className="text-center">
-            <div className="text-4xl font-bold text-audible-orange mb-2">50+</div>
-            <div className="text-lg font-semibold text-audible-text-primary mb-1">Open Positions</div>
-            <div className="text-sm text-audible-text-secondary">Waiting for you</div>
-          </Card>
-          <Card padding="lg" className="text-center">
-            <div className="text-4xl font-bold text-audible-orange mb-2">95%</div>
-            <div className="text-lg font-semibold text-audible-text-primary mb-1">Employee Satisfaction</div>
-            <div className="text-sm text-audible-text-secondary">Love working here</div>
-          </Card>
-        </div>
-
-        {/* Benefits Section */}
-        <div className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-audible-text-primary mb-4">
-              Why Work at Audible?
-            </h2>
-            <p className="text-lg text-audible-text-secondary max-w-3xl mx-auto">
-              We're committed to creating an environment where you can do your best work and live your best life.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {benefits.map((benefit) => {
-              const Icon = benefit.icon;
-              return (
-                <Card key={benefit.title} padding="lg">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="w-12 h-12 rounded-full bg-audible-orange/10 flex items-center justify-center">
-                        <Icon className="w-6 h-6 text-audible-orange" />
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-audible-text-primary mb-2">
-                        {benefit.title}
-                      </h3>
-                      <p className="text-audible-text-secondary leading-relaxed">
-                        {benefit.description}
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Departments Section */}
-        <div className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-audible-text-primary mb-4">
-              Open Positions by Department
-            </h2>
-            <p className="text-lg text-audible-text-secondary max-w-3xl mx-auto">
-              Find your perfect role in our diverse and growing team.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {departments.map((dept) => (
-              <Card key={dept.name} padding="lg" className="hover:shadow-lg transition-shadow">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-bold text-audible-text-primary">
-                    {dept.name}
-                  </h3>
-                  <span className="px-3 py-1 bg-audible-orange text-white text-sm font-medium rounded-full">
-                    {dept.openings} openings
-                  </span>
-                </div>
-                <p className="text-audible-text-secondary mb-4">
-                  {dept.description}
-                </p>
-                <Button variant="outline" size="sm">
-                  View Positions
-                </Button>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Locations Section */}
-        <div className="mb-16">
-          <Card padding="xl">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-audible-text-primary mb-4">
-                Global Offices
-              </h2>
-              <p className="text-lg text-audible-text-secondary max-w-3xl mx-auto">
-                Work from anywhere or join us at one of our offices around the world.
-              </p>
+    <div className="page pb-20">
+      <PageHeader
+        title="Join our team"
+        description="Help us change the way people experience stories. We are looking for curious, creative and driven people who want to make a real difference in audio."
+        actions={<Button onClick={scrollToRoles} rightIcon={<ArrowRight className="h-4 w-4" strokeWidth={1.75} />}>See open roles</Button>}
+      >
+        <dl className="flex flex-wrap gap-x-12 gap-y-6 border-t border-line pt-6">
+          {stats.map((s) => (
+            <div key={s.label} className="flex flex-col">
+              <dt className="order-2 mt-1 text-sm font-semibold text-ink">{s.label}</dt>
+              <dd className="order-1 t-h1 tabular text-ink">{s.value}</dd>
+              <dd className="order-3 t-meta">{s.note}</dd>
             </div>
+          ))}
+        </dl>
+      </PageHeader>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {locations.map((location) => (
-                <div key={location} className="flex items-center gap-2 p-4 bg-audible-gray-50 rounded-lg">
-                  <MapPin className="w-5 h-5 text-audible-orange flex-shrink-0" />
-                  <span className="text-audible-text-primary font-medium">
-                    {location}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </Card>
+      {/* Open roles as a table */}
+      <section id="open-positions" aria-labelledby="roles-title" className="mt-10 scroll-mt-24 md:mt-14">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 id="roles-title" className="t-h2 text-ink">Open positions by department</h2>
+            <p className="mt-1 text-[0.9375rem] text-ink-2">Find your role in a diverse and growing team.</p>
+          </div>
+          <p className="t-meta">{departments.reduce((n, d) => n + d.openings, 0)} openings in {departments.length} departments</p>
         </div>
-
-        {/* CTA Section */}
-        <div className="text-center">
-          <Card padding="xl" className="bg-gradient-to-r from-audible-orange to-audible-orange/80 text-white">
-            <h2 className="text-3xl font-bold mb-4">
-              Ready to Make an Impact?
-            </h2>
-            <p className="text-lg mb-8 opacity-90">
-              Join us in our mission to transform how the world experiences stories.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="secondary" size="lg">
-                View All Openings
+        <ul className="mt-6 divide-y divide-line border-y border-line">
+          {departments.map((dept) => (
+            <li key={dept.name} className="flex flex-col gap-3 py-5 md:grid md:grid-cols-[12rem_minmax(0,1fr)_7rem_auto] md:items-center md:gap-6">
+              <div className="flex items-baseline justify-between gap-4 md:block">
+                <h3 className="font-serif text-xl font-medium text-ink">{dept.name}</h3>
+                <p className="text-sm text-ink-2 tabular md:hidden"><span className="font-semibold text-ink">{dept.openings}</span> openings</p>
+              </div>
+              <p className="text-[0.9375rem] text-ink-2">{dept.description}</p>
+              <p className="hidden text-sm text-ink-2 tabular md:block md:text-right"><span className="font-semibold text-ink">{dept.openings}</span> openings</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="self-start"
+                aria-label={`View positions: ${dept.name}`}
+                onClick={() => setSelectedDept(dept)}
+              >
+                View positions
               </Button>
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-audible-orange">
-                Learn More About Us
-              </Button>
-            </div>
-          </Card>
+            </li>
+          ))}
+        </ul>
+        <p role="status" className={selectedDept ? 'mt-4 text-[0.9375rem] text-ink-2' : ''}>
+          {selectedDept && `${selectedDept.name}: ${selectedDept.openings} openings. This is an educational demo, so there are no real job applications.`}
+        </p>
+      </section>
+
+      {/* Benefits: two by two, ruled */}
+      <section aria-labelledby="why" className="mt-16 grid gap-8 md:mt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12">
+        <div>
+          <h2 id="why" className="t-h2 text-ink">Why work at Listenable</h2>
+          <p className="mt-2 text-[0.9375rem] text-ink-2 max-w-[40ch]">We are committed to a place where you can do your best work and live your best life.</p>
         </div>
-      </div>
+        <dl className="grid gap-x-10 sm:grid-cols-2">
+          {benefits.map((b) => (
+            <div key={b.title} className="border-t border-ink py-5">
+              <dt className="t-h3 text-ink">{b.title}</dt>
+              <dd className="mt-1.5 text-ink-2">{b.description}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      {/* Offices */}
+      <section aria-labelledby="offices" className="mt-16 md:mt-20">
+        <h2 id="offices" className="t-h2 text-ink">Global offices</h2>
+        <p className="mt-1 text-[0.9375rem] text-ink-2">Work from anywhere, or join us at one of our offices.</p>
+        <ul className="mt-6 grid grid-cols-1 gap-x-8 border-t border-line xs:grid-cols-2 md:grid-cols-4">
+          {locations.map((location) => (
+            <li key={location} className="flex items-center gap-2.5 border-b border-line py-3.5 text-ink">
+              <MapPin className="h-4 w-4 shrink-0 text-ink-3" strokeWidth={1.75} aria-hidden="true" />
+              {location}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Closing block */}
+      <section aria-labelledby="impact" className="mt-16 flex flex-col gap-6 rounded-2xl border border-line bg-surface p-6 md:mt-20 md:flex-row md:items-center md:justify-between md:p-10">
+        <div>
+          <h2 id="impact" className="t-h2 text-ink">Ready to make an impact?</h2>
+          <p className="mt-2 text-ink-2">Join us in changing how the world experiences stories.</p>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          <Button variant="highlight" size="lg" onClick={scrollToRoles}>View all openings</Button>
+          <Link to="/about" className="inline-flex h-12 items-center rounded-full border border-line-strong px-6 font-medium text-ink hover:bg-paper">About us</Link>
+        </div>
+      </section>
     </div>
   );
 };

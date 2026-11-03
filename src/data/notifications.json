@@ -98,7 +98,7 @@
     "message": "You have 2 credits expiring in 7 days",
     "timestamp": "2025-11-11T09:00:00",
     "read": false,
-    "actionUrl": "/discover"
+    "actionUrl": "/browse"
   },
   {
     "id": "notif-9",

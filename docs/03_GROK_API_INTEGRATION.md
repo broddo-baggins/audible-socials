@@ -47,7 +47,7 @@ Your Listenable platform now features **real AI intelligence** powered by Grok A
 export const GROK_API_CONFIG = {
   apiKey: process.env.GROK_API_KEY || 'YOUR_GROK_API_KEY_HERE',
   baseUrl: 'https://api.x.ai/v1',
-  model: 'grok-beta',
+  model: 'grok-4.7',
   maxTokens: 1000,
   temperature: 0.7,
 };
@@ -223,18 +223,18 @@ WARNING: Add "⚠️ SPOILER WARNING" at start of response
 ### Request Format
 
 ```javascript
-POST https://api.x.ai/v1/chat/completions
+POST https://api.x.ai/v1/responses
 
 Headers:
   Content-Type: application/json
-  Authorization: Bearer gsk_gtkPaG...
+  Authorization: Bearer $GROK_API_KEY   # added server-side by api/grok.js
 
 Body:
 {
-  "messages": [...],
-  "model": "grok-beta",
+  "input": [...],
+  "model": "grok-4.7",
   "temperature": 0.7,
-  "max_tokens": 1000,
+  "max_output_tokens": 1000,
   "stream": false
 }
 ```
@@ -448,22 +448,24 @@ Add tracking for:
 
 ### Environment Variables (Production)
 
-For production, move API key to environment variable:
+The API key is a **server-only** environment variable. The browser never sees it:
+it calls `/api/grok` (`api/grok.js`, a Vercel serverless function), which adds the key
+and forwards the request to xAI.
 
-**Create `example.env`:**
+**`.env.local` (local dev, gitignored):**
 ```bash
-# Grok API Configuration
-VITE_GROK_API_KEY=your_api_key_here
-VITE_GROK_BASE_URL=https://api.x.ai/v1
-VITE_GROK_MODEL=grok-beta
+GROK_API_KEY=your_api_key_here
+# optional, defaults to grok-4.7
+GROK_MODEL=grok-4.7
 ```
 
-**Update `src/config/api.js`:**
+Never prefix the key with `VITE_`: Vite inlines every `VITE_*` variable into the
+public JavaScript bundle.
+
+**`src/config/api.js`:**
 ```javascript
 export const GROK_API_CONFIG = {
-  apiKey: import.meta.env.VITE_GROK_API_KEY || 'fallback_key',
-  baseUrl: import.meta.env.VITE_GROK_BASE_URL || 'https://api.x.ai/v1',
-  model: import.meta.env.VITE_GROK_MODEL || 'grok-beta',
+  endpoint: '/api/grok',
   // ...
 };
 ```

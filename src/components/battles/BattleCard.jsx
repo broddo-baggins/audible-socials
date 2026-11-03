@@ -1,36 +1,35 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Users, Trophy, Clock, Target, Zap, Sword, BookOpen } from 'lucide-react';
+import { Calendar, Users, Trophy, Clock, Target, Zap, Swords, BookOpen, Check } from 'lucide-react';
 import { joinBattle, getUserData } from '../../utils/localStorage';
+import { hasJoinedBattle } from '../../utils/battles';
+import { Badge } from '../ui';
 
-export default function BattleCard({ battle, compact = false }) {
+const TYPE_META = {
+  speed_reading: { label: 'Speed reading', icon: Zap },
+  book_voting: { label: 'Book voting', icon: Swords },
+  streak_challenge: { label: 'Streak challenge', icon: Target },
+  review_battle: { label: 'Review battle', icon: Trophy },
+  recommendation_duel: { label: 'Recommendation duel', icon: BookOpen },
+};
+
+const STATUS_VARIANT = { active: 'success', upcoming: 'highlight', completed: 'outline' };
+
+/**
+ * BattleCard: one battle. The full version is a wide row (what it is and
+ * its rules on the left, who leads and what to do on the right) meant to
+ * sit in a divide-y list; `compact` is a small bordered card.
+ */
+export default function BattleCard({ battle, compact = false, showDetailsLink = true }) {
   const [isJoining, setIsJoining] = useState(false);
   const userData = getUserData();
-  const isParticipant = battle.participants?.includes(userData?.id);
+  const [isParticipant, setIsParticipant] = useState(() => hasJoinedBattle(battle, userData?.id));
   const isActive = battle.status === 'active';
   const isUpcoming = battle.status === 'upcoming';
 
-  const getBattleIcon = (type) => {
-    const icons = {
-      'speed_reading': <Zap className="w-5 h-5" />,
-      'book_voting': <Sword className="w-5 h-5" />,
-      'streak_challenge': <Target className="w-5 h-5" />,
-      'review_battle': <Trophy className="w-5 h-5" />,
-      'recommendation_duel': <BookOpen className="w-5 h-5" />
-    };
-    return icons[type] || <Sword className="w-5 h-5" />;
-  };
-
-  const getBattleColor = (type) => {
-    const colors = {
-      'speed_reading': 'from-orange-500 to-red-500',
-      'book_voting': 'from-purple-500 to-pink-500',
-      'streak_challenge': 'from-blue-500 to-cyan-500',
-      'review_battle': 'from-green-500 to-emerald-500',
-      'recommendation_duel': 'from-yellow-500 to-orange-500'
-    };
-    return colors[type] || 'from-purple-500 to-pink-500';
-  };
+  const type = TYPE_META[battle.type] || { label: 'Battle', icon: Swords };
+  const TypeIcon = type.icon;
+  const statusLabel = battle.status.charAt(0).toUpperCase() + battle.status.slice(1);
 
   const handleJoinBattle = async () => {
     setIsJoining(true);
@@ -38,7 +37,7 @@ export default function BattleCard({ battle, compact = false }) {
       // Mock API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       joinBattle(battle.id);
-      // Update local state would happen here
+      setIsParticipant(true);
     } catch (error) {
       console.error('Failed to join battle:', error);
     } finally {
@@ -68,41 +67,39 @@ export default function BattleCard({ battle, compact = false }) {
     return `${hours}h left`;
   };
 
+  const joinLabel = isJoining ? 'Joining' : isParticipant ? 'Joined' : isActive ? 'Join battle' : isUpcoming ? 'Starts soon' : 'Closed';
+  const joinClass = isParticipant
+    ? 'border border-line-strong bg-surface text-ink'
+    : isActive
+      ? 'bg-ink text-paper hover:bg-gray-800'
+      : 'bg-surface-sunk text-ink-2';
+
   if (compact) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-4 hover:border-purple-300 transition-colors">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center space-x-2">
-            <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${getBattleColor(battle.type)} flex items-center justify-center text-white`}>
-              {getBattleIcon(battle.type)}
-            </div>
+      <div className="rounded-lg border border-line bg-surface p-4 transition-colors hover:border-line-strong">
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line-strong text-ink">
+              <TypeIcon className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            </span>
             <div>
-              <h4 className="font-semibold text-gray-900 text-sm">{battle.name}</h4>
-              <p className="text-xs text-gray-600">{battle.participants?.length || 0} participants</p>
+              <h4 className="text-sm font-semibold text-ink">{battle.name}</h4>
+              <p className="text-[0.8125rem] text-ink-3 tabular">{battle.participants?.length || 0} participants</p>
             </div>
           </div>
-          <div className={`px-2 py-1 rounded-full text-xs font-semibold ${
-            isActive ? 'bg-green-100 text-green-700' :
-            isUpcoming ? 'bg-blue-100 text-blue-700' :
-            'bg-gray-100 text-gray-700'
-          }`}>
-            {battle.status}
-          </div>
+          <Badge variant={STATUS_VARIANT[battle.status] || 'default'} size="sm">{statusLabel}</Badge>
         </div>
-        <p className="text-xs text-gray-600 mb-3 line-clamp-2">{battle.description}</p>
+        <p className="mb-3 line-clamp-2 text-[0.8125rem] text-ink-2">{battle.description}</p>
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">{getTimeRemaining()}</span>
+          <span className="text-[0.8125rem] text-ink-3 tabular">{getTimeRemaining()}</span>
           <button
+            type="button"
             onClick={handleJoinBattle}
             disabled={isParticipant || !isActive || isJoining}
-            className={`px-3 py-1 rounded text-xs font-semibold transition-colors ${
-              isParticipant
-                ? 'bg-green-100 text-green-700'
-                : isActive
-                  ? 'bg-purple-600 text-white hover:bg-purple-700'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }`}
+            aria-busy={isJoining || undefined}
+            className={`inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-[0.8125rem] font-medium transition-colors disabled:cursor-not-allowed ${joinClass}`}
           >
+            {isParticipant && <Check className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />}
             {isParticipant ? 'Joined' : isActive ? 'Join' : 'Upcoming'}
           </button>
         </div>
@@ -110,141 +107,115 @@ export default function BattleCard({ battle, compact = false }) {
     );
   }
 
+  const rules = battle.rules ? [
+    battle.rules.timeLimit && ['Time limit', battle.rules.timeLimit],
+    battle.rules.minProgress && ['Minimum progress', `${battle.rules.minProgress}%`],
+    battle.rules.minDailyMinutes && ['Daily goal', `${battle.rules.minDailyMinutes} minutes`],
+    battle.rules.scoring && ['Scoring', battle.rules.scoring.replace(/_/g, ' ')],
+  ].filter(Boolean) : [];
+
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all">
-      {/* Header */}
-      <div className={`bg-gradient-to-r ${getBattleColor(battle.type)} p-6 text-white`}>
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              {getBattleIcon(battle.type)}
-            </div>
-            <div>
-              <h3 className="text-xl font-bold">{battle.name}</h3>
-              <p className="text-white/90 text-sm">Battle #{battle.id.split('_')[1]}</p>
-            </div>
-          </div>
-          <div className={`px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm ${
-            isActive ? 'bg-green-500/20 text-green-100' :
-            isUpcoming ? 'bg-blue-500/20 text-blue-100' :
-            'bg-gray-500/20 text-gray-100'
-          }`}>
-            {battle.status.charAt(0).toUpperCase() + battle.status.slice(1)}
-          </div>
+    <article className="grid gap-8 py-8 md:py-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-14" aria-labelledby={`battle-${battle.id}`}>
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.8125rem] text-ink-2">
+          <span className="inline-flex items-center gap-1.5 font-medium text-ink">
+            <TypeIcon className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            {type.label}
+          </span>
+          <span className="text-ink-3 tabular">Battle {battle.id.split('_')[1]}</span>
+          <Badge variant={STATUS_VARIANT[battle.status] || 'default'} size="sm">{statusLabel}</Badge>
         </div>
 
-        <p className="text-white/90 leading-relaxed">{battle.description}</p>
-      </div>
+        <h3 id={`battle-${battle.id}`} className="mt-3 t-h2 text-ink">
+          {showDetailsLink
+            ? <Link to={`/battle/${battle.id}`} className="hover:underline decoration-1 underline-offset-4">{battle.name}</Link>
+            : battle.name}
+        </h3>
+        <p className="mt-2 max-w-[60ch] text-[0.9375rem] text-ink-2">{battle.description}</p>
 
-      {/* Content */}
-      <div className="p-6">
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-1">
-              <Users className="w-4 h-4 text-gray-400 mr-1" />
-              <span className="text-2xl font-bold text-gray-900">{battle.participants?.length || 0}</span>
-            </div>
-            <p className="text-xs text-gray-600">Participants</p>
+        <dl className="mt-6 grid grid-cols-3 gap-4 border-y border-line py-4">
+          <div>
+            <dt className="flex items-center gap-1.5 t-meta"><Users className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />Participants</dt>
+            <dd className="mt-1 font-serif text-2xl font-medium text-ink tabular">{battle.participants?.length || 0}</dd>
           </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-1">
-              <Clock className="w-4 h-4 text-gray-400 mr-1" />
-              <span className="text-2xl font-bold text-gray-900">{getTimeRemaining()}</span>
-            </div>
-            <p className="text-xs text-gray-600">Time Left</p>
+          <div>
+            <dt className="flex items-center gap-1.5 t-meta"><Clock className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />Time left</dt>
+            <dd className="mt-1 font-serif text-2xl font-medium text-ink tabular">{getTimeRemaining()}</dd>
           </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-1">
-              <Trophy className="w-4 h-4 text-gray-400 mr-1" />
-              <span className="text-2xl font-bold text-gray-900">{battle.prizes?.winner || 'Credits'}</span>
-            </div>
-            <p className="text-xs text-gray-600">Prize</p>
+          <div>
+            <dt className="flex items-center gap-1.5 t-meta"><Trophy className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />Prize</dt>
+            <dd className="mt-1 text-[0.9375rem] font-semibold leading-snug text-ink">{battle.prizes?.winner || 'Credits'}</dd>
           </div>
-        </div>
+        </dl>
 
-        {/* Rules Preview */}
-        {battle.rules && (
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <h4 className="font-semibold text-gray-900 mb-2">Battle Rules</h4>
-            <div className="text-sm text-gray-600 space-y-1">
-              {battle.rules.timeLimit && <p>⏰ Time Limit: {battle.rules.timeLimit}</p>}
-              {battle.rules.minProgress && <p>📊 Min Progress: {battle.rules.minProgress}%</p>}
-              {battle.rules.minDailyMinutes && <p>🎧 Daily Goal: {battle.rules.minDailyMinutes} minutes</p>}
-              {battle.rules.scoring && <p>🏆 Scoring: {battle.rules.scoring.replace('_', ' ')}</p>}
-            </div>
+        {rules.length > 0 && (
+          <div className="mt-5">
+            <h4 className="text-sm font-semibold text-ink-2">Rules</h4>
+            <dl className="mt-2 grid gap-x-8 gap-y-1.5 text-sm sm:grid-cols-2">
+              {rules.map(([label, value]) => (
+                <div key={label} className="flex justify-between gap-4 sm:justify-start">
+                  <dt className="text-ink-3">{label}</dt>
+                  <dd className="font-medium text-ink first-letter:uppercase tabular">{value}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         )}
 
-        {/* Leaderboard Preview */}
-        {battle.leaderboard && battle.leaderboard.length > 0 && (
-          <div className="mb-6">
-            <h4 className="font-semibold text-gray-900 mb-3">Current Leaders</h4>
-            <div className="space-y-2">
+        <p className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.8125rem] text-ink-3">
+          <span className="inline-flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />Starts {formatDate(battle.startDate)}</span>
+          <span>Ends {formatDate(battle.endDate)}</span>
+        </p>
+      </div>
+
+      <div className="flex min-w-0 flex-col">
+        {battle.leaderboard && battle.leaderboard.length > 0 ? (
+          <div>
+            <h4 className="text-sm font-semibold text-ink-2">Current leaders</h4>
+            <ol className="mt-2 divide-y divide-line border-y border-line">
               {battle.leaderboard.slice(0, 3).map((participant, index) => (
-                <div key={participant.userId} className="flex items-center justify-between bg-gray-50 rounded p-3">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      index === 0 ? 'bg-yellow-500 text-white' :
-                      index === 1 ? 'bg-gray-400 text-white' :
-                      'bg-orange-600 text-white'
-                    }`}>
-                      {index + 1}
-                    </div>
-                    <span className="font-medium text-gray-900">{participant.username}</span>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-bold text-gray-900">{participant.score}</div>
-                    <div className="text-xs text-gray-600">
+                <li key={participant.userId} className="flex items-center gap-3 py-3">
+                  <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold tabular ${index === 0 ? 'bg-hl text-ink' : 'border border-line-strong text-ink'}`}>
+                    {index + 1}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate font-medium text-ink">{participant.username}</span>
+                  <span className="text-right">
+                    <span className="block font-semibold text-ink tabular">{participant.score}</span>
+                    <span className="block text-[0.8125rem] text-ink-3 tabular">
                       {participant.progress ? `${participant.progress}%` :
                        participant.currentStreak ? `${participant.currentStreak}d` :
                        participant.completionTime || ''}
-                    </div>
-                  </div>
-                </div>
+                    </span>
+                  </span>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
+        ) : (
+          <p className="rounded-lg border border-dashed border-line-strong px-4 py-5 text-sm text-ink-2">No one on the board yet. The first to join leads.</p>
         )}
 
-        {/* Action Button */}
-        <div className="flex space-x-3">
-          <Link
-            to={`/battle/${battle.id}`}
-            className="flex-1 bg-gray-100 text-gray-700 px-4 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors text-center"
-          >
-            View Details
-          </Link>
+        <div className="mt-6 flex flex-wrap gap-3">
           <button
+            type="button"
             onClick={handleJoinBattle}
             disabled={isParticipant || !isActive || isJoining}
-            className={`flex-1 px-4 py-3 rounded-lg font-semibold transition-colors ${
-              isParticipant
-                ? 'bg-green-100 text-green-700 cursor-default'
-                : isActive
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }`}
+            aria-busy={isJoining || undefined}
+            className={`inline-flex h-11 items-center gap-2 rounded-full px-5 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed ${joinClass}`}
           >
-            {isJoining ? 'Joining...' :
-             isParticipant ? '✓ Joined' :
-             isActive ? 'Join Battle' :
-             'Starts Soon'}
+            {isParticipant && <Check className="h-4 w-4" strokeWidth={2} aria-hidden="true" />}
+            {joinLabel}
           </button>
-        </div>
-
-        {/* Dates */}
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200 text-xs text-gray-600">
-          <div className="flex items-center space-x-1">
-            <Calendar className="w-3 h-3" />
-            <span>Starts: {formatDate(battle.startDate)}</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <Calendar className="w-3 h-3" />
-            <span>Ends: {formatDate(battle.endDate)}</span>
-          </div>
+          {showDetailsLink && (
+            <Link
+              to={`/battle/${battle.id}`}
+              className="inline-flex h-11 items-center rounded-full border border-line-strong px-5 text-[0.9375rem] font-medium text-ink hover:bg-surface"
+            >
+              View details
+            </Link>
+          )}
         </div>
       </div>
-    </div>
+    </article>
   );
 }

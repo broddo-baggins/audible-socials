@@ -9,7 +9,7 @@
 ## 📋 PRE-TEST CHECKLIST
 
 ### **Environment Setup**
-- [ ] `.env` file exists with `VITE_GROK_API_KEY`
+- [ ] `.env` file exists with `GROK_API_KEY`
 - [ ] API key is valid and active
 - [ ] Dev server running (`npm run dev`)
 - [ ] Browser console open for debugging
@@ -17,10 +17,10 @@
 ### **Quick Verification**
 ```bash
 # 1. Check environment variable
-echo $VITE_GROK_API_KEY
+echo $GROK_API_KEY
 
 # 2. Verify config file
-cat src/config/api.js | grep VITE_GROK_API_KEY
+grep GROK_API_KEY api/grok.js
 
 # 3. Start dev server
 npm run dev
@@ -80,7 +80,7 @@ npm run dev
 **Debug:**
 ```javascript
 // Check network tab for:
-POST https://api.x.ai/v1/chat/completions
+POST https://api.x.ai/v1/responses
 Status: 200 OK
 Response: { choices: [...] }
 ```
@@ -450,7 +450,7 @@ npm run dev
 ```javascript
 // Check grokAPI.js
 // Verify response parsing
-// Check model: 'grok-beta'
+// Check model: 'grok-4.7'
 ```
 
 ### **Issue: "Rate limiting"**

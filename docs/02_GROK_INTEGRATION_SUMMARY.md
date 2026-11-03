@@ -132,24 +132,24 @@ npm run dev
 
 ### API Endpoint
 ```
-https://api.x.ai/v1/chat/completions
+https://api.x.ai/v1/responses
 ```
 
 ### Models Used
-- **Model**: grok-beta
+- **Model**: grok-4.7
 - **Temperature**: 0.7 (chat), 0.8 (recommendations)
 - **Max Tokens**: 500 (chat), 800 (recommendations)
 
 ### Request Example
 ```javascript
 {
-  "messages": [
+  "input": [
     {"role": "system", "content": "You are a book expert..."},
     {"role": "user", "content": "Recommend a sci-fi book"}
   ],
-  "model": "grok-beta",
+  "model": "grok-4.7",
   "temperature": 0.7,
-  "max_tokens": 500
+  "max_output_tokens": 500
 }
 ```
 
@@ -350,7 +350,7 @@ https://api.x.ai/v1/chat/completions
 ### API Configuration
 - **File**: `src/config/api.js`
 - **Key**: Already configured
-- **Model**: grok-beta
+- **Model**: grok-4.7
 - **Retry**: 3 attempts
 
 ### Troubleshooting

@@ -1,9 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BookGrid from '../components/books/BookGrid';
-import { BookCardSkeleton } from '../components/ui/Skeleton';
+import BookCard from '../components/books/BookCard';
+import { PageHeader, Button } from '../components/ui';
 import booksData from '../data/books.json';
+import { getUserData } from '../utils/localStorage';
 
-const getBookProgress = (bookId) => {
+/**
+ * Library: what you own. The counts as three serif numbers, then the books you
+ * are in the middle of, then the whole shelf behind tabs.
+ */
+const getBookProgress = (bookId, user) => {
   const progressKey = `echoread_progress_${bookId}`;
   const saved = localStorage.getItem(progressKey);
   if (saved) {
@@ -11,15 +18,15 @@ const getBookProgress = (bookId) => {
       const progress = JSON.parse(saved);
       return progress.progress || 0;
     } catch (error) {
-      console.error('Error parsing saved progress:', error);
-      return 0;
+      console.warn('Ignoring unreadable saved progress:', error);
     }
   }
-  return Math.floor(Math.random() * 100);
+  if (user.completedBooks?.includes(bookId)) return 100;
+  if (user.currentlyReading === bookId) return user.currentProgress || 0;
+  return 0;
 };
 
-const getBookStatus = (bookId) => {
-  const progress = getBookProgress(bookId);
+const getBookStatus = (progress) => {
   if (progress === 0) return 'Not started';
   if (progress === 100) return 'Finished';
   return 'In progress';
@@ -40,155 +47,136 @@ const getLastListened = (bookId) => {
   return null;
 };
 
+const tabs = [
+  { id: 'all', label: 'All' },
+  { id: 'audiobooks', label: 'Audiobooks' },
+  { id: 'podcasts', label: 'Podcasts' },
+  { id: 'wishlist', label: 'Wishlist' },
+];
+
+// The user's own books, with progress, and their wishlist.
+const loadLibrary = () => {
+  try {
+    const user = getUserData();
+    const byId = (ids = []) => ids.map((id) => booksData.find((b) => b.id === id)).filter(Boolean);
+    const books = byId(user.library).map((book) => {
+      const progress = getBookProgress(book.id, user);
+      return {
+        ...book,
+        progress,
+        status: getBookStatus(progress),
+        lastListened: getLastListened(book.id),
+      };
+    });
+    return { books, wishlistBooks: byId(user.wishlist) };
+  } catch (error) {
+    console.error('Error loading library:', error);
+    return { books: [], wishlistBooks: [] };
+  }
+};
+
 const Library = () => {
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [{ books, wishlistBooks }] = useState(loadLibrary);
   const [activeTab, setActiveTab] = useState('all');
   const [viewMode, setViewMode] = useState('grid');
-  
-  const tabs = [
-    { id: 'all', label: 'All' },
-    { id: 'audiobooks', label: 'Audiobooks' },
-    { id: 'podcasts', label: 'Podcasts' },
-    { id: 'wishlist', label: 'Wishlist' },
-  ];
-  
-  useEffect(() => {
-    const loadLibrary = async () => {
-      try {
-        // Books already have cover paths in books.json
-        const booksWithProgress = booksData.slice(0, 20).map((book) => ({
-          ...book,
-          progress: getBookProgress(book.id),
-          status: getBookStatus(book.id),
-          lastListened: getLastListened(book.id),
-        }));
-        
-        setBooks(booksWithProgress);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error loading library:', error);
-        setLoading(false);
-      }
-    };
-    
-    loadLibrary();
-  }, []);
-  
-  const filterBooksByTab = (books) => {
+
+  const filterBooksByTab = (list) => {
     switch (activeTab) {
       case 'audiobooks':
-        return books.filter(b => b.contentType === 'audiobook');
+        return list.filter((b) => b.contentType === 'audiobook');
       case 'podcasts':
-        return books.filter(b => b.contentType === 'podcast');
+        return list.filter((b) => b.contentType === 'podcast');
       case 'wishlist':
-        // In a real app, this would filter by wishlist status
-        return books.filter((_, i) => i % 3 === 0);
+        return wishlistBooks;
       default:
-        return books;
+        return list;
     }
   };
-  
-  const continueListening = books.filter(b => b.progress > 0 && b.progress < 100).slice(0, 6);
+
+  const continueListening = books
+    .filter((b) => b.progress > 0 && b.progress < 100)
+    .sort((a, b) => b.progress - a.progress)
+    .slice(0, 6);
   const filteredBooks = filterBooksByTab(books);
-  
+  const activeLabel = tabs.find((t) => t.id === activeTab)?.label;
+
+  const stats = [
+    { label: 'in progress', value: books.filter((b) => b.status === 'In progress').length },
+    { label: 'finished', value: books.filter((b) => b.status === 'Finished').length },
+    { label: 'not started', value: books.filter((b) => b.status === 'Not started').length },
+  ];
+
   return (
-    <div className="min-h-screen bg-echo-cream">
-      <div className="max-w-9xl mx-auto px-4 sm:px-6 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-echo-text-primary mb-2">
-            My Library
-          </h1>
-          <p className="text-echo-text-secondary">
-            {filteredBooks.length} {activeTab === 'all' ? 'items' : activeTab}
-          </p>
-        </div>
-        
-        {/* Tabs */}
-        <div className="mb-8 border-b border-echo-divider">
-          <div className="flex gap-8 overflow-x-auto scrollbar-hide">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`pb-4 font-medium whitespace-nowrap transition-colors relative ${
-                  activeTab === tab.id
-                    ? 'text-echo-orange'
-                    : 'text-echo-text-secondary hover:text-echo-text-primary'
-                }`}
-              >
-                {tab.label}
-                {activeTab === tab.id && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-echo-orange" />
-                )}
-              </button>
-            ))}
+    <div className="page pb-16">
+      <PageHeader
+        title="Your library"
+        description="Everything you own, and where you left off."
+        actions={<Button variant="secondary" onClick={() => navigate('/browse')}>Find a new book</Button>}
+      >
+        <dl className="flex flex-wrap gap-x-12 gap-y-5">
+          <div className="flex flex-col-reverse">
+            <dt className="mt-1.5 text-[0.8125rem] text-ink-3">titles</dt>
+            <dd className="font-serif text-[2.25rem] font-medium leading-none text-ink tabular">{books.length}</dd>
           </div>
-        </div>
-        
-        {/* Continue Listening Section */}
+          {stats.map((s) => (
+            <div key={s.label} className="flex flex-col-reverse">
+              <dt className="mt-1.5 text-[0.8125rem] text-ink-3">{s.label}</dt>
+              <dd className="font-serif text-[2.25rem] font-medium leading-none text-ink tabular">{s.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </PageHeader>
+
+      {/* Tabs */}
+      <div role="tablist" aria-label="Library sections" className="flex gap-6 overflow-x-auto border-b border-line scrollbar-hide">
+        {tabs.map((tab) => {
+          const selected = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              aria-controls="library-panel"
+              onClick={() => setActiveTab(tab.id)}
+              className={`relative -mb-px inline-flex h-11 shrink-0 items-center whitespace-nowrap text-[0.9375rem] font-medium ${selected ? 'text-ink' : 'text-ink-2 hover:text-ink'}`}
+            >
+              {tab.label}
+              {selected && <span className="absolute inset-x-0 bottom-0 h-[3px] rounded-full bg-hl" aria-hidden="true" />}
+            </button>
+          );
+        })}
+      </div>
+
+      <div id="library-panel" role="tabpanel" aria-label={activeLabel} className="space-y-16 pt-10 md:space-y-20">
+        {/* Continue listening */}
         {activeTab === 'all' && continueListening.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-2xl font-bold text-echo-text-primary mb-6">
-              Continue Listening
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-              {loading ? (
-                <>
-                  {Array.from({ length: 6 }, (_, i) => (
-                    <BookCardSkeleton key={i} />
-                  ))}
-                </>
-              ) : (
-                continueListening.map((book) => (
-                  <div key={book.id} className="space-y-2">
-                    <div className="relative aspect-book rounded-lg overflow-hidden bg-echo-beige shadow-card">
-                      <img
-                        src={book.cover}
-                        alt={`${book.title} cover`}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/60 to-transparent">
-                        <div className="h-1 bg-echo-player-border rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-echo-orange"
-                            style={{ width: `${book.progress}%` }}
-                          />
-                        </div>
-                        <p className="text-xs text-white mt-1">{Math.round(book.progress)}%</p>
-                      </div>
-                    </div>
-                    <h3 className="font-serif font-semibold text-sm line-clamp-2">
-                      {book.title}
-                    </h3>
-                    <p className="text-xs text-echo-text-secondary">
-                      {book.status}
-                    </p>
-                  </div>
-                ))
-              )}
+          <section aria-labelledby="continue-title">
+            <h2 id="continue-title" className="t-h2 text-ink">Continue listening</h2>
+            <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:gap-x-6 lg:grid-cols-6">
+              {continueListening.map((book) => (
+                <BookCard key={book.id} book={{ ...book, progress: Math.round(book.progress) }} showProgress size="fluid" />
+              ))}
             </div>
           </section>
         )}
-        
-        {/* All Books Grid */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-echo-text-primary">
-              {activeTab === 'all' ? 'All Books' : tabs.find(t => t.id === activeTab)?.label}
-            </h2>
+
+        {/* The whole shelf */}
+        <section aria-labelledby="shelf-title">
+          <div className="flex items-baseline justify-between gap-4">
+            <h2 id="shelf-title" className="t-h2 text-ink">{activeTab === 'all' ? 'All titles' : activeLabel}</h2>
+            <p className="text-[0.8125rem] text-ink-3 tabular">{filteredBooks.length} {filteredBooks.length === 1 ? 'title' : 'titles'}</p>
           </div>
-          
           <BookGrid
+            className="mt-2"
             books={filteredBooks}
-            loading={loading}
             viewMode={viewMode}
             onViewModeChange={setViewMode}
             showViewToggle={true}
-            emptyMessage={`No ${activeTab === 'all' ? 'books' : activeTab} in your library`}
-            emptyAction={() => window.location.href = '/browse'}
-            emptyActionLabel="Browse books"
+            emptyMessage={activeTab === 'wishlist' ? 'Your wishlist is empty' : `No ${activeTab === 'all' ? 'titles' : activeTab} in your library yet`}
+            emptyAction={() => navigate('/browse')}
+            emptyActionLabel="Browse the catalogue"
           />
         </section>
       </div>

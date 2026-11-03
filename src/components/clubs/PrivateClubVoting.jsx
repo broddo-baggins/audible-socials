@@ -1,212 +1,128 @@
-import { useState, useEffect } from 'react';
-import { Vote, Users, Check, Trophy, BookOpen } from 'lucide-react';
-import { Card } from '../ui';
+import { useState, useMemo } from 'react';
+import PropTypes from 'prop-types';
+import { Check } from 'lucide-react';
 import booksData from '../../data/books.json';
 import { getClubVotes, castClubVote, getUserData } from '../../utils/localStorage';
+import { Cover, EmptyState } from '../ui';
+
+/**
+ * PrivateClubVoting: members vote on the next book. Each candidate is a row
+ * with its vote count drawn as an ink bar; your own vote is the filled button.
+ */
+
+const loadVotes = (club) => {
+  const stored = getClubVotes(club.id);
+  return Object.keys(stored).length > 0 ? stored : club.bookVotes || {};
+};
 
 export default function PrivateClubVoting({ club, currentUser, onVoteCast }) {
-  const [bookVotes, setBookVotes] = useState({});
-  const [votingBooks, setVotingBooks] = useState([]);
+  const [bookVotes, setBookVotes] = useState(() => loadVotes(club));
   const [loading, setLoading] = useState(false);
+  const members = club.members || [];
+  const meId = currentUser?.id;
 
-  useEffect(() => {
-    loadVotes();
-  }, [club.id]);
-
-  useEffect(() => {
-    // Get books that are being voted on
-    const books = Object.keys(bookVotes).map(bookId => {
-      const book = booksData.find(b => b.id === bookId);
-      return book ? {
-        ...book,
-        votes: bookVotes[bookId].length,
-        hasMyVote: bookVotes[bookId].includes(currentUser.id)
-      } : null;
-    }).filter(Boolean);
-
-    setVotingBooks(books);
-  }, [bookVotes, currentUser.id]);
-
-  const loadVotes = () => {
-    // First try to load from localStorage
-    const storedVotes = getClubVotes(club.id);
-    if (Object.keys(storedVotes).length > 0) {
-      setBookVotes(storedVotes);
-    } else {
-      // Fallback to club data
-      setBookVotes(club.bookVotes || {});
-    }
-  };
+  const votingBooks = useMemo(() => Object.keys(bookVotes).map((bookId) => {
+    const book = booksData.find((b) => b.id === bookId);
+    return book ? { ...book, votes: bookVotes[bookId].length, hasMyVote: bookVotes[bookId].includes(meId) } : null;
+  }).filter(Boolean), [bookVotes, meId]);
 
   const handleVote = async (bookId) => {
     setLoading(true);
     const userData = getUserData();
-
     const result = castClubVote(club.id, bookId, userData.id);
     if (result.success) {
       setBookVotes(result.votes);
-      if (onVoteCast) {
-        onVoteCast(result.votes);
-      }
+      onVoteCast?.(result.votes);
     }
     setLoading(false);
   };
 
-  const getWinner = () => {
+  const winner = (() => {
     if (votingBooks.length === 0) return null;
+    const top = votingBooks.reduce((p, c) => (p.votes > c.votes ? p : c));
+    return top.votes >= Math.ceil(members.length / 2) ? top : null;
+  })();
 
-    const winner = votingBooks.reduce((prev, current) =>
-      prev.votes > current.votes ? prev : current
-    );
-
-    // Check if winner has majority (more than half the club members)
-    const majorityThreshold = Math.ceil(club.members.length / 2);
-    return winner.votes >= majorityThreshold ? winner : null;
-  };
-
-  const winner = getWinner();
+  const current = club.currentBook ? booksData.find((b) => b.id === club.currentBook) : null;
+  const maxVotes = Math.max(1, members.length);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-xl font-bold text-gray-900">Book Voting</h3>
-          <p className="text-sm text-gray-600 mt-1">
-            Vote on the next book your club will read together
-          </p>
-        </div>
+    <div className="grid gap-12 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
+      <section aria-labelledby="vote-title" className="min-w-0">
+        <h2 id="vote-title" className="t-h2 text-ink">Vote on the next book</h2>
+        <p className="mt-1 text-[0.9375rem] text-ink-2">Pick what your club reads after this one.</p>
+
         {winner && (
-          <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium flex items-center space-x-1">
-            <Trophy className="w-4 h-4" />
-            <span>Winner Selected!</span>
+          <div className="mt-5 rounded-lg border border-success/30 bg-success-wash p-5" role="status">
+            <p className="font-semibold text-success">A book has won</p>
+            <p className="mt-1 text-[0.9375rem] text-ink">
+              Your club reads <span className="t-title-book">{winner.title}</span> by {winner.author} next, with {winner.votes} of {members.length} votes.
+            </p>
           </div>
         )}
-      </div>
 
-      {/* Current Book */}
-      {club.currentBook && (
-        <Card className="p-4 bg-purple-50 border-purple-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-16 bg-purple-200 rounded flex items-center justify-center">
-              <BookOpen className="w-6 h-6 text-purple-600" />
-            </div>
-            <div>
-              <h4 className="font-medium text-purple-900">Currently Reading</h4>
-              <p className="text-sm text-purple-700">
-                {booksData.find(b => b.id === club.currentBook)?.title || 'Unknown Book'}
-              </p>
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {/* Voting Books */}
-      {votingBooks.length > 0 ? (
-        <div className="space-y-4">
-          {votingBooks.map(book => (
-            <Card key={book.id} className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4 flex-1">
-                  <img
-                    src={book.cover}
-                    alt={book.title}
-                    className="w-12 h-16 object-cover rounded shadow-sm"
-                  />
-                  <div className="flex-1">
-                    <h4 className="font-medium text-gray-900">{book.title}</h4>
-                    <p className="text-sm text-gray-600">by {book.author}</p>
-                    <div className="flex items-center space-x-3 mt-2">
-                      <div className="flex items-center space-x-1 text-sm text-gray-600">
-                        <Vote className="w-4 h-4" />
-                        <span>{book.votes} votes</span>
-                      </div>
-                      <div className="flex items-center space-x-1 text-sm text-gray-600">
-                        <Users className="w-4 h-4" />
-                        <span>{club.members.length} members</span>
-                      </div>
+        {votingBooks.length > 0 ? (
+          <ul className="mt-6 divide-y divide-line border-y border-line">
+            {votingBooks.map((book) => (
+              <li key={book.id} className="grid grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-4 py-4">
+                <Cover src={book.cover} title={book.title} shadow={false} />
+                <div className="min-w-0">
+                  <p className="t-title-book text-ink line-clamp-1">{book.title}</p>
+                  <p className="text-[0.8125rem] text-ink-3">by {book.author}</p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="h-1.5 w-full max-w-[12rem] overflow-hidden rounded-full bg-line" aria-hidden="true">
+                      <div className={`h-full rounded-full ${winner?.id === book.id ? 'bg-hl' : 'bg-ink'}`} style={{ width: `${(book.votes / maxVotes) * 100}%` }} />
                     </div>
+                    <span className="text-[0.8125rem] text-ink-2 tabular">{book.votes} of {members.length} votes</span>
                   </div>
                 </div>
-
                 <button
+                  type="button"
                   onClick={() => handleVote(book.id)}
                   disabled={loading}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 ${
-                    book.hasMyVote
-                      ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                  aria-pressed={book.hasMyVote}
+                  className={`inline-flex h-11 items-center gap-1.5 rounded-full px-5 text-[0.9375rem] font-medium transition-colors disabled:opacity-60 ${
+                    book.hasMyVote ? 'bg-ink text-paper hover:bg-gray-800' : 'border border-line-strong text-ink hover:bg-surface'
                   }`}
                 >
-                  {book.hasMyVote ? (
-                    <>
-                      <Check className="w-4 h-4" />
-                      <span>Voted</span>
-                    </>
-                  ) : (
-                    <>
-                      <Vote className="w-4 h-4" />
-                      <span>Vote</span>
-                    </>
-                  )}
+                  {book.hasMyVote && <Check className="h-4 w-4" strokeWidth={2} aria-hidden="true" />}
+                  {book.hasMyVote ? 'Voted' : 'Vote'}
                 </button>
-              </div>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Card className="p-8 text-center">
-          <Vote className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No books up for voting</h3>
-          <p className="text-gray-600">
-            Start a discussion to suggest books for your club to vote on!
-          </p>
-        </Card>
-      )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <EmptyState className="mt-6" title="No books up for a vote" description="Start a discussion to suggest books for the club to vote on." />
+        )}
+      </section>
 
-      {/* Winner Announcement */}
-      {winner && (
-        <Card className="p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Trophy className="w-8 h-8 text-green-600" />
+      <aside className="space-y-10">
+        {current && (
+          <section aria-labelledby="vote-current">
+            <h3 id="vote-current" className="text-sm font-semibold text-ink-2">Reading now</h3>
+            <div className="mt-2 flex items-center gap-3">
+              <span className="w-10 shrink-0"><Cover src={current.cover} title={current.title} shadow={false} /></span>
+              <p className="t-title-book text-ink">{current.title}</p>
             </div>
-            <h3 className="text-xl font-bold text-green-900 mb-2">Winner Selected!</h3>
-            <p className="text-green-800 mb-4">
-              Your club will read "{winner.title}" by {winner.author} next!
-            </p>
-            <div className="flex items-center justify-center space-x-4 text-sm text-green-700">
-              <div className="flex items-center space-x-1">
-                <Vote className="w-4 h-4" />
-                <span>{winner.votes} votes</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <Users className="w-4 h-4" />
-                <span>of {club.members.length} members</span>
-              </div>
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {/* Voting Rules */}
-      <Card className="p-4 bg-blue-50 border-blue-200">
-        <div className="flex items-start space-x-3">
-          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-            <Vote className="w-4 h-4 text-blue-600" />
-          </div>
-          <div>
-            <h4 className="font-medium text-blue-900 mb-1">Voting Rules</h4>
-            <ul className="text-sm text-blue-800 space-y-1">
-              <li>• You can vote for multiple books</li>
-              <li>• Change your vote anytime before the deadline</li>
-              <li>• Book wins with majority vote (50% + 1)</li>
-              <li>• Host can start voting period anytime</li>
-              <li>• Voting continues until a book wins or deadline</li>
-            </ul>
-          </div>
-        </div>
-      </Card>
+          </section>
+        )}
+        <section aria-labelledby="vote-rules">
+          <h3 id="vote-rules" className="t-h3 text-ink">How voting works</h3>
+          <ul className="mt-3 space-y-2 text-[0.9375rem] text-ink-2">
+            <li>You can vote for more than one book.</li>
+            <li>Change your vote any time before the deadline.</li>
+            <li>A book wins with a majority, half the members plus one.</li>
+            <li>The host can open a vote at any time.</li>
+            <li>Voting runs until a book wins or the deadline passes.</li>
+          </ul>
+        </section>
+      </aside>
     </div>
   );
 }
+
+PrivateClubVoting.propTypes = {
+  club: PropTypes.object.isRequired,
+  currentUser: PropTypes.object,
+  onVoteCast: PropTypes.func,
+};

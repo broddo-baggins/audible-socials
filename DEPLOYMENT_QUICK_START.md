@@ -36,7 +36,7 @@ vercel
 2. Click "Add New"
 3. Enter:
    ```
-   Name: VITE_GROK_API_KEY
+   Name: GROK_API_KEY
    Value: YOUR_GROK_API_KEY_HERE
    ```
 4. Select: ✅ Production ✅ Preview ✅ Development
@@ -44,7 +44,7 @@ vercel
 
 **Via CLI**:
 ```bash
-vercel env add VITE_GROK_API_KEY
+vercel env add GROK_API_KEY
 # Paste the key when prompted
 # Select all environments
 ```
@@ -87,7 +87,7 @@ After deployment:
 vercel env ls
 
 # If missing, add it:
-vercel env add VITE_GROK_API_KEY
+vercel env add GROK_API_KEY
 
 # Then redeploy:
 vercel --prod

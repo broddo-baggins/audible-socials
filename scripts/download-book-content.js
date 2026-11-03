@@ -226,7 +226,7 @@ async function downloadBook(bookId, format = 'txt') {
 
   try {
     // Find legal download source
-    const downloadUrl = await findDownloadUrl(book, format);
+    const downloadUrl = await findDownloadUrl(book);
 
     if (!downloadUrl) {
       console.error('❌ No legal download URL found');
@@ -263,10 +263,9 @@ async function downloadBook(bookId, format = 'txt') {
 }
 
 // Find appropriate download URL for a book
-async function findDownloadUrl(book, format) {
+async function findDownloadUrl(book) {
   // For existing books, try to find legal alternatives
   const title = book.title.toLowerCase();
-  const author = book.author.toLowerCase();
 
   // Check if it's a known public domain work
   const publicDomainBooks = [
@@ -292,7 +291,7 @@ async function findDownloadUrl(book, format) {
       if (gutenbergResults.length > 0) {
         return gutenbergResults[0].downloadUrl;
       }
-    } catch (error) {
+    } catch {
       console.warn('Gutenberg lookup failed');
     }
 
@@ -302,7 +301,7 @@ async function findDownloadUrl(book, format) {
       if (olResults.length > 0) {
         return olResults[0].downloadUrl;
       }
-    } catch (error) {
+    } catch {
       console.warn('Open Library lookup failed');
     }
   }
@@ -504,13 +503,14 @@ async function main() {
   console.log('======================\n');
 
   switch (command) {
-    case 'search':
+    case 'search': {
       const query = args.slice(1).join(' ') || 'pride and prejudice';
       const source = args[2] || 'all';
       await searchBooks(query, source);
       break;
+    }
 
-    case 'download':
+    case 'download': {
       const bookId = args[1];
       const format = args[2] || 'txt';
       if (!bookId) {
@@ -520,8 +520,9 @@ async function main() {
       }
       await downloadBook(bookId, format);
       break;
+    }
 
-    case 'organize':
+    case 'organize': {
       const contentPath = args[1];
       if (!contentPath) {
         console.error('❌ Please specify a content path');
@@ -530,6 +531,7 @@ async function main() {
       }
       organizeContent(contentPath);
       break;
+    }
 
     case 'metadata':
       updateMetadata();

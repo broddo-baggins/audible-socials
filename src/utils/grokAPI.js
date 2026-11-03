@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Grok API Integration
  * 
@@ -5,7 +6,7 @@
  * Includes error handling, retries, and response formatting
  */
 
-import { GROK_API_CONFIG, API_CONFIG } from '../config/api';
+import { GROK_API_CONFIG, API_CONFIG } from '../config/api.js';
 
 /**
  * Make a request to Grok API
@@ -17,46 +18,43 @@ export const callGrokAPI = async (messages, options = {}) => {
   const {
     temperature = GROK_API_CONFIG.temperature,
     maxTokens = GROK_API_CONFIG.maxTokens,
-    model = GROK_API_CONFIG.model,
   } = options;
 
-  const requestBody = {
-    messages,
-    model,
-    stream: false,
-    temperature,
-    max_tokens: maxTokens,
-  };
-
-  // Check if API key is configured
-  if (!GROK_API_CONFIG.apiKey || GROK_API_CONFIG.apiKey === 'YOUR_GROK_API_KEY_HERE') {
-    console.warn('[Grok API] API key not configured - using intelligent mock responses');
-    return getMockResponse(messages);
-  }
-
-  // Log API key status (without revealing the key)
-  console.log('[Grok API] API Key Status:', GROK_API_CONFIG.apiKey.startsWith('gsk_') ? 'Valid format' : 'Invalid format');
-  console.log('[Grok API] Using Real Grok API - attempting connection...');
-
   try {
-    const response = await fetch(`${GROK_API_CONFIG.baseUrl}/chat/completions`, {
+    const response = await fetch(GROK_API_CONFIG.endpoint, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROK_API_CONFIG.apiKey}`,
-      },
-      body: JSON.stringify(requestBody),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, temperature, maxTokens }),
+      signal: AbortSignal.timeout(API_CONFIG.timeout),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Grok API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+    const data = await response.json().catch(() => ({}));
+
+    // Server has no GROK_API_KEY configured (or no /api route, e.g. a static preview)
+    if (response.status === 503 && data.error === 'not_configured') {
+      console.warn('[Grok API] Server key not configured - using intelligent mock responses');
+      return getMockResponse(messages);
+    }
+    if (response.status === 404) {
+      console.warn('[Grok API] /api/grok not available - using intelligent mock responses');
+      return getMockResponse(messages);
+    }
+    // The server already tried every configured model; retrying won't help.
+    if (data.error === 'upstream_unavailable') {
+      console.warn('[Grok API] No Grok model available - using intelligent mock responses');
+      return getMockResponse(messages);
     }
 
-    const data = await response.json();
-    return data.choices[0]?.message?.content || 'No response from AI';
+    if (!response.ok) {
+      const error = /** @type {Error & { status?: number }} */ (new Error(`Grok API Error: ${response.status} - ${data.error || 'Unknown error'}`));
+      error.status = response.status;
+      throw error;
+    }
+
+    return data.content || 'No response from AI';
   } catch (error) {
-    console.error('Grok API Error:', error);
+    if (!error.status) error.offline = true;
+    console.warn('[Grok API]', error.message);
     throw error;
   }
 };
@@ -117,11 +115,17 @@ export const callGrokAPIWithRetry = async (messages, options = {}) => {
     } catch (error) {
       lastError = error;
       
-      // Don't retry on certain errors
-      if (error.message.includes('401') || error.message.includes('403')) {
+      // Don't retry client errors (bad input, forbidden, too large); 429 may recover
+      if (error.status >= 400 && error.status < 500 && error.status !== 429) {
         throw error;
       }
       
+      // Last attempt and the AI is unreachable (network/timeout/5xx): degrade to mock
+      if (attempt === API_CONFIG.retryAttempts - 1 && (error.offline || error.status >= 500)) {
+        console.warn('[Grok API] Unavailable after retries - using intelligent mock responses');
+        return getMockResponse(messages);
+      }
+
       // Wait before retrying
       if (attempt < API_CONFIG.retryAttempts - 1) {
         await new Promise(resolve => setTimeout(resolve, API_CONFIG.retryDelay * (attempt + 1)));
@@ -292,22 +296,6 @@ IMPORTANT: You have access to real books in the Listenable catalog. Reference th
   } catch (error) {
     console.error('Error getting AI answer:', error);
     throw error;
-  }
-};
-
-/**
- * Health check for Grok API
- * @returns {Promise<boolean>} True if API is accessible
- */
-export const checkGrokAPIHealth = async () => {
-  try {
-    await callGrokAPI([
-      { role: 'user', content: 'Hi' }
-    ], { maxTokens: 10 });
-    return true;
-  } catch (error) {
-    console.error('Grok API health check failed:', error);
-    return false;
   }
 };
 

@@ -13,19 +13,21 @@ import {
  * Handles game loop, persistence, XP/FP calculation, and activity switching
  */
 export const useIdleGame = (isPlaying = false, currentBook = null) => {
-  const [gameState, setGameState] = useState(getIdleGameState());
-  const [sessionStartTime, setSessionStartTime] = useState(null);
+  const [gameState, setGameState] = useState(getIdleGameState);
+  // When the current listening session (or its current minute) started
+  const sessionStartRef = useRef(null);
   const [floatingTexts, setFloatingTexts] = useState([]);
   const [newAchievements, setNewAchievements] = useState([]);
   const intervalRef = useRef(null);
   const floatingTextIdRef = useRef(0);
   
   // Initialize lastActiveTime from saved state if available, otherwise now
-  const lastActiveTimeRef = useRef(
-    gameState.lastSaveTime && !isNaN(gameState.lastSaveTime) 
-      ? gameState.lastSaveTime 
+  const [initialActiveTime] = useState(() =>
+    gameState.lastSaveTime && !isNaN(gameState.lastSaveTime)
+      ? gameState.lastSaveTime
       : Date.now()
   );
+  const lastActiveTimeRef = useRef(initialActiveTime);
 
   // Add floating text notification
   const addFloatingText = useCallback((text, type = 'xp') => {
@@ -306,24 +308,24 @@ export const useIdleGame = (isPlaying = false, currentBook = null) => {
 
   // Handle play/pause state changes
   useEffect(() => {
-    if (isPlaying && !sessionStartTime) {
-      setSessionStartTime(Date.now());
-    } else if (!isPlaying && sessionStartTime) {
+    if (isPlaying && !sessionStartRef.current) {
+      sessionStartRef.current = Date.now();
+    } else if (!isPlaying && sessionStartRef.current) {
       // Calculate listening time when audio stops
-      const listeningTime = Math.floor((Date.now() - sessionStartTime) / (1000 * 60));
+      const listeningTime = Math.floor((Date.now() - sessionStartRef.current) / (1000 * 60));
       processListeningTime(listeningTime);
-      setSessionStartTime(null);
+      sessionStartRef.current = null;
     }
-  }, [isPlaying, sessionStartTime, processListeningTime]);
+  }, [isPlaying, processListeningTime]);
 
   // Game loop - update every minute while playing
   useEffect(() => {
     const updateGame = () => {
-      if (isPlaying && sessionStartTime) {
-        const minutesElapsed = Math.floor((Date.now() - sessionStartTime) / (1000 * 60));
+      if (isPlaying && sessionStartRef.current) {
+        const minutesElapsed = Math.floor((Date.now() - sessionStartRef.current) / (1000 * 60));
         if (minutesElapsed > 0) {
           processListeningTime(1); // Process 1 minute at a time
-          setSessionStartTime(Date.now()); // Reset for next minute
+          sessionStartRef.current = Date.now(); // Reset for next minute
         }
       }
     };
@@ -335,7 +337,7 @@ export const useIdleGame = (isPlaying = false, currentBook = null) => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isPlaying, sessionStartTime, processListeningTime]);
+  }, [isPlaying, processListeningTime]);
 
   // Handle page visibility changes
   useEffect(() => {
@@ -438,14 +440,14 @@ export const useIdleGame = (isPlaying = false, currentBook = null) => {
     return { success: true, upgrade };
   }, [addFloatingText]);
 
-  // Track passive checks (when user views game while not playing)
+  // Track passive checks (when user views game while not playing). Only the
+  // stored copy needs it: achievements are checked against stored state.
   useEffect(() => {
     if (!isPlaying) {
       const state = getIdleGameState();
-      const updatedState = updateIdleGameState({
+      updateIdleGameState({
         passiveChecks: (state.passiveChecks || 0) + 1
       });
-      setGameState(updatedState);
     }
   }, [isPlaying]);
 

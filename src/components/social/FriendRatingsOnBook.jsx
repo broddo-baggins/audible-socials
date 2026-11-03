@@ -1,105 +1,70 @@
-import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, Users, Crown } from 'lucide-react';
+import PropTypes from 'prop-types';
 import { getFriends } from '../../utils/localStorage';
+import { Avatar, Rating } from '../ui';
 import usersData from '../../data/users.json';
 
+/**
+ * FriendRatingsOnBook: how the people you follow rated this book. The friends'
+ * average as a big serif number, then one ruled row per friend.
+ */
 export default function FriendRatingsOnBook({ bookId }) {
-  const [friendRatings, setFriendRatings] = useState([]);
-
-  const loadFriendRatings = useCallback(() => {
-    const friendIds = getFriends();
-    const friends = usersData.filter(u => friendIds.includes(u.id));
-    
-    const ratings = friends
-      .filter(friend => 
-        friend.ratings[bookId] && 
-        friend.privacySettings?.shareRatings
-      )
-      .map(friend => ({
-        friend,
-        rating: friend.ratings[bookId]
-      }))
-      .sort((a, b) => b.rating - a.rating);
-
-    setFriendRatings(ratings);
-  }, [bookId]);
-
-  useEffect(() => {
-    loadFriendRatings();
-  }, [loadFriendRatings]);
+  // Derived from stored friends and static user data on each render
+  const friendIds = getFriends();
+  const friendRatings = usersData
+    .filter((u) => friendIds.includes(u.id))
+    .filter((friend) => friend.ratings?.[bookId] && friend.privacySettings?.shareRatings)
+    .map((friend) => ({ friend, rating: friend.ratings[bookId] }))
+    .sort((a, b) => b.rating - a.rating);
 
   if (friendRatings.length === 0) {
     return null;
   }
 
-  const avgRating = (
-    friendRatings.reduce((sum, r) => sum + r.rating, 0) / friendRatings.length
-  ).toFixed(1);
+  const avgRating = (friendRatings.reduce((sum, r) => sum + r.rating, 0) / friendRatings.length).toFixed(1);
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-200">
-      <div className="flex items-center justify-between mb-4">
+    <section aria-labelledby={`friend-ratings-${bookId}`}>
+      <div className="flex items-end justify-between gap-6">
         <div>
-          <h3 className="text-lg font-bold text-gray-900 flex items-center space-x-2">
-            <Users className="w-5 h-5 text-purple-600" />
-            <span>What Your Friends Think</span>
-          </h3>
-          <p className="text-sm text-gray-600 mt-1">
-            {friendRatings.length} friend{friendRatings.length > 1 ? 's' : ''} rated this book
+          <h2 id={`friend-ratings-${bookId}`} className="t-h2 text-ink">What your friends think</h2>
+          <p className="mt-1 text-[0.9375rem] text-ink-2">
+            {friendRatings.length} {friendRatings.length > 1 ? 'friends' : 'friend'} rated this book
           </p>
         </div>
-        <div className="text-right">
-          <div className="flex items-center space-x-1">
-            <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-            <span className="text-2xl font-bold text-gray-900">{avgRating}</span>
-          </div>
-          <p className="text-xs text-gray-600">Average from friends</p>
+        <div className="shrink-0 text-right">
+          <p className="font-serif text-[2.5rem] font-medium leading-none text-ink tabular">{avgRating}</p>
+          <p className="mt-1 text-[0.8125rem] text-ink-3">Friends&rsquo; average</p>
         </div>
       </div>
 
-      <div className="space-y-3">
+      <ul className="mt-5 divide-y divide-line border-y border-line">
         {friendRatings.map(({ friend, rating }) => (
-          <Link
-            key={friend.id}
-            to="/clubs/friends"
-            className="flex items-center justify-between p-3 bg-white rounded-lg hover:shadow-md transition-shadow border border-gray-200"
-          >
-            <div className="flex items-center space-x-3">
-              <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">
-                    {friend.name.split(' ').map(n => n[0]).join('')}
-                  </span>
-                </div>
-                {friend.isPremium && (
-                  <div className="absolute -bottom-1 -right-1 bg-audible-gold rounded-full p-0.5">
-                    <Crown className="w-3 h-3 text-white" />
-                  </div>
-                )}
+          <li key={friend.id}>
+            <Link to={`/friend/${friend.id}/library`} className="group flex items-center gap-3 py-3.5">
+              <Avatar src={friend.avatar} name={friend.name} size="md" />
+              <div className="min-w-0 flex-1">
+                <p className="text-[0.9375rem] font-semibold text-ink group-hover:underline underline-offset-4">
+                  {friend.name}
+                  {friend.isPremium && <span className="ml-2 align-middle text-xs font-medium text-ink-3">Premium</span>}
+                </p>
+                <p className="text-[0.8125rem] text-ink-3 tabular">{friend.library.length} books in their library</p>
               </div>
-              <div>
-                <p className="font-semibold text-gray-900 text-sm">{friend.name}</p>
-                <p className="text-xs text-gray-600">{friend.library.length} books</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-lg font-bold text-gray-900">{rating}</span>
-              <span className="text-sm text-gray-500">/5</span>
-            </div>
-          </Link>
+              <Rating value={rating} size="sm" showValue />
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
 
       {friendRatings.length > 3 && (
-        <Link
-          to="/clubs/friends"
-          className="mt-4 block text-center text-sm font-semibold text-purple-600 hover:text-purple-700"
-        >
+        <Link to="/clubs/friends" className="mt-4 inline-flex text-sm font-medium text-ink hover:underline underline-offset-4">
           See all friend ratings
         </Link>
       )}
-    </div>
+    </section>
   );
 }
+
+FriendRatingsOnBook.propTypes = {
+  bookId: PropTypes.string.isRequired,
+};

@@ -29,12 +29,12 @@ const ProgressBar = ({
   
   const variants = {
     default: {
-      bg: 'bg-echo-beige-dark',
-      fill: 'bg-echo-orange',
+      bg: 'bg-line',
+      fill: 'bg-ink',
     },
     player: {
       bg: 'bg-echo-player-border',
-      fill: 'bg-echo-orange',
+      fill: 'bg-hl',
     },
   };
   
@@ -60,7 +60,7 @@ const ProgressBar = ({
   const handleKeyDown = (e) => {
     if (!interactive) return;
     
-    let newValue = value;
+    let newValue;
     const step = max / 100;
     
     if (e.key === 'ArrowRight') {
@@ -83,7 +83,7 @@ const ProgressBar = ({
   return (
     <div className={`w-full ${className}`}>
       {showTime && (
-        <div className="flex justify-between items-center text-sm text-echo-text-secondary mb-1.5">
+        <div className="flex justify-between items-center text-sm text-ink-3 tabular mb-1.5">
           <span>{currentTime}</span>
           <span>{totalTime}</span>
         </div>
@@ -132,7 +132,7 @@ const ProgressBar = ({
         {/* Interactive handle */}
         {interactive && (
           <div
-            className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md transition-all duration-150 ${hovering ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
+            className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-surface rounded-full shadow-md ring-1 ring-ink transition-all duration-150 ${hovering ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
             style={{ left: `calc(${percentage}% - 6px)` }}
           />
         )}

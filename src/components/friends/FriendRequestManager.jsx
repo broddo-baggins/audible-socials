@@ -1,19 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { 
-  UserPlus, 
-  UserX, 
-  Check, 
-  X, 
-  AlertCircle, 
-  Clock, 
-  Send, 
-  Heart, 
-  HeartHandshake, 
-  BookOpen, 
-  Users 
-} from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { UserX, Check, X } from 'lucide-react';
 import usersData from '../../data/users.json';
 import {
   getPendingRequests,
@@ -21,19 +9,46 @@ import {
   acceptFriendRequest,
   rejectFriendRequest,
   cancelFriendRequest,
-  blockUser
+  blockUser,
 } from '../../utils/friendManagement';
 import { createFriendAcceptedNotification, createFriendRejectedNotification } from '../../utils/notifications';
+import { Avatar } from '../ui';
+
+/**
+ * FriendRequestManager: requests you received and sent, as two tabs over a
+ * list. Accept is the one filled button; decline and block sit quietly beside it.
+ */
+
+const relationshipLabels = {
+  book_club: 'Same book club',
+  similar_taste: 'Similar taste',
+  family: 'Family',
+  real_life: 'Friend in real life',
+  influencer: 'Influencer',
+};
+
+const timeSince = (timestamp) => {
+  const diffMs = Date.now() - new Date(timestamp);
+  const mins = Math.floor(diffMs / 60000);
+  const hours = Math.floor(diffMs / 3600000);
+  const days = Math.floor(diffMs / 86400000);
+  if (days > 0) return `${days}d ago`;
+  if (hours > 0) return `${hours}h ago`;
+  if (mins > 0) return `${mins}m ago`;
+  return 'Just now';
+};
+
+// Messages are user text; the system shows no emoji, so drop pictographs and tidy the spaces.
+const stripEmoji = (s = '') => s.replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}]/gu, '').replace(/\s+([.,!?])/g, '$1').replace(/\s{2,}/g, ' ').trim();
+
+const tabClass = (selected) =>
+  `relative -mb-px inline-flex h-11 items-center gap-2 text-[0.9375rem] font-medium transition-colors ${selected ? 'text-ink' : 'text-ink-2 hover:text-ink'}`;
 
 export default function FriendRequestManager({ onUpdate }) {
-  const [pendingRequests, setPendingRequests] = useState([]);
-  const [sentRequests, setSentRequests] = useState([]);
+  const [pendingRequests, setPendingRequests] = useState(() => getPendingRequests());
+  const [sentRequests, setSentRequests] = useState(() => getSentRequests());
   const [activeTab, setActiveTab] = useState('received');
   const [actionFeedback, setActionFeedback] = useState(null);
-
-  useEffect(() => {
-    loadRequests();
-  }, []);
 
   const loadRequests = () => {
     setPendingRequests(getPendingRequests());
@@ -48,37 +63,37 @@ export default function FriendRequestManager({ onUpdate }) {
   const handleAccept = (requestId, fromUserId) => {
     const result = acceptFriendRequest(requestId);
     if (result.success) {
-      const user = usersData.find(u => u.id === fromUserId);
+      const user = usersData.find((u) => u.id === fromUserId);
       if (user) {
         createFriendAcceptedNotification(fromUserId, 'You');
-        showFeedback('success', `You are now friends with ${user.name}!`);
+        showFeedback('success', `You and ${user.name} are now friends.`);
       }
       loadRequests();
       onUpdate?.();
     } else {
-      showFeedback('error', 'Failed to accept friend request');
+      showFeedback('error', 'The request could not be accepted.');
     }
   };
 
   const handleReject = (requestId, fromUserId) => {
-    if (window.confirm('Are you sure you want to decline this friend request?')) {
-      const user = usersData.find(u => u.id === fromUserId);
+    if (window.confirm('Decline this friend request?')) {
+      const user = usersData.find((u) => u.id === fromUserId);
       const result = rejectFriendRequest(requestId);
       if (result.success) {
         if (user) {
           createFriendRejectedNotification(fromUserId, 'You');
-          showFeedback('info', `You declined ${user.name}'s friend request`);
+          showFeedback('info', `You declined ${user.name}'s request.`);
         }
         loadRequests();
         onUpdate?.();
       } else {
-        showFeedback('error', 'Failed to decline friend request');
+        showFeedback('error', 'The request could not be declined.');
       }
     }
   };
 
   const handleBlock = (requestId, userId) => {
-    if (window.confirm('Block this user? They will not be able to send you requests.')) {
+    if (window.confirm('Block this person? They will not be able to send you requests.')) {
       rejectFriendRequest(requestId);
       blockUser(userId, 'blocked_from_request');
       loadRequests();
@@ -93,327 +108,138 @@ export default function FriendRequestManager({ onUpdate }) {
     }
   };
 
-  const getTimeSince = (timestamp) => {
-    const now = new Date();
-    const then = new Date(timestamp);
-    const diffMs = now - then;
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffDays > 0) return `${diffDays}d ago`;
-    if (diffHours > 0) return `${diffHours}h ago`;
-    if (diffMins > 0) return `${diffMins}m ago`;
-    return 'Just now';
-  };
-
-  const getRelationshipBadge = (context) => {
-    const badges = {
-      'book_club': { icon: '📚', text: 'Book Club Member', color: 'bg-blue-100 text-blue-700' },
-      'similar_taste': { icon: '⭐', text: 'Similar Taste', color: 'bg-purple-100 text-purple-700' },
-      'family': { icon: '👨‍👩‍👧‍👦', text: 'Family', color: 'bg-green-100 text-green-700' },
-      'real_life': { icon: '🤝', text: 'Friend IRL', color: 'bg-orange-100 text-orange-700' },
-      'influencer': { icon: '🌟', text: 'Influencer', color: 'bg-yellow-100 text-yellow-700' }
-    };
-    return badges[context] || null;
-  };
-
-  const renderPendingRequest = (request) => {
-    const user = usersData.find(u => u.id === request.fromUserId);
+  const renderPending = (request) => {
+    const user = usersData.find((u) => u.id === request.fromUserId);
     if (!user) return null;
-
-    const relationshipBadge = request.relationshipContext ? getRelationshipBadge(request.relationshipContext) : null;
+    const relation = request.relationshipContext ? relationshipLabels[request.relationshipContext] : null;
 
     return (
-      <motion.div
-        key={request.id}
-        initial={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
-        className="bg-gradient-to-r from-white to-purple-50/30 border-2 border-purple-200 rounded-xl p-5 hover:border-purple-400 transition-all shadow-sm hover:shadow-md"
-      >
-        <div className="flex items-start space-x-4">
-          <motion.div
-            className="flex-shrink-0 relative"
-            whileHover={{ scale: 1.05 }}
-          >
-            {user.avatar ? (
-              <img 
-                src={user.avatar} 
-                alt={user.name} 
-                className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-lg"
-              />
-            ) : (
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-lg">
-                  {user.name.split(' ').map(n => n[0]).join('')}
-                </span>
-              </div>
-            )}
-                      {user.isPremium && (
-                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
-                          <span className="text-xs text-white font-bold">P</span>
-                        </div>
-                      )}
-          </motion.div>
-
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <h4 className="font-bold text-gray-900 text-lg">{user.name}</h4>
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <span className="flex items-center gap-1">
-                    <BookOpen className="w-4 h-4" />
-                    {user.library.length} books
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Users className="w-4 h-4" />
-                    {user.joinedClubs.length} clubs
-                  </span>
-                </div>
-              </div>
-              <div className="text-right">
-                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                  {getTimeSince(request.timestamp)}
-                </span>
-                <div className="flex items-center gap-1 mt-1">
-                  <Heart className="w-4 h-4 text-red-400" />
-                  <span className="text-xs text-red-600 font-medium">Wants to connect</span>
-                </div>
-              </div>
+      <li key={request.id} className="py-4">
+        <div className="flex items-start gap-3">
+          <Avatar src={user.avatar} name={user.name} size="md" />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-baseline justify-between gap-3">
+              <p className="truncate font-semibold text-ink">{user.name}</p>
+              <span className="shrink-0 text-[0.8125rem] text-ink-3 tabular">{timeSince(request.timestamp)}</span>
             </div>
-
-            {relationshipBadge && (
-              <div className="mb-2">
-                <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${relationshipBadge.color}`}>
-                  <span>{relationshipBadge.icon}</span>
-                  <span>{relationshipBadge.text}</span>
-                </span>
-              </div>
-            )}
-
-            {request.message && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mt-3 p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-purple-100"
-              >
-                <div className="flex items-start gap-2">
-                  <HeartHandshake className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-gray-700 italic">"{request.message}"</p>
-                </div>
-              </motion.div>
-            )}
-
-            <div className="flex items-center gap-3 mt-4">
-              <motion.button
-                onClick={() => handleAccept(request.id, request.fromUserId)}
-                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-bold hover:from-green-600 hover:to-emerald-700 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Check className="w-5 h-5" />
-                <span>Accept Friend</span>
-              </motion.button>
-
-              <motion.button
-                onClick={() => handleReject(request.id, request.fromUserId)}
-                className="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-3 rounded-xl font-bold hover:from-gray-600 hover:to-gray-700 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <X className="w-5 h-5" />
-                <span>Decline</span>
-              </motion.button>
-
-              <motion.button
-                onClick={() => handleBlock(request.id, request.fromUserId)}
-                className="px-4 py-3 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition-colors"
-                title="Block user"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <UserX className="w-5 h-5" />
-              </motion.button>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    );
-  };
-
-  const renderSentRequest = (request) => {
-    const user = usersData.find(u => u.id === request.toUserId);
-    if (!user) return null;
-
-    return (
-      <div
-        key={request.id}
-        className="bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
-      >
-        <div className="flex items-start space-x-3">
-          <div className="flex-shrink-0">
-            {user.avatar ? (
-              <img 
-                src={user.avatar} 
-                alt={user.name} 
-                className="w-12 h-12 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-12 h-12 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold">
-                  {user.name.split(' ').map(n => n[0]).join('')}
-                </span>
-              </div>
-            )}
-          </div>
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between mb-1">
-              <h4 className="font-semibold text-gray-900">{user.name}</h4>
-              <span className="flex items-center text-xs text-gray-500">
-                <Clock className="w-3 h-3 mr-1" />
-                {getTimeSince(request.timestamp)}
-              </span>
-            </div>
-            
-            <p className="text-sm text-gray-600 mb-2">
-              Request pending
+            <p className="text-[0.8125rem] text-ink-3 tabular">
+              {user.library.length} books · {user.joinedClubs.length} clubs
+              {user.isPremium && ' · Premium'}
             </p>
-
-            <button
-              onClick={() => handleCancel(request.id)}
-              className="text-sm text-red-600 hover:text-red-700 font-semibold"
-            >
-              Cancel Request
-            </button>
+            {relation && <p className="mt-1.5 inline-flex rounded-sm bg-surface-sunk px-1.5 py-0.5 text-xs font-medium text-ink-2">{relation}</p>}
+            {request.message && (
+              <blockquote className="mt-2 border-l-2 border-line-strong pl-3 text-sm italic text-ink-2">&ldquo;{stripEmoji(request.message)}&rdquo;</blockquote>
+            )}
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <button type="button" onClick={() => handleAccept(request.id, request.fromUserId)} className="inline-flex h-9 items-center gap-1.5 rounded-full bg-ink px-4 text-sm font-medium text-paper hover:bg-gray-800">
+                <Check className="h-4 w-4" strokeWidth={2} aria-hidden="true" /> Accept
+              </button>
+              <button type="button" onClick={() => handleReject(request.id, request.fromUserId)} className="inline-flex h-9 items-center rounded-full border border-line-strong px-4 text-sm font-medium text-ink hover:bg-surface">
+                Decline
+              </button>
+              <button
+                type="button"
+                onClick={() => handleBlock(request.id, request.fromUserId)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-ink-2 hover:bg-danger-wash hover:text-danger"
+                aria-label={`Block ${user.name}`}
+                title="Block"
+              >
+                <UserX className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </li>
     );
   };
+
+  const renderSent = (request) => {
+    const user = usersData.find((u) => u.id === request.toUserId);
+    if (!user) return null;
+    return (
+      <li key={request.id} className="flex items-center gap-3 py-3">
+        <Avatar src={user.avatar} name={user.name} size="md" />
+        <div className="min-w-0 flex-1">
+          <p className="truncate font-medium text-ink">{user.name}</p>
+          <p className="text-[0.8125rem] text-ink-3 tabular">Pending, sent {timeSince(request.timestamp)}</p>
+        </div>
+        <button type="button" onClick={() => handleCancel(request.id)} className="inline-flex h-9 shrink-0 items-center rounded-full px-3 text-sm font-medium text-danger hover:bg-danger-wash">
+          Cancel
+        </button>
+      </li>
+    );
+  };
+
+  const total = pendingRequests.length + sentRequests.length;
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-      {/* Feedback Notification */}
-      <AnimatePresence>
-        {actionFeedback && (
-          <motion.div
-            initial={{ opacity: 0, y: -50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className={`mb-4 p-4 rounded-lg border-2 ${
-              actionFeedback.type === 'success'
-                ? 'bg-green-50 border-green-200 text-green-800'
-                : actionFeedback.type === 'error'
-                ? 'bg-red-50 border-red-200 text-red-800'
-                : 'bg-blue-50 border-blue-200 text-blue-800'
-            }`}
+    <section aria-labelledby="requests-title">
+      <h2 id="requests-title" className="t-h3 text-ink">
+        Friend requests {total > 0 && <span className="text-ink-3 tabular">{total}</span>}
+      </h2>
+
+      {actionFeedback && (
+        <p
+          role="status"
+          className={`mt-3 flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm ${
+            actionFeedback.type === 'success' ? 'border-success/30 bg-success-wash text-success' : actionFeedback.type === 'error' ? 'border-danger/30 bg-danger-wash text-danger' : 'border-line bg-surface text-ink-2'
+          }`}
+        >
+          {actionFeedback.type === 'success' ? <Check className="h-4 w-4" strokeWidth={2} aria-hidden="true" /> : actionFeedback.type === 'error' ? <X className="h-4 w-4" strokeWidth={2} aria-hidden="true" /> : null}
+          {actionFeedback.message}
+        </p>
+      )}
+
+      <div role="tablist" aria-label="Friend requests" className="mt-3 flex gap-6 border-b border-line">
+        {[
+          { id: 'received', label: 'Received', count: pendingRequests.length },
+          { id: 'sent', label: 'Sent', count: sentRequests.length },
+        ].map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            role="tab"
+            id={`req-tab-${t.id}`}
+            aria-selected={activeTab === t.id}
+            aria-controls="req-panel"
+            onClick={() => setActiveTab(t.id)}
+            className={tabClass(activeTab === t.id)}
           >
-            <div className="flex items-center gap-2">
-              {actionFeedback.type === 'success' && <Check className="w-5 h-5 text-green-600" />}
-              {actionFeedback.type === 'error' && <X className="w-5 h-5 text-red-600" />}
-              {actionFeedback.type === 'info' && <AlertCircle className="w-5 h-5 text-blue-600" />}
-              <p className="font-semibold">{actionFeedback.message}</p>
+            {t.label}
+            {t.count > 0 && <span className="rounded-full bg-surface-sunk px-1.5 text-xs font-semibold text-ink tabular">{t.count}</span>}
+            {activeTab === t.id && <span className="absolute inset-x-0 bottom-0 h-[3px] rounded-full bg-hl" aria-hidden="true" />}
+          </button>
+        ))}
+      </div>
+
+      <div id="req-panel" role="tabpanel" aria-labelledby={`req-tab-${activeTab}`}>
+        {activeTab === 'received' && (
+          pendingRequests.length === 0 ? (
+            <div className="mt-4 rounded-lg border border-dashed border-line-strong p-5">
+              <p className="font-medium text-ink">No requests right now</p>
+              <p className="mt-1 text-sm text-ink-2">When someone wants to connect, their request shows up here.</p>
+              <Link to="/social" className="mt-2 inline-flex min-h-11 items-center text-sm font-medium text-ink underline decoration-1 underline-offset-4 hover:decoration-2">Go to Social</Link>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="flex items-center space-x-2 mb-6">
-        <UserPlus className="w-6 h-6 text-purple-600" />
-        <h3 className="text-xl font-bold text-gray-900">Friend Requests</h3>
-        {(pendingRequests.length + sentRequests.length) > 0 && (
-          <span className="bg-purple-100 text-purple-700 text-sm font-bold px-3 py-1 rounded-full">
-            {pendingRequests.length + sentRequests.length}
-          </span>
-        )}
-      </div>
-
-      <div className="flex space-x-2 mb-6 border-b border-gray-200">
-        <button
-          onClick={() => setActiveTab('received')}
-          className={`pb-3 px-4 font-bold transition-colors relative ${
-            activeTab === 'received'
-              ? 'border-b-3 border-purple-600 text-purple-600'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Received
-          {pendingRequests.length > 0 && (
-            <span className="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-              {pendingRequests.length}
-            </span>
-          )}
-        </button>
-        <button
-          onClick={() => setActiveTab('sent')}
-          className={`pb-3 px-4 font-bold transition-colors ${
-            activeTab === 'sent'
-              ? 'border-b-3 border-purple-600 text-purple-600'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Sent
-          {sentRequests.length > 0 && (
-            <span className="ml-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-              {sentRequests.length}
-            </span>
-          )}
-        </button>
-      </div>
-
-      {activeTab === 'received' && (
-        <AnimatePresence>
-          <div className="space-y-4">
-            {pendingRequests.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center py-12 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border-2 border-dashed border-purple-200"
-              >
-                <Heart className="w-16 h-16 mx-auto text-purple-400 mb-4" />
-                <h4 className="text-lg font-bold text-gray-900 mb-2">No Friend Requests Yet</h4>
-                <p className="text-gray-600 mb-4">When people want to connect with you, you'll see their requests here</p>
-                <Link
-                  to="/social"
-                  className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-semibold"
-                >
-                  <UserPlus className="w-4 h-4" />
-                  Explore the Social Hub
-                </Link>
-              </motion.div>
-            ) : (
-              pendingRequests.map(renderPendingRequest)
-            )}
-          </div>
-        </AnimatePresence>
-      )}
-
-      {activeTab === 'sent' && (
-        <div className="space-y-4">
-          {sentRequests.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center py-12 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-dashed border-blue-200"
-            >
-              <Send className="w-16 h-16 mx-auto text-blue-400 mb-4" />
-              <h4 className="text-lg font-bold text-gray-900 mb-2">No Sent Requests</h4>
-              <p className="text-gray-600 mb-4">Friend requests you've sent will appear here</p>
-              <Link
-                to="/social"
-                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold"
-              >
-                <UserPlus className="w-4 h-4" />
-                Find New Friends
-              </Link>
-            </motion.div>
           ) : (
-            sentRequests.map(renderSentRequest)
-          )}
-        </div>
-      )}
-    </div>
+            <ul className="divide-y divide-line">{pendingRequests.map(renderPending)}</ul>
+          )
+        )}
+        {activeTab === 'sent' && (
+          sentRequests.length === 0 ? (
+            <div className="mt-4 rounded-lg border border-dashed border-line-strong p-5">
+              <p className="font-medium text-ink">No sent requests</p>
+              <p className="mt-1 text-sm text-ink-2">Requests you send wait here until they are answered.</p>
+              <Link to="/social" className="mt-2 inline-flex min-h-11 items-center text-sm font-medium text-ink underline decoration-1 underline-offset-4 hover:decoration-2">Find new friends</Link>
+            </div>
+          ) : (
+            <ul className="divide-y divide-line">{sentRequests.map(renderSent)}</ul>
+          )
+        )}
+      </div>
+    </section>
   );
 }
 
+FriendRequestManager.propTypes = {
+  onUpdate: PropTypes.func,
+};

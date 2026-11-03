@@ -1,167 +1,90 @@
-import { useRef, useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRef, useState, useEffect, useCallback, useId } from 'react';
+import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import BookCard from './BookCard';
 
-const BookCarousel = ({ 
-  title, 
-  books = [],
-  showProgress = false,
-  cardSize = 'md',
-  seeAllLink = null,
-  className = '' 
-}) => {
-  const scrollContainerRef = useRef(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
-  
+/**
+ * BookCarousel: a shelf. A serif title on the left, "See all" and two arrow
+ * buttons on the right (always visible, so keyboard and touch users get them too),
+ * and the books on a scroll-snapping row that bleeds to the page edge on phones.
+ */
+const BookCarousel = ({ title, description, books = [], showProgress = false, cardSize = 'md', seeAllLink = null, className = '' }) => {
+  const ref = useRef(null);
+  const headingId = useId();
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
+
+  const check = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    setCanLeft(el.scrollLeft > 4);
+    setCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+  }, []);
+
   useEffect(() => {
-    checkScrollability();
-    window.addEventListener('resize', checkScrollability);
-    return () => window.removeEventListener('resize', checkScrollability);
-  }, [books]);
-  
-  const checkScrollability = () => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    
-    setCanScrollLeft(container.scrollLeft > 0);
-    setCanScrollRight(
-      container.scrollLeft < container.scrollWidth - container.clientWidth - 10
-    );
+    // Measure after layout, once the new books have rendered
+    const frame = requestAnimationFrame(check);
+    const el = ref.current;
+    if (!el || typeof ResizeObserver === 'undefined') return () => cancelAnimationFrame(frame);
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => {
+      cancelAnimationFrame(frame);
+      ro.disconnect();
+    };
+  }, [books, check]);
+
+  const scroll = (dir) => {
+    const el = ref.current;
+    if (!el) return;
+    el.scrollBy({ left: (dir === 'left' ? -1 : 1) * el.clientWidth * 0.85, behavior: 'smooth' });
   };
-  
-  const scroll = (direction) => {
-    const container = scrollContainerRef.current;
-    if (!container || isScrolling) return;
-    
-    setIsScrolling(true);
-    
-    const scrollAmount = container.clientWidth * 0.8;
-    const targetScroll = direction === 'left' 
-      ? container.scrollLeft - scrollAmount 
-      : container.scrollLeft + scrollAmount;
-    
-    container.scrollTo({
-      left: targetScroll,
-      behavior: 'smooth'
-    });
-    
-    setTimeout(() => {
-      setIsScrolling(false);
-      checkScrollability();
-    }, 300);
-  };
-  
-  if (!books || books.length === 0) {
-    return null;
-  }
-  
+
+  if (!books || books.length === 0) return null;
+
+  const arrow = 'inline-flex h-9 w-9 items-center justify-center rounded-full border border-line-strong text-ink hover:bg-surface disabled:opacity-30 disabled:hover:bg-transparent';
+
   return (
-    <div className={`w-full ${className}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-audible-text-primary">
-          {title}
-        </h2>
-
-        {seeAllLink && (
-          <Link
-            to={seeAllLink}
-            className="text-sm font-medium text-audible-orange hover:text-audible-orange-dark transition-colors"
-          >
-            See all →
-          </Link>
-        )}
-      </div>
-      
-      {/* Carousel Container */}
-      <div className="relative group">
-        {/* Left Navigation Button - Hidden on mobile, visible on tablet and desktop */}
-        {canScrollLeft && (
-          <button
-            onClick={() => scroll('left')}
-            className="hidden tablet:flex lg:hidden absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center rounded-full bg-white shadow-lg text-audible-text-primary hover:bg-audible-orange hover:text-white border border-audible-gray-200 transition-colors opacity-70 hover:opacity-100 -translate-x-1/2"
-            aria-label="Scroll left"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-        )}
-
-        {/* Right Navigation Button - Hidden on mobile, visible on tablet and desktop */}
-        {canScrollRight && (
-          <button
-            onClick={() => scroll('right')}
-            className="hidden tablet:flex lg:hidden absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 items-center justify-center rounded-full bg-white shadow-lg text-audible-text-primary hover:bg-audible-orange hover:text-white border border-audible-gray-200 transition-colors opacity-70 hover:opacity-100 translate-x-1/2"
-            aria-label="Scroll right"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        )}
-
-        {/* Desktop Navigation Buttons - Larger and with hover effects */}
-        {canScrollLeft && (
-          <button
-            onClick={() => scroll('left')}
-            className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full bg-white shadow-lg text-audible-text-primary hover:bg-audible-orange hover:text-white border border-audible-gray-200 transition-colors opacity-0 group-hover:opacity-100 -translate-x-1/2"
-            aria-label="Scroll left"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-        )}
-
-        {canScrollRight && (
-          <button
-            onClick={() => scroll('right')}
-            className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center rounded-full bg-white shadow-lg text-audible-text-primary hover:bg-audible-orange hover:text-white border border-audible-gray-200 transition-colors opacity-0 group-hover:opacity-100 translate-x-1/2"
-            aria-label="Scroll right"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        )}
-        
-        {/* Books Scroll Container */}
-        <div
-          ref={scrollContainerRef}
-          className="flex gap-5 overflow-x-auto scrollbar-hide smooth-scroll px-1 py-2"
-          onScroll={checkScrollability}
-          role="region"
-          aria-label={`${title} carousel`}
-        >
-          {books.map((book) => (
-            <BookCard
-              key={book.id}
-              book={book}
-              showProgress={showProgress}
-              size={cardSize}
-            />
-          ))}
+    <section className={`w-full ${className}`} aria-labelledby={headingId}>
+      <div className="mb-5 flex items-end justify-between gap-4">
+        <div>
+          <h2 id={headingId} className="t-h2 text-ink">{title}</h2>
+          {description && <p className="mt-1 text-[0.9375rem] text-ink-2">{description}</p>}
         </div>
-        
-        {/* Gradient Fade Edges - Hidden on mobile, visible on tablet and desktop */}
-        {canScrollLeft && (
-          <div className="hidden tablet:block lg:hidden absolute left-0 top-0 bottom-0 w-16 gradient-fade-left pointer-events-none z-[5]" />
-        )}
-        {canScrollRight && (
-          <div className="hidden tablet:block lg:hidden absolute right-0 top-0 bottom-0 w-16 gradient-fade-right pointer-events-none z-[5]" />
-        )}
-
-        {/* Desktop Gradient Fade Edges */}
-        {canScrollLeft && (
-          <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-20 gradient-fade-left pointer-events-none z-[5]" />
-        )}
-        {canScrollRight && (
-          <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-20 gradient-fade-right pointer-events-none z-[5]" />
-        )}
+        <div className="flex shrink-0 items-center gap-2">
+          {seeAllLink && (
+            <Link to={seeAllLink} className="mr-1 inline-flex h-9 items-center gap-1 rounded-full px-2 text-sm font-medium text-ink hover:underline underline-offset-4">
+              See all <ArrowRight className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+              <span className="sr-only">{title}</span>
+            </Link>
+          )}
+          <button type="button" onClick={() => scroll('left')} disabled={!canLeft} className={`${arrow} hidden md:inline-flex`} aria-label={`Scroll ${title} left`}>
+            <ChevronLeft className="h-4 w-4" strokeWidth={1.75} />
+          </button>
+          <button type="button" onClick={() => scroll('right')} disabled={!canRight} className={`${arrow} hidden md:inline-flex`} aria-label={`Scroll ${title} right`}>
+            <ChevronRight className="h-4 w-4" strokeWidth={1.75} />
+          </button>
+        </div>
       </div>
-    </div>
+      <div
+        ref={ref}
+        onScroll={check}
+        className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 pt-1 scrollbar-hide md:mx-0 md:snap-none md:gap-6 md:px-0"
+      >
+        {books.map((book) => (
+          <div key={book.id} className="snap-start">
+            <BookCard book={book} showProgress={showProgress} size={cardSize} />
+          </div>
+        ))}
+      </div>
+    </section>
   );
 };
 
 BookCarousel.propTypes = {
   title: PropTypes.string.isRequired,
+  description: PropTypes.string,
   books: PropTypes.arrayOf(PropTypes.object),
   showProgress: PropTypes.bool,
   cardSize: PropTypes.oneOf(['sm', 'md', 'lg']),

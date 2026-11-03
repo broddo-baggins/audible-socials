@@ -10,20 +10,35 @@
  */
 
 import booksData from '../data/books.json';
-import { getFromLocalStorage } from './localStorage';
+import usersData from '../data/users.json';
+import clubsData from '../data/clubs.json';
+import { getUserData, getFriends, getJoinedClubs } from './localStorage';
+
+/**
+ * The signed-in user's library books, friends and joined clubs, resolved
+ * from the stored ids so AI features see the same data as the rest of the app.
+ */
+export const getListeningContext = () => {
+  const user = getUserData();
+  const libraryIds = (user.library || []).map(String);
+  const friendIds = getFriends();
+  const clubIds = getJoinedClubs();
+  return {
+    libraryBooks: booksData.filter(book => libraryIds.includes(String(book.id))),
+    friends: usersData.filter(u => friendIds.includes(u.id)),
+    clubs: clubsData.filter(club => clubIds.includes(club.id)),
+  };
+};
 
 /**
  * Get AI-powered book recommendations
  * @returns {Array} Array of recommended books with reasons
  */
 export const getAIRecommendations = () => {
-  const userLibrary = getFromLocalStorage('userLibrary') || [];
-  const userProgress = getFromLocalStorage('userProgress') || {};
-  const friends = getFromLocalStorage('friends') || [];
-  const bookClubs = getFromLocalStorage('userClubs') || [];
+  const { libraryBooks: userLibrary, friends, clubs: bookClubs } = getListeningContext();
 
   const recommendations = [];
-  const books = booksData.books;
+  const books = booksData;
 
   // Filter out books already in library
   const availableBooks = books.filter(book => 
@@ -84,10 +99,7 @@ export const getAIRecommendations = () => {
   // 4. Quick listens for busy schedules
   if (recommendations.length < 5) {
     const quickListen = availableBooks
-      .filter(book => {
-        const hours = parseInt(book.length);
-        return hours < 8 && book.rating >= 4.3;
-      })
+      .filter(book => book.durationMinutes < 8 * 60 && book.rating >= 4.3)
       .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
 
     if (quickListen) {
@@ -103,7 +115,7 @@ export const getAIRecommendations = () => {
   // 5. High-rated must-reads
   if (recommendations.length < 5) {
     const topRated = availableBooks
-      .filter(book => book.rating >= 4.7)
+      .filter(book => book.rating >= 4.7 && !recommendations.some(rec => rec.book.id === book.id))
       .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
 
     if (topRated) {
@@ -120,7 +132,7 @@ export const getAIRecommendations = () => {
   while (recommendations.length < 5 && availableBooks.length > recommendations.length) {
     const randomBook = availableBooks
       .filter(book => !recommendations.some(rec => rec.book.id === book.id))
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))[recommendations.length];
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
 
     if (randomBook) {
       recommendations.push({
@@ -156,51 +168,5 @@ const getRecentGenres = (library) => {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 2)
     .map(([genre]) => genre);
-};
-
-/**
- * Get personalized book recommendation for a specific context
- * @param {string} context - Context for recommendation (e.g., 'commute', 'workout', 'bedtime')
- * @returns {Object} Recommended book with reason
- */
-export const getContextualRecommendation = (context) => {
-  const books = booksData.books;
-  let filteredBooks = books;
-
-  switch (context) {
-    case 'commute':
-      // Engaging, fast-paced books for short sessions
-      filteredBooks = books.filter(book => {
-        const hours = parseInt(book.length);
-        return hours < 10 && ['Thriller', 'Mystery', 'Science Fiction'].includes(book.genre);
-      });
-      break;
-
-    case 'workout':
-      // Energetic, motivating content
-      filteredBooks = books.filter(book => 
-        ['Science Fiction', 'Fantasy', 'Adventure'].includes(book.genre)
-      );
-      break;
-
-    case 'bedtime':
-      // Relaxing, immersive stories
-      filteredBooks = books.filter(book => 
-        ['Fantasy', 'Fiction', 'Mystery'].includes(book.genre)
-      );
-      break;
-
-    default:
-      filteredBooks = books;
-  }
-
-  const recommended = filteredBooks
-    .sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
-
-  return {
-    book: recommended,
-    reason: `Perfect for your ${context} listening sessions!`,
-    context,
-  };
 };
 

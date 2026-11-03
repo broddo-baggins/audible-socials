@@ -15,16 +15,6 @@ export const getAllBooks = () => {
 };
 
 /**
- * Find a book by ID
- * @param {string} bookId - Book ID
- * @returns {Object|null} Book object or null
- */
-export const getBookById = (bookId) => {
-  const books = getAllBooks();
-  return books.find(b => b.id === bookId) || null;
-};
-
-/**
  * Find a book by title (fuzzy match)
  * @param {string} title - Book title to search
  * @returns {Object|null} Best matching book or null
@@ -127,77 +117,5 @@ export const getBookContextForAI = (book, userProgress = 0) => {
   }
   
   return context.join('\n');
-};
-
-/**
- * Get list of all book titles for AI context
- * @param {number} limit - Maximum number of titles
- * @returns {string} Formatted list of books
- */
-export const getBookCatalogSummary = (limit = 50) => {
-  const books = getAllBooks();
-  const topBooks = books
-    .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-    .slice(0, limit);
-  
-  const summary = topBooks.map((book, index) => 
-    `${index + 1}. "${book.title}" by ${book.author} (${book.genre}, ${book.rating}⭐)`
-  ).join('\n');
-  
-  return `**Available Books in Catalog (Top ${Math.min(limit, books.length)}):**\n${summary}`;
-};
-
-/**
- * Search books by query
- * @param {string} query - Search query
- * @param {number} limit - Maximum results
- * @returns {Array} Matching books
- */
-export const searchBooksInCatalog = (query, limit = 10) => {
-  if (!query) return [];
-  
-  const books = getAllBooks();
-  const lowerQuery = query.toLowerCase();
-  
-  return books
-    .filter(book => {
-      return (
-        book.title.toLowerCase().includes(lowerQuery) ||
-        book.author.toLowerCase().includes(lowerQuery) ||
-        book.genre?.toLowerCase().includes(lowerQuery) ||
-        book.description?.toLowerCase().includes(lowerQuery)
-      );
-    })
-    .slice(0, limit);
-};
-
-/**
- * Get books by genre
- * @param {string} genre - Genre name
- * @param {number} limit - Maximum results
- * @returns {Array} Books in genre
- */
-export const getBooksByGenre = (genre, limit = 10) => {
-  const books = getAllBooks();
-  return books
-    .filter(b => b.genre?.toLowerCase() === genre.toLowerCase())
-    .slice(0, limit);
-};
-
-/**
- * Get similar books
- * @param {Object} book - Reference book
- * @param {number} limit - Maximum results
- * @returns {Array} Similar books
- */
-export const getSimilarBooks = (book, limit = 5) => {
-  if (!book) return [];
-  
-  const books = getAllBooks();
-  
-  return books
-    .filter(b => b.id !== book.id && b.genre === book.genre)
-    .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-    .slice(0, limit);
 };
 

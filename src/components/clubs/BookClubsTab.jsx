@@ -1,353 +1,203 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Calendar, Crown, TrendingUp, Gift, Zap, Plus, Lock } from 'lucide-react';
+import { Plus, Check, Users, CalendarDays } from 'lucide-react';
 import clubsData from '../../data/clubs.json';
 import booksData from '../../data/books.json';
-import { getUserData, getJoinedClubs } from '../../utils/localStorage';
+import usersData from '../../data/users.json';
+import { getUserData, getJoinedClubs, getPrivateClubs } from '../../utils/localStorage';
+import { Cover, Waveform, Badge, Button, EmptyState } from '../ui';
+import MeetingsSummary from './MeetingsSummary';
 import CreatePrivateClub from './CreatePrivateClub';
 
+/**
+ * BookClubsTab: your clubs first (as large rows with the book you are on),
+ * then featured clubs as a list, then how clubs work. A private club can be
+ * started from here.
+ */
+
+const bookFor = (club) => booksData.find((b) => b.id === club.currentBook);
+
+const loadJoined = () => {
+  const ids = getJoinedClubs();
+  const privateClubs = getPrivateClubs();
+  return [
+    ...clubsData.filter((c) => ids.includes(c.id)),
+    ...privateClubs.filter((c) => ids.includes(c.id)),
+  ];
+};
+
 export default function BookClubsTab() {
-  const [userData, setUserData] = useState(null);
-  const [joinedClubs, setJoinedClubs] = useState([]);
-  const [featuredClubs, setFeaturedClubs] = useState([]);
+  const [userData] = useState(getUserData);
+  // Read once on mount, like the rest of the clubs tabs
+  const [joinedClubs, setJoinedClubs] = useState(loadJoined);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
-  useEffect(() => {
-    const user = getUserData();
-    setUserData(user);
-
-    // Get joined clubs
-    const clubIds = getJoinedClubs();
-    const joined = clubsData.filter(club => clubIds.includes(club.id));
-    setJoinedClubs(joined);
-
-    // Get featured clubs (exclude joined ones)
-    const featured = clubsData
-      .filter(club => !clubIds.includes(club.id))
-      .filter(club => !club.isPremium || user.isPremium) // Filter premium clubs if user is not premium
-      .sort((a, b) => b.memberCount - a.memberCount)
-      .slice(0, 6);
-    setFeaturedClubs(featured);
-  }, []);
+  // Featured clubs (exclude joined ones; premium clubs only for premium users)
+  const joinedIds = joinedClubs.map((c) => c.id);
+  const featuredClubs = clubsData
+    .filter((club) => !joinedIds.includes(club.id))
+    .filter((club) => !club.isPremium || userData?.isPremium)
+    .sort((a, b) => b.memberCount - a.memberCount)
+    .slice(0, 6);
 
   const handleClubCreated = (newClub) => {
-    // Add to joined clubs
-    const updatedJoined = [...joinedClubs, newClub];
-    setJoinedClubs(updatedJoined);
-
-    // Close modal
+    setJoinedClubs((prev) => (prev.some((c) => c.id === newClub.id) ? prev : [...prev, newClub]));
     setShowCreateModal(false);
   };
 
   const maxClubs = userData?.isPremium ? 3 : 2;
+  const atLimit = joinedClubs.length >= maxClubs;
 
   return (
-    <div className="space-y-8">
-      {/* Introduction */}
-      <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-8 text-white">
-        <h2 className="text-2xl font-bold mb-4">Welcome to Book Clubs!</h2>
-        <p className="mb-4 text-white/90">
-          Join curated book clubs hosted by authors, celebrities, and themed communities. 
-          Connect with fellow listeners, attend exclusive events, and never wonder what to read next.
-        </p>
-        <ul className="space-y-2 mb-6">
-          <li className="flex items-start">
-            <span className="mr-2">•</span>
-            <span>Discover books curated by experts and influencers</span>
-          </li>
-          <li className="flex items-start">
-            <span className="mr-2">•</span>
-            <span>Attend live author Q&As and virtual events</span>
-          </li>
-          <li className="flex items-start">
-            <span className="mr-2">•</span>
-            <span>Get 2-for-1 discounts on featured books</span>
-          </li>
-          <li className="flex items-start">
-            <span className="mr-2">•</span>
-            <span>Earn badges and streaks for participation</span>
-          </li>
-          <li className="flex items-start">
-            <span className="mr-2">•</span>
-            <span>Share your reading journey with friends</span>
-          </li>
-        </ul>
-        <p className="text-sm text-white/80">
-          You can join up to {maxClubs} clubs at a time{!userData?.isPremium && ' (upgrade to Premium for 3)'}.
-        </p>
-      </div>
-
-      {/* Joined Clubs */}
-      {joinedClubs.length > 0 && (
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">My Joined Clubs</h2>
-            <span className="text-sm text-gray-600">
-              {joinedClubs.length} of {maxClubs} clubs
-            </span>
+    <div className="space-y-16 pt-6 md:space-y-20">
+      {/* Your clubs */}
+      <section aria-labelledby="your-clubs">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 id="your-clubs" className="t-h2 text-ink">Your clubs</h2>
+            <p className="mt-1 text-[0.9375rem] text-ink-2 tabular">
+              {joinedClubs.length} of {maxClubs} clubs{!userData?.isPremium && ', Premium allows 3'}
+            </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {joinedClubs.map((club) => {
-              const currentBook = booksData.find(b => b.id === club.currentBook);
-              
-              return (
-                <Link
-                  key={club.id}
-                  to={`/club/${club.id}`}
-                  className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all overflow-hidden border-2 border-purple-200 hover:border-purple-400 group"
-                >
-                  {/* Book Cover Header */}
-                  {currentBook && (
-                    <div className="relative h-48 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
-                      <img
-                        src={currentBook.cover}
-                        alt={currentBook.title}
-                        className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                      {club.isPremium && (
-                        <div className="absolute top-3 right-3 bg-audible-gold text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center shadow-lg">
-                          <Crown className="w-3 h-3 mr-1" />
-                          Premium
-                        </div>
-                      )}
-                      <div className="absolute bottom-3 left-3 right-3">
-                        <p className="text-white text-sm font-semibold mb-1">Currently Reading:</p>
-                        <p className="text-white font-bold text-lg line-clamp-1">{currentBook.title}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="p-5">
-                    {/* Club Info */}
-                    <div className="mb-4">
-                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">
-                        {club.name}
-                      </h3>
-                      <div className="flex items-center space-x-2 mb-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold text-xs">
-                            {club.host.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500">Hosted by</p>
-                          <p className="text-sm font-semibold text-gray-900">{club.host}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Stats */}
-                    <div className="flex items-center justify-between text-sm border-t border-gray-200 pt-3 mb-3">
-                      <div className="flex items-center text-gray-600">
-                        <Calendar className="w-4 h-4 mr-1 text-purple-500" />
-                        <span className="font-semibold">{club.daysRemaining} days left</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <Users className="w-4 h-4 mr-1 text-purple-500" />
-                        <span className="font-semibold">{club.memberCount.toLocaleString()}</span>
-                      </div>
-                    </div>
-
-                    {/* Meetings Summary */}
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-200 mb-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs font-semibold text-blue-900 flex items-center">
-                          <Calendar className="w-3 h-3 mr-1" />
-                          Meeting Schedule
-                        </p>
-                        <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
-                          {club.meetingsPerMonth} per month
-                        </span>
-                      </div>
-                      {club.events && club.events.length > 0 && (
-                        <p className="text-xs text-blue-800">
-                          {club.events.length} upcoming event{club.events.length !== 1 ? 's' : ''}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Club Perks Highlight */}
-                    {club.perks && club.perks.length > 0 && (
-                      <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-3 border border-orange-200 mb-3">
-                        <p className="text-xs font-semibold text-orange-900 mb-1 flex items-center">
-                          <Gift className="w-3 h-3 mr-1" />
-                          Member Perks
-                        </p>
-                        <p className="text-xs text-orange-800 line-clamp-2">
-                          {club.perks[0]}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Next Event */}
-                    {club.events && club.events.length > 0 && (
-                      <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-3 border border-purple-200">
-                        <p className="text-xs font-semibold text-purple-900 mb-1 flex items-center">
-                          <Calendar className="w-3 h-3 mr-1" />
-                          Next Event
-                        </p>
-                        <p className="text-sm font-bold text-purple-900 mb-1">{club.events[0].title}</p>
-                        <p className="text-xs text-purple-700">
-                          {new Date(club.events[0].date).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit'
-                          })}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* Featured Clubs */}
-      <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-            <TrendingUp className="w-7 h-7 mr-2 text-purple-600" />
-            Featured Book Clubs
-          </h2>
+          <Button variant="outline" onClick={() => setShowCreateModal(true)} leftIcon={<Plus className="h-4 w-4" strokeWidth={1.75} />}>
+            Start a private club
+          </Button>
         </div>
 
-        {featuredClubs.length === 0 && joinedClubs.length >= maxClubs ? (
-          <div className="bg-white rounded-xl shadow-md p-8 text-center">
-            <Users className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              You've reached your club limit
-            </h3>
-            <p className="text-gray-600 mb-6">
-              You're currently in {maxClubs} clubs. Leave a club to join a new one.
-            </p>
-            {!userData?.isPremium && (
-              <Link
-                to="/profile"
-                className="inline-block bg-audible-gold text-white px-6 py-3 rounded-full font-semibold hover:bg-yellow-600 transition-colors"
-              >
-                Upgrade to Premium for 3 Clubs
-              </Link>
-            )}
-          </div>
+        {joinedClubs.length === 0 ? (
+          <EmptyState
+            className="mt-6"
+            title="You are not in a club yet"
+            description="Pick one below. You read the month's book on your own time and meet the others live."
+          />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredClubs.map((club) => {
-              const currentBook = booksData.find(b => b.id === club.currentBook);
-              
+          <ul className="mt-6 grid gap-5 lg:grid-cols-2">
+            {joinedClubs.map((club) => {
+              const book = bookFor(club);
               return (
-                <Link
-                  key={club.id}
-                  to={`/club/${club.id}`}
-                  className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all overflow-hidden border-2 border-gray-200 hover:border-purple-500 group"
-                >
-                  {/* Book Cover Header */}
-                  {currentBook && (
-                    <div className="relative h-44 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
-                      <img
-                        src={currentBook.cover}
-                        alt={currentBook.title}
-                        className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                      {club.isPremium && (
-                        <div className="absolute top-3 right-3 bg-audible-gold text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center shadow-lg">
-                          <Crown className="w-3 h-3 mr-1" />
-                          Premium
-                        </div>
-                      )}
-                      <div className="absolute bottom-3 left-3 right-3">
-                        <p className="text-white/90 text-xs font-semibold mb-1">Currently Reading:</p>
-                        <p className="text-white font-bold line-clamp-1">{currentBook.title}</p>
+                <li key={club.id}>
+                  <Link to={`/club/${club.id}`} className="group grid h-full grid-cols-[5.5rem_minmax(0,1fr)] gap-5 rounded-lg border border-line bg-surface p-5 transition-colors hover:border-line-strong sm:grid-cols-[7rem_minmax(0,1fr)]">
+                    <Cover src={book?.cover} title={book?.title || club.name} author={book?.author} />
+                    <div className="flex min-w-0 flex-col">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {club.isPrivate && <Badge size="sm" variant="outline">Private</Badge>}
+                        {club.isPremium && <Badge size="sm" variant="primary">Premium</Badge>}
                       </div>
-                    </div>
-                  )}
-
-                  <div className="p-4">
-                    {/* Club Info */}
-                    <div className="mb-3">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors line-clamp-1">
-                        {club.name}
-                      </h3>
-                      <div className="flex items-center space-x-2 mb-2">
-                        <div className="w-7 h-7 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="text-white font-bold text-xs">
-                            {club.host.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                          </span>
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-xs text-gray-500">Hosted by</p>
-                          <p className="text-sm font-semibold text-gray-900 truncate">{club.host}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-gray-600 mb-3 line-clamp-2">{club.description}</p>
-
-                    {/* Perks Highlight */}
-                    {club.perks && club.perks.length > 0 && (
-                      <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-2 mb-3 border border-orange-200">
-                        <p className="text-xs text-orange-900 flex items-center gap-1">
-                          <Zap className="w-3 h-3 text-orange-600" />
-                          <span className="font-semibold">{club.perks[0]}</span>
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Meeting Frequency Highlight */}
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2 mb-3 border border-blue-200">
-                      <div className="flex items-center justify-between">
-                        <p className="text-xs text-blue-900 flex items-center gap-1">
-                          <Calendar className="w-3 h-3 text-blue-600" />
-                          <span className="font-semibold">Meetings</span>
-                        </p>
-                        <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
-                          {club.meetingsPerMonth} per month
-                        </span>
-                      </div>
-                      {club.events && club.events.length > 0 && (
-                        <p className="text-xs text-blue-800 mt-1">
-                          {club.events.length} upcoming event{club.events.length !== 1 ? 's' : ''}
+                      <h3 className="mt-1 font-serif text-xl font-medium leading-tight text-ink group-hover:underline underline-offset-4 decoration-1">{club.name}</h3>
+                      <p className="mt-0.5 text-[0.8125rem] text-ink-3">Hosted by {club.host === userData?.id ? 'you' : usersData.find((u) => u.id === club.host || `user-${u.id}` === club.host)?.name || club.host}</p>
+                      {book && (
+                        <p className="mt-3 text-[0.9375rem] text-ink-2">
+                          Reading <span className="t-title-book text-ink">{book.title}</span>
                         </p>
                       )}
-                    </div>
-
-                    {/* Discount Highlight */}
-                    {club.discounts?.monthlyBook && (
-                      <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-2 mb-3 border border-green-200">
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs text-green-900 flex items-center gap-1">
-                            <span className="font-semibold">Save</span>
-                          </p>
-                          <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded-full">
-                            ${club.discounts.monthlyBook.maxSavings} OFF
-                          </span>
-                        </div>
-                        <p className="text-xs text-green-800 mt-1">
-                          {club.discounts.monthlyBook.description}
-                        </p>
+                      <Waveform seed={`club-${club.id}`} bars={48} height={14} className="mt-3 h-3.5 w-full max-w-[16rem] text-ink-3" />
+                      <dl className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[0.8125rem] text-ink-2 tabular">
+                        {Number.isFinite(club.daysRemaining) && <div><dt className="sr-only">Time left</dt><dd>{club.daysRemaining} days left</dd></div>}
+                        <div><dt className="sr-only">Members</dt><dd>{(club.memberCount || 0).toLocaleString()} members</dd></div>
+                      </dl>
+                      <div className="mt-3 border-t border-line pt-3">
+                        <MeetingsSummary club={club} />
                       </div>
-                    )}
-
-                    {/* Stats */}
-                    <div className="flex items-center justify-between text-xs text-gray-600 border-t border-gray-200 pt-3">
-                      <div className="flex items-center">
-                        <Users className="w-4 h-4 mr-1 text-purple-500" />
-                        <span className="font-semibold">{club.memberCount.toLocaleString()}</span>
-                      </div>
-                      <span className="text-purple-600 font-semibold">Host: {club.host}</span>
+                      {club.perks?.[0] && <p className="mt-2 text-[0.8125rem] text-ink-3 line-clamp-1">Perk: {club.perks[0]}</p>}
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+                </li>
               );
             })}
-          </div>
+          </ul>
         )}
       </section>
+
+      {/* Featured clubs */}
+      <section aria-labelledby="featured-clubs">
+        <h2 id="featured-clubs" className="t-h2 text-ink">Featured clubs</h2>
+        <p className="mt-1 text-[0.9375rem] text-ink-2">The biggest clubs you are not in yet.</p>
+
+        {featuredClubs.length === 0 && atLimit ? (
+          <EmptyState
+            className="mt-6"
+            title="You have reached your club limit"
+            description={`You are in ${maxClubs} clubs. Leave one to join a new one.`}
+            {...(!userData?.isPremium ? { action: 'Upgrade to Premium for 3 clubs', actionTo: '/profile' } : {})}
+          />
+        ) : featuredClubs.length === 0 ? (
+          <EmptyState className="mt-6" title="You are in every featured club" description="New clubs open each month. Check back soon." />
+        ) : (
+          <ul className="mt-6 divide-y divide-line border-y border-line">
+            {featuredClubs.map((club) => {
+              const book = bookFor(club);
+              return (
+                <li key={club.id}>
+                  <Link to={`/club/${club.id}`} className="group grid grid-cols-[3.5rem_minmax(0,1fr)] gap-4 py-5 sm:grid-cols-[4.5rem_minmax(0,1fr)_13rem] sm:gap-6">
+                    <Cover src={book?.cover} title={book?.title || club.name} author={book?.author} shadow={false} />
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        <h3 className="font-serif text-lg font-medium text-ink group-hover:underline underline-offset-4 decoration-1 md:text-xl">{club.name}</h3>
+                        {club.isPremium && <Badge size="sm" variant="primary">Premium</Badge>}
+                      </div>
+                      <p className="text-[0.8125rem] text-ink-3">
+                        Hosted by {club.host}
+                        {book && <> · reading <span className="t-title-book text-ink-2">{book.title}</span></>}
+                      </p>
+                      <p className="mt-2 max-w-[60ch] text-sm text-ink-2 line-clamp-2">{club.description}</p>
+                      {club.perks?.[0] && (
+                        <p className="mt-2 flex items-start gap-1.5 text-[0.8125rem] text-ink-2">
+                          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden="true" /> {club.perks[0]}
+                        </p>
+                      )}
+                    </div>
+                    <dl className="col-start-2 grid grid-cols-2 gap-x-4 gap-y-2 text-[0.8125rem] text-ink-2 tabular sm:col-start-auto sm:block sm:space-y-1.5 sm:text-right">
+                      <div className="flex items-center gap-1.5 sm:justify-end">
+                        <dt><Users className="h-3.5 w-3.5" strokeWidth={1.75} aria-label="Members" /></dt>
+                        <dd>{club.memberCount.toLocaleString()} members</dd>
+                      </div>
+                      <div className="flex items-center gap-1.5 sm:justify-end">
+                        <dt><CalendarDays className="h-3.5 w-3.5" strokeWidth={1.75} aria-label="Meetings" /></dt>
+                        <dd>{club.meetingsPerMonth} a month{club.events?.length ? `, ${club.events.length} upcoming` : ''}</dd>
+                      </div>
+                      {club.discounts?.monthlyBook && (
+                        <div className="col-span-2 sm:col-span-1">
+                          <dt className="sr-only">Member saving</dt>
+                          <dd className="font-medium text-ink">Save ${club.discounts.monthlyBook.maxSavings} <span className="font-normal text-ink-3">{club.discounts.monthlyBook.description}</span></dd>
+                        </div>
+                      )}
+                    </dl>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
+      {/* How clubs work */}
+      <section aria-labelledby="how-clubs" className="grid gap-8 rounded-2xl border border-line bg-surface p-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] md:p-10">
+        <div>
+          <h2 id="how-clubs" className="t-h2 text-ink">How clubs work</h2>
+          <p className="mt-3 text-[0.9375rem] text-ink-2">
+            Clubs are hosted by authors, celebrities and themed communities. You listen to the month&rsquo;s book, come to live events and always know what to read next.
+          </p>
+          <p className="mt-3 text-sm text-ink-3 tabular">
+            You can be in up to {maxClubs} clubs at a time{!userData?.isPremium && ' (3 with Premium)'}.
+          </p>
+        </div>
+        <ul className="grid content-start gap-x-8 gap-y-3 sm:grid-cols-2">
+          {[
+            'Books picked by experts and hosts you follow',
+            'Live author Q&As and online events',
+            '2-for-1 offers on featured books',
+            'Badges and streaks for taking part',
+            'Your listening shared with friends',
+          ].map((item) => (
+            <li key={item} className="flex items-start gap-3 border-t border-line pt-3 text-[0.9375rem] text-ink">
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-ink-2" strokeWidth={2} aria-hidden="true" />
+              {item}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {showCreateModal && <CreatePrivateClub onClubCreated={handleClubCreated} onClose={() => setShowCreateModal(false)} />}
     </div>
   );
 }
-
