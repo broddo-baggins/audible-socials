@@ -1,8 +1,15 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Button } from '../components/ui';
 import { Accessibility, Volume2, Eye, Keyboard, Smartphone, Headphones, Users, CheckCircle } from 'lucide-react';
 
+const scrollToSection = (id) => {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
 const AccessibilityPage = () => {
+  const navigate = useNavigate();
+
   const accessibilityFeatures = [
     {
       title: 'Screen Reader Support',
@@ -109,24 +116,30 @@ const AccessibilityPage = () => {
     {
       title: 'Accessibility Settings',
       description: 'Learn how to customize your Audible experience for accessibility.',
-      link: '#settings',
+      link: '/settings',
     },
     {
       title: 'Supported Assistive Technologies',
       description: 'List of assistive technologies compatible with Audible.',
-      link: '#technologies',
+      link: '#accessibility-features',
     },
     {
       title: 'Keyboard Shortcuts',
       description: 'Complete guide to keyboard navigation and shortcuts.',
-      link: '#shortcuts',
+      link: '#accessibility-features',
     },
     {
       title: 'Contact Accessibility Team',
       description: 'Get in touch with our dedicated accessibility support team.',
-      link: '#contact',
+      link: '/contact',
     },
   ];
+
+  // Resource links are either app routes or sections of this page
+  const openResource = (link) => {
+    if (link.startsWith('#')) scrollToSection(link.slice(1));
+    else navigate(link);
+  };
 
   return (
     <div className="min-h-screen bg-audible-white">
@@ -163,7 +176,7 @@ const AccessibilityPage = () => {
         </div>
 
         {/* Accessibility Features */}
-        <div className="mb-16">
+        <div id="accessibility-features" className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-audible-text-primary mb-4">
               Accessibility Features
@@ -272,7 +285,7 @@ const AccessibilityPage = () => {
         </div>
 
         {/* Resources & Support */}
-        <div className="mb-16">
+        <div id="accessibility-resources" className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-audible-text-primary mb-4">
               Resources & Support
@@ -291,7 +304,12 @@ const AccessibilityPage = () => {
                 <p className="text-sm text-audible-text-secondary mb-4">
                   {resource.description}
                 </p>
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => openResource(resource.link)}
+                  aria-label={`Learn more: ${resource.title}`}
+                >
                   Learn More
                 </Button>
               </Card>
@@ -312,10 +330,10 @@ const AccessibilityPage = () => {
               Our dedicated accessibility team is here to help you have the best possible experience with Audible.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="secondary" size="lg">
+              <Button variant="secondary" size="lg" onClick={() => navigate('/contact')}>
                 Contact Accessibility Team
               </Button>
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-audible-orange">
+              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-audible-orange" onClick={() => scrollToSection('accessibility-resources')}>
                 Accessibility Resources
               </Button>
             </div>

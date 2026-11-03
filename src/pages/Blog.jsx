@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useEmailSignup } from '../hooks/useEmailSignup';
 import { Card, Button } from '../components/ui';
 import { BookOpen, Users, TrendingUp, Clock, User, Tag } from 'lucide-react';
 
+const DEMO_NOTE = 'The full article is not published in this educational demo.';
+
 const Blog = () => {
+  const signup = useEmailSignup();
+  const [featuredOpen, setFeaturedOpen] = useState(false);
+  const [openPost, setOpenPost] = useState(null);
+  const [notice, setNotice] = useState('');
+
   const featuredPost = {
     title: 'The Future of Audio Storytelling: Trends Shaping 2025',
     excerpt: 'Explore the emerging trends in audio entertainment that are revolutionizing how we consume stories and connect with content.',
@@ -11,6 +19,7 @@ const Blog = () => {
     readTime: '8 min read',
     category: 'Industry Trends',
     image: '/images/blog/audio-future.jpg',
+    body: 'From interactive narratives to social listening rooms, audio is becoming more personal and more shared at the same time.',
   };
 
   const recentPosts = [
@@ -94,6 +103,11 @@ const Blog = () => {
                 <p className="text-audible-text-secondary mb-6 leading-relaxed">
                   {featuredPost.excerpt}
                 </p>
+                {featuredOpen && (
+                  <p id="featured-article-body" className="text-audible-text-secondary mb-6 leading-relaxed">
+                    {featuredPost.body} {DEMO_NOTE}
+                  </p>
+                )}
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-audible-orange rounded-full flex items-center justify-center text-white font-medium">
                     {featuredPost.author.charAt(0)}
@@ -111,8 +125,13 @@ const Blog = () => {
                     </div>
                   </div>
                 </div>
-                <Button variant="primary">
-                  Read Full Article
+                <Button
+                  variant="primary"
+                  onClick={() => setFeaturedOpen(!featuredOpen)}
+                  aria-expanded={featuredOpen}
+                  aria-controls="featured-article-body"
+                >
+                  {featuredOpen ? 'Show Less' : 'Read Full Article'}
                 </Button>
               </div>
             </div>
@@ -150,10 +169,13 @@ const Blog = () => {
             <h2 className="text-2xl font-bold text-audible-text-primary">
               Recent Posts
             </h2>
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => setNotice(`All ${recentPosts.length} recent posts are shown below.`)}>
               View All Posts
             </Button>
           </div>
+          <p role="status" className="text-audible-text-secondary mb-4">
+            {notice}
+          </p>
 
           <div className="grid md:grid-cols-2 gap-8">
             {recentPosts.map((post, index) => (
@@ -173,6 +195,11 @@ const Blog = () => {
                 <p className="text-audible-text-secondary mb-4 leading-relaxed">
                   {post.excerpt}
                 </p>
+                {openPost === index && (
+                  <p id={`post-body-${index}`} className="text-audible-text-secondary mb-4 leading-relaxed">
+                    {`By ${post.author}. ${DEMO_NOTE}`}
+                  </p>
+                )}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-audible-orange rounded-full flex items-center justify-center text-white font-medium text-sm">
@@ -191,8 +218,15 @@ const Blog = () => {
                       </div>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm">
-                    Read More
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setOpenPost(openPost === index ? null : index)}
+                    aria-expanded={openPost === index}
+                    aria-controls={`post-body-${index}`}
+                    aria-label={`${openPost === index ? 'Show less' : 'Read more'}: ${post.title}`}
+                  >
+                    {openPost === index ? 'Show Less' : 'Read More'}
                   </Button>
                 </div>
               </Card>
@@ -212,16 +246,22 @@ const Blog = () => {
             <p className="text-lg mb-8 opacity-90">
               Get our latest articles, insights, and audio entertainment news delivered to your inbox.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+            <form onSubmit={signup.submit} noValidate className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
               <input
                 type="email"
                 placeholder="Enter your email address"
+                aria-label="Email address"
+                value={signup.email}
+                onChange={(e) => signup.setEmail(e.target.value)}
                 className="flex-1 px-4 py-3 rounded-md text-audible-text-primary"
               />
-              <Button variant="secondary">
+              <Button type="submit" variant="secondary">
                 Subscribe
               </Button>
-            </div>
+            </form>
+            <p role="status" className="mt-4">
+              {signup.message}
+            </p>
             <p className="text-sm opacity-75 mt-4">
               Join 50,000+ readers. Unsubscribe at any time.
             </p>

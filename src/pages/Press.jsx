@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useEmailSignup } from '../hooks/useEmailSignup';
 import { Card, Button } from '../components/ui';
 import { Newspaper, Camera, Download, ExternalLink, Calendar, Users } from 'lucide-react';
 
 const Press = () => {
+  const signup = useEmailSignup();
+  const [openRelease, setOpenRelease] = useState(null);
+  const [notice, setNotice] = useState('');
+
   const pressReleases = [
     {
       title: 'Audible Launches Revolutionary Social Listening Features',
@@ -104,7 +109,20 @@ const Press = () => {
                 <p className="text-audible-text-secondary mb-4 leading-relaxed">
                   {release.excerpt}
                 </p>
-                <Button variant="outline" size="sm" rightIcon={<ExternalLink className="w-4 h-4" />}>
+                {openRelease === index && (
+                  <p id={`release-body-${index}`} className="text-audible-text-secondary mb-4 leading-relaxed">
+                    The full release is not published in this educational demo. Media contacts are listed below.
+                  </p>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  rightIcon={<ExternalLink className="w-4 h-4" />}
+                  onClick={() => setOpenRelease(openRelease === index ? null : index)}
+                  aria-expanded={openRelease === index}
+                  aria-controls={`release-body-${index}`}
+                  aria-label={`Read full release: ${release.title}`}
+                >
                   Read Full Release
                 </Button>
               </Card>
@@ -112,7 +130,7 @@ const Press = () => {
           </div>
 
           <div className="text-center mt-8">
-            <Button variant="primary">
+            <Button variant="primary" onClick={() => setNotice(`All ${pressReleases.length} press releases are shown above.`)}>
               View All Press Releases
             </Button>
           </div>
@@ -140,13 +158,22 @@ const Press = () => {
                   <div className="text-sm text-audible-text-secondary mb-4">
                     Type: {item.type} • Size: {item.size}
                   </div>
-                  <Button variant="outline" size="sm" fullWidth>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    fullWidth
+                    onClick={() => setNotice(`${item.name} is not available for download in this demo.`)}
+                    aria-label={`Download ${item.name}`}
+                  >
                     Download
                   </Button>
                 </div>
               ))}
             </div>
           </Card>
+          <p role="status" className="text-center text-audible-text-secondary mt-6">
+            {notice}
+          </p>
         </div>
 
         {/* Contact Section */}
@@ -203,16 +230,22 @@ const Press = () => {
             <p className="text-lg mb-8 opacity-90">
               Get the latest Audible news and announcements delivered to your inbox.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+            <form onSubmit={signup.submit} noValidate className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
               <input
                 type="email"
                 placeholder="Enter your email"
+                aria-label="Email address"
+                value={signup.email}
+                onChange={(e) => signup.setEmail(e.target.value)}
                 className="flex-1 px-4 py-3 rounded-md text-audible-text-primary"
               />
-              <Button variant="secondary">
+              <Button type="submit" variant="secondary">
                 Subscribe
               </Button>
-            </div>
+            </form>
+            <p role="status" className="mt-4">
+              {signup.message}
+            </p>
           </Card>
         </div>
       </div>

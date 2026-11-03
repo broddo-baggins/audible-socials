@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Button } from '../components/ui';
 import { Users, Heart, Zap, Target, MapPin, Clock } from 'lucide-react';
 
 const Careers = () => {
+  const navigate = useNavigate();
+  const [selectedDept, setSelectedDept] = useState(null);
+
   const benefits = [
     {
       title: 'Work-Life Balance',
@@ -111,7 +115,7 @@ const Careers = () => {
         </div>
 
         {/* Departments Section */}
-        <div className="mb-16">
+        <div id="open-positions" className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-audible-text-primary mb-4">
               Open Positions by Department
@@ -135,12 +139,20 @@ const Careers = () => {
                 <p className="text-audible-text-secondary mb-4">
                   {dept.description}
                 </p>
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedDept(dept)}
+                  aria-label={`View Positions: ${dept.name}`}
+                >
                   View Positions
                 </Button>
               </Card>
             ))}
           </div>
+          <p role="status" className="text-center text-audible-text-secondary mt-6">
+            {selectedDept && `${selectedDept.name}: ${selectedDept.openings} openings. This is an educational demo, so there are no real job applications.`}
+          </p>
         </div>
 
         {/* Locations Section */}
@@ -178,10 +190,14 @@ const Careers = () => {
               Join us in our mission to transform how the world experiences stories.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="secondary" size="lg">
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={() => document.getElementById('open-positions')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              >
                 View All Openings
               </Button>
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-audible-orange">
+              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-audible-orange" onClick={() => navigate('/about')}>
                 Learn More About Us
               </Button>
             </div>

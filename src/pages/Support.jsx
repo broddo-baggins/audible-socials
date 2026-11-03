@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Button } from '../components/ui';
 import { Search, MessageCircle, Phone, Mail, BookOpen, Play, CreditCard, Users, Settings, HelpCircle } from 'lucide-react';
 
 const Support = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [notice, setNotice] = useState('');
 
   const categories = [
     { id: 'all', name: 'All Topics', icon: HelpCircle },
@@ -48,9 +51,15 @@ const Support = () => {
     },
   ];
 
-  const filteredFaqs = selectedCategory === 'all'
-    ? faqs
-    : faqs.filter(faq => faq.category === selectedCategory);
+  // A FAQ matches the search when its text contains any word of the query
+  const queryWords = searchQuery.toLowerCase().split(/\s+/).filter(word => word.length > 2);
+  const filteredFaqs = faqs
+    .filter(faq => selectedCategory === 'all' || faq.category === selectedCategory)
+    .filter(faq => {
+      if (queryWords.length === 0) return true;
+      const text = `${faq.question} ${faq.answer}`.toLowerCase();
+      return queryWords.some(word => text.includes(word));
+    });
 
   const contactMethods = [
     {
@@ -59,6 +68,7 @@ const Support = () => {
       icon: MessageCircle,
       available: '24/7',
       action: 'Start Chat',
+      onClick: () => navigate('/contact'),
     },
     {
       title: 'Phone Support',
@@ -66,6 +76,7 @@ const Support = () => {
       icon: Phone,
       available: 'Mon-Fri 9AM-6PM EST',
       action: 'Call Now',
+      onClick: () => setNotice('Phone support is not available in this demo. Please use the contact form instead.'),
     },
     {
       title: 'Email Support',
@@ -73,6 +84,7 @@ const Support = () => {
       icon: Mail,
       available: 'Response within 24 hours',
       action: 'Send Email',
+      onClick: () => navigate('/contact'),
     },
   ];
 
@@ -99,6 +111,7 @@ const Support = () => {
                 <input
                   type="text"
                   placeholder="Search for help..."
+                  aria-label="Search for help"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-12 pr-4 py-4 border border-audible-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-audible-orange focus:border-audible-orange"
@@ -128,6 +141,7 @@ const Support = () => {
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
+                  aria-pressed={selectedCategory === category.id}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-colors ${
                     selectedCategory === category.id
                       ? 'bg-audible-orange text-white'
@@ -154,6 +168,11 @@ const Support = () => {
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
+            {filteredFaqs.length === 0 && (
+              <p className="text-audible-text-secondary md:col-span-2 text-center">
+                No answers match your search. Try another word or contact us below.
+              </p>
+            )}
             {filteredFaqs.map((faq, index) => (
               <Card key={index} padding="lg" className="hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-audible-text-primary mb-3">
@@ -167,7 +186,7 @@ const Support = () => {
           </div>
 
           <div className="text-center mt-8">
-            <Button variant="outline">
+            <Button variant="outline" onClick={() => navigate('/faq')}>
               View All FAQs
             </Button>
           </div>
@@ -201,7 +220,7 @@ const Support = () => {
                   <p className="text-sm text-audible-text-secondary mb-4">
                     {method.available}
                   </p>
-                  <Button variant="primary" fullWidth>
+                  <Button variant="primary" fullWidth onClick={method.onClick}>
                     {method.action}
                   </Button>
                 </Card>
@@ -233,7 +252,7 @@ const Support = () => {
                 <p className="text-sm text-audible-text-secondary mb-4">
                   Step-by-step guides for all features
                 </p>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => navigate('/faq')}>
                   Browse Guide
                 </Button>
               </div>
@@ -248,7 +267,7 @@ const Support = () => {
                 <p className="text-sm text-audible-text-secondary mb-4">
                   Visual guides and walkthroughs
                 </p>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => setNotice('Video tutorials are not available in this demo.')}>
                   Watch Videos
                 </Button>
               </div>
@@ -263,7 +282,7 @@ const Support = () => {
                 <p className="text-sm text-audible-text-secondary mb-4">
                   Connect with other listeners
                 </p>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => navigate('/clubs')}>
                   Join Discussion
                 </Button>
               </div>
@@ -278,11 +297,14 @@ const Support = () => {
                 <p className="text-sm text-audible-text-secondary mb-4">
                   Check service availability
                 </p>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => setNotice('All systems operational. (Demo status: this is a mock service.)')}>
                   View Status
                 </Button>
               </div>
             </div>
+            <p role="status" className="text-center text-audible-text-secondary mt-6">
+              {notice}
+            </p>
           </Card>
         </div>
       </div>

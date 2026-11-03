@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Button } from '../components/ui';
 import { Smartphone, Download, Star, Shield, Zap, Headphones, Cloud, Settings, CheckCircle } from 'lucide-react';
 
+const DEMO_NOTICE = 'Listenable is an educational demo, so there is no iOS app to download. The web app works in your browser.';
+
+const scrollToSection = (id) => {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
 const IOSApp = () => {
+  const navigate = useNavigate();
+  const [heroNotice, setHeroNotice] = useState('');
+  const [ctaNotice, setCtaNotice] = useState('');
+
   const features = [
     {
       title: 'Seamless Audio Experience',
@@ -91,13 +102,16 @@ const IOSApp = () => {
             Download for free and start your free trial today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-black hover:bg-gray-800 text-white" leftIcon={<Download className="w-5 h-5" />}>
+            <Button size="lg" className="bg-black hover:bg-gray-800 text-white" leftIcon={<Download className="w-5 h-5" />} onClick={() => setHeroNotice(DEMO_NOTICE)}>
               Download on the App Store
             </Button>
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="lg" onClick={() => scrollToSection('app-features')}>
               Learn More
             </Button>
           </div>
+          <p role="status" className="text-audible-text-secondary mt-4">
+            {heroNotice}
+          </p>
         </div>
 
         {/* App Store Stats */}
@@ -132,7 +146,7 @@ const IOSApp = () => {
         </div>
 
         {/* Features Grid */}
-        <div className="mb-16">
+        <div id="app-features" className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-audible-text-primary mb-4">
               Powerful Features for iOS
@@ -179,7 +193,7 @@ const IOSApp = () => {
         </div>
 
         {/* System Requirements */}
-        <div className="mb-16">
+        <div id="system-requirements" className="mb-16">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-bold text-audible-text-primary mb-6">
@@ -242,7 +256,7 @@ const IOSApp = () => {
             </div>
 
             <div className="text-center mt-8">
-              <Button variant="outline">
+              <Button variant="outline" onClick={() => navigate('/privacy')}>
                 View Full Privacy Policy
               </Button>
             </div>
@@ -314,13 +328,16 @@ const IOSApp = () => {
               Download Audible for iOS and get your first audiobook free with a 30-day trial.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-black hover:bg-gray-800 text-white" leftIcon={<Download className="w-5 h-5" />}>
+              <Button size="lg" className="bg-black hover:bg-gray-800 text-white" leftIcon={<Download className="w-5 h-5" />} onClick={() => setCtaNotice(DEMO_NOTICE)}>
                 Download on the App Store
               </Button>
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-audible-orange">
+              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-audible-orange" onClick={() => scrollToSection('system-requirements')}>
                 View System Requirements
               </Button>
             </div>
+            <p role="status" className="mt-4">
+              {ctaNotice}
+            </p>
           </Card>
         </div>
       </div>

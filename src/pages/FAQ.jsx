@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Button } from '../components/ui';
 import { ChevronDown, ChevronUp, Search, CreditCard, Play, BookOpen, Users, Settings, Smartphone } from 'lucide-react';
 
 const FAQ = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedItems, setExpandedItems] = useState(new Set());
 
@@ -185,6 +187,7 @@ const FAQ = () => {
                 <input
                   type="text"
                   placeholder="Search FAQs..."
+                  aria-label="Search FAQs"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-12 pr-4 py-4 border border-audible-gray-300 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-audible-orange focus:border-audible-orange"
@@ -212,11 +215,18 @@ const FAQ = () => {
               </Button>
             </div>
 
+            {filteredFaqs.length === 0 && (
+              <p className="text-audible-text-secondary">
+                No FAQs match "{searchQuery}". Try another word or contact our support team.
+              </p>
+            )}
+
             <div className="space-y-4">
               {filteredFaqs.map((faq) => (
                 <Card key={faq.id} padding="lg">
                   <button
                     onClick={() => toggleExpanded(faq.id)}
+                    aria-expanded={expandedItems.has(faq.id)}
                     className="w-full text-left"
                   >
                     <div className="flex items-center justify-between">
@@ -269,6 +279,7 @@ const FAQ = () => {
                       <Card key={faq.id} padding="lg">
                         <button
                           onClick={() => toggleExpanded(faq.id)}
+                          aria-expanded={expandedItems.has(faq.id)}
                           className="w-full text-left"
                         >
                           <div className="flex items-center justify-between">
@@ -308,10 +319,10 @@ const FAQ = () => {
               Our support team is here to help. Get in touch for personalized assistance.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="secondary" size="lg">
+              <Button variant="secondary" size="lg" onClick={() => navigate('/contact')}>
                 Contact Support
               </Button>
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-audible-orange">
+              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-audible-orange" onClick={() => navigate('/support')}>
                 Visit Support Center
               </Button>
             </div>

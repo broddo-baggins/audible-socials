@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, Button } from '../components/ui';
 import { Monitor, Download, Star, Shield, Zap, Headphones, Cloud, Settings, CheckCircle, Cpu, HardDrive, Laptop } from 'lucide-react';
 
+const demoNotice = (platform = 'desktop') =>
+  `Listenable is an educational demo, so there is no ${platform} app to download. The web app works in your browser.`;
+
+const scrollToSection = (id) => {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
 const DesktopApp = () => {
+  const [heroNotice, setHeroNotice] = useState('');
+  const [platformNotice, setPlatformNotice] = useState('');
+  const [ctaNotice, setCtaNotice] = useState('');
+
   const platforms = [
     {
       name: 'Windows',
@@ -120,17 +131,20 @@ const DesktopApp = () => {
             and enjoy professional-grade audio playback and advanced library management.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" leftIcon={<Download className="w-5 h-5" />}>
+            <Button size="lg" leftIcon={<Download className="w-5 h-5" />} onClick={() => setHeroNotice(demoNotice())}>
               Download for Your Platform
             </Button>
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="lg" onClick={() => scrollToSection('system-requirements')}>
               System Requirements
             </Button>
           </div>
+          <p role="status" className="text-audible-text-secondary mt-4">
+            {heroNotice}
+          </p>
         </div>
 
         {/* Platform Support */}
-        <div className="mb-16">
+        <div id="platforms" className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-audible-text-primary mb-4">
               Available for All Major Platforms
@@ -156,13 +170,16 @@ const DesktopApp = () => {
                     <p><strong>Requirements:</strong> {platform.requirements}</p>
                     <p><strong>Download Size:</strong> {platform.downloadSize}</p>
                   </div>
-                  <Button variant="primary" fullWidth>
+                  <Button variant="primary" fullWidth onClick={() => setPlatformNotice(demoNotice(platform.name))}>
                     Download for {platform.name}
                   </Button>
                 </Card>
               );
             })}
           </div>
+          <p role="status" className="text-center text-audible-text-secondary mt-6">
+            {platformNotice}
+          </p>
         </div>
 
         {/* Download Stats */}
@@ -244,7 +261,7 @@ const DesktopApp = () => {
         </div>
 
         {/* System Requirements Table */}
-        <div className="mb-16">
+        <div id="system-requirements" className="mb-16">
           <h2 className="text-3xl font-bold text-audible-text-primary mb-8 text-center">
             System Requirements
           </h2>
@@ -362,13 +379,16 @@ const DesktopApp = () => {
               Download Audible for desktop and unlock the full potential of audio entertainment.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-white text-audible-orange hover:bg-gray-100" leftIcon={<Download className="w-5 h-5" />}>
+              <Button size="lg" className="bg-white text-audible-orange hover:bg-gray-100" leftIcon={<Download className="w-5 h-5" />} onClick={() => setCtaNotice(demoNotice())}>
                 Download Now
               </Button>
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-audible-orange">
+              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-audible-orange" onClick={() => scrollToSection('platforms')}>
                 View All Platforms
               </Button>
             </div>
+            <p role="status" className="mt-4">
+              {ctaNotice}
+            </p>
           </Card>
         </div>
       </div>
