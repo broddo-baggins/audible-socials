@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Search as SearchIcon, TrendingUp, Clock } from 'lucide-react';
 import { Input, Tag, Badge } from '../components/ui';
@@ -6,19 +6,53 @@ import BookGrid from '../components/books/BookGrid';
 import { searchBooks, getAutocompleteSuggestions, debounce } from '../utils/searchFilter';
 import booksData from '../data/books.json';
 
+const loadRecentSearches = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem('echoread_recent_searches'));
+    return Array.isArray(saved) ? saved : [];
+  } catch (error) {
+    console.warn('Error parsing saved searches:', error);
+    return [];
+  }
+};
+
 const Search = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const queryParam = searchParams.get('q') || '';
   
-  const [books, setBooks] = useState([]);
+  // Books already have cover paths in books.json
+  const books = booksData;
   const [searchQuery, setSearchQuery] = useState(queryParam);
-  const [searchResults, setSearchResults] = useState([]);
   const [suggestions, setSuggestions] = useState(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [recentSearches, setRecentSearches] = useState([]);
+  const [recentSearches, setRecentSearches] = useState(loadRecentSearches);
+
+  // Results follow the ?q= parameter
+  const searchResults = useMemo(
+    () => (queryParam.trim() ? searchBooks(books, queryParam) : []),
+    [books, queryParam]
+  );
+
+  // When ?q= changes (here or from the header search), sync the input and
+  // record the query, adjusting state during render rather than in an effect
+  const [prevQuery, setPrevQuery] = useState(null);
+  if (queryParam !== prevQuery) {
+    setPrevQuery(queryParam);
+    setSearchQuery(queryParam);
+    const query = queryParam.trim();
+    if (query) {
+      setRecentSearches(prev => [query, ...prev.filter(q => q !== query)].slice(0, 10));
+    }
+  }
+
+  // Persist recent searches
+  useEffect(() => {
+    if (recentSearches.length > 0) {
+      localStorage.setItem('echoread_recent_searches', JSON.stringify(recentSearches));
+    }
+  }, [recentSearches]);
   
   const trendingSearches = [
     'Science Fiction',
@@ -28,58 +62,6 @@ const Search = () => {
     'Memoir',
     'Originals',
   ];
-  
-  // Load books
-  useEffect(() => {
-    const loadBooks = async () => {
-      try {
-        // Books already have cover paths in books.json
-        setBooks(booksData);
-      } catch (error) {
-        console.error('Error loading books:', error);
-      }
-    };
-    
-    loadBooks();
-    
-    // Load recent searches
-    const saved = localStorage.getItem('echoread_recent_searches');
-    if (saved) {
-      try {
-        setRecentSearches(JSON.parse(saved));
-      } catch (error) {
-        console.error('Error parsing saved searches:', error);
-        setRecentSearches([]);
-      }
-    }
-  }, []);
-  
-  const saveRecentSearch = useCallback((query) => {
-    const updated = [query, ...recentSearches.filter(q => q !== query)].slice(0, 10);
-    setRecentSearches(updated);
-    localStorage.setItem('echoread_recent_searches', JSON.stringify(updated));
-  }, [recentSearches]);
-  
-  const performSearch = useCallback((query) => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      return;
-    }
-    
-    setLoading(true);
-    const results = searchBooks(books, query);
-    setSearchResults(results);
-    setLoading(false);
-    
-    saveRecentSearch(query);
-  }, [books, saveRecentSearch]);
-  
-  // Perform search when query param changes
-  useEffect(() => {
-    if (queryParam && books.length > 0) {
-      performSearch(queryParam);
-    }
-  }, [queryParam, books.length, performSearch]);
   
   const clearRecentSearches = () => {
     setRecentSearches([]);
@@ -91,7 +73,7 @@ const Search = () => {
     () =>
       debounce((query) => {
         if (query.trim()) {
-          const results = getAutocompleteSuggestions(books, query, 5);
+          const results = getAutocompleteSuggestions(books, query);
           setSuggestions(results);
         } else {
           setSuggestions(null);
@@ -232,7 +214,6 @@ const Search = () => {
           <div>
             <BookGrid
               books={searchResults}
-              loading={loading}
               showViewToggle={true}
               emptyMessage={`No results found for "${queryParam}"`}
               emptyAction={() => navigate('/browse')}

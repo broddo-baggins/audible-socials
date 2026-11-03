@@ -249,7 +249,7 @@ export const getAutocompleteSuggestions = (books, query) => {
  */
 export const debounce = (func, wait) => {
   let timeout;
-  return function executedFunction(...args) {
+  const executedFunction = (...args) => {
     const later = () => {
       clearTimeout(timeout);
       func(...args);
@@ -257,4 +257,7 @@ export const debounce = (func, wait) => {
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
   };
+  // Drop a pending call (e.g. when the component unmounts)
+  executedFunction.cancel = () => clearTimeout(timeout);
+  return executedFunction;
 };

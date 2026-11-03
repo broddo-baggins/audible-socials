@@ -6,6 +6,9 @@ import PropTypes from 'prop-types';
 import clubsData from '../../data/clubs.json';
 import booksData from '../../data/books.json';
 
+// Clubs have no genre of their own: use the genre of the book they are reading
+const clubGenre = (club) => booksData.find(b => b.id === club.currentBook)?.genre;
+
 const BookClubTeaser = ({ bookId }) => {
   const navigate = useNavigate();
   const clubs = useMemo(() => {
@@ -16,7 +19,7 @@ const BookClubTeaser = ({ bookId }) => {
     return clubsData
       .filter(club =>
         club.currentBook === bookId ||
-        club.genre === currentBook.genre ||
+        clubGenre(club) === currentBook.genre ||
         (currentBook.clubs && currentBook.clubs.includes(club.id))
       )
       .slice(0, 3);
@@ -51,9 +54,11 @@ const BookClubTeaser = ({ bookId }) => {
                   {club.memberCount} members
                 </p>
               </div>
-              <Badge variant="primary" size="sm">
-                {club.genre}
-              </Badge>
+              {clubGenre(club) && (
+                <Badge variant="primary" size="sm">
+                  {clubGenre(club)}
+                </Badge>
+              )}
             </div>
             
             {/* Club Stats */}
@@ -64,11 +69,11 @@ const BookClubTeaser = ({ bookId }) => {
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
-                <span>Meets {club.meetingFrequency || 'weekly'}</span>
+                <span>Meets {club.meetingsPerMonth ? `${club.meetingsPerMonth}x a month` : 'monthly'}</span>
               </div>
               <div className="flex items-center gap-1">
                 <BookOpen className="w-3 h-3" />
-                <span>{club.booksRead || 23} books read</span>
+                <span>{(club.previousBooks?.length || 0) + 1} books read</span>
               </div>
             </div>
             

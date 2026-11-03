@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Filter } from 'lucide-react';
 import FilterSidebar from '../components/browse/FilterSidebar';
@@ -7,11 +7,13 @@ import { Tag, Button } from '../components/ui';
 import { searchBooks, filterBooks, sortBooks, getFilterOptions, paginateResults } from '../utils/searchFilter';
 import booksData from '../data/books.json';
 
+// Books already have cover paths in books.json
+const BOOKS = booksData;
+const FILTER_OPTIONS = getFilterOptions(BOOKS);
+
 const Browse = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   
   // Parse query params
@@ -32,59 +34,30 @@ const Browse = () => {
   
   const [sortBy, setSortBy] = useState(sortParam);
   const [currentPage, setCurrentPage] = useState(pageParam);
-  const [filteredBooks, setFilteredBooks] = useState([]);
-  const [paginatedResults, setPaginatedResults] = useState(null);
-  const [filterOptions, setFilterOptions] = useState({
-    contentTypes: [],
-    genres: [],
-    languages: [],
-  });
   
-  // Load books
-  useEffect(() => {
-    const loadBooks = async () => {
-      try {
-        // Books already have cover paths in books.json
-        setBooks(booksData);
-        setFilterOptions(getFilterOptions(booksData));
-        setLoading(false);
-      } catch (error) {
-        console.error('Error loading books:', error);
-        setLoading(false);
-      }
-    };
-    
-    loadBooks();
-  }, []);
-  
-  // Apply filters, search, and sort whenever they change
-  useEffect(() => {
-    if (books.length === 0) return;
-    
-    let result = books;
-    
-    // Apply search
+  // Apply search, filters and sorting; derived, so nothing to keep in sync
+  const filteredBooks = useMemo(() => {
+    let result = BOOKS;
     if (queryParam) {
       result = searchBooks(result, queryParam);
     }
-    
-    // Apply filters
     result = filterBooks(result, filters);
-    
-    // Apply sorting
-    result = sortBooks(result, sortBy);
-    
-    setFilteredBooks(result);
-    
-    // Reset to page 1 when filters change
+    return sortBooks(result, sortBy);
+  }, [queryParam, filters, sortBy]);
+
+  // Reset to page 1 when the search, filters or sort change (adjusting state
+  // during render; a ?page= in the initial URL is kept)
+  const [prevFilters, setPrevFilters] = useState({ queryParam, filters, sortBy });
+  if (prevFilters.queryParam !== queryParam || prevFilters.filters !== filters || prevFilters.sortBy !== sortBy) {
+    setPrevFilters({ queryParam, filters, sortBy });
     setCurrentPage(1);
-  }, [books, queryParam, filters, sortBy]);
-  
+  }
+
   // Paginate results
-  useEffect(() => {
-    const paginated = paginateResults(filteredBooks, currentPage, 24);
-    setPaginatedResults(paginated);
-  }, [filteredBooks, currentPage]);
+  const paginatedResults = useMemo(
+    () => paginateResults(filteredBooks, currentPage, 24),
+    [filteredBooks, currentPage]
+  );
   
   const handleFiltersChange = (newFilters) => {
     setFilters(newFilters);
@@ -210,7 +183,7 @@ const Browse = () => {
             <FilterSidebar
               filters={filters}
               onFiltersChange={handleFiltersChange}
-              filterOptions={filterOptions}
+              filterOptions={FILTER_OPTIONS}
               onClear={handleClearFilters}
             />
           </div>
@@ -255,7 +228,6 @@ const Browse = () => {
             {/* Books Grid */}
             <BookGrid
               books={paginatedResults?.items || []}
-              loading={loading}
               showViewToggle={true}
               emptyMessage={queryParam ? `No results found for "${queryParam}"` : 'No books match your filters'}
               emptyAction={handleClearFilters}
@@ -340,7 +312,7 @@ const Browse = () => {
               <FilterSidebar
                 filters={filters}
                 onFiltersChange={handleFiltersChange}
-                filterOptions={filterOptions}
+                filterOptions={FILTER_OPTIONS}
                 onClear={handleClearFilters}
               />
             </div>

@@ -3,6 +3,37 @@ import { X, ChevronDown, ChevronUp } from 'lucide-react';
 import PropTypes from 'prop-types';
 import { Button, Tag } from '../ui';
 
+// Defined outside FilterSidebar so a section keeps its DOM (and a range input
+// its drag state) when the filters change.
+const FilterSection = ({ title, expanded, onToggle, children }) => (
+  <div className="border-b border-echo-divider pb-4">
+    <button
+      onClick={onToggle}
+      aria-expanded={expanded}
+      className="w-full flex items-center justify-between py-2 text-left"
+    >
+      <h3 className="font-semibold text-echo-text-primary">{title}</h3>
+      {expanded ? (
+        <ChevronUp className="w-5 h-5 text-echo-text-secondary" />
+      ) : (
+        <ChevronDown className="w-5 h-5 text-echo-text-secondary" />
+      )}
+    </button>
+    {expanded && (
+      <div className="mt-3 space-y-2">
+        {children}
+      </div>
+    )}
+  </div>
+);
+
+FilterSection.propTypes = {
+  title: PropTypes.string.isRequired,
+  expanded: PropTypes.bool,
+  onToggle: PropTypes.func.isRequired,
+  children: PropTypes.node,
+};
+
 const FilterSidebar = ({ 
   filters, 
   onFiltersChange, 
@@ -65,27 +96,6 @@ const FilterSidebar = ({
     );
   };
   
-  const FilterSection = ({ title, section, children }) => (
-    <div className="border-b border-echo-divider pb-4">
-      <button
-        onClick={() => toggleSection(section)}
-        className="w-full flex items-center justify-between py-2 text-left"
-      >
-        <h3 className="font-semibold text-echo-text-primary">{title}</h3>
-        {expandedSections[section] ? (
-          <ChevronUp className="w-5 h-5 text-echo-text-secondary" />
-        ) : (
-          <ChevronDown className="w-5 h-5 text-echo-text-secondary" />
-        )}
-      </button>
-      {expandedSections[section] && (
-        <div className="mt-3 space-y-2">
-          {children}
-        </div>
-      )}
-    </div>
-  );
-  
   return (
     <aside className={`bg-white rounded-xl border border-echo-border p-6 ${className}`}>
       {/* Header */}
@@ -105,7 +115,7 @@ const FilterSidebar = ({
       {/* Filter Sections */}
       <div className="space-y-6">
         {/* Content Type */}
-        <FilterSection title="Content Type" section="contentType">
+        <FilterSection title="Content Type" expanded={!!expandedSections.contentType} onToggle={() => toggleSection('contentType')}>
           {filterOptions.contentTypes.map((type) => (
             <label key={type} className="flex items-center gap-2 cursor-pointer">
               <input
@@ -120,7 +130,7 @@ const FilterSidebar = ({
         </FilterSection>
         
         {/* Genre */}
-        <FilterSection title="Genre" section="genre">
+        <FilterSection title="Genre" expanded={!!expandedSections.genre} onToggle={() => toggleSection('genre')}>
           <div className="max-h-48 overflow-y-auto space-y-2">
             {filterOptions.genres.map((genre) => (
               <label key={genre} className="flex items-center gap-2 cursor-pointer">
@@ -137,7 +147,7 @@ const FilterSidebar = ({
         </FilterSection>
         
         {/* Duration */}
-        <FilterSection title="Duration" section="duration">
+        <FilterSection title="Duration" expanded={!!expandedSections.duration} onToggle={() => toggleSection('duration')}>
           <div className="space-y-3">
             <div>
               <label className="text-sm text-echo-text-secondary mb-1 block">
@@ -183,7 +193,7 @@ const FilterSidebar = ({
         </FilterSection>
         
         {/* Language */}
-        <FilterSection title="Language" section="language">
+        <FilterSection title="Language" expanded={!!expandedSections.language} onToggle={() => toggleSection('language')}>
           {filterOptions.languages.map((language) => (
             <label key={language} className="flex items-center gap-2 cursor-pointer">
               <input
@@ -198,7 +208,7 @@ const FilterSidebar = ({
         </FilterSection>
         
         {/* Rating */}
-        <FilterSection title="Minimum Rating" section="rating">
+        <FilterSection title="Minimum Rating" expanded={!!expandedSections.rating} onToggle={() => toggleSection('rating')}>
           <div className="space-y-2">
             {[4.5, 4.0, 3.5, 3.0].map((rating) => (
               <label key={rating} className="flex items-center gap-2 cursor-pointer">
