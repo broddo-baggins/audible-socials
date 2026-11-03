@@ -1,329 +1,207 @@
-import React, { useState } from 'react';
-import { Card, Button } from '../components/ui';
-import { Mail, Phone, MessageCircle, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
+import { useState, useId, useRef } from 'react';
+import { Mail, Phone, MessageCircle, Send, CheckCircle2 } from 'lucide-react';
+import { PageHeader, Button, Input } from '../components/ui';
+
+/**
+ * Contact: the form leads (labels above, hints and errors below, errors
+ * announced), other ways to reach us sit beside it as a ruled list, then
+ * offices and hours as plain columns.
+ */
+const emptyForm = { name: '', email: '', subject: '', category: '', message: '' };
+
+const contactMethods = [
+  { title: 'Email support', description: 'Send us a detailed message', icon: Mail, contact: 'support@audible.com', href: 'mailto:support@audible.com', response: 'Response within 24 hours', action: 'Send email' },
+  { title: 'Phone support', description: 'Speak with a specialist', icon: Phone, contact: '1-888-AUDIBLE (1-888-283-4253)', href: 'tel:18882834253', response: 'Mon to Fri, 9 AM to 6 PM EST', action: 'Call now' },
+  { title: 'Live chat', description: 'Get instant help online', icon: MessageCircle, contact: 'Available 24/7', response: 'Instant response', action: 'Start chat' },
+];
+
+const offices = [
+  { city: 'New York', address: '123 Audio Street, New York, NY 10001', phone: '+1 (555) 123-4567', email: 'nyc@audible.com' },
+  { city: 'San Francisco', address: '456 Sound Avenue, San Francisco, CA 94102', phone: '+1 (555) 987-6543', email: 'sf@audible.com' },
+  { city: 'London', address: '789 Listening Lane, London EC1A 1BB', phone: '+44 20 1234 5678', email: 'london@audible.com' },
+];
+
+const categories = [
+  'Account & Billing',
+  'Technical Support',
+  'Content Questions',
+  'Partnerships',
+  'Press Inquiries',
+  'General Feedback',
+  'Other',
+];
+
+const validate = (data) => {
+  const errors = {};
+  if (!data.name.trim()) errors.name = 'Enter your full name.';
+  if (!data.email.trim()) errors.email = 'Enter your email address.';
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errors.email = 'Enter an email address like name@example.com.';
+  if (!data.category) errors.category = 'Choose the category closest to your question.';
+  if (!data.subject.trim()) errors.subject = 'Add a short subject.';
+  if (!data.message.trim()) errors.message = 'Tell us how we can help.';
+  return errors;
+};
+
+const fieldBase = 'w-full bg-surface text-base text-ink border rounded-lg transition-colors focus:outline-none focus:border-ink focus:shadow-[0_0_0_3px_var(--hl)]';
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    category: '',
-    message: '',
-  });
+  const [formData, setFormData] = useState(emptyForm);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errors, setErrors] = useState({});
+  const formRef = useRef(null);
+  const categoryId = useId();
+  const messageId = useId();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const found = validate(formData);
+    if (Object.keys(found).length) {
+      setErrors(found);
+      const first = Object.keys(found)[0];
+      formRef.current?.querySelector(`[name="${first}"]`)?.focus();
+      return;
+    }
     // In a real app, this would submit to an API
     console.log('Form submitted:', formData);
     setIsSubmitted(true);
     setTimeout(() => {
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        category: '',
-        message: '',
-      });
+      setFormData(emptyForm);
       setIsSubmitted(false);
     }, 3000);
   };
 
-  const contactMethods = [
-    {
-      title: 'Email Support',
-      description: 'Send us a detailed message',
-      icon: Mail,
-      contact: 'support@audible.com',
-      response: 'Response within 24 hours',
-      action: 'Send Email',
-    },
-    {
-      title: 'Phone Support',
-      description: 'Speak with a specialist',
-      icon: Phone,
-      contact: '1-888-AUDIBLE (1-888-283-4253)',
-      response: 'Mon-Fri 9AM-6PM EST',
-      action: 'Call Now',
-    },
-    {
-      title: 'Live Chat',
-      description: 'Get instant help online',
-      icon: MessageCircle,
-      contact: 'Available 24/7',
-      response: 'Instant response',
-      action: 'Start Chat',
-    },
-  ];
-
-  const offices = [
-    {
-      city: 'New York',
-      address: '123 Audio Street, New York, NY 10001',
-      phone: '+1 (555) 123-4567',
-      email: 'nyc@audible.com',
-    },
-    {
-      city: 'San Francisco',
-      address: '456 Sound Avenue, San Francisco, CA 94102',
-      phone: '+1 (555) 987-6543',
-      email: 'sf@audible.com',
-    },
-    {
-      city: 'London',
-      address: '789 Listening Lane, London EC1A 1BB',
-      phone: '+44 20 1234 5678',
-      email: 'london@audible.com',
-    },
-  ];
-
-  const categories = [
-    'Account & Billing',
-    'Technical Support',
-    'Content Questions',
-    'Partnerships',
-    'Press Inquiries',
-    'General Feedback',
-    'Other',
-  ];
-
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen bg-audible-white flex items-center justify-center">
-        <Card padding="xl" className="max-w-md text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6 mx-auto">
-            <CheckCircle className="w-8 h-8 text-green-600" />
-          </div>
-          <h2 className="text-2xl font-bold text-audible-text-primary mb-4">
-            Message Sent!
-          </h2>
-          <p className="text-audible-text-secondary mb-6">
-            Thank you for contacting us. We've received your message and will get back to you within 24 hours.
-          </p>
-          <Button onClick={() => setIsSubmitted(false)} variant="primary">
-            Send Another Message
-          </Button>
-        </Card>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-audible-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-audible-text-primary mb-6">
-            Contact Us
-          </h1>
-          <p className="text-xl text-audible-text-secondary max-w-3xl mx-auto leading-relaxed">
-            Have a question, need support, or want to share feedback? We're here to help.
-            Choose the best way to get in touch with our team.
-          </p>
-        </div>
+    <div className="page pb-20">
+      <PageHeader
+        title="Contact us"
+        description="A question, a problem or some feedback? Send a message, or choose another way to reach our team below."
+      />
 
-        <div className="grid lg:grid-cols-2 gap-12 mb-16">
-          {/* Contact Form */}
-          <div>
-            <Card padding="lg">
-              <h2 className="text-2xl font-bold text-audible-text-primary mb-6">
-                Send us a Message
-              </h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-audible-text-primary mb-2">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-3 py-2 border border-audible-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-audible-orange focus:border-audible-orange"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-audible-text-primary mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-3 py-2 border border-audible-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-audible-orange focus:border-audible-orange"
-                    />
-                  </div>
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-16">
+        {/* Form */}
+        <section aria-labelledby="form-title" className="rounded-2xl border border-line bg-surface p-5 md:p-8">
+          {isSubmitted ? (
+            <div role="status" className="flex flex-col items-start gap-4 py-6">
+              <CheckCircle2 className="h-8 w-8 text-success" strokeWidth={1.75} aria-hidden="true" />
+              <h2 id="form-title" className="t-h2 text-ink">Message sent</h2>
+              <p className="text-ink-2 max-w-[52ch]">Thank you for contacting us. We have your message and will reply within 24 hours.</p>
+              <Button onClick={() => setIsSubmitted(false)} variant="primary">Send another message</Button>
+            </div>
+          ) : (
+            <>
+              <h2 id="form-title" className="t-h2 text-ink">Send us a message</h2>
+              <p className="mt-1 text-[0.8125rem] text-ink-3">All fields are required.</p>
+              <form ref={formRef} onSubmit={handleSubmit} noValidate className="mt-6 space-y-5">
+                <div className="grid gap-5 md:grid-cols-2">
+                  <Input label="Full name" name="name" value={formData.name} onChange={handleInputChange} required autoComplete="name" error={errors.name} fullWidth />
+                  <Input label="Email address" type="email" name="email" value={formData.email} onChange={handleInputChange} required autoComplete="email" error={errors.email} hint="We only use it to reply." fullWidth />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-audible-text-primary mb-2">
-                    Category *
-                  </label>
+                  <label htmlFor={categoryId} className="block text-sm font-medium text-ink mb-1.5">Category</label>
                   <select
+                    id={categoryId}
                     name="category"
                     value={formData.category}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-audible-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-audible-orange focus:border-audible-orange"
+                    aria-invalid={errors.category ? true : undefined}
+                    aria-describedby={errors.category ? `${categoryId}-error` : undefined}
+                    className={`${fieldBase} h-11 px-3 ${errors.category ? 'border-danger' : 'border-line-strong'}`}
                   >
                     <option value="">Select a category</option>
                     {categories.map((category) => (
-                      <option key={category} value={category}>
-                        {category}
-                      </option>
+                      <option key={category} value={category}>{category}</option>
                     ))}
                   </select>
+                  {errors.category && <p id={`${categoryId}-error`} role="alert" className="mt-1.5 text-sm text-danger">{errors.category}</p>}
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-audible-text-primary mb-2">
-                    Subject *
-                  </label>
-                  <input
-                    type="text"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-2 border border-audible-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-audible-orange focus:border-audible-orange"
-                  />
-                </div>
+                <Input label="Subject" name="subject" value={formData.subject} onChange={handleInputChange} required error={errors.subject} fullWidth />
 
                 <div>
-                  <label className="block text-sm font-medium text-audible-text-primary mb-2">
-                    Message *
-                  </label>
+                  <label htmlFor={messageId} className="block text-sm font-medium text-ink mb-1.5">Message</label>
                   <textarea
+                    id={messageId}
                     name="message"
                     value={formData.message}
                     onChange={handleInputChange}
                     required
                     rows={6}
-                    className="w-full px-3 py-2 border border-audible-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-audible-orange focus:border-audible-orange resize-none"
-                    placeholder="Tell us how we can help you..."
+                    aria-invalid={errors.message ? true : undefined}
+                    aria-describedby={errors.message ? `${messageId}-error` : `${messageId}-hint`}
+                    placeholder="Tell us how we can help you"
+                    className={`${fieldBase} resize-y px-3.5 py-3 ${errors.message ? 'border-danger' : 'border-line-strong'}`}
                   />
+                  {errors.message
+                    ? <p id={`${messageId}-error`} role="alert" className="mt-1.5 text-sm text-danger">{errors.message}</p>
+                    : <p id={`${messageId}-hint`} className="mt-1.5 text-sm text-ink-3">Include your device and app version for technical questions.</p>}
                 </div>
 
-                <Button type="submit" variant="primary" fullWidth rightIcon={<Send className="w-4 h-4" />}>
-                  Send Message
+                <Button type="submit" variant="primary" size="lg" rightIcon={<Send className="h-4 w-4" strokeWidth={1.75} />}>
+                  Send message
                 </Button>
               </form>
-            </Card>
-          </div>
+            </>
+          )}
+        </section>
 
-          {/* Contact Methods */}
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-audible-text-primary mb-6">
-              Other Ways to Reach Us
-            </h2>
-
-            {contactMethods.map((method, index) => {
+        {/* Other ways */}
+        <section aria-labelledby="other-ways">
+          <h2 id="other-ways" className="t-h2 text-ink">Other ways to reach us</h2>
+          <ul className="mt-5 divide-y divide-line border-y border-line">
+            {contactMethods.map((method) => {
               const Icon = method.icon;
               return (
-                <Card key={index} padding="lg" className="hover:shadow-md transition-shadow">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-audible-orange/10 rounded-full flex items-center justify-center">
-                        <Icon className="w-6 h-6 text-audible-orange" />
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-audible-text-primary mb-1">
-                        {method.title}
-                      </h3>
-                      <p className="text-audible-text-secondary mb-2">
-                        {method.description}
-                      </p>
-                      <p className="text-sm font-medium text-audible-text-primary mb-1">
-                        {method.contact}
-                      </p>
-                      <p className="text-sm text-audible-text-secondary mb-4">
-                        {method.response}
-                      </p>
-                      <Button variant="outline" size="sm">
-                        {method.action}
-                      </Button>
-                    </div>
+                <li key={method.title} className="flex gap-4 py-5">
+                  <Icon className="mt-0.5 h-5 w-5 shrink-0 text-ink-2" strokeWidth={1.75} aria-hidden="true" />
+                  <div className="min-w-0 flex-1">
+                    <h3 className="t-h3 text-ink">{method.title}</h3>
+                    <p className="text-ink-2">{method.description}</p>
+                    <p className="mt-2 text-sm font-medium text-ink">{method.contact}</p>
+                    <p className="text-[0.8125rem] text-ink-3">{method.response}</p>
+                    {method.href ? (
+                      <a href={method.href} className="mt-3 inline-flex h-9 items-center rounded-full border border-line-strong px-4 text-sm font-medium text-ink hover:bg-surface">{method.action}</a>
+                    ) : (
+                      <Button variant="outline" size="sm" className="mt-3">{method.action}</Button>
+                    )}
                   </div>
-                </Card>
+                </li>
               );
             })}
-          </div>
-        </div>
-
-        {/* Office Locations */}
-        <div className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-audible-text-primary mb-4">
-              Our Offices
-            </h2>
-            <p className="text-lg text-audible-text-secondary">
-              Visit us at one of our global locations
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {offices.map((office, index) => (
-              <Card key={index} padding="lg" className="text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-audible-orange/10 mb-4 mx-auto">
-                  <MapPin className="w-6 h-6 text-audible-orange" />
-                </div>
-                <h3 className="text-xl font-bold text-audible-text-primary mb-2">
-                  {office.city}
-                </h3>
-                <p className="text-audible-text-secondary mb-3">
-                  {office.address}
-                </p>
-                <div className="space-y-1 text-sm text-audible-text-secondary">
-                  <p className="flex items-center gap-2">
-                    <Phone className="w-4 h-4" />
-                    {office.phone}
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Mail className="w-4 h-4" />
-                    {office.email}
-                  </p>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Business Hours */}
-        <div className="text-center">
-          <Card padding="lg" className="bg-audible-gray-50 max-w-2xl mx-auto">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-audible-orange/10 mb-4 mx-auto">
-              <Clock className="w-8 h-8 text-audible-orange" />
-            </div>
-            <h2 className="text-2xl font-bold text-audible-text-primary mb-4">
-              Business Hours
-            </h2>
-            <div className="space-y-2 text-audible-text-secondary">
-              <p className="font-medium">
-                Customer Support: Monday - Friday, 9:00 AM - 6:00 PM EST
-              </p>
-              <p>
-                Live Chat: 24 hours a day, 7 days a week
-              </p>
-              <p>
-                Email: Response within 24 hours during business days
-              </p>
-            </div>
-          </Card>
-        </div>
+          </ul>
+        </section>
       </div>
+
+      {/* Offices and hours */}
+      <section aria-labelledby="offices" className="mt-16 md:mt-20">
+        <h2 id="offices" className="t-h2 text-ink">Our offices</h2>
+        <div className="mt-6 grid gap-x-10 md:grid-cols-3">
+          {offices.map((office) => (
+            <address key={office.city} className="border-t border-ink py-5 not-italic">
+              <h3 className="font-serif text-xl font-medium text-ink">{office.city}</h3>
+              <p className="mt-2 text-ink-2">{office.address}</p>
+              <p className="mt-3 text-[0.9375rem]"><a href={`tel:${office.phone.replace(/[^+\d]/g, '')}`} className="link tabular">{office.phone}</a></p>
+              <p className="text-[0.9375rem]"><a href={`mailto:${office.email}`} className="link">{office.email}</a></p>
+            </address>
+          ))}
+        </div>
+      </section>
+
+      <section aria-labelledby="hours" className="mt-12 rounded-lg bg-surface-sunk p-5 md:p-6">
+        <h2 id="hours" className="t-h3 text-ink">Business hours</h2>
+        <dl className="mt-3 grid gap-x-8 gap-y-2 text-[0.9375rem] sm:grid-cols-[10rem_minmax(0,1fr)]">
+          <dt className="font-medium text-ink">Customer support</dt><dd className="text-ink-2">Monday to Friday, 9:00 AM to 6:00 PM EST</dd>
+          <dt className="font-medium text-ink">Live chat</dt><dd className="text-ink-2">24 hours a day, 7 days a week</dd>
+          <dt className="font-medium text-ink">Email</dt><dd className="text-ink-2">Response within 24 hours on business days</dd>
+        </dl>
+      </section>
     </div>
   );
 };
