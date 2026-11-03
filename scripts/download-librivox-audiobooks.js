@@ -54,7 +54,7 @@ function makeRequest(url, options = {}) {
             ? JSON.parse(data)
             : data;
           resolve({ data: result, statusCode: res.statusCode, headers: res.headers });
-        } catch (e) {
+        } catch {
           resolve({ data, statusCode: res.statusCode, headers: res.headers });
         }
       });
@@ -299,7 +299,7 @@ async function downloadAudiobook(book, downloadFullBook = false) {
             downloadUrl = url;
             break;
           }
-        } catch (e) {
+        } catch {
           // Continue to next URL
         }
       }
@@ -606,7 +606,7 @@ function integrateBooks() {
     if (fs.existsSync(metadataPath)) {
       try {
         metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
-      } catch (e) {
+      } catch {
         console.log(`⚠️  Could not read metadata for ${filename}`);
       }
     }

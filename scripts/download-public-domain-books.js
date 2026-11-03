@@ -10,8 +10,6 @@
 import fs from 'fs';
 import path from 'path';
 import https from 'https';
-import axios from 'axios';
-import * as cheerio from 'cheerio';
 
 // Configuration
 const CONTENT_DIR = path.join(process.cwd(), 'public', 'content', 'books');
@@ -183,7 +181,7 @@ async function downloadGutenbergBook(bookInfo) {
       await downloadFile(altUrl, filepath);
       console.log(`✅ Downloaded via alternative URL: ${filename}`);
       return filepath;
-    } catch (altError) {
+    } catch {
       console.error('❌ Alternative URL also failed');
       return null;
     }
@@ -311,7 +309,7 @@ function showAvailableBooks() {
   console.log('📚 Available Public Domain Books:');
   console.log('=================================\n');
 
-  Object.entries(PUBLIC_DOMAIN_CATALOG).forEach(([key, book], index) => {
+  Object.values(PUBLIC_DOMAIN_CATALOG).forEach((book, index) => {
     console.log(`${index + 1}. "${book.title}" by ${book.author}`);
     console.log(`   Gutenberg ID: ${book.gutenbergId}`);
     console.log(`   Downloads: ${book.downloads.toLocaleString()}`);
@@ -330,19 +328,20 @@ async function main() {
   console.log('=================================\n');
 
   switch (command) {
-    case 'download':
+    case 'download': {
       const downloaded = await downloadForExistingBooks();
       if (downloaded > 0) {
         updateBookMetadata();
         console.log('\n💾 Metadata updated!');
       }
       break;
+    }
 
     case 'list':
       showAvailableBooks();
       break;
 
-    case 'single':
+    case 'single': {
       const bookKey = args[1];
       if (!bookKey || !PUBLIC_DOMAIN_CATALOG[bookKey]) {
         console.error('❌ Please specify a valid book key');
@@ -351,6 +350,7 @@ async function main() {
       }
       await downloadGutenbergBook(PUBLIC_DOMAIN_CATALOG[bookKey]);
       break;
+    }
 
     default:
       console.log('📖 Available Commands:');
