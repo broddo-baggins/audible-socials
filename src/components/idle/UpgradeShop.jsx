@@ -1,35 +1,41 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Check, Lock, Sparkles, Headphones, Armchair, Coffee, Library, Circle, ChefHat, Sprout, Sofa } from 'lucide-react';
+import { useId } from 'react';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
+import { ShoppingBag, Check, Lock, ChevronDown, Headphones, Armchair, Coffee, Library, Circle, ChefHat, Sprout, Sofa } from 'lucide-react';
 import { UPGRADES, isUpgradeAvailable } from '../../utils/idleGame';
 
 // Icon mapping for dynamic rendering
 const ICON_MAP = {
-  'Headphones': Headphones,
-  'Armchair': Armchair,
-  'Coffee': Coffee,
-  'Library': Library,
-  'Circle': Circle,
-  'ChefHat': ChefHat,
-  'Sprout': Sprout,
-  'Sofa': Sofa
+  Headphones,
+  Armchair,
+  Coffee,
+  Library,
+  Circle,
+  ChefHat,
+  Sprout,
+  Sofa,
+};
+
+const sentence = (s = '') => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+
+const categoryNames = {
+  equipment: 'Equipment',
+  furniture: 'Furniture',
+  consumable: 'Consumables',
 };
 
 /**
- * UpgradeShop - Interface for purchasing upgrades with Focus Points
+ * UpgradeShop: spend focus points on permanent bonuses. A disclosure row on
+ * night; open, three short lists by category and your balance. Each row
+ * says what it costs, what it needs first, or that you own it.
  */
 const UpgradeShop = ({ gameState, onPurchase, showShop, onToggleShop }) => {
-  const buttonVariants = {
-    idle: { scale: 1 },
-    hover: { scale: 1.05 },
-    tap: { scale: 0.95 }
-  };
+  const panelId = useId();
 
   // Group upgrades by category
   const categories = {
     equipment: [],
     furniture: [],
-    consumable: []
+    consumable: [],
   };
 
   Object.values(UPGRADES).forEach(upgrade => {
@@ -38,130 +44,106 @@ const UpgradeShop = ({ gameState, onPurchase, showShop, onToggleShop }) => {
     }
   });
 
-  const categoryNames = {
-    equipment: 'Equipment',
-    furniture: 'Furniture',
-    consumable: 'Consumables'
-  };
+  const owned = gameState.purchasedUpgrades.length;
 
   return (
     <div>
-      {/* Toggle Button */}
-      <motion.button
+      <button
+        type="button"
         onClick={onToggleShop}
-        className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-lg py-3 px-4 flex items-center justify-center gap-2 transition-colors shadow-lg"
-        variants={buttonVariants}
-        initial="idle"
-        whileHover="hover"
-        whileTap="tap"
+        aria-expanded={showShop}
+        aria-controls={panelId}
+        className="flex min-h-12 w-full items-center gap-3 rounded-lg border border-[#3A3D45] px-4 py-3 text-left transition-colors hover:bg-night-raised"
       >
-        <ShoppingCart className="w-5 h-5 text-white" />
-        <span className="text-white font-bold">
-          Upgrade Shop
-        </span>
-        <Sparkles className="w-4 h-4 text-yellow-300" />
-      </motion.button>
+        <ShoppingBag className="h-5 w-5 shrink-0 text-ink-on-night-2" strokeWidth={1.75} aria-hidden="true" />
+        <span className="flex-1 font-medium">Upgrade shop</span>
+        <span className="text-[0.8125rem] text-ink-on-night-2 tabular">{owned} of {Object.keys(UPGRADES).length} owned</span>
+        <ChevronDown className={`h-5 w-5 shrink-0 text-ink-on-night-2 transition-transform duration-200 ${showShop ? 'rotate-180' : ''}`} strokeWidth={1.75} aria-hidden="true" />
+      </button>
 
-      {/* Shop Interface */}
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {showShop && (
-          <motion.div
+          <Motion.div
+            id={panelId}
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-3 space-y-4 overflow-hidden"
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
           >
-            {Object.entries(categories).map(([category, upgrades]) => (
-              <div key={category}>
-                <h3 className="text-white font-bold text-sm mb-2 flex items-center gap-2">
-                  <span>{categoryNames[category]}</span>
-                </h3>
-                <div className="space-y-2">
-                  {upgrades.map(upgrade => {
-                    const isPurchased = gameState.purchasedUpgrades.includes(upgrade.id);
-                    const canAfford = gameState.focusPoints >= upgrade.cost;
-                    const meetsRequirements = !upgrade.requires || 
-                      gameState.purchasedUpgrades.includes(upgrade.requires);
-                    const isAvailable = isUpgradeAvailable(upgrade.id, gameState);
-
-                    return (
-                      <motion.button
-                        key={upgrade.id}
-                        onClick={() => isAvailable && onPurchase(upgrade.id)}
-                        disabled={!isAvailable || isPurchased}
-                        className={`w-full p-3 rounded-lg flex items-center gap-3 transition-all ${
-                          isPurchased
-                            ? 'bg-green-600/30 border-2 border-green-500'
-                            : isAvailable
-                            ? 'bg-white/10 hover:bg-white/20 border-2 border-blue-400/50'
-                            : 'bg-gray-700/30 cursor-not-allowed border-2 border-gray-600/30'
-                        }`}
-                        variants={buttonVariants}
-                        initial="idle"
-                        whileHover={isAvailable && !isPurchased ? "hover" : "idle"}
-                        whileTap={isAvailable && !isPurchased ? "tap" : "idle"}
-                        layout
-                      >
-                        {/* Icon */}
-                        <div className="w-8 h-8 flex items-center justify-center">
-                          {ICON_MAP[upgrade.icon] ? (
-                            React.createElement(ICON_MAP[upgrade.icon], { className: "w-6 h-6 text-white" })
-                          ) : (
-                            <span className="text-white text-sm">{upgrade.icon}</span>
-                          )}
-                        </div>
-
-                        {/* Details */}
-                        <div className="flex-1 text-left">
-                          <div className="font-semibold text-white text-sm flex items-center gap-2">
-                            {upgrade.name}
-                            {isPurchased && (
-                              <Check className="w-4 h-4 text-green-400" />
-                            )}
-                          </div>
-                          <div className="text-xs text-white/70">{upgrade.description}</div>
-                          
-                          {/* Requirements */}
-                          {upgrade.requires && !meetsRequirements && (
-                            <div className="text-xs text-red-400 mt-1 flex items-center gap-1">
-                              <Lock className="w-3 h-3" />
-                              Requires: {UPGRADES[upgrade.requires]?.name}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Cost */}
-                        <div className="text-right">
-                          {isPurchased ? (
-                            <div className="text-green-400 font-bold text-sm">Owned</div>
-                          ) : (
-                            <div className={`font-bold text-sm ${
-                              canAfford && meetsRequirements ? 'text-blue-400' : 'text-red-400'
-                            }`}>
-                              <div className="flex items-center gap-1">
-                                <Sparkles className="w-3 h-3" />
-                                {upgrade.cost}
-                              </div>
-                              <div className="text-xs text-white/50">FP</div>
-                            </div>
-                          )}
-                        </div>
-                      </motion.button>
-                    );
-                  })}
-                </div>
+            <div className="mt-4 space-y-6 px-1">
+              <div className="flex items-baseline justify-between rounded-lg bg-night-raised px-4 py-3">
+                <span className="text-[0.8125rem] text-ink-on-night-2">Your focus points</span>
+                <span className="font-serif text-2xl font-medium tabular">{gameState.focusPoints.toLocaleString()} <span className="font-sans text-sm text-ink-on-night-2">FP</span></span>
               </div>
-            ))}
 
-            {/* Current Balance */}
-            <div className="bg-white/10 rounded-lg p-3 text-center">
-              <div className="text-sm text-white/70 mb-1">Your Focus Points</div>
-              <div className="text-2xl font-bold text-blue-400 flex items-center justify-center gap-2">
-                <Sparkles className="w-5 h-5" />
-                {gameState.focusPoints.toLocaleString()}
-              </div>
+              {Object.entries(categories).map(([category, upgrades]) => (
+                <section key={category} aria-label={categoryNames[category]}>
+                  <h3 className="px-3 text-[0.8125rem] font-semibold text-ink-on-night-2">{categoryNames[category]}</h3>
+                  <ul className="mt-1 divide-y divide-[#2C2F36]">
+                    {upgrades.map(upgrade => {
+                      const isPurchased = gameState.purchasedUpgrades.includes(upgrade.id);
+                      const canAfford = gameState.focusPoints >= upgrade.cost;
+                      const meetsRequirements = !upgrade.requires ||
+                        gameState.purchasedUpgrades.includes(upgrade.requires);
+                      const isAvailable = isUpgradeAvailable(upgrade.id, gameState);
+                      const Icon = ICON_MAP[upgrade.icon] || Circle;
+                      const shortBy = upgrade.cost - gameState.focusPoints;
+
+                      return (
+                        <li key={upgrade.id}>
+                          <button
+                            type="button"
+                            onClick={() => isAvailable && onPurchase(upgrade.id)}
+                            disabled={!isAvailable || isPurchased}
+                            aria-label={`${sentence(upgrade.name)}, ${upgrade.description}. ${isPurchased ? 'Owned' : `${upgrade.cost} focus points`}`}
+                            className={`flex min-h-14 w-full items-center gap-4 rounded-md px-3 py-3 text-left transition-colors ${
+                              isAvailable && !isPurchased ? 'hover:bg-night-raised' : 'cursor-default'
+                            }`}
+                          >
+                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#3A3D45]">
+                              <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden="true" />
+                            </span>
+
+                            <span className="min-w-0 flex-1">
+                              <span className="flex items-center gap-2 font-medium">
+                                {sentence(upgrade.name)}
+                                {isPurchased && <Check className="h-4 w-4 text-hl" strokeWidth={2} aria-hidden="true" />}
+                              </span>
+                              <span className="block text-[0.8125rem] text-ink-on-night-2">{upgrade.description}</span>
+                              {upgrade.requires && !meetsRequirements && (
+                                <span className="mt-1 flex items-center gap-1 text-[0.8125rem] text-ink-on-night-2">
+                                  <Lock className="h-3 w-3" strokeWidth={1.75} aria-hidden="true" />
+                                  Needs {sentence(UPGRADES[upgrade.requires]?.name)}
+                                </span>
+                              )}
+                            </span>
+
+                            <span className="shrink-0 text-right tabular">
+                              {isPurchased ? (
+                                <span className="text-[0.8125rem] font-semibold">Owned</span>
+                              ) : isAvailable ? (
+                                <span className="inline-flex h-9 items-center rounded-full bg-ink-on-night px-3.5 text-[0.8125rem] font-semibold text-ink">
+                                  {upgrade.cost.toLocaleString()} FP
+                                </span>
+                              ) : (
+                                <>
+                                  <span className="block text-[0.9375rem] font-semibold text-ink-on-night-2">{upgrade.cost.toLocaleString()} FP</span>
+                                  {!canAfford && meetsRequirements && (
+                                    <span className="block text-xs text-ink-on-night-2">{shortBy.toLocaleString()} short</span>
+                                  )}
+                                </>
+                              )}
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+              ))}
             </div>
-          </motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
     </div>
@@ -169,4 +151,3 @@ const UpgradeShop = ({ gameState, onPurchase, showShop, onToggleShop }) => {
 };
 
 export default UpgradeShop;
-

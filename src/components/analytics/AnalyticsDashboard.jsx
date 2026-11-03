@@ -1,26 +1,38 @@
 import { useMemo } from 'react';
-import { BarChart2, Clock, Book, TrendingUp, Award, Headphones } from 'lucide-react';
 import PropTypes from 'prop-types';
+import { EmptyState } from '../ui';
 
 /**
- * AnalyticsDashboard Component
- * Displays reading statistics and analytics
+ * AnalyticsDashboard: your reading history as numbers in Literata and the
+ * genres you return to as ink bars, the top one in highlighter.
  */
-const AnalyticsDashboard = ({ userData, readingHistory = [] }) => {
+const StatItem = ({ label, value }) => (
+  <div className="flex flex-col">
+    <dt className="order-2 mt-1 t-meta">{label}</dt>
+    <dd className="order-1 t-h1 text-ink tabular">{value}</dd>
+  </div>
+);
+
+StatItem.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+};
+
+const AnalyticsDashboard = ({ userData: _userData, readingHistory = [] }) => {
   const stats = useMemo(() => {
     const totalBooks = readingHistory.length;
     const totalHours = readingHistory.reduce((sum, book) => sum + (book.hoursListened || 0), 0);
     const averageRating = totalBooks > 0
       ? readingHistory.reduce((sum, book) => sum + (book.rating || 0), 0) / totalBooks
       : 0;
-    
+
     const genreCount = {};
     readingHistory.forEach(book => {
       book.genres?.forEach(genre => {
         genreCount[genre] = (genreCount[genre] || 0) + 1;
       });
     });
-    
+
     const topGenres = Object.entries(genreCount)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 5);
@@ -38,55 +50,52 @@ const AnalyticsDashboard = ({ userData, readingHistory = [] }) => {
     };
   }, [readingHistory]);
 
-  const StatCard = ({ icon: Icon, label, value, color }) => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-      <div className="flex items-center gap-4">
-        <div className={`p-3 rounded-lg ${color}`}>
-          <Icon className="w-6 h-6 text-white" />
-        </div>
-        <div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">{label}</p>
-          <p className="text-2xl font-bold">{value}</p>
-        </div>
-      </div>
-    </div>
-  );
+  const maxGenre = stats.topGenres[0]?.[1] || 1;
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Your Reading Analytics</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatCard icon={Book} label="Books Completed" value={stats.totalBooks} color="bg-blue-500" />
-        <StatCard icon={Clock} label="Hours Listened" value={stats.totalHours} color="bg-green-500" />
-        <StatCard icon={Award} label="Average Rating" value={stats.averageRating} color="bg-yellow-500" />
-        <StatCard icon={TrendingUp} label="This Month" value={stats.booksThisMonth} color="bg-purple-500" />
-        <StatCard icon={Headphones} label="Avg Hours/Book" value={stats.totalBooks > 0 ? Math.round(stats.totalHours / stats.totalBooks) : 0} color="bg-indigo-500" />
-        <StatCard icon={BarChart2} label="Top Genres" value={stats.topGenres.length} color="bg-pink-500" />
-      </div>
+    <section aria-labelledby="analytics-title" className="space-y-10">
+      <h2 id="analytics-title" className="t-h2 text-ink">Your reading analytics</h2>
 
-      {stats.topGenres.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-          <h3 className="text-lg font-semibold mb-4">Favorite Genres</h3>
-          <div className="space-y-3">
-            {stats.topGenres.map(([genre, count]) => (
-              <div key={genre}>
-                <div className="flex justify-between mb-1">
-                  <span className="text-sm font-medium">{genre}</span>
-                  <span className="text-sm text-gray-600">{count} books</span>
-                </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full"
-                    style={{ width: `${(count / stats.totalBooks) * 100}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      {stats.totalBooks === 0 ? (
+        <EmptyState
+          title="Nothing to count yet"
+          description="Finish your first book and your hours, ratings and genres will show here."
+          action="Open your library"
+          actionTo="/library"
+        />
+      ) : (
+        <>
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-3">
+            <StatItem label="Books completed" value={stats.totalBooks} />
+            <StatItem label="Hours listened" value={stats.totalHours} />
+            <StatItem label="Average rating" value={stats.averageRating} />
+            <StatItem label="Finished this month" value={stats.booksThisMonth} />
+            <StatItem label="Hours per book, on average" value={stats.totalBooks > 0 ? Math.round(stats.totalHours / stats.totalBooks) : 0} />
+            <StatItem label="Genres in your top list" value={stats.topGenres.length} />
+          </dl>
+
+          {stats.topGenres.length > 0 && (
+            <div>
+              <h3 className="t-h3 text-ink">Favourite genres</h3>
+              <ul className="mt-4 space-y-3">
+                {stats.topGenres.map(([genre, count], i) => (
+                  <li key={genre} className="grid grid-cols-[minmax(0,9rem)_minmax(0,1fr)_auto] items-center gap-4">
+                    <span className={`truncate text-sm ${i === 0 ? 'font-semibold text-ink' : 'text-ink-2'}`}>{genre}</span>
+                    <span className="relative h-3 border-l border-line-strong" aria-hidden="true">
+                      <span
+                        className={`absolute inset-y-0 left-0 rounded-r-[3px] ${i === 0 ? 'bg-hl ring-1 ring-inset ring-ink' : 'bg-ink'}`}
+                        style={{ width: `${(count / maxGenre) * 100}%` }}
+                      />
+                    </span>
+                    <span className="text-right text-[0.8125rem] text-ink-2 tabular">{count} {count === 1 ? 'book' : 'books'}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
       )}
-    </div>
+    </section>
   );
 };
 
@@ -95,12 +104,4 @@ AnalyticsDashboard.propTypes = {
   readingHistory: PropTypes.array
 };
 
-StatCard.propTypes = {
-  icon: PropTypes.elementType.isRequired,
-  label: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  color: PropTypes.string.isRequired
-};
-
 export default AnalyticsDashboard;
-
