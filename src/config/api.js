@@ -5,10 +5,10 @@
  */
 
 // Grok API Configuration
+// The browser calls our own serverless proxy (api/grok.js). The xAI key lives
+// only on the server as GROK_API_KEY and is never bundled into the client.
 export const GROK_API_CONFIG = {
-  apiKey: import.meta.env.VITE_GROK_API_KEY || 'YOUR_GROK_API_KEY_HERE',
-  baseUrl: 'https://api.x.ai/v1',
-  model: 'grok-beta',
+  endpoint: '/api/grok',
   maxTokens: 1000,
   temperature: 0.7,
 };

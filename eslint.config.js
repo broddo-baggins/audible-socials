@@ -27,7 +27,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['scripts/**/*.js', 'vite.config.js', 'postcss.config.js', 'tailwind.config.js'],
+    files: ['api/**/*.js', 'tests/**/*.js', 'scripts/**/*.js', 'vite.config.js', 'postcss.config.js', 'tailwind.config.js'],
     languageOptions: {
       globals: {
         ...globals.node,
