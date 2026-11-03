@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { 
   Trophy, 
   Users, 
@@ -17,19 +17,13 @@ import clubMilestonesData from '../../data/clubMilestones.json';
 import usersData from '../../data/users.json';
 
 export default function ClubTimeline({ clubId }) {
-  const [milestones, setMilestones] = useState([]);
-  const [clubStats, setClubStats] = useState(null);
-  const [upcomingMilestones, setUpcomingMilestones] = useState([]);
   const [activeFilter, setActiveFilter] = useState('all');
 
-  useEffect(() => {
-    const clubData = clubMilestonesData.find(c => c.clubId === clubId);
-    if (clubData) {
-      setMilestones(clubData.milestones || []);
-      setClubStats(clubData.stats || null);
-      setUpcomingMilestones(clubData.upcomingMilestones || []);
-    }
-  }, [clubId]);
+  // Static data: derive it from the club id instead of copying it into state
+  const clubData = clubMilestonesData.find(c => c.clubId === clubId);
+  const milestones = clubData?.milestones || [];
+  const clubStats = clubData?.stats || null;
+  const upcomingMilestones = clubData?.upcomingMilestones || [];
 
   const getMilestoneIcon = (type) => {
     switch (type) {

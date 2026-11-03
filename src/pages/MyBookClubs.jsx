@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion as Motion } from 'framer-motion';
 import BookClubsTab from '../components/clubs/BookClubsTab';
@@ -14,14 +14,10 @@ const deriveActiveTab = (pathname) => {
 export default function MyBookClubs() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState(() => deriveActiveTab(location.pathname));
-
-  useEffect(() => {
-    setActiveTab(deriveActiveTab(location.pathname));
-  }, [location.pathname]);
+  // The URL is the source of truth for the tab
+  const activeTab = deriveActiveTab(location.pathname);
 
   const handleTabChange = (tab) => {
-    setActiveTab(tab);
     if (tab === 'clubs') navigate('/clubs');
     else if (tab === 'friends') navigate('/clubs/friends');
     else if (tab === 'activity') navigate('/clubs/activity');

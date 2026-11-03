@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Play, Pause, Trophy, Star, Clock, Award, Zap, Lock, Ear, Sofa, Fish, Landmark, Compass, Globe, Library, Target, Sparkles, Castle, Scroll, Hourglass, Sprout, Mountain, Circle, Shield, Flame, Palette, Hammer, Cat, Footprints, Scissors, BookOpen, Glasses, Coins, Briefcase, DollarSign, TrendingUp, ShoppingBag, Crown, Hand, Heart, Moon, Sun, ChefHat } from 'lucide-react';
 import IdleGame from '../components/idle/IdleGame';
 import { Card, Button } from '../components/ui';
-import { getIdleGameState, ACHIEVEMENTS, updateIdleGameState } from '../utils/idleGame';
+import { getIdleGameState, ACHIEVEMENTS } from '../utils/idleGame';
 
 // Icon mapping for achievements
 const ACHIEVEMENT_ICON_MAP = {

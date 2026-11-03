@@ -60,7 +60,7 @@ const ProgressBar = ({
   const handleKeyDown = (e) => {
     if (!interactive) return;
     
-    let newValue = value;
+    let newValue;
     const step = max / 100;
     
     if (e.key === 'ArrowRight') {

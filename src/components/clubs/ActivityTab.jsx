@@ -6,86 +6,87 @@ import booksData from '../../data/books.json';
 import clubsData from '../../data/clubs.json';
 import { getFriends } from '../../utils/localStorage';
 
-export default function ActivityTab() {
-  const [activities, setActivities] = useState([]);
+const getTimeAgo = (diff) => {
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor(diff / 3600000);
 
-  useEffect(() => {
-    generateActivities();
-    // Slower refresh - every 60 seconds instead of real-time
-    const interval = setInterval(generateActivities, 60000);
-    return () => clearInterval(interval);
-  }, []);
+  if (days > 0) return `${days}d ago`;
+  if (hours > 0) return `${hours}h ago`;
+  return 'Just now';
+};
 
-  const generateActivities = () => {
-    const friendIds = getFriends();
-    const friends = usersData.filter(u => friendIds.includes(u.id));
-    
-    const activityList = [];
+const buildActivities = () => {
+  const friendIds = getFriends();
+  const friends = usersData.filter(u => friendIds.includes(u.id));
+  
+  const activityList = [];
 
-    // FRIENDS ONLY - No trending or public activities
-    friends.forEach((friend) => {
-      // Currently reading
-      if (friend.currentlyReading) {
-        const book = booksData.find(b => b.id === friend.currentlyReading);
-        if (book) {
-          activityList.push({
-            id: `reading-${friend.id}`,
-            type: 'reading',
-            user: friend,
-            book: book,
-            timestamp: Date.now() - Math.random() * 86400000 * 3 // Last 3 days
-          });
-        }
+  // FRIENDS ONLY - No trending or public activities
+  friends.forEach((friend) => {
+    // Currently reading
+    if (friend.currentlyReading) {
+      const book = booksData.find(b => b.id === friend.currentlyReading);
+      if (book) {
+        activityList.push({
+          id: `reading-${friend.id}`,
+          type: 'reading',
+          user: friend,
+          book: book,
+          timestamp: Date.now() - Math.random() * 86400000 * 3 // Last 3 days
+        });
       }
+    }
 
-      // Recent ratings
-      Object.entries(friend.ratings).slice(0, 2).forEach(([bookId, rating]) => {
-        const book = booksData.find(b => b.id === bookId);
-        if (book) {
-          activityList.push({
-            id: `rating-${friend.id}-${bookId}`,
-            type: 'rating',
-            user: friend,
-            book: book,
-            rating: rating,
-            timestamp: Date.now() - Math.random() * 86400000 * 7 // Last 7 days
-          });
-        }
-      });
-
-      // Club joins
-      friend.joinedClubs.slice(0, 1).forEach((clubId) => {
-        const club = clubsData.find(c => c.id === clubId);
-        if (club) {
-          const clubBook = booksData.find(b => b.id === club.currentBook);
-          activityList.push({
-            id: `club-${friend.id}-${clubId}`,
-            type: 'club_join',
-            user: friend,
-            club: club,
-            book: clubBook,
-            timestamp: Date.now() - Math.random() * 86400000 * 14 // Last 14 days
-          });
-        }
-      });
+    // Recent ratings
+    Object.entries(friend.ratings).slice(0, 2).forEach(([bookId, rating]) => {
+      const book = booksData.find(b => b.id === bookId);
+      if (book) {
+        activityList.push({
+          id: `rating-${friend.id}-${bookId}`,
+          type: 'rating',
+          user: friend,
+          book: book,
+          rating: rating,
+          timestamp: Date.now() - Math.random() * 86400000 * 7 // Last 7 days
+        });
+      }
     });
 
-    // Sort by timestamp (most recent first)
-    activityList.sort((a, b) => b.timestamp - a.timestamp);
+    // Club joins
+    friend.joinedClubs.slice(0, 1).forEach((clubId) => {
+      const club = clubsData.find(c => c.id === clubId);
+      if (club) {
+        const clubBook = booksData.find(b => b.id === club.currentBook);
+        activityList.push({
+          id: `club-${friend.id}-${clubId}`,
+          type: 'club_join',
+          user: friend,
+          club: club,
+          book: clubBook,
+          timestamp: Date.now() - Math.random() * 86400000 * 14 // Last 14 days
+        });
+      }
+    });
+  });
 
-    setActivities(activityList.slice(0, 25)); // Show more activities
-  };
+  // Sort by timestamp (most recent first)
+  activityList.sort((a, b) => b.timestamp - a.timestamp);
 
-  const getTimeAgo = (timestamp) => {
-    const now = Date.now();
-    const diff = now - timestamp;
-    const days = Math.floor(diff / 86400000);
-    const hours = Math.floor(diff / 3600000);
-    
-    if (days > 0) return `${days}d ago`;
-    if (hours > 0) return `${hours}h ago`;
-    return 'Just now';
-  };
+  // Label each with its age now, so rendering stays pure
+  const now = Date.now();
+  return activityList
+    .slice(0, 25) // Show more activities
+    .map(activity => ({ ...activity, timeAgo: getTimeAgo(now - activity.timestamp) }));
+};
+
+export default function ActivityTab() {
+  const [activities, setActivities] = useState(buildActivities);
+
+  useEffect(() => {
+    // Slower refresh - every 60 seconds instead of real-time
+    const interval = setInterval(() => setActivities(buildActivities()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const renderActivity = (activity) => {
     switch (activity.type) {
@@ -120,7 +121,7 @@ export default function ActivityTab() {
                     </div>
                     <div>
                       <p className="font-bold text-gray-900">{activity.user.name}</p>
-                      <p className="text-xs text-gray-500">{getTimeAgo(activity.timestamp)}</p>
+                      <p className="text-xs text-gray-500">{activity.timeAgo}</p>
                     </div>
                   </div>
                   <BookOpen className="w-5 h-5 text-green-500" />
@@ -172,7 +173,7 @@ export default function ActivityTab() {
                     </div>
                     <div>
                       <p className="font-bold text-gray-900">{activity.user.name}</p>
-                      <p className="text-xs text-gray-500">{getTimeAgo(activity.timestamp)}</p>
+                      <p className="text-xs text-gray-500">{activity.timeAgo}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-1 bg-yellow-50 px-3 py-1 rounded-full">
@@ -229,7 +230,7 @@ export default function ActivityTab() {
                     </div>
                     <div>
                       <p className="font-bold text-gray-900">{activity.user.name}</p>
-                      <p className="text-xs text-gray-500">{getTimeAgo(activity.timestamp)}</p>
+                      <p className="text-xs text-gray-500">{activity.timeAgo}</p>
                     </div>
                   </div>
                   <Users className="w-5 h-5 text-purple-500" />

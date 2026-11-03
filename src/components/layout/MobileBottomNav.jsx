@@ -1,6 +1,6 @@
 import { Home, Library, Compass, Search, User, Users, Zap } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion'; // eslint-disable-line no-unused-vars
+import { motion } from 'framer-motion';
 
 const MobileBottomNav = () => {
   const location = useLocation();

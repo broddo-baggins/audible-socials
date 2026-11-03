@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { BookOpen, Star, Clock, TrendingUp, Share2, ArrowLeft, Crown, Users, ChevronDown, Heart, MessageCircle, Filter } from 'lucide-react';
 import usersData from '../data/users.json';
@@ -10,29 +10,17 @@ import { getFriends } from '../utils/localStorage';
 export default function FriendLibrary() {
   const { friendId } = useParams();
   const navigate = useNavigate();
-  const [friend, setFriend] = useState(null);
-  const [friendBooks, setFriendBooks] = useState([]);
-  const [shareHistory, setShareHistory] = useState(null);
+  // Static data for this friend id
+  const friend = useMemo(() => usersData.find(u => u.id === friendId) || null, [friendId]);
+  const isFriend = useMemo(() => getFriends().includes(friendId), [friendId]);
   const [filter, setFilter] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
-  const [isFriend, setIsFriend] = useState(false);
 
-  useEffect(() => {
-    // Find the friend
-    const foundFriend = usersData.find(u => u.id === friendId);
-    if (!foundFriend) {
-      navigate('/clubs/friends');
-      return;
-    }
-
-    // Check if they're a friend
-    const friendsList = getFriends();
-    setIsFriend(friendsList.includes(friendId));
-
-    setFriend(foundFriend);
-
-    // Get friend's books with details
-    const books = (foundFriend.library || [])
+  // Friend's books with details
+  const friendBooks = useMemo(() => {
+    if (!friend) return [];
+    const foundFriend = friend;
+    return (foundFriend.library || [])
       .map(bookId => {
         const book = booksData.find(b => b.id === bookId);
         if (!book) return null;
@@ -47,13 +35,14 @@ export default function FriendLibrary() {
         };
       })
       .filter(book => book !== null);
+  }, [friend]);
 
-    setFriendBooks(books);
+  const shareHistory = useMemo(() => shareHistoryData.find(h => h.userId === friendId), [friendId]);
 
-    // Get share history
-    const history = shareHistoryData.find(h => h.userId === friendId);
-    setShareHistory(history);
-  }, [friendId, navigate]);
+  // Unknown friend: back to the friends list
+  useEffect(() => {
+    if (!friend) navigate('/clubs/friends', { replace: true });
+  }, [friend, navigate]);
 
   if (!friend) {
     return (

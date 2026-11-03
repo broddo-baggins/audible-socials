@@ -1,15 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Calendar, Clock, Users, Check, Bell } from 'lucide-react';
 import { getUserData, saveUserData } from '../../utils/localStorage';
 
 export default function EventRSVP({ event }) {
-  const [hasRSVP, setHasRSVP] = useState(false);
+  const [hasRSVP, setHasRSVP] = useState(() => getUserData().rsvpEvents?.includes(event.id) || false);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const user = getUserData();
-    setHasRSVP(user.rsvpEvents?.includes(event.id) || false);
-  }, [event.id]);
 
   const handleRSVP = () => {
     setLoading(true);

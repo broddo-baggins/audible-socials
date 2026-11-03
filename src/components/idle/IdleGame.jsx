@@ -10,6 +10,33 @@ import UpgradeShop from './UpgradeShop';
 import IdleAchievements from './IdleAchievements';
 import FloatingText from './FloatingText';
 
+// Per-bar peak height and speed, picked once so renders stay pure.
+const VISUALIZER_BARS = [...Array(5)].map(() => ({
+  peak: 16 + Math.random() * 16,
+  duration: 0.5 + Math.random() * 0.5,
+}));
+
+// Audio Visualizer Bars (shown while playing)
+const AudioVisualizer = () => (
+  <div className="flex items-end justify-center gap-1 h-8 mb-2">
+    {VISUALIZER_BARS.map((bar, i) => (
+      <motion.div
+        key={i}
+        className="w-1.5 bg-green-400 rounded-t-sm"
+        animate={{
+          height: [4, bar.peak, 4],
+          opacity: [0.5, 1, 0.5]
+        }}
+        transition={{
+          duration: bar.duration,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+    ))}
+  </div>
+);
+
 /**
  * IdleGame - Main idle game component
  * Integrates all sub-components and manages game state via useIdleGame hook
@@ -49,30 +76,6 @@ const IdleGame = ({ isPlaying: externalIsPlaying, currentBook: externalBook }) =
       // Purchase successful - could add additional feedback here
     }
   };
-
-  // Audio Visualizer Bars
-  const AudioVisualizer = () => (
-    <div className="flex items-end justify-center gap-1 h-8 mb-2">
-      {[...Array(5)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="w-1.5 bg-green-400 rounded-t-sm"
-          animate={isPlaying ? {
-            height: [4, 16 + Math.random() * 16, 4],
-            opacity: [0.5, 1, 0.5]
-          } : {
-            height: 4,
-            opacity: 0.3
-          }}
-          transition={{
-            duration: 0.5 + Math.random() * 0.5,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-      ))}
-    </div>
-  );
 
   return (
     <div className="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 rounded-xl p-6 text-white shadow-2xl overflow-hidden">

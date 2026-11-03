@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -17,13 +17,7 @@ const BookCarousel = ({
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   
-  useEffect(() => {
-    checkScrollability();
-    window.addEventListener('resize', checkScrollability);
-    return () => window.removeEventListener('resize', checkScrollability);
-  }, [books]);
-  
-  const checkScrollability = () => {
+  const checkScrollability = useCallback(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
     
@@ -31,7 +25,17 @@ const BookCarousel = ({
     setCanScrollRight(
       container.scrollLeft < container.scrollWidth - container.clientWidth - 10
     );
-  };
+  }, []);
+
+  useEffect(() => {
+    // Measure after layout, once the new books have rendered
+    const frame = requestAnimationFrame(checkScrollability);
+    window.addEventListener('resize', checkScrollability);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('resize', checkScrollability);
+    };
+  }, [books, checkScrollability]);
   
   const scroll = (direction) => {
     const container = scrollContainerRef.current;

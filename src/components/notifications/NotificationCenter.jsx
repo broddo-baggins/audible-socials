@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bell, X, Check, Users, Star, Calendar, Gift, Trophy, TrendingUp, CreditCard, BookOpen } from 'lucide-react';
 import { 
@@ -10,17 +10,20 @@ import {
 } from '../../utils/notifications';
 
 export default function NotificationCenter({ isOpen, onClose }) {
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-
-  useEffect(() => {
-    loadNotifications();
-  }, [isOpen]);
+  const [notifications, setNotifications] = useState(getNotifications);
+  const [unreadCount, setUnreadCount] = useState(getUnreadCount);
 
   const loadNotifications = () => {
     setNotifications(getNotifications());
     setUnreadCount(getUnreadCount());
   };
+
+  // Re-read storage each time the panel opens (adjusting state during render)
+  const [wasOpen, setWasOpen] = useState(isOpen);
+  if (isOpen !== wasOpen) {
+    setWasOpen(isOpen);
+    if (isOpen) loadNotifications();
+  }
 
   const handleMarkAsRead = (id) => {
     markAsRead(id);

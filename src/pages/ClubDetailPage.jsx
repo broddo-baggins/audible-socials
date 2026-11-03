@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion as Motion } from 'framer-motion';
 import { Users, Calendar, Clock, Crown, Gift, Award, Check, X, Star, TrendingUp, BookOpen } from 'lucide-react';
@@ -15,55 +15,45 @@ import DiscountDisplay from '../components/clubs/DiscountDisplay';
 
 export default function ClubDetailPage() {
   const { clubId } = useParams();
-  const [club, setClub] = useState(null);
-  const [currentBook, setCurrentBook] = useState(null);
-  const [previousBooks, setPreviousBooks] = useState([]);
-  const [userData, setUserData] = useState(null);
-  const [isMember, setIsMember] = useState(false);
-  const [coverUrl, setCoverUrl] = useState(null);
-  const [friendsInClub, setFriendsInClub] = useState([]);
-  const [clubFriends, setClubFriends] = useState(null);
+  // Club, books and friends are static data for this club id
+  const club = useMemo(() => clubsData.find(c => c.id === clubId), [clubId]);
+  const currentBook = useMemo(() => club && booksData.find(b => b.id === club.currentBook), [club]);
+  const previousBooks = useMemo(() => (club?.previousBooks || [])
+    .map(id => booksData.find(b => b.id === id))
+    .filter(Boolean), [club]);
+  const friendsInClub = useMemo(() => {
+    const friendIds = getFriends();
+    return usersData.filter(u =>
+      friendIds.includes(u.id) && u.joinedClubs && u.joinedClubs.includes(clubId)
+    );
+  }, [clubId]);
+  // All club friends (direct friends and friends of friends)
+  const clubFriends = useMemo(() => getClubFriends(clubId, usersData), [clubId]);
+
+  const [userData, setUserData] = useState(getUserData);
+  const [isMember, setIsMember] = useState(() => getJoinedClubs().includes(clubId));
+  // Re-read membership when the route moves to another club
+  const [prevClubId, setPrevClubId] = useState(clubId);
+  if (clubId !== prevClubId) {
+    setPrevClubId(clubId);
+    setUserData(getUserData());
+    setIsMember(getJoinedClubs().includes(clubId));
+  }
+
+  // Fallback cover for books without one, keyed by book so it never shows on another club
+  const [fetchedCover, setFetchedCover] = useState({ bookId: null, url: null });
+  const coverUrl = fetchedCover.bookId === currentBook?.id ? fetchedCover.url : null;
+  useEffect(() => {
+    if (!currentBook || currentBook.cover) return;
+    let active = true;
+    fetchGoogleImagesCover(currentBook.id, currentBook.coverQuery, currentBook.genre)
+      .then(url => { if (active) setFetchedCover({ bookId: currentBook.id, url }); });
+    return () => { active = false; };
+  }, [currentBook]);
+
   const [activeTab, setActiveTab] = useState('overview');
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
-
-  useEffect(() => {
-    const foundClub = clubsData.find(c => c.id === clubId);
-    setClub(foundClub);
-
-    if (foundClub) {
-      // Get current book
-      const current = booksData.find(b => b.id === foundClub.currentBook);
-      setCurrentBook(current);
-      
-      if (current) {
-        fetchGoogleImagesCover(current.id, current.coverQuery, current.genre)
-          .then(cover => setCoverUrl(cover));
-      }
-
-      // Get previous books
-      const previous = foundClub.previousBooks
-        .map(id => booksData.find(b => b.id === id))
-        .filter(Boolean);
-      setPreviousBooks(previous);
-
-      // Get user data
-      const user = getUserData();
-      setUserData(user);
-      setIsMember(getJoinedClubs().includes(clubId));
-
-      // Find friends in this club
-      const friendIds = getFriends();
-      const friends = usersData.filter(u =>
-        friendIds.includes(u.id) && u.joinedClubs && u.joinedClubs.includes(clubId)
-      );
-      setFriendsInClub(friends);
-
-      // Get all club friends (direct friends and friends of friends)
-      const clubFriendsData = getClubFriends(clubId, usersData);
-      setClubFriends(clubFriendsData);
-    }
-  }, [clubId]);
 
   const handleJoinClub = () => {
     // Check if user owns the current book

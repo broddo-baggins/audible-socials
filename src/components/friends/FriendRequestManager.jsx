@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   UserPlus, 
@@ -26,14 +26,10 @@ import {
 import { createFriendAcceptedNotification, createFriendRejectedNotification } from '../../utils/notifications';
 
 export default function FriendRequestManager({ onUpdate }) {
-  const [pendingRequests, setPendingRequests] = useState([]);
-  const [sentRequests, setSentRequests] = useState([]);
+  const [pendingRequests, setPendingRequests] = useState(getPendingRequests);
+  const [sentRequests, setSentRequests] = useState(getSentRequests);
   const [activeTab, setActiveTab] = useState('received');
   const [actionFeedback, setActionFeedback] = useState(null);
-
-  useEffect(() => {
-    loadRequests();
-  }, []);
 
   const loadRequests = () => {
     setPendingRequests(getPendingRequests());

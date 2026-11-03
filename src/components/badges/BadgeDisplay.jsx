@@ -248,8 +248,9 @@ const BadgeDisplay = ({ earnedBadges = [], allBadges = false, size = 'md', showP
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {badgesData.map((badge) => {
             const isEarned = earnedBadges.includes(badge.id);
-            // Mock progress for demonstration
-            const mockProgress = isEarned ? 100 : Math.floor(Math.random() * 80) + 10;
+            // Mock progress for demonstration, stable per badge across renders
+            const seed = [...String(badge.id)].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+            const mockProgress = isEarned ? 100 : (seed % 80) + 10;
             return (
               <BadgeProgress
                 key={badge.id}

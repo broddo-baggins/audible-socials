@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { User, Crown, CreditCard, Users, BookOpen, Settings, LogOut, Trophy, TrendingUp } from 'lucide-react';
 import { getUserData, getJoinedClubs, getFriends, setPremium, signOut } from '../utils/localStorage';
@@ -9,9 +9,15 @@ import BadgeDisplay from '../components/badges/BadgeDisplay';
 import ListeningStats from '../components/stats/ListeningStats';
 
 export default function Profile() {
-  const [userData, setUserData] = useState(null);
-  const [joinedClubs, setJoinedClubs] = useState([]);
-  const [friends, setFriends] = useState([]);
+  const [userData, setUserData] = useState(getUserData);
+  const [joinedClubs] = useState(() => {
+    const clubIds = getJoinedClubs();
+    return clubsData.filter(club => clubIds.includes(club.id));
+  });
+  const [friends] = useState(() => {
+    const friendIds = getFriends();
+    return usersData.filter(u => friendIds.includes(u.id));
+  });
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(location.hash === '#privacy' ? 'settings' : 'overview');
@@ -26,21 +32,6 @@ export default function Profile() {
     signOut();
     navigate('/');
   };
-
-  useEffect(() => {
-    const user = getUserData();
-    setUserData(user);
-
-    // Get joined clubs
-    const clubIds = getJoinedClubs();
-    const clubs = clubsData.filter(club => clubIds.includes(club.id));
-    setJoinedClubs(clubs);
-
-    // Get friends
-    const friendIds = getFriends();
-    const friendsList = usersData.filter(u => friendIds.includes(u.id));
-    setFriends(friendsList);
-  }, []);
 
   if (!userData) {
     return <div className="flex items-center justify-center h-screen">Loading...</div>;

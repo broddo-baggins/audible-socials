@@ -13,10 +13,7 @@ const CharacterVisuals = ({ activity, isPlaying }) => {
   
   // Sprite animation loop
   useEffect(() => {
-    if (!isPlaying) {
-      setFrame(0);
-      return;
-    }
+    if (!isPlaying) return;
 
     const interval = setInterval(() => {
       setFrame(prev => (prev + 1) % 2);
@@ -27,7 +24,8 @@ const CharacterVisuals = ({ activity, isPlaying }) => {
 
   const currentActivity = ACTIVITIES[activity];
   const spriteData = PIXEL_SPRITES[activity] || PIXEL_SPRITES.meditate;
-  const currentFrame = spriteData[frame];
+  // Paused characters rest on the first frame
+  const currentFrame = spriteData[isPlaying ? frame : 0];
   const pixelColor = SPRITE_COLORS[activity] || '#A78BFA';
 
   // Helper to render the pixel grid

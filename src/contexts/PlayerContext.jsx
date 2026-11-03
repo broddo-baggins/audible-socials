@@ -19,16 +19,30 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { PlayerContext } from './PlayerContextObject';
 
+// Player state saved by a previous visit, or null
+const loadSavedState = () => {
+  try {
+    const state = JSON.parse(localStorage.getItem('echoread_player_state'));
+    return state?.currentBook ? state : null;
+  } catch (e) {
+    console.warn('Failed to load player state:', e);
+    return null;
+  }
+};
+
 export const PlayerProvider = ({ children }) => {
+  // Restored once, when the provider mounts
+  const [saved] = useState(loadSavedState);
+
   // Core playback state
-  const [currentBook, setCurrentBook] = useState(null);    // Currently loaded book
+  const [currentBook, setCurrentBook] = useState(saved?.currentBook ?? null); // Currently loaded book
   const [isPlaying, setIsPlaying] = useState(false);       // Playback status
-  const [currentTime, setCurrentTime] = useState(0);       // Current playback position (seconds)
+  const [currentTime, setCurrentTime] = useState(saved?.currentTime || 0); // Current playback position (seconds)
   const [duration, setDuration] = useState(0);             // Total book duration (seconds)
-  const [currentChapter, setCurrentChapter] = useState(0); // Current chapter index
+  const [currentChapter, setCurrentChapter] = useState(saved?.currentChapter || 0); // Current chapter index
 
   // Playback controls
-  const [playbackSpeed, setPlaybackSpeed] = useState(1.0); // Playback speed multiplier
+  const [playbackSpeed, setPlaybackSpeed] = useState(saved?.playbackSpeed || 1.0); // Playback speed multiplier
   const [volume, setVolume] = useState(1.0);               // Volume level (0-1)
 
   // Additional features
@@ -47,24 +61,6 @@ export const PlayerProvider = ({ children }) => {
   const audioRef = useRef(null);                           // HTML5 audio element
   const sleepTimerRef = useRef(null);                      // Timeout for sleep timer
   
-  // Load saved state from localStorage
-  useEffect(() => {
-    const savedState = localStorage.getItem('echoread_player_state');
-    if (savedState) {
-      try {
-        const state = JSON.parse(savedState);
-        if (state.currentBook) {
-          setCurrentBook(state.currentBook);
-          setCurrentTime(state.currentTime || 0);
-          setCurrentChapter(state.currentChapter || 0);
-          setPlaybackSpeed(state.playbackSpeed || 1.0);
-        }
-      } catch (e) {
-        console.error('Failed to load player state:', e);
-      }
-    }
-  }, []);
-  
   // Save state to localStorage
   useEffect(() => {
     if (currentBook) {
@@ -81,9 +77,8 @@ export const PlayerProvider = ({ children }) => {
   // Initialize audio element
   useEffect(() => {
     if (!audioRef.current) {
+      // Volume and speed are applied by their own effects below
       audioRef.current = new Audio();
-      audioRef.current.volume = volume;
-      audioRef.current.playbackRate = playbackSpeed;
 
       // Handle audio events
       audioRef.current.addEventListener('loadedmetadata', () => {

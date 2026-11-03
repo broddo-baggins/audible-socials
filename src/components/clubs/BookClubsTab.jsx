@@ -1,39 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, Calendar, Crown, TrendingUp, Gift, Zap, Plus, Lock } from 'lucide-react';
 import clubsData from '../../data/clubs.json';
 import booksData from '../../data/books.json';
 import { getUserData, getJoinedClubs } from '../../utils/localStorage';
-import CreatePrivateClub from './CreatePrivateClub';
 
 export default function BookClubsTab() {
-  const [userData, setUserData] = useState(null);
-  const [joinedClubs, setJoinedClubs] = useState([]);
-  const [featuredClubs, setFeaturedClubs] = useState([]);
+  const [userData] = useState(getUserData);
+  // Read once on mount, like the rest of the clubs tabs
+  const [clubIds] = useState(getJoinedClubs);
+  const joinedClubs = clubsData.filter(club => clubIds.includes(club.id));
 
-  useEffect(() => {
-    const user = getUserData();
-    setUserData(user);
-
-    // Get joined clubs
-    const clubIds = getJoinedClubs();
-    const joined = clubsData.filter(club => clubIds.includes(club.id));
-    setJoinedClubs(joined);
-
-    // Get featured clubs (exclude joined ones)
-    const featured = clubsData
-      .filter(club => !clubIds.includes(club.id))
-      .filter(club => !club.isPremium || user.isPremium) // Filter premium clubs if user is not premium
-      .sort((a, b) => b.memberCount - a.memberCount)
-      .slice(0, 6);
-    setFeaturedClubs(featured);
-  }, []);
-
-  const handleClubCreated = (newClub) => {
-    // Add to joined clubs
-    const updatedJoined = [...joinedClubs, newClub];
-    setJoinedClubs(updatedJoined);
-  };
+  // Featured clubs (exclude joined ones; premium clubs only for premium users)
+  const featuredClubs = clubsData
+    .filter(club => !clubIds.includes(club.id))
+    .filter(club => !club.isPremium || userData.isPremium)
+    .sort((a, b) => b.memberCount - a.memberCount)
+    .slice(0, 6);
 
   const maxClubs = userData?.isPremium ? 3 : 2;
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, UserPlus, Crown, Users, BookOpen, Star, Gauge, Clock, Send } from 'lucide-react';
 import usersData from '../../data/users.json';
@@ -8,26 +8,26 @@ import { getUserData, getFriends, removeFriend } from '../../utils/localStorage'
 import { sendFriendRequest, getSuggestedFriends, getFriendsOfFriends, isUserBlocked } from '../../utils/friendManagement';
 import FriendRequestManager from '../friends/FriendRequestManager';
 
+const loadFriendsList = () => {
+  const friendIds = getFriends();
+  return usersData.filter(u => friendIds.includes(u.id));
+};
+
+// Show top 6 friends of friends
+const loadFriendsOfFriends = () => getFriendsOfFriends('user-me', usersData).slice(0, 6);
+
 export default function FriendsTab() {
-  const [friends, setFriends] = useState([]);
-  const [friendsOfFriends, setFriendsOfFriends] = useState([]);
+  const [friends, setFriends] = useState(loadFriendsList);
+  const [friendsOfFriends, setFriendsOfFriends] = useState(loadFriendsOfFriends);
+  // Fixed for this visit, for "finishes on" estimates
+  const [now] = useState(() => Date.now());
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
 
-  useEffect(() => {
-    getUserData();
-    loadFriends();
-  }, []);
-
   const loadFriends = () => {
-    const friendIds = getFriends();
-    const friendsList = usersData.filter(u => friendIds.includes(u.id));
-    setFriends(friendsList);
-
-    // Load friends of friends
-    const fofList = getFriendsOfFriends('user-me', usersData).slice(0, 6); // Show top 6
-    setFriendsOfFriends(fofList);
+    setFriends(loadFriendsList());
+    setFriendsOfFriends(loadFriendsOfFriends());
   };
 
   const handleSearch = (query) => {
@@ -597,7 +597,7 @@ export default function FriendsTab() {
                   const totalDuration = currentBook.durationMinutes || 600; // fallback
                   const currentPosition = Math.round((progress / 100) * totalDuration);
                   const remainingTime = totalDuration - currentPosition;
-                  const estimatedCompletion = new Date(Date.now() + (remainingTime * 60 * 1000));
+                  const estimatedCompletion = new Date(now + (remainingTime * 60 * 1000));
 
                   return (
                     <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-purple-200">
@@ -665,7 +665,7 @@ export default function FriendsTab() {
 
                       const completionTime = selectedFriend.completionTimes?.[bookId] ||
                         Math.floor((book.durationMinutes || 600) / (selectedFriend.listeningSpeed || 1.0));
-                      const daysAgo = Math.floor(Math.random() * 30) + 1; // Mock data
+                      const daysAgo = (Number.parseInt(bookId, 10) || bookId.length) % 30 + 1; // Mock data, stable per book
 
                       return (
                         <Link

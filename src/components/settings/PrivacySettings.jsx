@@ -1,21 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Shield, Eye, EyeOff } from 'lucide-react';
 import { getUserData, saveUserData } from '../../utils/localStorage';
 
 export default function PrivacySettings() {
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState(() => getUserData()?.privacySettings || {
     shareLibrary: true,
     shareProgress: true,
     shareRatings: true,
     shareClubs: true
   });
-
-  useEffect(() => {
-    const user = getUserData();
-    if (user && user.privacySettings) {
-      setSettings(user.privacySettings);
-    }
-  }, []);
 
   const handleToggle = (key) => {
     const newSettings = { ...settings, [key]: !settings[key] };

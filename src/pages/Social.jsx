@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, BookOpen, Trophy, TrendingUp, UserPlus, Crown, Calendar, Star, Clock, Award, Sparkles } from 'lucide-react';
 import SocialNudges from '../components/social/SocialNudges';
@@ -10,8 +10,34 @@ import usersData from '../data/users.json';
 import clubsData from '../data/clubs.json';
 import booksData from '../data/books.json';
 
+// Friends, suggestions, clubs and stats for the hub, read once from localStorage
+const loadSocial = () => {
+  const user = getUserData();
+
+  const friendIds = getFriends();
+  const friendsList = usersData.filter(u => friendIds.includes(u.id));
+
+  const joinedClubIds = getJoinedClubs();
+  const featured = clubsData
+    .filter(club => !joinedClubIds.includes(club.id))
+    .sort((a, b) => b.memberCount - a.memberCount)
+    .slice(0, 3);
+
+  return {
+    userData: user,
+    friends: friendsList,
+    // Show top 4 friends of friends
+    friendsOfFriends: getFriendsOfFriends('user-me', usersData).slice(0, 4),
+    featuredClubs: featured,
+    stats: {
+      totalFriends: friendsList.length,
+      clubsJoined: joinedClubIds.length,
+      booksShared: user.library?.length || 0
+    }
+  };
+};
+
 const Social = () => {
-  const [userData, setUserData] = useState(null);
   const [requested, setRequested] = useState(() => new Set(getSentRequests().map(r => r.toUserId)));
   const handleAddFriend = (userId) => {
     const result = sendFriendRequest(userId, '', 'friends_of_friends');
@@ -19,40 +45,7 @@ const Social = () => {
       setRequested(prev => new Set(prev).add(userId));
     }
   };
-  const [friends, setFriends] = useState([]);
-  const [friendsOfFriends, setFriendsOfFriends] = useState([]);
-  const [featuredClubs, setFeaturedClubs] = useState([]);
-  const [stats, setStats] = useState({
-    totalFriends: 0,
-    clubsJoined: 0,
-    booksShared: 0
-  });
-
-  useEffect(() => {
-    const user = getUserData();
-    setUserData(user);
-
-    const friendIds = getFriends();
-    const friendsList = usersData.filter(u => friendIds.includes(u.id));
-    setFriends(friendsList);
-
-    // Load friends of friends
-    const fofList = getFriendsOfFriends('user-me', usersData).slice(0, 4); // Show top 4
-    setFriendsOfFriends(fofList);
-
-    const joinedClubIds = getJoinedClubs();
-    const featured = clubsData
-      .filter(club => !joinedClubIds.includes(club.id))
-      .sort((a, b) => b.memberCount - a.memberCount)
-      .slice(0, 3);
-    setFeaturedClubs(featured);
-
-    setStats({
-      totalFriends: friendsList.length,
-      clubsJoined: joinedClubIds.length,
-      booksShared: user.library?.length || 0
-    });
-  }, []);
+  const [{ userData, friends, friendsOfFriends, featuredClubs, stats }] = useState(loadSocial);
 
   return (
     <div className="min-h-screen bg-audible-white">
