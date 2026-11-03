@@ -1,100 +1,69 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Play, Plus, Heart, Share2, Clock } from 'lucide-react';
-import { Button, Rating, Badge, Card } from '../components/ui';
+import { useState, useMemo } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { Play, Plus, Check, Heart, Share2, ChevronDown } from 'lucide-react';
+import { Button, Rating, Badge, Cover, Waveform, ErrorState } from '../components/ui';
 import BookCarousel from '../components/books/BookCarousel';
 import FriendRecommendations from '../components/social/FriendRecommendations';
 import BookClubTeaser from '../components/social/BookClubTeaser';
-import { Skeleton } from '../components/ui';
+import FriendRatingsOnBook from '../components/social/FriendRatingsOnBook';
 import { usePlayer } from '../contexts/usePlayer';
-import booksData from '../data/books.json';
 import { getUserData, addToLibrary, toggleWishlist, purchaseBook } from '../utils/localStorage';
+import booksData from '../data/books.json';
 
-// Fixed share of ratings per star level, scaled by the book rating, so the bars are stable.
-const ratingDistribution = (rating) => {
-  const weights = { 5: Math.max(rating - 3, 0.2), 4: 1, 3: Math.max(4.5 - rating, 0.2), 2: 0.15, 1: 0.1 };
-  const total = Object.values(weights).reduce((sum, w) => sum + w, 0);
-  return (stars) => Math.round((weights[stars] / total) * 100);
+/**
+ * BookDetail: one book, set like the inside flap of a jacket. The cover on the
+ * left with the book's own waveform under it; on the right the serif title,
+ * who wrote and who reads it, the reading, the facts and one key action.
+ * Below: the summary, the chapters, what friends and clubs think, then shelves.
+ */
+const slug = (s) => s.toLowerCase().replace(/&/g, ' ').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+const formatDate = (iso) => {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? null : d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+};
+
+const safeUser = () => {
+  try { return getUserData(); } catch { return null; }
+};
+
+const KIND = {
+  original: { badge: 'original', label: 'Listenable Original', about: 'About this original' },
+  podcast: { badge: 'podcast', label: 'Podcast series', about: 'About this podcast' },
+  audiobook: { badge: null, label: null, about: 'About this audiobook' },
 };
 
 const BookDetail = () => {
   const { bookId } = useParams();
   const { loadBook, play } = usePlayer();
-  const navigate = useNavigate();
-  const [owned, setOwned] = useState(false);
-  const [wishlisted, setWishlisted] = useState(false);
-  const [shareStatus, setShareStatus] = useState('');
-  const [book, setBook] = useState(null);
-  const [similarBooks, setSimilarBooks] = useState([]);
-  const [authorBooks, setAuthorBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
+
+  const book = useMemo(() => booksData.find((b) => b.id === bookId) || null, [bookId]);
+  const similarBooks = useMemo(
+    () => (book ? booksData.filter((b) => b.genre === book.genre && b.id !== book.id && b.author !== book.author).slice(0, 12) : []),
+    [book],
+  );
+  const authorBooks = useMemo(
+    () => (book ? booksData.filter((b) => b.author === book.author && b.id !== book.id).slice(0, 12) : []),
+    [book],
+  );
+
+  const [user, setUser] = useState(safeUser);
   const [expandedDescription, setExpandedDescription] = useState(false);
-  
-  useEffect(() => {
-    const loadBookDetails = async () => {
-      try {
-        const foundBook = booksData.find(b => b.id === bookId);
-        if (!foundBook) {
-          setLoading(false);
-          return;
-        }
-        
-        // Books already have cover paths in books.json
-        setBook(foundBook);
-        const user = getUserData();
-        setOwned(user.library.includes(bookId));
-        setWishlisted((user.wishlist || []).includes(bookId));
-        setShareStatus('');
-        
-        // Load similar books (same genre)
-        const similar = booksData
-          .filter(b => b.genre === foundBook.genre && b.id !== bookId)
-          .slice(0, 12);
-        setSimilarBooks(similar);
-        
-        // Load author books
-        const authorBooks = booksData
-          .filter(b => b.author === foundBook.author && b.id !== bookId)
-          .slice(0, 12);
-        setAuthorBooks(authorBooks);
-        
-        setLoading(false);
-      } catch (error) {
-        console.error('Error loading book details:', error);
-        setLoading(false);
-      }
-    };
-    
-    loadBookDetails();
-  }, [bookId]);
-  
-  const handleAddToLibrary = () => {
-    addToLibrary(book.id);
-    setOwned(true);
-  };
+  const [showAllChapters, setShowAllChapters] = useState(false);
+  const [wished, setWished] = useState(() => Boolean(user?.wishlist?.includes(bookId)));
+  const [notice, setNotice] = useState('');
 
-  const handleBuyWithCredit = () => {
-    const result = purchaseBook(book.id);
-    if (result.success) {
-      setOwned(true);
-    } else {
-      alert(result.error === 'No credits available' ? 'You have no credits left.' : result.error);
-    }
-  };
+  // Reset the per-book state when the route moves to another book
+  const [shownId, setShownId] = useState(bookId);
+  if (shownId !== bookId) {
+    setShownId(bookId);
+    setExpandedDescription(false);
+    setShowAllChapters(false);
+    setWished(Boolean(user?.wishlist?.includes(bookId)));
+    setNotice('');
+  }
 
-  const handleShare = async () => {
-    const url = window.location.href;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: book.title, url });
-        return;
-      }
-      await navigator.clipboard.writeText(url);
-      setShareStatus('Link copied');
-    } catch (error) {
-      if (error?.name !== 'AbortError') setShareStatus('Copy failed');
-    }
-  };
+  const inLibrary = Boolean(user?.library?.includes(bookId));
 
   const handleStartListening = () => {
     if (book) {
@@ -102,268 +71,259 @@ const BookDetail = () => {
       play();
     }
   };
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-audible-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-          <div className="grid md:grid-cols-[300px,1fr] gap-8">
-            <Skeleton variant="bookCover" height="h-96" />
-            <div className="space-y-4">
-              <Skeleton variant="title" />
-              <Skeleton variant="text" width="1/2" />
-              <Skeleton variant="text" count={3} />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  
+
+  const handleAddToLibrary = () => {
+    if (inLibrary) return;
+    addToLibrary(bookId);
+    setUser(safeUser());
+    setNotice('Added to your library.');
+  };
+
+  const handleBuyWithCredit = () => {
+    if (inLibrary) return;
+    const result = purchaseBook(bookId);
+    if (result.success) {
+      setUser(result.user);
+      setNotice(`Bought with 1 credit. ${result.user.credits} left.`);
+    } else if (result.error === 'No credits available') {
+      setNotice('You have no credits left. You can still buy it for the list price.');
+    } else {
+      setNotice(result.error);
+    }
+  };
+
+  const handleToggleWishlist = () => {
+    setWished(toggleWishlist(bookId));
+    setUser(safeUser());
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: book.title, text: `${book.title} by ${book.author}`, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setNotice('Link copied.');
+      }
+    } catch (error) {
+      // AbortError: the person closed the share sheet
+      if (error?.name !== 'AbortError') setNotice('Copying the link failed.');
+    }
+  };
+
   if (!book) {
     return (
-      <div className="min-h-screen bg-audible-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-audible-text-primary mb-4">Book not found</h1>
-          <Button onClick={() => navigate('/browse')}>Browse books</Button>
-        </div>
+      <div className="page pb-16">
+        <ErrorState
+          className="pt-12 md:pt-20"
+          title="Book not found"
+          description="The link may be out of date, or the title has left the catalogue. Search for it by name, or browse what is here."
+          backTo="/browse"
+          backLabel="Browse the catalogue"
+        />
+        <Link to="/search" className="link text-[0.9375rem]">Search by title or author</Link>
       </div>
     );
   }
 
+  const kind = KIND[book.contentType] || KIND.audiobook;
+  const released = formatDate(book.releaseDate);
+  const chapters = book.chapters || [];
+  const visibleChapters = showAllChapters ? chapters : chapters.slice(0, 5);
+  const longDescription = (book.description || '').length > 320;
+
+  const facts = [
+    { term: 'Length', value: book.duration },
+    book.episodeCount ? { term: 'Episodes', value: `${book.episodeCount}${book.frequency ? `, ${book.frequency.toLowerCase()}` : ''}` } : null,
+    released ? { term: 'Released', value: released } : null,
+    book.language ? { term: 'Language', value: book.language } : null,
+    book.publisher ? { term: 'Publisher', value: book.publisher } : null,
+  ].filter(Boolean);
+
   return (
-    <div className="min-h-screen bg-audible-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        {/* Book Details Section */}
-        <div className="grid md:grid-cols-[300px,1fr] lg:grid-cols-[400px,1fr] gap-8 mb-12">
-          {/* Cover Image - Sticky on desktop */}
-          <div className="md:sticky md:top-24 self-start">
-            <div className="aspect-book rounded-lg overflow-hidden shadow-lg bg-audible-gray-100">
-              <img
-                src={book.cover}
-                alt={`${book.title} cover`}
-                className="w-full h-full object-cover"
-              />
+    <div className="page pb-16">
+      {/* Where this book sits in the catalogue */}
+      <nav aria-label="Breadcrumb" className="pt-6 md:pt-8">
+        <ol className="flex flex-wrap items-center gap-1.5 text-[0.8125rem] text-ink-3">
+          <li><Link to="/browse" className="hover:text-ink hover:underline underline-offset-4">Browse</Link></li>
+          <li aria-hidden="true">/</li>
+          <li><Link to={`/browse?genre=${slug(book.genre)}`} className="hover:text-ink hover:underline underline-offset-4">{book.genre}</Link></li>
+        </ol>
+      </nav>
+
+      {/* The flap: cover and waveform, then the facts */}
+      <div className="mt-6 grid gap-8 md:grid-cols-[13rem_minmax(0,1fr)] md:gap-10 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-16">
+        <div className="w-44 sm:w-52 md:w-auto md:sticky md:top-24 md:self-start">
+          <Cover src={book.cover} title={book.title} author={book.author} loading="eager" />
+          <div className="mt-5">
+            <Waveform seed={book.id} bars={44} height={28} className="h-7 w-full text-ink-3" label={`Waveform of ${book.title}`} />
+            <div className="mt-1.5 flex justify-between text-xs text-ink-3 tabular">
+              <span>0:00</span>
+              <span>{book.duration}</span>
             </div>
-            {book.contentType !== 'audiobook' && (
-              <div className="mt-4">
-                <Badge
-                  variant={book.contentType === 'original' ? 'original' : 'podcast'}
-                  size="lg"
-                  className="w-full justify-center"
-                >
-                  {book.contentType === 'original' ? 'Audible Original' : 'Podcast Series'}
-                </Badge>
-              </div>
-            )}
+          </div>
+        </div>
+
+        <div className="min-w-0">
+          {kind.badge && <Badge variant={kind.badge} className="mb-4">{kind.label}</Badge>}
+          <h1 className="t-title-book text-ink text-[clamp(2rem,1.4rem+2.4vw,3.25rem)] leading-[1.08] tracking-[-0.015em]">{book.title}</h1>
+          <p className="mt-3 text-lg text-ink-2">
+            By <Link to={`/search?q=${encodeURIComponent(book.author)}`} className="font-medium text-ink hover:underline underline-offset-4">{book.author}</Link>
+          </p>
+          {book.narrator && <p className="mt-0.5 text-[0.9375rem] text-ink-3">Read by {book.narrator}</p>}
+          {book.series && (
+            <p className="mt-1 text-[0.9375rem] text-ink-3">{book.series}{book.seriesNumber ? `, book ${book.seriesNumber}` : ''}</p>
+          )}
+
+          <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <Rating value={book.rating} size="lg" showValue />
+            <span className="text-[0.9375rem] text-ink-3 tabular">{book.ratingsCount.toLocaleString()} ratings</span>
           </div>
 
-          {/* Book Info */}
-          <div>
-            {/* Title and Author */}
-            <div className="mb-6">
-              <h1 className="text-4xl md:text-5xl font-bold text-audible-text-primary mb-4">
-                {book.title}
-              </h1>
-              <p className="text-xl text-audible-text-secondary mb-2">
-                By <Link to={`/search?q=${encodeURIComponent(book.author)}`} className="hover:text-audible-orange transition-colors">{book.author}</Link>
-              </p>
-              {book.narrator && (
-                <p className="text-lg text-audible-text-tertiary">
-                  Narrated by {book.narrator}
-                </p>
-              )}
-              {book.series && (
-                <p className="text-base text-audible-text-tertiary mt-2">
-                  {book.series} {book.seriesNumber && `#${book.seriesNumber}`}
-                </p>
-              )}
-            </div>
-
-            {/* Rating */}
-            <div className="mb-6">
-              <Rating
-                value={book.rating}
-                showValue={true}
-                showCount={true}
-                count={book.ratingsCount}
-                size="lg"
-              />
-            </div>
-
-            {/* Metadata */}
-            <div className="flex flex-wrap gap-4 mb-6 text-audible-text-secondary">
-              {book.duration && (
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5" />
-                  <span>{book.duration}</span>
-                </div>
-              )}
-              <div>Release: {new Date(book.releaseDate).toLocaleDateString()}</div>
-              <div>{book.language}</div>
-              <Badge variant="outline">{book.genre}</Badge>
-            </div>
-            
-            {/* Action Buttons */}
-            <div className="flex flex-wrap gap-4 mb-8">
-              <Button 
-                size="lg"
-                onClick={handleStartListening}
-                leftIcon={<Play className="w-5 h-5" fill="currentColor" />}
-              >
-                Start Listening
-              </Button>
-              <Button 
-                size="lg"
-                variant="secondary"
-                onClick={handleAddToLibrary}
-                disabled={owned}
-                leftIcon={<Plus className="w-5 h-5" />}
-              >
-                {owned ? 'In Library' : 'Add to Library'}
-              </Button>
-              <Button 
-                size="lg"
-                variant="outline"
-                onClick={() => setWishlisted(toggleWishlist(book.id))}
-                aria-pressed={wishlisted}
-                leftIcon={<Heart className="w-5 h-5" fill={wishlisted ? 'currentColor' : 'none'} />}
-              >
-                {wishlisted ? 'Wishlisted' : 'Wishlist'}
-              </Button>
-              <Button 
-                size="lg"
-                variant="ghost"
-                onClick={handleShare}
-                leftIcon={<Share2 className="w-5 h-5" />}
-              >
-                <span aria-live="polite">{shareStatus || 'Share'}</span>
-              </Button>
-            </div>
-            
-            {/* Membership Pricing */}
-            <Card padding="lg" className="mb-8 bg-audible-gray-50 border-audible-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-semibold text-audible-text-primary mb-1">
-                    1 Credit or ${book.price}
-                  </p>
-                  <p className="text-sm text-audible-text-secondary">
-                    Members get this book for 1 credit
-                  </p>
-                </div>
-                <Button variant="primary" onClick={handleBuyWithCredit} disabled={owned}>
-                  {owned ? 'Owned' : 'Buy with Credit'}
-                </Button>
+          <dl className="mt-6 grid grid-cols-2 gap-x-8 gap-y-4 border-y border-line py-5 sm:grid-cols-3 xl:grid-cols-5">
+            {facts.map((f) => (
+              <div key={f.term} className="min-w-0">
+                <dt className="text-[0.8125rem] text-ink-3">{f.term}</dt>
+                <dd className="mt-0.5 text-[0.9375rem] font-medium text-ink tabular">{f.value}</dd>
               </div>
-            </Card>
+            ))}
+            <div className="min-w-0">
+              <dt className="text-[0.8125rem] text-ink-3">Genre</dt>
+              <dd className="mt-0.5 text-[0.9375rem] font-medium">
+                <Link to={`/browse?genre=${slug(book.genre)}`} className="text-ink hover:underline underline-offset-4">{book.genre}</Link>
+              </dd>
+            </div>
+          </dl>
 
-            {/* Description */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-audible-text-primary mb-4">About this audiobook</h2>
-              <div className={`text-audible-text-secondary leading-relaxed ${!expandedDescription ? 'line-clamp-4' : ''}`}>
-                {book.description}
+          {/* Actions: one highlighter, the rest quiet */}
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Button variant="highlight" size="lg" onClick={handleStartListening} leftIcon={<Play className="h-4 w-4" fill="currentColor" strokeWidth={0} />}>
+              Start listening
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              onClick={handleAddToLibrary}
+              aria-pressed={inLibrary}
+              leftIcon={inLibrary ? <Check className="h-4 w-4" strokeWidth={2} /> : <Plus className="h-4 w-4" strokeWidth={2} />}
+            >
+              {inLibrary ? 'In your library' : 'Add to library'}
+            </Button>
+            <button
+              type="button"
+              onClick={handleToggleWishlist}
+              aria-pressed={wished}
+              aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
+              className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-line-strong text-ink hover:bg-surface"
+            >
+              <Heart className={`h-5 w-5 ${wished ? 'fill-ink' : ''}`} strokeWidth={1.75} />
+            </button>
+            <button
+              type="button"
+              onClick={handleShare}
+              aria-label="Share this book"
+              className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-line-strong text-ink hover:bg-surface"
+            >
+              <Share2 className="h-5 w-5" strokeWidth={1.75} />
+            </button>
+          </div>
+          <p className="mt-3 min-h-5 text-sm text-ink-2" role="status" aria-live="polite">{notice}</p>
+
+          {/* Price */}
+          {!inLibrary && (
+            <div className="mt-4 flex flex-col gap-4 rounded-lg bg-surface-sunk px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-semibold text-ink">1 credit or <span className="tabular">${book.price}</span></p>
+                <p className="text-sm text-ink-2">
+                  Members get this {book.contentType === 'podcast' ? 'series' : 'book'} for 1 credit.
+                  {user && typeof user.credits === 'number' && <> You have <span className="tabular">{user.credits}</span> {user.credits === 1 ? 'credit' : 'credits'}.</>}
+                </p>
               </div>
+              <Button variant="primary" onClick={handleBuyWithCredit} disabled={user?.credits === 0}>Buy with credit</Button>
+            </div>
+          )}
+
+          {/* Summary */}
+          <section aria-labelledby="about-title" className="mt-12">
+            <h2 id="about-title" className="t-h2 text-ink">{kind.about}</h2>
+            <p id="book-description" className={`mt-4 max-w-[68ch] text-[1.0625rem] leading-relaxed text-ink-2 ${longDescription && !expandedDescription ? 'line-clamp-4' : ''}`}>
+              {book.description}
+            </p>
+            {longDescription && (
               <button
-                onClick={() => setExpandedDescription(!expandedDescription)}
-                className="text-audible-orange hover:text-audible-orange-dark font-medium mt-2 transition-colors"
+                type="button"
+                onClick={() => setExpandedDescription((v) => !v)}
+                aria-expanded={expandedDescription}
+                aria-controls="book-description"
+                className="mt-2 h-9 text-[0.9375rem] font-medium text-ink underline underline-offset-4 decoration-1 hover:decoration-2"
               >
                 {expandedDescription ? 'Show less' : 'Read more'}
               </button>
-            </div>
-
-            {/* Chapters Preview */}
-            {book.chapters && book.chapters.length > 0 && (
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold text-audible-text-primary mb-4">Chapters</h2>
-                <Card padding="none">
-                  <div className="divide-y divide-audible-gray-200">
-                    {book.chapters.slice(0, 5).map((chapter) => (
-                      <div key={chapter.id} className="px-6 py-4 flex items-center justify-between hover:bg-audible-gray-50 transition-colors">
-                        <div>
-                          <p className="font-medium text-audible-text-primary">{chapter.title}</p>
-                        </div>
-                        <span className="text-sm text-audible-text-tertiary">{chapter.duration}</span>
-                      </div>
-                    ))}
-                  </div>
-                  {book.chapters.length > 5 && (
-                    <div className="px-6 py-4 text-center text-audible-text-secondary text-sm">
-                      + {book.chapters.length - 5} more chapters
-                    </div>
-                  )}
-                </Card>
-              </div>
             )}
+          </section>
 
-            {/* Publisher Info */}
-            <div className="text-sm text-audible-text-tertiary mb-8">
-              <p>Publisher: {book.publisher}</p>
-            </div>
-            
-          </div>
-        </div>
-        
-        {/* Social Features */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-          <FriendRecommendations bookId={bookId} />
-          <BookClubTeaser bookId={bookId} />
-        </div>
-        
-        {/* More from Author */}
-        {authorBooks.length > 0 && (
-          <section className="mb-12">
-            <BookCarousel
-              title={`More from ${book.author}`}
-              books={authorBooks}
-              cardSize="md"
-            />
-          </section>
-        )}
-        
-        {/* Similar Books */}
-        {similarBooks.length > 0 && (
-          <section className="mb-12">
-            <BookCarousel
-              title="People also listened to"
-              books={similarBooks}
-              cardSize="md"
-            />
-          </section>
-        )}
-        
-        {/* Reviews Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-audible-text-primary mb-6">
-            Ratings and reviews
-          </h2>
-          <Card padding="lg">
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <div className="text-5xl font-bold text-audible-text-primary mb-2">
-                  {book.rating.toFixed(1)}
-                </div>
-                <Rating value={book.rating} size="lg" showValue={false} />
-                <p className="text-audible-text-secondary mt-2">
-                  {book.ratingsCount.toLocaleString()} ratings
-                </p>
+          {/* Chapters */}
+          {chapters.length > 0 && (
+            <section aria-labelledby="chapters-title" className="mt-12">
+              <div className="flex items-baseline justify-between gap-4">
+                <h2 id="chapters-title" className="t-h2 text-ink">{book.contentType === 'podcast' ? 'Episodes' : 'Chapters'}</h2>
+                <span className="text-[0.8125rem] text-ink-3 tabular">{chapters.length} in this preview</span>
               </div>
-              <div className="space-y-2">
-                {[5, 4, 3, 2, 1].map((stars) => (
-                  <div key={stars} className="flex items-center gap-3">
-                    <span className="w-12 text-sm text-audible-text-secondary">{stars} stars</span>
-                    <div className="flex-1 h-2 bg-audible-gray-200 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-yellow-400"
-                        style={{ width: `${ratingDistribution(book.rating)(stars)}%` }}
-                      />
-                    </div>
-                  </div>
+              <ol id="chapter-list" className="mt-4 divide-y divide-line border-y border-line">
+                {visibleChapters.map((chapter, i) => (
+                  <li key={chapter.id} className="flex min-h-13 items-center gap-4 py-3">
+                    <span className="w-6 shrink-0 text-right text-sm text-ink-3 tabular">{i + 1}</span>
+                    <span className="min-w-0 flex-1 text-[0.9375rem] text-ink">{chapter.title}</span>
+                    <span className="shrink-0 text-sm text-ink-3 tabular">{chapter.duration}</span>
+                  </li>
                 ))}
+              </ol>
+              {chapters.length > 5 && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllChapters((v) => !v)}
+                  aria-expanded={showAllChapters}
+                  aria-controls="chapter-list"
+                  className="mt-3 inline-flex h-10 items-center gap-1.5 text-[0.9375rem] font-medium text-ink hover:underline underline-offset-4"
+                >
+                  {showAllChapters ? 'Show fewer' : `Show all ${chapters.length}`}
+                  <ChevronDown className={`h-4 w-4 transition-transform ${showAllChapters ? 'rotate-180' : ''}`} strokeWidth={1.75} aria-hidden="true" />
+                </button>
+              )}
+            </section>
+          )}
+
+          {/* The reading, in numbers */}
+          <section aria-labelledby="ratings-title" className="mt-12">
+            <h2 id="ratings-title" className="t-h2 text-ink">Ratings</h2>
+            <div className="mt-4 flex flex-wrap items-end gap-x-6 gap-y-3">
+              <p className="font-serif text-[3.5rem] font-medium leading-none text-ink tabular">{book.rating.toFixed(1)}</p>
+              <div className="pb-1">
+                <Rating value={book.rating} size="lg" showValue={false} />
+                <p className="mt-1 text-[0.9375rem] text-ink-3 tabular">from {book.ratingsCount.toLocaleString()} listeners</p>
               </div>
             </div>
-          </Card>
-        </section>
+          </section>
+        </div>
+      </div>
+
+      {/* What people you know think, and where it is being read */}
+      <div className="mt-16 grid gap-12 border-t border-line pt-12 md:mt-20 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-16">
+        <div className="space-y-12">
+          <FriendRatingsOnBook bookId={bookId} />
+          <FriendRecommendations bookId={bookId} />
+        </div>
+        <BookClubTeaser bookId={bookId} />
+      </div>
+
+      <div className="mt-16 space-y-16 md:mt-20 md:space-y-20">
+        {authorBooks.length > 0 && (
+          <BookCarousel title={`More from ${book.author}`} books={authorBooks} cardSize="md" seeAllLink={`/search?q=${encodeURIComponent(book.author)}`} />
+        )}
+        {similarBooks.length > 0 && (
+          <BookCarousel title="More like this" description={`Other ${book.genre.toLowerCase()} people listen to.`} books={similarBooks} cardSize="md" seeAllLink={`/browse?genre=${slug(book.genre)}`} />
+        )}
       </div>
     </div>
   );

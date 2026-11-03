@@ -41,9 +41,6 @@ export const test = base.extend(/** @type {any} */ ({
         (url) => REMOTE_IMAGE_HOSTS.includes(url.hostname),
         (route) => route.fulfill({ status: 200, contentType: 'image/png', body: PIXEL }),
       );
-      await page.route(/fonts\.(googleapis|gstatic)\.com/, (route) =>
-        route.fulfill({ status: 200, contentType: 'text/css', body: '' }),
-      );
       // Default AI reply; tests that exercise other AI states override this route.
       await page.route('**/api/grok', (route) => route.fulfill(grokReply()));
 
@@ -86,10 +83,7 @@ export const test = base.extend(/** @type {any} */ ({
 
 /** Run axe on the current page: no critical or serious violations. */
 export const expectAccessible = async (page, { exclude = [] } = {}) => {
-  let builder = new AxeBuilder({ page })
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
-    // Colour contrast belongs to the visual redesign (branch redesign/2026-11).
-    .disableRules(['color-contrast']);
+  let builder = new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']);
   for (const sel of exclude) builder = builder.exclude(sel);
   // axe injects inline styles and fetches stylesheets to analyse them, which
   // the app's CSP blocks. Those reports come from axe, not the app, so drop

@@ -1,293 +1,165 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Users,
-  BookOpen,
-  Trophy,
-  Clock,
-  TrendingUp,
-  Star,
-  MessageCircle,
-  UserPlus,
-  Calendar,
-  Award,
-  Target
-} from 'lucide-react';
-import { Card } from '../ui';
+import { BookOpen, Users, UserPlus, Check, Lock, ArrowRight } from 'lucide-react';
+import { Avatar, Waveform, Rating } from '../ui';
 import { getUserData, getFriends } from '../../utils/localStorage';
 import usersData from '../../data/users.json';
 import booksData from '../../data/books.json';
 
-const StatCard = ({ icon, title, value, subtitle, color = 'blue' }) => {
-  const Icon = icon;
-  return (
-    <Card className="p-4 hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-3">
-        <div className={`w-10 h-10 rounded-lg bg-${color}-100 flex items-center justify-center`}>
-          <Icon className={`w-5 h-5 text-${color}-600`} />
-        </div>
-        <div>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
-          <p className="text-sm font-medium text-gray-700">{title}</p>
-          {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
-        </div>
-      </div>
-    </Card>
-  );
-};
-
-const RecentActivity = () => {
-  const activities = [
-    { type: 'completed', book: 'The Three-Body Problem', daysAgo: 2, rating: 5 },
-    { type: 'joined', club: 'Sci-Fi Sundays', daysAgo: 5 },
-    { type: 'friend', friend: 'Sarah Chen', daysAgo: 7 },
-  ];
-
-  return (
-    <Card className="p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-        <TrendingUp className="w-5 h-5 text-purple-600" />
-        Recent Activity
-      </h3>
-      <div className="space-y-3">
-        {activities.map((activity, index) => (
-          <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-              {activity.type === 'completed' && <BookOpen className="w-4 h-4 text-purple-600" />}
-              {activity.type === 'joined' && <Users className="w-4 h-4 text-purple-600" />}
-              {activity.type === 'friend' && <UserPlus className="w-4 h-4 text-purple-600" />}
-            </div>
-            <div className="flex-1">
-              <p className="text-sm text-gray-900">
-                {activity.type === 'completed' && `Completed "${activity.book}"`}
-                {activity.type === 'joined' && `Joined "${activity.club}"`}
-                {activity.type === 'friend' && `Connected with ${activity.friend}`}
-              </p>
-              <p className="text-xs text-gray-500">{activity.daysAgo} days ago</p>
-            </div>
-            {activity.rating && (
-              <div className="flex items-center gap-1">
-                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                <span className="text-sm font-medium">{activity.rating}</span>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-};
-
-const FriendProgress = ({ friends }) => {
-  const friendProgress = friends.slice(0, 3);
-
-  return (
-    <Card className="p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-        <Clock className="w-5 h-5 text-green-600" />
-        Friends' Progress
-      </h3>
-      <div className="space-y-4">
-        {friendProgress.map((friend) => (
-          <div key={friend.id} className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-              {friend.name.split(' ').map(n => n[0]).join('')}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900">{friend.name}</p>
-              <p className="text-xs text-gray-600 truncate">{friend.book?.title || 'Unknown Book'}</p>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="flex-1 bg-gray-200 rounded-full h-1.5">
-                  <div
-                    className="bg-green-500 h-1.5 rounded-full"
-                    style={{ width: `${friend.progress}%` }}
-                  />
-                </div>
-                <span className="text-xs text-gray-500">{friend.progress}%</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-      {friends.length > 3 && (
-        <Link
-          to="/clubs/friends"
-          className="block mt-4 text-center text-sm text-purple-600 hover:text-purple-700 font-medium"
-        >
-          View all friends
-        </Link>
-      )}
-    </Card>
-  );
-};
-
-const Achievements = ({ stats }) => {
-  const achievements = [
-    { icon: Trophy, title: 'First Book Club', description: 'Joined your first book club', unlocked: stats.clubsJoined > 0 },
-    { icon: Star, title: 'Book Lover', description: 'Completed 10 books', unlocked: stats.booksCompleted >= 10 },
-    { icon: Users, title: 'Social Butterfly', description: 'Made 5 friends', unlocked: stats.totalFriends >= 5 },
-    { icon: Award, title: 'High Scorer', description: 'Average rating above 4.5', unlocked: stats.averageRating >= 4.5 },
-  ];
-
-  return (
-    <Card className="p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-        <Award className="w-5 h-5 text-yellow-600" />
-        Achievements
-      </h3>
-      <div className="grid grid-cols-2 gap-3">
-        {achievements.map((achievement, index) => (
-          <div
-            key={index}
-            className={`p-3 rounded-lg border-2 ${
-              achievement.unlocked
-                ? 'border-yellow-200 bg-yellow-50'
-                : 'border-gray-200 bg-gray-50 opacity-60'
-            }`}
-          >
-            <achievement.icon
-              className={`w-6 h-6 mb-2 ${
-                achievement.unlocked ? 'text-yellow-600' : 'text-gray-400'
-              }`}
-            />
-            <p className={`text-sm font-medium ${
-              achievement.unlocked ? 'text-gray-900' : 'text-gray-500'
-            }`}>
-              {achievement.title}
-            </p>
-            <p className={`text-xs ${
-              achievement.unlocked ? 'text-gray-600' : 'text-gray-400'
-            }`}>
-              {achievement.description}
-            </p>
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-};
+/**
+ * SocialDashboard (on Account): your social numbers as type, what you did
+ * lately, where your friends are in their books, what you have unlocked.
+ */
 
 // Friends plus the stats shown on the dashboard, read once from localStorage.
 const loadDashboard = () => {
   const user = getUserData();
   const friendIds = getFriends();
-  const friends = usersData
-    .filter(u => friendIds.includes(u.id))
-    .map(friend => ({
-      ...friend,
-      // Mock progress for friends without one, fixed for this visit
-      progress: friend.currentProgress || Math.floor(Math.random() * 100),
-      book: booksData.find(b => b.id === friend.currentlyReading) || booksData[0]
-    }));
-
+  const friends = usersData.filter((u) => friendIds.includes(u.id));
   const ratings = Object.values(user.ratings || {});
-  const avgRating = ratings.length > 0 ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : 0;
-
+  const avgRating = ratings.length > 0 ? Number((ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)) : 0;
   return {
     userData: user,
     friends,
+    friendProgress: friends.slice(0, 3).map((friend) => ({
+      ...friend,
+      // Mock progress for friends without one, fixed for this visit
+      progress: friend.currentProgress || Math.floor(Math.random() * 100),
+      book: booksData.find((b) => b.id === friend.currentlyReading) || booksData[0],
+    })),
     stats: {
       totalFriends: friends.length,
       booksCompleted: user.library?.length || 0,
       hoursListened: user.hoursListened || 0,
       clubsJoined: user.joinedClubs?.length || 0,
       averageRating: avgRating,
-      streakDays: user.streakDays || 0
-    }
+      streakDays: user.streakDays || 0,
+    },
   };
 };
 
-const SocialDashboard = () => {
-  const [{ userData, friends, stats }] = useState(loadDashboard);
+const recentActivity = [
+  { type: 'completed', book: 'The Three-Body Problem', daysAgo: 2, rating: 5 },
+  { type: 'joined', club: 'Sci-Fi Sundays', daysAgo: 5 },
+  { type: 'friend', friend: 'Sarah Chen', daysAgo: 7 },
+];
+const activityIcon = { completed: BookOpen, joined: Users, friend: UserPlus };
 
+const SocialDashboard = () => {
+  const [{ userData, friends, friendProgress, stats }] = useState(loadDashboard);
   if (!userData) return null;
 
+  const achievements = [
+    { title: 'First book club', description: 'Joined your first book club', unlocked: stats.clubsJoined > 0 },
+    { title: 'Book lover', description: 'Finished 10 books', unlocked: stats.booksCompleted >= 10 },
+    { title: 'Social butterfly', description: 'Made 5 friends', unlocked: stats.totalFriends >= 5 },
+    { title: 'High scorer', description: 'Average rating above 4.5', unlocked: stats.averageRating >= 4.5 },
+  ];
+
+  const statList = [
+    ['friends', stats.totalFriends],
+    ['books finished', stats.booksCompleted],
+    ['hours listened', stats.hoursListened],
+    ['book clubs', stats.clubsJoined],
+    ['average rating', stats.averageRating || '0'],
+    ['day streak', stats.streakDays],
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* Stats Overview */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatCard
-          icon={Users}
-          title="Friends"
-          value={stats.totalFriends}
-          color="blue"
-        />
-        <StatCard
-          icon={BookOpen}
-          title="Books Completed"
-          value={stats.booksCompleted}
-          color="green"
-        />
-        <StatCard
-          icon={Clock}
-          title="Hours Listened"
-          value={stats.hoursListened}
-          subtitle="total listening time"
-          color="purple"
-        />
-        <StatCard
-          icon={Trophy}
-          title="Book Clubs"
-          value={stats.clubsJoined}
-          color="orange"
-        />
-        <StatCard
-          icon={Star}
-          title="Avg Rating"
-          value={stats.averageRating}
-          color="yellow"
-        />
-        <StatCard
-          icon={Target}
-          title="Reading Streak"
-          value={`${stats.streakDays} days`}
-          color="red"
-        />
+    <div className="space-y-12">
+      <dl className="grid grid-cols-2 gap-x-6 gap-y-6 border-t border-line pt-6 sm:grid-cols-3 lg:grid-cols-6">
+        {statList.map(([label, value]) => (
+          <div key={label} className="flex flex-col-reverse">
+            <dt className="mt-1 text-[0.8125rem] text-ink-3">{label}</dt>
+            <dd className="t-h1 text-ink tabular">{value}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <div className="grid gap-12 lg:grid-cols-2">
+        <section aria-labelledby="sd-recent">
+          <h3 id="sd-recent" className="t-h3 text-ink">Recent activity</h3>
+          <ul className="mt-3 divide-y divide-line border-y border-line">
+            {recentActivity.map((a) => {
+              const Icon = activityIcon[a.type];
+              return (
+                <li key={`${a.type}-${a.daysAgo}`} className="flex items-center gap-3 py-3">
+                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-sunk text-ink-2">
+                    <Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[0.9375rem] text-ink">
+                      {a.type === 'completed' && <>Finished <span className="t-title-book">{a.book}</span></>}
+                      {a.type === 'joined' && <>Joined {a.club}</>}
+                      {a.type === 'friend' && <>Connected with {a.friend}</>}
+                    </p>
+                    <p className="text-[0.8125rem] text-ink-3 tabular">{a.daysAgo} days ago</p>
+                  </div>
+                  {a.rating && <Rating value={a.rating} size="sm" showValue={false} />}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        <section aria-labelledby="sd-friends">
+          <h3 id="sd-friends" className="t-h3 text-ink">Where your friends are</h3>
+          {friendProgress.length === 0 ? (
+            <p className="mt-3 rounded-lg border border-dashed border-line-strong p-5 text-[0.9375rem] text-ink-2">
+              No friends yet. <Link to="/clubs/friends" className="link">Find some</Link>.
+            </p>
+          ) : (
+            <ul className="mt-3 divide-y divide-line border-y border-line">
+              {friendProgress.map((f) => (
+                <li key={f.id} className="flex items-center gap-3 py-3">
+                  <Avatar src={f.avatar} name={f.name} size="md" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[0.9375rem] font-medium text-ink">{f.name}</p>
+                    <p className="t-title-book text-sm text-ink-2 line-clamp-1">{f.book?.title || 'Unknown book'}</p>
+                    <div className="mt-1 flex items-center gap-2">
+                      <Waveform seed={`${f.id}-${f.book?.id}`} bars={28} height={12} progress={f.progress / 100} className="h-3 w-24 text-ink" label={`${f.progress}% listened`} />
+                      <span className="text-xs text-ink-3 tabular">{f.progress}%</span>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+          {friends.length > 3 && (
+            <Link to="/clubs/friends" className="mt-3 inline-flex min-h-11 items-center text-sm font-medium text-ink underline decoration-1 underline-offset-4 hover:decoration-2">All friends</Link>
+          )}
+        </section>
       </div>
 
-      {/* Activity and Progress */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentActivity />
-        <FriendProgress friends={friends} />
-      </div>
+      <section aria-labelledby="sd-ach">
+        <h3 id="sd-ach" className="t-h3 text-ink">Achievements</h3>
+        <ul className="mt-3 grid gap-x-8 sm:grid-cols-2">
+          {achievements.map((a) => (
+            <li key={a.title} className="flex items-start gap-3 border-t border-line py-3">
+              <span className={`mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${a.unlocked ? 'bg-ink text-paper' : 'border border-dashed border-line-strong text-ink-3'}`}>
+                {a.unlocked ? <Check className="h-3.5 w-3.5" strokeWidth={2.25} aria-hidden="true" /> : <Lock className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />}
+              </span>
+              <div>
+                <p className={`font-medium ${a.unlocked ? 'text-ink' : 'text-ink-2'}`}>{a.title}<span className="sr-only">{a.unlocked ? ', unlocked' : ', locked'}</span></p>
+                <p className="text-[0.8125rem] text-ink-3">{a.description}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      {/* Achievements */}
-      <Achievements stats={stats} />
-
-      {/* Quick Actions */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <Link
-            to="/clubs/friends"
-            className="flex flex-col items-center gap-2 p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
-          >
-            <UserPlus className="w-6 h-6 text-blue-600" />
-            <span className="text-sm font-medium text-blue-900">Find Friends</span>
+      <nav aria-label="Social shortcuts" className="flex flex-wrap gap-3">
+        {[
+          ['/clubs/friends', 'Find friends'],
+          ['/clubs', 'Join clubs'],
+          ['/browse?sort=trending', 'Discover'],
+          ['/profile', 'Profile'],
+        ].map(([to, label]) => (
+          <Link key={to} to={to} className="inline-flex h-11 items-center gap-1.5 rounded-full border border-line-strong px-5 text-[0.9375rem] font-medium text-ink hover:bg-surface">
+            {label} <ArrowRight className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
           </Link>
-          <Link
-            to="/clubs"
-            className="flex flex-col items-center gap-2 p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
-          >
-            <Users className="w-6 h-6 text-purple-600" />
-            <span className="text-sm font-medium text-purple-900">Join Clubs</span>
-          </Link>
-          <Link
-            to="/browse?sort=trending"
-            className="flex flex-col items-center gap-2 p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
-          >
-            <TrendingUp className="w-6 h-6 text-green-600" />
-            <span className="text-sm font-medium text-green-900">Discover</span>
-          </Link>
-          <Link
-            to="/account"
-            className="flex flex-col items-center gap-2 p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors"
-          >
-            <Award className="w-6 h-6 text-orange-600" />
-            <span className="text-sm font-medium text-orange-900">Profile</span>
-          </Link>
-        </div>
-      </Card>
+        ))}
+      </nav>
     </div>
   );
 };

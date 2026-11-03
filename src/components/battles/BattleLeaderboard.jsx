@@ -1,38 +1,17 @@
 import { useState } from 'react';
-import { Trophy, Medal, Award, Crown, Star, BookOpen, Flame, Clock } from 'lucide-react';
+import { BookOpen, Flame, Clock } from 'lucide-react';
+import { Avatar } from '../ui';
 
+/**
+ * BattleLeaderboard: a ranked divide-y list. Rank 1 sits on the highlighter;
+ * the score for the battle type is the big number, points under it.
+ */
 export default function BattleLeaderboard({ leaderboard, battleType, showFull: showFullInitially = false }) {
   const [showFull, setShowFull] = useState(showFullInitially);
-  const getRankIcon = (rank) => {
-    switch (rank) {
-      case 1:
-        return <Crown className="w-5 h-5 text-yellow-500" />;
-      case 2:
-        return <Medal className="w-5 h-5 text-gray-400" />;
-      case 3:
-        return <Award className="w-5 h-5 text-orange-600" />;
-      default:
-        return <span className="w-5 h-5 flex items-center justify-center text-sm font-bold text-gray-500">{rank}</span>;
-    }
-  };
-
-  const getRankBgColor = (rank) => {
-    switch (rank) {
-      case 1:
-        return 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200';
-      case 2:
-        return 'bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200';
-      case 3:
-        return 'bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200';
-      default:
-        return 'bg-white border-gray-200';
-    }
-  };
-
   const formatScore = (participant, battleType) => {
     switch (battleType) {
       case 'speed_reading':
-        return `${participant.completionTime || 'In Progress'}`;
+        return `${participant.completionTime || 'In progress'}`;
       case 'streak_challenge':
         return `${participant.currentStreak || 0} day streak`;
       case 'book_voting':
@@ -45,135 +24,85 @@ export default function BattleLeaderboard({ leaderboard, battleType, showFull: s
   const displayParticipants = showFull ? leaderboard : leaderboard?.slice(0, 10) || [];
 
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 text-white">
-        <div className="flex items-center space-x-2">
-          <Trophy className="w-6 h-6" />
-          <h3 className="text-lg font-bold">Battle Leaderboard</h3>
-        </div>
-        <p className="text-sm text-white/90 mt-1">Real-time rankings updated every 5 minutes</p>
-      </div>
+    <div>
+      <p className="text-[0.8125rem] text-ink-3">Rankings update every 5 minutes.</p>
 
-      {/* Leaderboard */}
-      <div className="divide-y divide-gray-100">
-        {displayParticipants.map((participant, index) => {
-          const rank = index + 1;
-          const isTopThree = rank <= 3;
+      {displayParticipants.length > 0 && (
+        <ol className="mt-3 divide-y divide-line border-y border-line">
+          {displayParticipants.map((participant, index) => {
+            const rank = index + 1;
 
-          return (
-            <div
-              key={participant.userId}
-              className={`p-4 transition-colors hover:bg-gray-50 ${getRankBgColor(rank)}`}
-            >
-              <div className="flex items-center justify-between">
-                {/* Rank and Avatar */}
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-8 h-8">
-                    {getRankIcon(rank)}
-                  </div>
+            return (
+              <li key={participant.userId} className="py-4">
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold tabular ${
+                      rank === 1 ? 'bg-hl text-ink' : rank <= 3 ? 'border border-line-strong text-ink' : 'text-ink-3'
+                    }`}
+                    aria-label={`Rank ${rank}`}
+                  >
+                    {rank}
+                  </span>
 
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">
-                      {participant.username.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
+                  <Avatar name={participant.username} size="md" />
 
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{participant.username}</h4>
-                    <div className="flex items-center space-x-2 text-xs text-gray-600">
+                  <div className="min-w-0 flex-1">
+                    <h4 className="truncate font-semibold text-ink">{participant.username}</h4>
+                    <div className="flex flex-wrap items-center gap-x-3 text-[0.8125rem] text-ink-3 tabular">
                       {participant.progress && (
-                        <span className="flex items-center gap-1">
-                          <BookOpen className="w-3 h-3" />
+                        <span className="inline-flex items-center gap-1">
+                          <BookOpen className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />
                           {participant.progress}% complete
                         </span>
                       )}
                       {participant.currentStreak && (
-                        <span className="flex items-center gap-1">
-                          <Flame className="w-3 h-3" />
+                        <span className="inline-flex items-center gap-1">
+                          <Flame className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />
                           {participant.currentStreak} day streak
                         </span>
                       )}
                       {participant.totalMinutes && (
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
+                        <span className="inline-flex items-center gap-1">
+                          <Clock className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />
                           {participant.totalMinutes} min total
                         </span>
                       )}
                     </div>
                   </div>
-                </div>
 
-                {/* Score */}
-                <div className="text-right">
-                  <div className="text-xl font-bold text-gray-900">
-                    {formatScore(participant, battleType)}
-                  </div>
-                  {participant.score && (
-                    <div className="text-xs text-gray-600">
-                      {participant.score} points
+                  <div className="shrink-0 text-right">
+                    <div className="font-serif text-xl font-medium text-ink tabular">
+                      {formatScore(participant, battleType)}
                     </div>
-                  )}
-                  {isTopThree && (
-                    <div className="flex items-center justify-center mt-1">
-                      <Star className="w-3 h-3 text-yellow-500 fill-current" />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Progress Bar for Active Battles */}
-              {participant.progress !== undefined && (
-                <div className="mt-3">
-                  <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
-                    <span>Progress</span>
-                    <span>{participant.progress}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500"
-                      style={{ width: `${participant.progress}%` }}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Streak Indicator */}
-              {participant.currentStreak && (
-                <div className="mt-2 flex items-center space-x-1">
-                  <div className="flex space-x-1">
-                    {Array.from({ length: Math.min(participant.currentStreak, 5) }).map((_, i) => (
-                      <div key={i} className="w-2 h-2 bg-orange-500 rounded-full" />
-                    ))}
-                    {participant.currentStreak > 5 && (
-                      <span className="text-xs text-orange-600 font-semibold ml-1">
-                        +{participant.currentStreak - 5}
-                      </span>
+                    {participant.score && (
+                      <div className="text-[0.8125rem] text-ink-3">{participant.score.toLocaleString()} points</div>
                     )}
                   </div>
-                  <span className="text-xs text-orange-600 font-medium">Day streak!</span>
                 </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
 
-      {/* Footer */}
-      {!showFull && leaderboard && leaderboard.length > 10 && (
-        <div className="p-4 bg-gray-50 border-t border-gray-200 text-center">
-          <button onClick={() => setShowFull(true)} className="text-purple-600 hover:text-purple-700 font-semibold text-sm">
-            View Full Leaderboard ({leaderboard.length - 10} more participants)
-          </button>
-        </div>
+                {participant.progress !== undefined && (
+                  <div className="mt-3 pl-11">
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-line" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={participant.progress} aria-label={`${participant.username} progress`}>
+                      <div className="h-full rounded-full bg-ink" style={{ width: `${participant.progress}%` }} />
+                    </div>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ol>
       )}
 
-      {/* Empty State */}
+      {!showFull && leaderboard && leaderboard.length > 10 && (
+        <button type="button" onClick={() => setShowFull(true)} className="mt-3 inline-flex h-11 items-center text-sm font-medium text-ink underline decoration-1 underline-offset-4 hover:decoration-2">
+          See the full leaderboard ({leaderboard.length - 10} more)
+        </button>
+      )}
+
       {(!leaderboard || leaderboard.length === 0) && (
-        <div className="p-8 text-center">
-          <Trophy className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <h4 className="text-gray-600 font-semibold mb-2">No participants yet</h4>
-          <p className="text-gray-500 text-sm">Be the first to join this battle!</p>
+        <div className="mt-3 rounded-lg border border-dashed border-line-strong px-5 py-6">
+          <h4 className="font-semibold text-ink">No participants yet</h4>
+          <p className="mt-1 text-sm text-ink-2">Be the first to join this battle.</p>
         </div>
       )}
     </div>

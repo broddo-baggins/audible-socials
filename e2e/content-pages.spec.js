@@ -21,9 +21,16 @@ const expectScrollsTo = async (button, target) => {
   await expect.poll(async () => nearTop(await topOf(target)), { timeout: 5_000 }).toBe(true);
 };
 
+/** A button or link in <main>: a string matches its whole name, a RegExp as given. */
+const control = (page, name) => {
+  const main = page.locator('main');
+  const opts = typeof name === 'string' ? { name, exact: true } : { name };
+  return main.getByRole('button', opts).or(main.getByRole('link', opts)).first();
+};
+
 const expectNavigates = async (page, path, name, url) => {
   await freshStart(page, path);
-  await page.locator('main').getByRole('button', { name, exact: true }).first().click();
+  await control(page, name).click();
   await expect(page).toHaveURL(url);
 };
 
@@ -45,15 +52,15 @@ test.describe('/support', () => {
     await freshStart(page, '/support');
     const main = page.locator('main');
     await main.getByRole('button', { name: 'payment problems' }).click();
-    await expect(main.getByRole('textbox', { name: 'Search for help' })).toHaveValue('payment problems');
+    await expect(main.getByRole('searchbox', { name: 'Search for help' })).toHaveValue('payment problems');
     await expect(main.getByText('How do I update my payment method?')).toBeVisible();
     await expect(main.getByText('Why is my audiobook not playing?')).toBeHidden();
 
-    await main.getByRole('textbox', { name: 'Search for help' }).fill('zzzz');
-    await expect(main.getByText('No answers match your search')).toBeVisible();
-    await main.getByRole('textbox', { name: 'Search for help' }).fill('');
+    await main.getByRole('searchbox', { name: 'Search for help' }).fill('zzzz');
+    await expect(main.getByText('No answers match that yet')).toBeVisible();
+    await main.getByRole('searchbox', { name: 'Search for help' }).fill('');
 
-    const social = main.getByRole('button', { name: 'Social Features' });
+    const social = main.getByRole('button', { name: 'Social features' });
     await social.click();
     await expect(social).toHaveAttribute('aria-pressed', 'true');
     await expect(main.getByText('How do I join a book club?')).toBeVisible();
@@ -62,11 +69,11 @@ test.describe('/support', () => {
   });
 
   for (const [name, url] of [
-    ['View All FAQs', /\/faq$/],
-    ['Start Chat', /\/contact$/],
-    ['Send Email', /\/contact$/],
-    ['Browse Guide', /\/faq$/],
-    ['Join Discussion', /\/clubs$/],
+    ['View all FAQs', /\/faq$/],
+    ['Start chat', /\/contact$/],
+    ['Send email', /\/contact$/],
+    [/Browse guide$/, /\/faq$/],
+    [/Join discussion$/, /\/clubs$/],
   ]) {
     test(`${name} navigates`, async ({ page }) => {
       await expectNavigates(page, '/support', name, url);
@@ -74,14 +81,14 @@ test.describe('/support', () => {
   }
 
   for (const [name, text] of [
-    ['Call Now', 'Phone support is not available'],
-    ['Watch Videos', 'Video tutorials are not available'],
-    ['View Status', 'All systems operational'],
+    ['Call now', 'Phone support is not available'],
+    [/Watch videos$/, 'Video tutorials are not available'],
+    [/View status$/, 'All systems operational'],
   ]) {
     test(`${name} shows a notice`, async ({ page }) => {
       await freshStart(page, '/support');
-      await page.locator('main').getByRole('button', { name, exact: true }).click();
-      await expect(page.locator('main').getByRole('status')).toContainText(text);
+      await control(page, name).click();
+      await expect(page.locator('main').getByRole('status').filter({ hasText: text })).toBeVisible();
     });
   }
 });
@@ -96,67 +103,65 @@ test.describe('/faq', () => {
     await expect(question).toHaveAttribute('aria-expanded', 'true');
     await expect(main.getByText('world\'s largest audio entertainment service')).toBeVisible();
 
-    await main.getByRole('textbox', { name: 'Search FAQs' }).fill('zzzz');
-    await expect(main.getByText('No FAQs match "zzzz"')).toBeVisible();
-    await main.getByRole('button', { name: 'Clear Search' }).click();
-    await expect(main.getByRole('textbox', { name: 'Search FAQs' })).toHaveValue('');
+    await main.getByRole('searchbox', { name: 'Search FAQs' }).fill('zzzz');
+    await expect(main.getByText('Nothing matches "zzzz"')).toBeVisible();
+    // The field's clear icon and the outline button share the name; either clears.
+    await main.getByRole('button', { name: 'Clear search', exact: true }).last().click();
+    await expect(main.getByRole('searchbox', { name: 'Search FAQs' })).toHaveValue('');
     await expectAccessible(page);
   });
 
-  test('Contact Support navigates', async ({ page }) => {
-    await expectNavigates(page, '/faq', 'Contact Support', /\/contact$/);
+  test('Contact support navigates', async ({ page }) => {
+    await expectNavigates(page, '/faq', 'Contact support', /\/contact$/);
   });
 
-  test('Visit Support Center navigates', async ({ page }) => {
-    await expectNavigates(page, '/faq', 'Visit Support Center', /\/support$/);
+  test('Visit support center navigates', async ({ page }) => {
+    await expectNavigates(page, '/faq', 'Visit support center', /\/support$/);
   });
 });
 
 test.describe('/accessibility', () => {
   for (const [name, url] of [
-    ['Learn more: Accessibility Settings', /\/settings$/],
-    ['Learn more: Contact Accessibility Team', /\/contact$/],
-    ['Contact Accessibility Team', /\/contact$/],
+    [/^Accessibility settings/, /\/settings$/],
+    [/^Contact the accessibility team/, /\/contact$/],
+    ['Contact the team', /\/contact$/],
   ]) {
     test(`${name} navigates`, async ({ page }) => {
       await expectNavigates(page, '/accessibility', name, url);
     });
   }
 
-  for (const name of ['Learn more: Supported Assistive Technologies', 'Learn more: Keyboard Shortcuts']) {
-    test(`${name} scrolls to the features`, async ({ page }) => {
+  for (const [name, target] of [
+    [/^Supported assistive technologies/, '#accessibility-features'],
+    [/^Keyboard shortcuts/, '#player'],
+  ]) {
+    test(`${name} scrolls to ${target}`, async ({ page }) => {
       await freshStart(page, '/accessibility');
-      const button = page.locator('main').getByRole('button', { name, exact: true });
-      await expectScrollsTo(button, page.locator('#accessibility-features'));
+      await expectScrollsTo(control(page, name), page.locator(target));
     });
   }
-
-  test('Accessibility Resources scrolls to the resources', async ({ page }) => {
-    await freshStart(page, '/accessibility');
-    const button = page.locator('main').getByRole('button', { name: 'Accessibility Resources', exact: true });
-    await expectScrollsTo(button, page.locator('#accessibility-resources'));
-  });
 });
 
 test.describe('/careers', () => {
-  test('View Positions shows the department openings', async ({ page }) => {
+  test('View positions shows the department openings', async ({ page }) => {
     await freshStart(page, '/careers');
     const main = page.locator('main');
     for (const [dept, openings] of [['Engineering', 12], ['Product', 8], ['Design', 6], ['Marketing', 10], ['Content', 15], ['Operations', 7]]) {
-      await main.getByRole('button', { name: `View Positions: ${dept}` }).click();
+      await main.getByRole('button', { name: `View positions: ${dept}` }).click();
       await expect(main.getByRole('status')).toContainText(`${dept}: ${openings} openings`);
     }
     await expectAccessible(page);
   });
 
-  test('View All Openings scrolls to the departments', async ({ page }) => {
-    await freshStart(page, '/careers');
-    const button = page.locator('main').getByRole('button', { name: 'View All Openings' });
-    await expectScrollsTo(button, page.locator('#open-positions'));
-  });
+  for (const name of ['View all openings', 'See open roles']) {
+    test(`${name} scrolls to the departments`, async ({ page }) => {
+      await freshStart(page, '/careers');
+      await expectScrollsTo(control(page, name), page.locator('#open-positions'));
+    });
+  }
 
-  test('Learn More About Us navigates', async ({ page }) => {
-    await expectNavigates(page, '/careers', 'Learn More About Us', /\/about$/);
+  test('About us navigates', async ({ page }) => {
+    await expectNavigates(page, '/careers', 'About us', /\/about$/);
   });
 });
 
@@ -164,19 +169,19 @@ test.describe('/blog', () => {
   test('articles expand and collapse', async ({ page }) => {
     await freshStart(page, '/blog');
     const main = page.locator('main');
-    const featured = main.getByRole('button', { name: 'Read Full Article' });
+    const featured = main.getByRole('button', { name: 'Read full article' });
     await featured.click();
-    const less = main.getByRole('button', { name: 'Show Less', exact: true });
+    const less = main.getByRole('button', { name: 'Show less', exact: true });
     await expect(less).toHaveAttribute('aria-expanded', 'true');
     await expect(main.locator('#featured-article-body')).toBeVisible();
     await less.click();
     await expect(main.locator('#featured-article-body')).toBeHidden();
 
     const titles = [
-      'Building Communities Through Shared Listening',
-      'The Science of Perfect Audio Production',
-      'Diversity in Storytelling: Voices That Matter',
-      'Accessibility Innovation in Audio Technology',
+      'Building communities through shared listening',
+      'The science of perfect audio production',
+      'Diversity in storytelling: voices that matter',
+      'Accessibility innovation in audio technology',
     ];
     for (const [index, title] of titles.entries()) {
       await main.getByRole('button', { name: `Read more: ${title}` }).click();
@@ -188,7 +193,7 @@ test.describe('/blog', () => {
 
   test('View All Posts shows a notice', async ({ page }) => {
     await freshStart(page, '/blog');
-    await page.locator('main').getByRole('button', { name: 'View All Posts' }).click();
+    await page.locator('main').getByRole('button', { name: 'View all posts' }).click();
     await expect(page.locator('main').getByRole('status').filter({ hasText: 'All 4 recent posts' })).toBeVisible();
   });
 
@@ -202,17 +207,17 @@ test.describe('/press', () => {
   test('releases expand and media kit downloads explain the demo', async ({ page }) => {
     await freshStart(page, '/press');
     const main = page.locator('main');
-    const releases = main.getByRole('button', { name: /^Read full release:/ });
+    const releases = main.getByRole('button', { name: /^Read (full )?release:/ });
     await expect(releases).toHaveCount(4);
     for (let index = 0; index < 4; index += 1) {
       await releases.nth(index).click();
       await expect(main.locator(`#release-body-${index}`)).toBeVisible();
     }
 
-    await main.getByRole('button', { name: 'View All Press Releases' }).click();
+    await main.getByRole('button', { name: 'View all press releases' }).click();
     await expect(main.getByRole('status').filter({ hasText: 'All 4 press releases' })).toBeVisible();
 
-    for (const item of ['Company Logo (High Resolution)', 'Brand Guidelines', 'Product Screenshots', 'Executive Photos', 'Press Release Template']) {
+    for (const item of ['Company logo (high resolution)', 'Brand guidelines', 'Product screenshots', 'Executive photos', 'Press release template']) {
       await main.getByRole('button', { name: `Download ${item}` }).click();
       await expect(main.getByRole('status').filter({ hasText: `${item} is not available` })).toBeVisible();
     }
@@ -226,11 +231,11 @@ test.describe('/press', () => {
 });
 
 const APP_PAGES = [
-  { path: '/apps/ios', platform: 'iOS', download: 'Download on the App Store', requirements: 'View System Requirements' },
-  { path: '/apps/android', platform: 'Android', download: 'Get it on Google Play', requirements: 'System Requirements' },
+  { path: '/apps/ios', platform: 'iOS', download: 'Download on the App Store' },
+  { path: '/apps/android', platform: 'Android', download: 'Get it on Google Play' },
 ];
 
-for (const { path, platform, download, requirements } of APP_PAGES) {
+for (const { path, platform, download } of APP_PAGES) {
   test.describe(path, () => {
     test('both download buttons explain the demo', async ({ page }) => {
       await freshStart(page, path);
@@ -245,46 +250,40 @@ for (const { path, platform, download, requirements } of APP_PAGES) {
       await expectAccessible(page);
     });
 
-    test('Learn More scrolls to the features', async ({ page }) => {
+    test('System requirements scrolls to the requirements', async ({ page }) => {
       await freshStart(page, path);
-      await expectScrollsTo(page.locator('main').getByRole('button', { name: 'Learn More', exact: true }), page.locator('#app-features'));
-    });
-
-    test(`${requirements} scrolls to the requirements`, async ({ page }) => {
-      await freshStart(page, path);
-      const button = page.locator('main').getByRole('button', { name: requirements, exact: true });
-      await expectScrollsTo(button, page.locator('#system-requirements'));
+      await expectScrollsTo(control(page, 'System requirements'), page.locator('#system-requirements'));
     });
   });
 }
 
-test('/apps/ios View Full Privacy Policy navigates', async ({ page }) => {
-  await expectNavigates(page, '/apps/ios', 'View Full Privacy Policy', /\/privacy$/);
+test('/apps/ios View full privacy policy navigates', async ({ page }) => {
+  await expectNavigates(page, '/apps/ios', 'View full privacy policy', /\/privacy$/);
 });
 
 test.describe('/apps/desktop', () => {
   test('every download button explains the demo', async ({ page }) => {
     await freshStart(page, '/apps/desktop');
     const main = page.locator('main');
-    await main.getByRole('button', { name: 'Download for Your Platform' }).click();
-    await expect(main.getByRole('status').filter({ hasText: 'no desktop app to download' })).toHaveCount(1);
     for (const platform of ['Windows', 'macOS', 'Linux']) {
-      await main.getByRole('button', { name: `Download for ${platform}` }).click();
-      await expect(main.getByRole('status').filter({ hasText: `no ${platform} app to download` })).toBeVisible();
+      await main.getByRole('tab', { name: platform, exact: true }).click();
+      await main.getByRole('tabpanel').getByRole('button', { name: `Download for ${platform}` }).click();
+      await expect(main.getByRole('status').filter({ hasText: `no ${platform} app to download` })).toHaveCount(1);
     }
-    await main.getByRole('button', { name: 'Download Now' }).click();
-    await expect(main.getByRole('status').filter({ hasText: 'no desktop app to download' })).toHaveCount(2);
+    // The closing block offers the selected platform too.
+    await main.getByRole('button', { name: 'Download for Linux' }).last().click();
+    await expect(main.getByRole('status').filter({ hasText: 'no Linux app to download' })).toHaveCount(2);
     await expectAccessible(page);
   });
 
-  test('System Requirements scrolls to the table', async ({ page }) => {
+  test('Full system requirements scrolls to the table', async ({ page }) => {
     await freshStart(page, '/apps/desktop');
-    await expectScrollsTo(page.locator('main').getByRole('button', { name: 'System Requirements', exact: true }), page.locator('#system-requirements'));
+    await expectScrollsTo(control(page, 'Full system requirements'), page.locator('#system-requirements'));
   });
 
   test('View All Platforms scrolls to the platforms', async ({ page }) => {
     await freshStart(page, '/apps/desktop');
-    const button = page.locator('main').getByRole('button', { name: 'View All Platforms' });
+    const button = page.locator('main').getByRole('button', { name: 'View all platforms' });
     await expectScrollsTo(button, page.locator('#platforms'));
   });
 });

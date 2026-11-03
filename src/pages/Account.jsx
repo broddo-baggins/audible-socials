@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { User, CreditCard, Settings, Bell, Globe, Shield, HelpCircle, BookOpen, TrendingUp, Award, Users } from 'lucide-react';
-import { Card, Button, Badge } from '../components/ui';
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Settings, ArrowRight, Download, Trash2 } from 'lucide-react';
+import { Button, Badge, Avatar, PageHeader } from '../components/ui';
 import ListeningStats from '../components/stats/ListeningStats';
 import BadgeDisplay from '../components/badges/BadgeDisplay';
 import SocialDashboard from '../components/social/SocialDashboard';
@@ -13,11 +13,32 @@ const APP_KEY = /^(audible_|echoread_|cookie_preferences|idle)/;
 const appStorageEntries = () =>
   Object.keys(localStorage).filter(key => APP_KEY.test(key)).map(key => [key, localStorage.getItem(key)]);
 
+// /settings, /help and /notifications open the settings tab; the last two scroll to their section.
+const TAB_FOR_PATH = { '/settings': 'settings', '/help': 'settings', '/notifications': 'settings' };
+const SECTION_FOR_PATH = { '/help': 'help', '/notifications': 'notifications' };
+
+const slug = (s) => s.toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '');
+
+/**
+ * Account: your profile, your social life and your settings, as three text
+ * tabs on a hairline. Profile pairs your numbers with the membership panel;
+ * settings are plain divide-y lists with help at the end.
+ */
 const Account = () => {
-  const location = useLocation();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState(location.pathname === '/settings' ? 'settings' : 'profile');
   const storedUser = getUserData();
+  // The tab follows the route until you pick one; a new route resets it.
+  const [picked, setPicked] = useState({ path: pathname, tab: TAB_FOR_PATH[pathname] || 'profile' });
+  const activeTab = picked.path === pathname ? picked.tab : (TAB_FOR_PATH[pathname] || 'profile');
+  const setActiveTab = (tab) => setPicked({ path: pathname, tab });
+
+  useEffect(() => {
+    const section = SECTION_FOR_PATH[pathname];
+    if (section) {
+      requestAnimationFrame(() => document.getElementById(section)?.scrollIntoView({ block: 'start' }));
+    }
+  }, [pathname]);
 
   // Mock profile details; plan and credits come from the stored user
   const user = {
@@ -40,7 +61,7 @@ const Account = () => {
     ],
     badges: ['completionist', 'speed_reader', 'genre_explorer', 'veteran_listener'],
   };
-  
+
   // Listening stats for the component
   const listeningStats = {
     hoursListened: user.hoursListened,
@@ -52,11 +73,10 @@ const Account = () => {
     thisMonthHours: 18,
     thisYearBooks: 23,
   };
-  
+
   const settingsSections = [
     {
       title: 'Playback',
-      icon: BookOpen,
       items: [
         { label: 'Default playback speed', value: '1.0x' },
         { label: 'Auto-skip silence', value: 'On' },
@@ -65,7 +85,6 @@ const Account = () => {
     },
     {
       title: 'Notifications',
-      icon: Bell,
       items: [
         { label: 'New releases', value: 'On' },
         { label: 'Club updates', value: 'On' },
@@ -74,7 +93,6 @@ const Account = () => {
     },
     {
       title: 'Privacy',
-      icon: Shield,
       items: [
         { label: 'Show listening activity', value: 'Friends only' },
         { label: 'Allow friend requests', value: 'On' },
@@ -82,15 +100,21 @@ const Account = () => {
       ],
     },
     {
-      title: 'Language & Region',
-      icon: Globe,
+      title: 'Language and region',
       items: [
         { label: 'Language', value: 'English' },
         { label: 'Region', value: 'United States' },
       ],
     },
   ];
-  
+
+  const helpLinks = [
+    { label: 'Frequently asked questions', to: '/faq' },
+    { label: 'Contact support', to: '/contact' },
+    { label: 'Terms of service', to: '/terms' },
+    { label: 'Privacy policy', to: '/privacy' },
+  ];
+
   const handleDownloadData = () => {
     const data = Object.fromEntries(appStorageEntries().map(([key, value]) => {
       try {
@@ -114,226 +138,145 @@ const Account = () => {
   };
 
   const tabs = [
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'social', label: 'Social', icon: Users },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'profile', label: 'Profile' },
+    { id: 'social', label: 'Social' },
+    { id: 'settings', label: 'Settings' },
   ];
 
-  return (
-    <div className="min-h-screen bg-audible-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-audible-text-primary mb-8">
-          Account
-        </h1>
+  const onTabKey = (e, i) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    e.preventDefault();
+    const next = (i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length;
+    setActiveTab(tabs[next].id);
+    document.getElementById(`account-tab-${tabs[next].id}`)?.focus();
+  };
 
-        {/* Tab Navigation */}
-        <div className="flex border-b border-audible-gray-200 mb-8">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
+  const fmtDate = (iso, opts) => new Date(iso).toLocaleDateString('en-US', opts);
+
+  return (
+    <div className="page pb-16">
+      <PageHeader title="Account" description="Your profile, membership and settings in one place.">
+        <div role="tablist" aria-label="Account sections" className="flex gap-6 border-b border-line">
+          {tabs.map((tab, i) => {
+            const selected = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
+                id={`account-tab-${tab.id}`}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-controls="account-panel"
+                tabIndex={selected ? 0 : -1}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-3 font-medium transition-colors ${
-                  activeTab === tab.id
-                    ? 'text-audible-orange border-b-2 border-audible-orange'
-                    : 'text-audible-text-secondary hover:text-audible-text-primary'
-                }`}
+                onKeyDown={(e) => onTabKey(e, i)}
+                className={`relative h-12 text-[0.9375rem] font-medium transition-colors ${selected ? 'text-ink' : 'text-ink-2 hover:text-ink'}`}
               >
-                <Icon className="w-5 h-5" />
                 {tab.label}
+                {selected && <span className="absolute inset-x-0 -bottom-px h-[3px] rounded-full bg-hl" aria-hidden="true" />}
               </button>
             );
           })}
         </div>
-        
+      </PageHeader>
+
+      <div id="account-panel" role="tabpanel" aria-labelledby={`account-tab-${activeTab}`} className="pt-4">
         {activeTab === 'profile' && (
-          <div className="grid lg:grid-cols-[1fr,400px] gap-8">
-            {/* Main Content */}
-            <div className="space-y-6">
-            {/* Profile Card */}
-            <Card padding="lg">
-              <div className="flex items-start gap-6">
-                <div className="flex-shrink-0">
-                  <div className="w-24 h-24 rounded-full bg-echo-orange flex items-center justify-center text-white text-3xl font-bold">
-                    {user.avatar ? (
-                      <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
-                    ) : (
-                      user.name.charAt(0)
-                    )}
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-echo-text-primary mb-1">
-                    {user.name}
-                  </h2>
-                  <p className="text-echo-text-secondary mb-4">{user.email}</p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <Badge variant="primary">
-                      {user.plan} Member
-                    </Badge>
+          <div className="grid gap-14 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-14">
+            <div className="min-w-0 space-y-16">
+              {/* Who you are */}
+              <section aria-label="Profile" className="flex flex-col gap-5 sm:flex-row sm:items-start">
+                <Avatar src={user.avatar} name={user.name} size="xl" />
+                <div className="min-w-0 flex-1">
+                  <h2 className="t-h2 text-ink">{user.name}</h2>
+                  <p className="mt-1 text-[0.9375rem] text-ink-2">{user.email}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Badge variant="primary">{user.plan} member</Badge>
                     <Badge variant="outline">
-                      Member since {new Date(user.memberSince).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}
+                      Member since {fmtDate(user.memberSince, { year: 'numeric', month: 'long' })}
                     </Badge>
                   </div>
-                  <Button variant="outline" onClick={() => navigate('/profile')} leftIcon={<Settings className="w-4 h-4" />}>
-                    Edit Profile
+                  <Button variant="outline" className="mt-5" onClick={() => navigate('/profile')} leftIcon={<Settings className="h-4 w-4" strokeWidth={1.75} />}>
+                    Edit profile
                   </Button>
                 </div>
-              </div>
-            </Card>
-            
-            {/* Listening Statistics */}
-            <Card padding="lg">
-              <h2 className="text-xl font-bold text-echo-text-primary mb-6 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5" />
-                Listening Statistics
-              </h2>
-              <ListeningStats stats={listeningStats} />
-            </Card>
-            
-            {/* Achievements */}
-            <Card padding="lg">
-              <h2 className="text-xl font-bold text-echo-text-primary mb-6 flex items-center gap-2">
-                <Award className="w-5 h-5" />
-                Achievements & Badges
-              </h2>
-              <BadgeDisplay earnedBadges={user.badges} />
-            </Card>
-            
-            {/* Settings Sections */}
-            {settingsSections.map((section) => (
-              <Card key={section.title} padding="lg">
-                <h2 className="text-xl font-bold text-echo-text-primary mb-4 flex items-center gap-2">
-                  <section.icon className="w-5 h-5" />
-                  {section.title}
-                </h2>
-                <div className="space-y-4">
-                  {section.items.map((item) => (
-                    <div key={item.label} className="flex items-center justify-between py-2">
-                      <span className="text-echo-text-secondary">{item.label}</span>
-                      <span className="text-echo-text-primary font-medium">{item.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            ))}
-            
-            {/* Help & Support */}
-            <Card padding="lg">
-              <h2 className="text-xl font-bold text-echo-text-primary mb-4 flex items-center gap-2">
-                <HelpCircle className="w-5 h-5" />
-                Help & Support
-              </h2>
-              <div className="space-y-3">
-                <Button variant="ghost" fullWidth className="justify-start" onClick={() => navigate('/faq')}>
-                  FAQ
-                </Button>
-                <Button variant="ghost" fullWidth className="justify-start" onClick={() => navigate('/contact')}>
-                  Contact Support
-                </Button>
-                <Button variant="ghost" fullWidth className="justify-start" onClick={() => navigate('/terms')}>
-                  Terms of Service
-                </Button>
-                <Button variant="ghost" fullWidth className="justify-start" onClick={() => navigate('/privacy')}>
-                  Privacy Policy
-                </Button>
-              </div>
-            </Card>
-          </div>
-          
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Membership Card */}
-            <Card padding="lg" variant="elevated">
-              <div className="text-center mb-6">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-echo-orange/10 mb-4">
-                  <CreditCard className="w-8 h-8 text-echo-orange" />
-                </div>
-                <h3 className="text-xl font-bold text-echo-text-primary mb-2">
-                  {user.plan} Membership
-                </h3>
-                <p className="text-echo-text-secondary text-sm">
-                  Renews on {new Date(user.renewalDate).toLocaleDateString()}
-                </p>
-              </div>
-              
-              <div className="space-y-4 mb-6">
-                <div className="flex items-center justify-between py-3 border-b border-echo-divider">
-                  <span className="text-echo-text-secondary">Available Credits</span>
-                  <span className="text-2xl font-bold text-echo-orange">{user.credits}</span>
-                </div>
-                <div className="flex items-center justify-between py-3 border-b border-echo-divider">
-                  <span className="text-echo-text-secondary">Credits Used</span>
-                  <span className="font-semibold text-echo-text-primary">{user.creditsUsed}</span>
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                <Button fullWidth variant="primary" onClick={() => navigate('/profile')}>
-                  Upgrade Plan
-                </Button>
-                <Button fullWidth variant="outline" onClick={() => navigate('/profile')}>
-                  Manage Subscription
-                </Button>
-              </div>
-            </Card>
-            
-            {/* Quick Stats */}
-            <Card padding="lg">
-              <h3 className="font-bold text-echo-text-primary mb-4">
-                This Month
-              </h3>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-echo-text-secondary">Hours Listened</span>
-                    <span className="font-bold text-echo-orange">{user.hoursListened}h</span>
-                  </div>
-                  <div className="h-2 bg-echo-beige rounded-full overflow-hidden">
-                    <div className="h-full bg-echo-orange" style={{ width: '75%' }} />
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-echo-text-secondary">Books Finished</span>
-                    <span className="font-bold text-echo-orange">{user.booksFinished}</span>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-echo-text-secondary">Current Streak</span>
-                    <span className="font-bold text-echo-orange">{user.currentStreak} days</span>
-                  </div>
-                </div>
-              </div>
-            </Card>
-            
-            {/* Favorite Genres */}
-            <Card padding="lg">
-              <h3 className="font-bold text-echo-text-primary mb-4">
-                Favorite Genres
-              </h3>
-              <div className="space-y-3">
-                {user.favoriteGenres.map((genre) => (
-                  <div key={genre.name}>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm text-echo-text-secondary">{genre.name}</span>
-                      <span className="text-sm font-medium text-echo-text-primary">{genre.count} books</span>
-                    </div>
-                    <div className="h-2 bg-echo-beige rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-echo-orange"
-                        style={{ width: `${(genre.count / user.booksFinished) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
+              </section>
+
+              <section aria-labelledby="account-stats">
+                <h2 id="account-stats" className="t-h2 mb-6 text-ink">Listening statistics</h2>
+                <ListeningStats stats={listeningStats} />
+              </section>
+
+              <section aria-labelledby="account-badges">
+                <h2 id="account-badges" className="t-h2 mb-6 text-ink">Achievements and badges</h2>
+                <BadgeDisplay earnedBadges={user.badges} />
+              </section>
             </div>
+
+            {/* Sidebar */}
+            <aside className="min-w-0 space-y-12">
+              <section aria-labelledby="account-membership" className="rounded-2xl border border-line bg-surface p-6">
+                <h2 id="account-membership" className="t-h3 text-ink">{user.plan} membership</h2>
+                <p className="mt-1 t-meta">Renews on {fmtDate(user.renewalDate, { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+
+                <dl className="mt-6 grid grid-cols-2 gap-6 border-y border-line py-5">
+                  <div className="flex flex-col">
+                    <dt className="order-2 mt-1 t-meta">Credits available</dt>
+                    <dd className="order-1 font-serif text-4xl font-medium leading-none text-ink tabular">{user.credits}</dd>
+                  </div>
+                  <div className="flex flex-col">
+                    <dt className="order-2 mt-1 t-meta">Credits used</dt>
+                    <dd className="order-1 font-serif text-4xl font-medium leading-none text-ink-2 tabular">{user.creditsUsed}</dd>
+                  </div>
+                </dl>
+
+                <div className="mt-6 flex flex-col gap-3">
+                  <Button fullWidth variant="primary" onClick={() => navigate('/profile')}>Upgrade plan</Button>
+                  <Button fullWidth variant="outline" onClick={() => navigate('/profile')}>Manage subscription</Button>
+                </div>
+              </section>
+
+              <section aria-labelledby="account-month">
+                <h2 id="account-month" className="t-h3 text-ink">This month</h2>
+                <dl className="mt-4 divide-y divide-line border-y border-line">
+                  <div className="flex flex-wrap items-baseline justify-between py-3">
+                    <dt className="text-[0.9375rem] text-ink-2">Hours listened</dt>
+                    <dd className="font-semibold text-ink tabular">{user.hoursListened} h</dd>
+                    <dd className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-line" aria-hidden="true">
+                      <div className="h-full rounded-full bg-ink" style={{ width: '75%' }} />
+                    </dd>
+                  </div>
+                  <div className="flex items-baseline justify-between py-3">
+                    <dt className="text-[0.9375rem] text-ink-2">Books finished</dt>
+                    <dd className="font-semibold text-ink tabular">{user.booksFinished}</dd>
+                  </div>
+                  <div className="flex items-baseline justify-between py-3">
+                    <dt className="text-[0.9375rem] text-ink-2">Current streak</dt>
+                    <dd className="font-semibold text-ink tabular">{user.currentStreak} days</dd>
+                  </div>
+                </dl>
+              </section>
+
+              <section aria-labelledby="account-genres">
+                <h2 id="account-genres" className="t-h3 text-ink">Favourite genres</h2>
+                <ul className="mt-4 space-y-3">
+                  {user.favoriteGenres.map((genre, i) => (
+                    <li key={genre.name}>
+                      <div className="flex items-baseline justify-between text-sm">
+                        <span className={i === 0 ? 'font-semibold text-ink' : 'text-ink-2'}>{genre.name}</span>
+                        <span className="text-ink-2 tabular">{genre.count} books</span>
+                      </div>
+                      <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-line" aria-hidden="true">
+                        <div
+                          className={`h-full rounded-full ${i === 0 ? 'bg-hl ring-1 ring-inset ring-ink' : 'bg-ink'}`}
+                          style={{ width: `${(genre.count / user.booksFinished) * 100}%` }}
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </aside>
           </div>
         )}
 
@@ -344,51 +287,52 @@ const Account = () => {
         )}
 
         {activeTab === 'settings' && (
-          <div className="grid lg:grid-cols-[1fr,400px] gap-8">
-            {/* Main Content */}
-            <div className="space-y-6">
-              {/* Settings Sections */}
+          <div className="grid gap-14 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-14">
+            <div className="min-w-0 space-y-12">
               {settingsSections.map((section) => (
-                <Card key={section.title} padding="lg">
-                  <h2 className="text-xl font-bold text-audible-text-primary mb-4 flex items-center gap-2">
-                    <section.icon className="w-5 h-5" />
-                    {section.title}
-                  </h2>
-                  <div className="space-y-4">
-                    {section.items.map((item, index) => (
-                      <div key={index} className="flex items-center justify-between py-2">
-                        <span className="text-audible-text-primary">{item.label}</span>
-                        <span className="text-audible-text-secondary">{item.value}</span>
+                <section key={section.title} id={slug(section.title)} aria-labelledby={`${slug(section.title)}-title`} className="scroll-mt-24">
+                  <h2 id={`${slug(section.title)}-title`} className="t-h2 text-ink">{section.title}</h2>
+                  <dl className="mt-4 divide-y divide-line border-y border-line">
+                    {section.items.map((item) => (
+                      <div key={item.label} className="flex items-center justify-between gap-6 py-3.5">
+                        <dt className="text-[0.9375rem] text-ink">{item.label}</dt>
+                        <dd className="text-[0.9375rem] text-ink-2 tabular">{item.value}</dd>
                       </div>
                     ))}
-                  </div>
-                </Card>
+                  </dl>
+                </section>
               ))}
+
+              <section id="help" aria-labelledby="help-title" className="scroll-mt-24">
+                <h2 id="help-title" className="t-h2 text-ink">Help and support</h2>
+                <ul className="mt-4 divide-y divide-line border-y border-line">
+                  {helpLinks.map((l) => (
+                    <li key={l.to}>
+                      <Link to={l.to} className="group flex min-h-12 items-center justify-between gap-4 py-3 text-[0.9375rem] text-ink">
+                        <span className="group-hover:underline underline-offset-4">{l.label}</span>
+                        <ArrowRight className="h-4 w-4 text-ink-3 group-hover:text-ink" strokeWidth={1.75} aria-hidden="true" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
             </div>
 
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* Account Actions */}
-              <Card padding="lg">
-                <h3 className="font-bold text-audible-text-primary mb-4">
-                  Account Actions
-                </h3>
-                <div className="space-y-3">
-                  <Button fullWidth variant="primary" onClick={() => navigate('/profile')}>
-                    Edit Profile
-                  </Button>
-                  <Button fullWidth variant="outline" onClick={() => navigate('/profile#privacy')}>
-                    Privacy Settings
-                  </Button>
-                  <Button fullWidth variant="outline" onClick={handleDownloadData}>
-                    Download Data
-                  </Button>
-                  <Button fullWidth variant="outline" className="text-red-600 hover:text-red-700" onClick={handleDeleteAccount}>
-                    Delete Account
+            <aside className="min-w-0">
+              <section aria-labelledby="account-actions" className="rounded-2xl border border-line bg-surface p-6">
+                <h2 id="account-actions" className="t-h3 text-ink">Account actions</h2>
+                <div className="mt-5 flex flex-col gap-3">
+                  <Button fullWidth variant="primary" onClick={() => navigate('/profile')}>Edit profile</Button>
+                  <Button fullWidth variant="outline" onClick={() => document.getElementById('privacy')?.scrollIntoView({ block: 'start' })}>Privacy settings</Button>
+                  <Button fullWidth variant="outline" onClick={handleDownloadData} leftIcon={<Download className="h-4 w-4" strokeWidth={1.75} />}>Download data</Button>
+                </div>
+                <div className="mt-6 border-t border-line pt-5">
+                  <Button fullWidth variant="outline" className="text-danger! hover:bg-danger-wash!" onClick={handleDeleteAccount} leftIcon={<Trash2 className="h-4 w-4" strokeWidth={1.75} />}>
+                    Delete account
                   </Button>
                 </div>
-              </Card>
-            </div>
+              </section>
+            </aside>
           </div>
         )}
       </div>

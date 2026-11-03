@@ -11,10 +11,10 @@ const AI_RECS = JSON.stringify([
 ]);
 
 const openAssistant = async (page, tab) => {
-  await page.getByRole('button', { name: 'Open AI Assistant' }).click();
-  const panel = page.getByRole('heading', { name: 'AI Reading Assistant' }).locator('xpath=ancestor::div[contains(@class,"fixed")][1]');
+  await page.getByRole('button', { name: 'Ask about a book: open the reading assistant' }).click();
+  const panel = page.getByRole('dialog', { name: 'Reading assistant' });
   await expect(panel).toBeVisible();
-  if (tab) await panel.getByRole('button', { name: tab }).click();
+  if (tab) await panel.getByRole('tab', { name: tab }).click();
   return panel;
 };
 
@@ -70,7 +70,7 @@ test.describe('AI recommendations', () => {
     });
     await freshStart(page);
     const panel = await openAssistant(page);
-    await expect(panel.locator('.animate-pulse').first()).toBeVisible();
+    await expect(panel.locator('.shimmer').first()).toBeVisible();
     release();
     await expect(recommendationCards(panel)).toHaveCount(2);
 
@@ -92,8 +92,8 @@ test.describe('AI book chat', () => {
       await route.fulfill(grokReply('Dune is about politics, ecology and prophecy.'));
     });
     await freshStart(page);
-    const panel = await openAssistant(page, 'Ask About Books');
-    const input = panel.getByRole('textbox', { name: 'Ask about any book' });
+    const panel = await openAssistant(page, 'Ask about books');
+    const input = panel.getByRole('textbox', { name: 'Ask about a book' });
     await input.fill('What is Dune about?');
     await panel.getByRole('button', { name: 'Send message' }).click();
     await expect(panel.getByText('Dune is about politics, ecology and prophecy.')).toBeVisible();
@@ -110,9 +110,9 @@ test.describe('AI book chat', () => {
 
   test('Enter sends, and the send button is disabled for empty input', async ({ page }) => {
     await freshStart(page);
-    const panel = await openAssistant(page, 'Ask About Books');
+    const panel = await openAssistant(page, 'Ask about books');
     await expect(panel.getByRole('button', { name: 'Send message' })).toBeDisabled();
-    await panel.getByRole('textbox', { name: 'Ask about any book' }).fill('Recommend me something');
+    await panel.getByRole('textbox', { name: 'Ask about a book' }).fill('Recommend me something');
     await page.keyboard.press('Enter');
     await expect(panel.getByText('Mock Grok reply for tests.')).toBeVisible();
   });
@@ -121,8 +121,8 @@ test.describe('AI book chat', () => {
     guard.allow(/http 503: POST .*\/api\/grok/);
     await page.route('**/api/grok', (route) => route.fulfill(json(503, { error: 'not_configured' })));
     await freshStart(page);
-    const panel = await openAssistant(page, 'Ask About Books');
-    await panel.getByRole('textbox', { name: 'Ask about any book' }).fill('Can you recommend a book?');
+    const panel = await openAssistant(page, 'Ask about books');
+    await panel.getByRole('textbox', { name: 'Ask about a book' }).fill('Can you recommend a book?');
     await panel.getByRole('button', { name: 'Send message' }).click();
     await expect(panel.getByText(/I'd recommend 'The Name of the Wind'/)).toBeVisible();
   });
@@ -132,21 +132,21 @@ test.describe('AI book chat', () => {
     guard.allow(/AI Chat Error|Error getting AI (answer|recommendations)/);
     await page.route('**/api/grok', (route) => route.fulfill(json(400, { error: 'Message too long' })));
     await freshStart(page);
-    const panel = await openAssistant(page, 'Ask About Books');
-    await panel.getByRole('textbox', { name: 'Ask about any book' }).fill('Hello?');
+    const panel = await openAssistant(page, 'Ask about books');
+    await panel.getByRole('textbox', { name: 'Ask about a book' }).fill('Hello?');
     await panel.getByRole('button', { name: 'Send message' }).click();
-    await expect(panel.getByText(/Sorry, I encountered an error/)).toBeVisible();
+    await expect(panel.getByText(/Sorry, something went wrong/)).toBeVisible();
     await expect(panel.getByText(/Message too long/)).toBeVisible();
 
     await panel.getByRole('button', { name: 'Reset chat' }).click();
-    await expect(panel.getByText(/Sorry, I encountered an error/)).toBeHidden();
+    await expect(panel.getByText(/Sorry, something went wrong/)).toBeHidden();
   });
 
   test('closes and reopens the assistant', async ({ page }) => {
     await freshStart(page);
     await openAssistant(page);
-    await page.getByRole('button', { name: 'Close AI Assistant' }).click();
-    await expect(page.getByRole('heading', { name: 'AI Reading Assistant' })).toBeHidden();
-    await expect(page.getByRole('button', { name: 'Open AI Assistant' })).toBeVisible();
+    await page.getByRole('button', { name: 'Close assistant' }).click();
+    await expect(page.getByRole('dialog', { name: 'Reading assistant' })).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Ask about a book: open the reading assistant' })).toBeVisible();
   });
 });

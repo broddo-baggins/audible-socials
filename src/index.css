@@ -1,35 +1,98 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Literata:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+/*
+ * Listenable design tokens ("Marginalia"). DESIGN.md is the written system and
+ * tokens.json the machine-readable copy; change all three together.
+ *
+ * Tailwind v4 never read tailwind.config.js, so every colour, font and radius the
+ * app uses is declared here in @theme. The default hue families (purple, pink,
+ * blue, ...) are folded onto the one accent ramp on purpose: the palette is ink,
+ * paper and a highlighter, and legacy classes cannot reintroduce other hues.
+ */
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Literata';
+  src: url('/fonts/literata-latin.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Literata';
+  src: url('/fonts/literata-italic-latin.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  src: url('/fonts/schibsted-grotesk-latin.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@custom-variant tablet (@media (min-width: 768px) and (max-width: 1023px));
+
 :root {
-  /* Audible Brand Colors - Exact Match */
-  --color-audible-orange: #FF6B35;
-  --color-audible-orange-dark: #E55A2B;
-  --color-audible-orange-light: #FF855A;
+  /* Grounds */
+  --paper: #F2F2EE;          /* page ground */
+  --surface: #FBFBF9;        /* cards, sheets, inputs */
+  --surface-sunk: #E9E9E4;   /* wells, skeletons, tracks */
+  --night: #141519;          /* player, the one dark surface */
+  --night-raised: #1F2127;
 
-  --color-bg-primary: #FFFFFF;
-  --color-bg-secondary: #F9FAFB;
-  --color-bg-surface: #F3F4F6;
+  /* Inks */
+  --ink: #17181C;            /* headings, body, primary fill: 15.8:1 on paper */
+  --ink-2: #43464E;          /* secondary text: 8.4:1 on paper */
+  --ink-3: #53575F;          /* tertiary, meta: 6.5:1 on paper (small antialiased text measures near 4.8) */
+  --ink-on-night: #F2F2EE;   /* 16.3:1 on night */
+  --ink-on-night-2: #A3A7AF; /* 7.6:1 on night */
 
-  --color-text-primary: #111827;
-  --color-text-secondary: #6B7280;
-  --color-text-tertiary: #9CA3AF;
+  /* Lines */
+  --line: #DCDDD7;           /* hairlines, dividers (decorative) */
+  --line-strong: #7E8279;    /* input and control edges: 3.5:1 on paper */
 
-  --color-border: #E5E7EB;
-  --color-divider: #E5E7EB;
+  /* The one accent: a highlighter. A fill under ink, never text on paper. */
+  --hl: #E2F04B;             /* ink on hl 14.2:1; hl on night 14.6:1 */
+  --hl-soft: #EEF6A6;
+  --hl-wash: #F6FAD4;
 
-  --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-serif: Georgia, Cambria, 'Times New Roman', serif;
-  --font-display: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* States (text-safe on paper and surface) */
+  --danger: #B3261E;         /* 5.8:1 */
+  --danger-wash: #FBEFEE;
+  --success: #2D6A39;        /* 5.8:1 */
+  --success-wash: #EEF5EF;
 
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* Space (4 pt base) */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px;
+  --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px;
+
+  /* Radius */
+  --radius-cover: 3px;       /* book covers and tags: books have nearly square corners */
+  --radius-panel: 10px;      /* cards, inputs, panels, menus */
+  --radius-sheet: 14px;      /* dialogs and large surfaces */
+  --radius-pill: 999px;      /* buttons, chips, avatars */
+
+  /* Elevation: tinted with ink, never pure black */
+  --shadow-1: 0 1px 2px rgb(23 24 28 / 0.06);
+  --shadow-2: 0 2px 6px rgb(23 24 28 / 0.06), 0 8px 24px rgb(23 24 28 / 0.06);
+  --shadow-cover: 0 1px 1px rgb(23 24 28 / 0.12), 0 6px 16px -6px rgb(23 24 28 / 0.35);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 120ms;
+  --dur: 220ms;
+
+  /* Layout */
+  --page-max: 1280px;
+  --header-h: 64px;
+
+  font-family: var(--font-sans);
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light;
-  color: #111827;
-  background-color: #FFFFFF;
-
+  color: var(--ink);
+  background-color: var(--paper);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -37,223 +100,261 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #FFFFFF;
-  color: #111827;
+@theme inline {
+  --font-sans: 'Schibsted Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Literata', Georgia, 'Times New Roman', serif;
+  --font-display: 'Literata', Georgia, 'Times New Roman', serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --breakpoint-xs: 475px;
+  --container-8xl: 88rem;
+  --container-9xl: 96rem;
+
+  /* Semantic colours: bg-paper, text-ink-2, border-line, bg-hl ... */
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-surface-sunk: var(--surface-sunk);
+  --color-night: var(--night);
+  --color-night-raised: var(--night-raised);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-on-night: var(--ink-on-night);
+  --color-ink-on-night-2: var(--ink-on-night-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-hl: var(--hl);
+  --color-hl-soft: var(--hl-soft);
+  --color-hl-wash: var(--hl-wash);
+  --color-danger: var(--danger);
+  --color-danger-wash: var(--danger-wash);
+  --color-success: var(--success);
+  --color-success-wash: var(--success-wash);
+
+  --color-white: var(--surface);
+  --color-black: #0F1013;
+
+  /* Neutral ramp: every grey family resolves here */
+  --color-gray-50: #F7F7F4;  --color-gray-100: var(--paper); --color-gray-200: #E6E6E1;
+  --color-gray-300: var(--line); --color-gray-400: #5E626B; --color-gray-500: var(--ink-3);
+  --color-gray-600: #4D5058; --color-gray-700: var(--ink-2); --color-gray-800: #2A2C32;
+  --color-gray-900: var(--ink); --color-gray-950: #0F1013;
+  --color-slate-50: #F7F7F4; --color-slate-100: var(--paper); --color-slate-200: #E6E6E1;
+  --color-slate-300: var(--line); --color-slate-400: #5E626B; --color-slate-500: var(--ink-3);
+  --color-slate-600: #4D5058; --color-slate-700: var(--ink-2); --color-slate-800: #2A2C32;
+  --color-slate-900: var(--ink); --color-slate-950: #0F1013;
+
+  /* Hue families folded onto the highlighter (50-400) and ink (500-950) */
+  --accent-50: var(--hl-wash); --accent-100: var(--hl-wash); --accent-200: var(--hl-soft);
+  --accent-300: var(--hl); --accent-400: var(--hl); --accent-500: var(--ink-2);
+  --accent-600: #2A2C32; --accent-700: var(--ink); --accent-800: var(--ink); --accent-900: var(--ink);
+  --accent-950: #0F1013;
+  --color-purple-50: var(--accent-50); --color-purple-100: var(--accent-100); --color-purple-200: var(--accent-200); --color-purple-300: var(--accent-300); --color-purple-400: var(--accent-400); --color-purple-500: var(--accent-500); --color-purple-600: var(--accent-600); --color-purple-700: var(--accent-700); --color-purple-800: var(--accent-800); --color-purple-900: var(--accent-900); --color-purple-950: var(--accent-950);
+  --color-pink-50: var(--accent-50); --color-pink-100: var(--accent-100); --color-pink-200: var(--accent-200); --color-pink-300: var(--accent-300); --color-pink-400: var(--accent-400); --color-pink-500: var(--accent-500); --color-pink-600: var(--accent-600); --color-pink-700: var(--accent-700); --color-pink-800: var(--accent-800); --color-pink-900: var(--accent-900); --color-pink-950: var(--accent-950);
+  --color-blue-50: var(--accent-50); --color-blue-100: var(--accent-100); --color-blue-200: var(--accent-200); --color-blue-300: var(--accent-300); --color-blue-400: var(--accent-400); --color-blue-500: var(--accent-500); --color-blue-600: var(--accent-600); --color-blue-700: var(--accent-700); --color-blue-800: var(--accent-800); --color-blue-900: var(--accent-900); --color-blue-950: var(--accent-950);
+  --color-indigo-50: var(--accent-50); --color-indigo-100: var(--accent-100); --color-indigo-200: var(--accent-200); --color-indigo-300: var(--accent-300); --color-indigo-400: var(--accent-400); --color-indigo-500: var(--accent-500); --color-indigo-600: var(--accent-600); --color-indigo-700: var(--accent-700); --color-indigo-800: var(--accent-800); --color-indigo-900: var(--accent-900); --color-indigo-950: var(--accent-950);
+  --color-violet-50: var(--accent-50); --color-violet-100: var(--accent-100); --color-violet-200: var(--accent-200); --color-violet-300: var(--accent-300); --color-violet-400: var(--accent-400); --color-violet-500: var(--accent-500); --color-violet-600: var(--accent-600); --color-violet-700: var(--accent-700); --color-violet-800: var(--accent-800); --color-violet-900: var(--accent-900); --color-violet-950: var(--accent-950);
+  --color-fuchsia-50: var(--accent-50); --color-fuchsia-100: var(--accent-100); --color-fuchsia-200: var(--accent-200); --color-fuchsia-300: var(--accent-300); --color-fuchsia-400: var(--accent-400); --color-fuchsia-500: var(--accent-500); --color-fuchsia-600: var(--accent-600); --color-fuchsia-700: var(--accent-700); --color-fuchsia-800: var(--accent-800); --color-fuchsia-900: var(--accent-900); --color-fuchsia-950: var(--accent-950);
+  --color-sky-50: var(--accent-50); --color-sky-100: var(--accent-100); --color-sky-200: var(--accent-200); --color-sky-300: var(--accent-300); --color-sky-400: var(--accent-400); --color-sky-500: var(--accent-500); --color-sky-600: var(--accent-600); --color-sky-700: var(--accent-700); --color-sky-800: var(--accent-800); --color-sky-900: var(--accent-900); --color-sky-950: var(--accent-950);
+  --color-cyan-50: var(--accent-50); --color-cyan-100: var(--accent-100); --color-cyan-200: var(--accent-200); --color-cyan-300: var(--accent-300); --color-cyan-400: var(--accent-400); --color-cyan-500: var(--accent-500); --color-cyan-600: var(--accent-600); --color-cyan-700: var(--accent-700); --color-cyan-800: var(--accent-800); --color-cyan-900: var(--accent-900); --color-cyan-950: var(--accent-950);
+  --color-teal-50: var(--accent-50); --color-teal-100: var(--accent-100); --color-teal-200: var(--accent-200); --color-teal-300: var(--accent-300); --color-teal-400: var(--accent-400); --color-teal-500: var(--accent-500); --color-teal-600: var(--accent-600); --color-teal-700: var(--accent-700); --color-teal-800: var(--accent-800); --color-teal-900: var(--accent-900); --color-teal-950: var(--accent-950);
+  --color-orange-50: var(--accent-50); --color-orange-100: var(--accent-100); --color-orange-200: var(--accent-200); --color-orange-300: var(--accent-300); --color-orange-400: var(--accent-400); --color-orange-500: var(--accent-500); --color-orange-600: var(--accent-600); --color-orange-700: var(--accent-700); --color-orange-800: var(--accent-800); --color-orange-900: var(--accent-900); --color-orange-950: var(--accent-950);
+  --color-amber-50: var(--accent-50); --color-amber-100: var(--accent-100); --color-amber-200: var(--accent-200); --color-amber-300: var(--accent-300); --color-amber-400: var(--accent-400); --color-amber-500: var(--accent-500); --color-amber-600: var(--accent-600); --color-amber-700: var(--accent-700); --color-amber-800: var(--accent-800); --color-amber-900: var(--accent-900); --color-amber-950: var(--accent-950);
+  --color-yellow-50: var(--accent-50); --color-yellow-100: var(--accent-100); --color-yellow-200: var(--accent-200); --color-yellow-300: var(--accent-300); --color-yellow-400: var(--accent-400); --color-yellow-500: var(--accent-500); --color-yellow-600: var(--accent-600); --color-yellow-700: var(--accent-700); --color-yellow-800: var(--accent-800); --color-yellow-900: var(--accent-900); --color-yellow-950: var(--accent-950);
+  --color-rose-50: var(--accent-50); --color-rose-100: var(--accent-100); --color-rose-200: var(--accent-200); --color-rose-300: var(--accent-300); --color-rose-400: var(--accent-400); --color-rose-500: var(--accent-500); --color-rose-600: var(--accent-600); --color-rose-700: var(--accent-700); --color-rose-800: var(--accent-800); --color-rose-900: var(--accent-900); --color-rose-950: var(--accent-950);
+  --color-lime-50: var(--accent-50); --color-lime-100: var(--accent-100); --color-lime-200: var(--accent-200); --color-lime-300: var(--accent-300); --color-lime-400: var(--accent-400); --color-lime-500: var(--accent-500); --color-lime-600: var(--accent-600); --color-lime-700: var(--accent-700); --color-lime-800: var(--accent-800); --color-lime-900: var(--accent-900); --color-lime-950: var(--accent-950);
+
+  /* States keep their meaning, desaturated */
+  --color-green-50: var(--success-wash); --color-green-100: #DCEBDF; --color-green-200: #BBD8C0; --color-green-300: #8FBE98; --color-green-400: #4F8F5B; --color-green-500: var(--success); --color-green-600: var(--success); --color-green-700: #23552D; --color-green-800: #1B4223; --color-green-900: #12301A;
+  --color-emerald-50: var(--success-wash); --color-emerald-100: #DCEBDF; --color-emerald-200: #BBD8C0; --color-emerald-300: #8FBE98; --color-emerald-400: #4F8F5B; --color-emerald-500: var(--success); --color-emerald-600: var(--success); --color-emerald-700: #23552D; --color-emerald-800: #1B4223; --color-emerald-900: #12301A;
+  --color-red-50: var(--danger-wash); --color-red-100: #F6DCDA; --color-red-200: #EDB8B4; --color-red-300: #E08F89; --color-red-400: #C9493F; --color-red-500: var(--danger); --color-red-600: var(--danger); --color-red-700: #8F1E18; --color-red-800: #6E1712; --color-red-900: #4F100D;
+
+  /* Legacy audible-* names, mapped onto the system (they never rendered before) */
+  --color-audible-orange: var(--ink);
+  --color-audible-orange-dark: #2A2C32;
+  --color-audible-orange-light: var(--ink-2);
+  --color-audible-white: var(--paper);
+  --color-audible-cream: var(--paper);
+  --color-audible-gold: var(--hl);
+  --color-audible-text-primary: var(--ink);
+  --color-audible-text-secondary: var(--ink-2);
+  --color-audible-text-tertiary: var(--ink-3);
+  --color-audible-gray: var(--line);
+  --color-audible-gray-50: #F7F7F4; --color-audible-gray-100: var(--paper); --color-audible-gray-200: var(--line);
+  --color-audible-gray-300: var(--line); --color-audible-gray-400: #5E626B; --color-audible-gray-500: var(--ink-3);
+  --color-audible-gray-600: #4D5058; --color-audible-gray-700: var(--ink-2); --color-audible-gray-800: #2A2C32;
+  --color-audible-gray-900: var(--ink);
+  --color-audible-blue-500: var(--ink-2); --color-audible-blue-600: var(--ink);
+  --color-audible-dark-light: var(--night-raised);
+  --color-audible-new-release: var(--hl); --color-audible-bestseller: var(--hl);
+  --color-audible-original: var(--ink); --color-audible-podcast: var(--ink-2);
+
+  /* Legacy echo-* names (the player and older components) */
+  --color-echo-orange: var(--ink); --color-echo-orange-dark: #2A2C32; --color-echo-orange-light: var(--ink-2);
+  --color-echo-text-primary: var(--ink); --color-echo-text-secondary: var(--ink-2); --color-echo-text-tertiary: var(--ink-3);
+  --color-echo-text-disabled: var(--ink-3); --color-echo-bg-tertiary: var(--surface-sunk);
+  --color-echo-beige: var(--surface-sunk); --color-echo-beige-dark: var(--line); --color-echo-cream: var(--paper);
+  --color-echo-charcoal: var(--night); --color-echo-border: var(--line); --color-echo-divider: var(--line);
+  --color-echo-error: var(--danger); --color-echo-success: var(--success); --color-echo-info: var(--ink-2);
+  --color-echo-player-bg: var(--night); --color-echo-player-surface: var(--night-raised);
+  --color-echo-player-elevated: var(--night-raised); --color-echo-player-border: #3A3D45;
+  --color-echo-player-hover: rgb(242 242 238 / 0.08); --color-echo-player-text: var(--ink-on-night);
+  --color-echo-player-text-muted: var(--ink-on-night-2); --color-echo-player-subtitle: var(--ink-on-night-2);
+
+  /* One radius system: covers 3, panels 10, sheets 14, pills */
+  --radius-xs: 2px;
+  --radius-sm: var(--radius-cover);
+  --radius: 6px;
+  --radius-md: 6px;
+  --radius-lg: var(--radius-panel);
+  --radius-xl: var(--radius-panel);
+  --radius-2xl: var(--radius-sheet);
+  --radius-3xl: var(--radius-sheet);
+
+  --shadow-sm: var(--shadow-1);
+  --shadow: var(--shadow-1);
+  --shadow-md: var(--shadow-2);
+  --shadow-lg: var(--shadow-2);
+  --shadow-xl: var(--shadow-2);
+  --shadow-2xl: var(--shadow-2);
+  --shadow-card: var(--shadow-1);
+  --shadow-card-hover: var(--shadow-2);
+  --shadow-cover: var(--shadow-cover);
+
+  --ease-smooth: var(--ease-out);
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-fade-in: fade-in var(--dur) var(--ease-out);
+
+  @keyframes shimmer {
+    0% { background-position: -600px 0; }
+    100% { background-position: 600px 0; }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 }
 
-* {
-  box-sizing: border-box;
+@layer base {
+  html { background-color: var(--paper); }
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: var(--paper);
+    color: var(--ink);
+    font-size: 16px;
+  }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+  ::placeholder { color: var(--ink-3); opacity: 1; }
+  button, [role="button"], a { touch-action: manipulation; }
+  button:not(:disabled), [role="button"] { cursor: pointer; }
+
+  /* Focus: an ink ring with a highlighter halo, visible on paper, covers and night */
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px var(--hl);
+    border-radius: inherit;
+  }
+  .on-night :focus-visible, .bg-night :focus-visible {
+    outline-color: var(--hl);
+    box-shadow: none;
+  }
+
+  ::selection { background-color: var(--hl); color: var(--ink); }
 }
 
-/* Accessibility - Focus visible */
-:focus-visible {
-  outline: 2px solid #FF6B35;
-  outline-offset: 2px;
+@layer components {
+  /* Type roles (see DESIGN.md, "Type") */
+  .t-display { font-family: var(--font-serif); font-weight: 500; font-size: clamp(2.25rem, 1.4rem + 3vw, 3.75rem); line-height: 1.04; letter-spacing: -0.02em; }
+  .t-h1 { font-family: var(--font-serif); font-weight: 500; font-size: clamp(1.875rem, 1.4rem + 1.6vw, 2.75rem); line-height: 1.1; letter-spacing: -0.015em; }
+  .t-h2 { font-family: var(--font-serif); font-weight: 500; font-size: clamp(1.375rem, 1.15rem + 0.8vw, 1.75rem); line-height: 1.2; letter-spacing: -0.01em; }
+  .t-h3 { font-family: var(--font-sans); font-weight: 600; font-size: 1.125rem; line-height: 1.35; }
+  .t-body { font-size: 1rem; line-height: 1.6; }
+  .t-small { font-size: 0.875rem; line-height: 1.5; }
+  .t-meta { font-size: 0.8125rem; line-height: 1.45; color: var(--ink-3); }
+  .t-label { font-size: 0.75rem; line-height: 1.3; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+  .t-title-book { font-family: var(--font-serif); font-weight: 500; line-height: 1.25; }
+
+  /* The highlighter mark: a hand-drawn swipe under one or two words */
+  .mark {
+    background-image: linear-gradient(transparent 42%, var(--hl) 42%, var(--hl) 88%, transparent 88%);
+    padding: 0 0.12em;
+    margin: 0 -0.06em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .page { max-width: var(--page-max); margin-inline: auto; padding-inline: var(--space-4); }
+  @media (min-width: 768px) { .page { padding-inline: var(--space-6); } }
+  @media (min-width: 1280px) { .page { padding-inline: var(--space-7); } }
+
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-panel); }
+  .rule { border-top: 1px solid var(--line); }
+
+  .link { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  .link:hover { text-decoration-thickness: 2px; text-decoration-color: var(--ink); background: var(--hl-wash); }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-  
-  /* Smooth scrolling for carousels */
-  .smooth-scroll {
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  /* Hide scrollbar but keep functionality */
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  
-  /* Gradient overlays for carousels */
-  .gradient-fade-right {
-    background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.9) 90%, #FFFFFF 100%);
-  }
-
-  .gradient-fade-left {
-    background: linear-gradient(to left, transparent 0%, rgba(255, 255, 255, 0.9) 90%, #FFFFFF 100%);
-  }
-  
+  .text-balance { text-wrap: balance; }
+  .smooth-scroll { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
   .gradient-fade-both {
-    mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
   }
-  
-  /* Book cover aspect ratio */
-  .aspect-book {
-    aspect-ratio: 2 / 3;
-  }
-  
-  /* Line clamp utilities */
-  .line-clamp-1 {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  .line-clamp-4 {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  /* Player-specific utilities */
-  .player-dark-bg {
-    background: linear-gradient(180deg, #15191E 0%, #0A0E13 100%);
-  }
-  
-  .player-control-shadow {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-  }
-  
-  .player-scrubber {
-    appearance: none;
-    -webkit-appearance: none;
-    background: transparent;
-    cursor: pointer;
-  }
-  
-  .player-scrubber::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #F27024;
-    cursor: pointer;
-    box-shadow: 0 0 4px rgba(242, 112, 36, 0.5);
-  }
-  
-  .player-scrubber::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #F27024;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 0 4px rgba(242, 112, 36, 0.5);
-  }
-  
-  .player-scrubber::-webkit-slider-runnable-track {
-    height: 4px;
-    border-radius: 2px;
-    background: #2A3038;
-  }
-  
-  .player-scrubber::-moz-range-track {
-    height: 4px;
-    border-radius: 2px;
-    background: #2A3038;
-  }
-  
-  /* Carousel shadow effects */
-  .carousel-shadow-start {
-    box-shadow: inset 10px 0 15px -10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .carousel-shadow-end {
-    box-shadow: inset -10px 0 15px -10px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Hover lift effect for cards */
-  .hover-lift {
-    transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
-  }
-  
-  .hover-lift:hover {
-    transform: translateY(-4px);
-  }
-  
-  /* Glass morphism effect */
-  .glass-effect {
-    background: rgba(31, 35, 41, 0.8);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-  
-  .glass-effect-dark {
-    background: rgba(21, 25, 30, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-  
-  /* Safe area padding for mobile */
-  .safe-top {
-    padding-top: env(safe-area-inset-top);
-  }
-  
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  
-  /* Shimmer loading effect */
+  .aspect-book { aspect-ratio: 2 / 3; }
+  .cover-shadow { box-shadow: var(--shadow-cover); }
+  /* Schibsted's tabular figures widen commas and periods too, so .tabular keeps lining figures only */
+  .tabular { font-variant-numeric: lining-nums; }
+
+  .player-dark-bg { background: var(--night); }
+  .player-control-shadow { box-shadow: 0 2px 8px rgb(15 16 19 / 0.5); }
+  .player-scrubber { appearance: none; -webkit-appearance: none; background: transparent; cursor: pointer; }
+  .player-scrubber::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--hl); cursor: pointer; }
+  .player-scrubber::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--hl); cursor: pointer; border: none; }
+  .player-scrubber::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: #3A3D45; }
+  .player-scrubber::-moz-range-track { height: 4px; border-radius: 2px; background: #3A3D45; }
+
+  .hover-lift { transition: transform var(--dur) var(--ease-out); }
+  .hover-lift:hover { transform: translateY(-2px); }
+
+  /* Kept for components that still reference them; solid, no blur */
+  .glass-effect { background: rgb(31 33 39 / 0.96); }
+  .glass-effect-dark { background: var(--night); }
+
+  .safe-top { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
   .shimmer {
-    background: linear-gradient(to right, #1F2329 0%, #252A31 20%, #1F2329 40%, #1F2329 100%);
-    background-size: 1000px 100%;
-    animation: shimmer 2s linear infinite;
+    background: linear-gradient(90deg, var(--surface-sunk) 0%, #F1F1EC 40%, var(--surface-sunk) 80%);
+    background-size: 1200px 100%;
+    animation: shimmer 1.6s linear infinite;
+  }
+
+  .line-clamp-1, .line-clamp-2, .line-clamp-3, .line-clamp-4 { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .line-clamp-1 { -webkit-line-clamp: 1; line-clamp: 1; }
+  .line-clamp-2 { -webkit-line-clamp: 2; line-clamp: 2; }
+  .line-clamp-3 { -webkit-line-clamp: 3; line-clamp: 3; }
+  .line-clamp-4 { -webkit-line-clamp: 4; line-clamp: 4; }
+}
+
+/* Reduced motion: CSS side. Framer Motion is covered by <MotionConfig reducedMotion="user">. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
-/* Custom scrollbar - Audible theme */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #F9FAFB;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #D1D5DB;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #9CA3AF;
-}
-
-/* Selection color */
-::selection {
-  background-color: #FF6B35;
-  color: #FFFFFF;
-}
-
-/* Smooth transitions for theme */
-* {
-  transition-property: background-color, border-color, color, fill, stroke;
-  transition-duration: 150ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #C9CAC3; border-radius: 999px; border: 2px solid var(--paper); }
+::-webkit-scrollbar-thumb:hover { background: var(--line-strong); }

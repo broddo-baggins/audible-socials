@@ -1,16 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, UserPlus, Crown, Users, BookOpen, Star, Gauge, Clock, Send } from 'lucide-react';
+import { Search, UserPlus, Send, X, Gauge } from 'lucide-react';
 import usersData from '../../data/users.json';
 import booksData from '../../data/books.json';
 import clubsData from '../../data/clubs.json';
 import { getUserData, getFriends, removeFriend } from '../../utils/localStorage';
 import { sendFriendRequest, getSuggestedFriends, getFriendsOfFriends, isUserBlocked } from '../../utils/friendManagement';
 import FriendRequestManager from '../friends/FriendRequestManager';
+import { Avatar, Badge, Cover, Waveform, Rating, Input, Button, EmptyState } from '../ui';
+
+/**
+ * FriendsTab: your friends as a list (who they are, what they are on and how
+ * far), finding new ones, requests and friends of friends at the side, and a
+ * profile sheet per friend.
+ */
+
+const hm = (mins) => `${Math.floor(mins / 60)}h ${mins % 60}m`;
 
 const loadFriendsList = () => {
   const friendIds = getFriends();
-  return usersData.filter(u => friendIds.includes(u.id));
+  return usersData.filter((u) => friendIds.includes(u.id));
+};
+
+const getContextualMessage = (user, currentUser) => {
+  const sharedClubs = user.joinedClubs?.filter((clubId) => currentUser.joinedClubs?.includes(clubId)) || [];
+  if (sharedClubs.length > 0) {
+    const club = clubsData.find((c) => c.id === sharedClubs[0]);
+    return {
+      message: `Hi, we are both in ${club?.name}. I would love to connect and share thoughts on the books.`,
+      context: 'book_club',
+      sharedClub: sharedClubs[0],
+    };
+  }
+  const sharedBooks = user.library?.filter((bookId) => currentUser.library?.includes(bookId)) || [];
+  if (sharedBooks.length >= 3) {
+    return {
+      message: `Hi, we have ${sharedBooks.length} books in common. Our taste is close, so let's share recommendations.`,
+      context: 'similar_taste',
+    };
+  }
+  const theirGenre = user.stats?.favoriteGenre;
+  if (theirGenre && theirGenre === currentUser.stats?.favoriteGenre) {
+    return { message: `Hi, I see we both love ${theirGenre}. Let's connect and swap favourite listens.`, context: 'similar_taste' };
+  }
+  return { message: 'Hi, your reading list looks great. I would love to connect and share recommendations.', context: null };
 };
 
 // Show top 6 friends of friends
@@ -19,11 +52,10 @@ const loadFriendsOfFriends = () => getFriendsOfFriends('user-me', usersData).sli
 export default function FriendsTab() {
   const [friends, setFriends] = useState(loadFriendsList);
   const [friendsOfFriends, setFriendsOfFriends] = useState(loadFriendsOfFriends);
-  // Fixed for this visit, for "finishes on" estimates
-  const [now] = useState(() => Date.now());
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
+  const [notice, setNotice] = useState(null);
 
   const loadFriends = () => {
     setFriends(loadFriendsList());
@@ -32,688 +64,330 @@ export default function FriendsTab() {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    if (query.trim()) {
-      const suggested = getSuggestedFriends('user-me', usersData);
-      const results = suggested.filter(user =>
-        user.name.toLowerCase().includes(query.toLowerCase())
-      );
-      setSearchResults(results);
-    } else {
-      const suggested = getSuggestedFriends('user-me', usersData);
-      setSearchResults(suggested.slice(0, 10));
-    }
-  };
-
-  const getContextualMessage = (user, currentUser) => {
-    // Check for shared clubs
-    const sharedClubs = user.joinedClubs?.filter(clubId => 
-      currentUser.joinedClubs?.includes(clubId)
-    ) || [];
-    
-    if (sharedClubs.length > 0) {
-      const club = clubsData.find(c => c.id === sharedClubs[0]);
-      return {
-        message: `Hey! We're both in ${club?.name}. I'd love to connect and share our thoughts on the books!`,
-        context: 'book_club',
-        sharedClub: sharedClubs[0]
-      };
-    }
-
-    // Check for similar reading taste (shared books in library)
-    const sharedBooks = user.library?.filter(bookId => 
-      currentUser.library?.includes(bookId)
-    ) || [];
-    
-    if (sharedBooks.length >= 3) {
-      return {
-        message: `Hi! I noticed we have ${sharedBooks.length} books in common - we have such similar taste! Would love to connect and share recommendations.`,
-        context: 'similar_taste'
-      };
-    }
-
-    // Check for same favorite genre
-    const userFavoriteGenre = user.stats?.favoriteGenre;
-    const myFavoriteGenre = currentUser.stats?.favoriteGenre;
-    
-    if (userFavoriteGenre && userFavoriteGenre === myFavoriteGenre) {
-      return {
-        message: `Hey! I see we both love ${userFavoriteGenre}. Let's connect and swap our favorite listens!`,
-        context: 'similar_taste'
-      };
-    }
-
-    // Default message
-    return {
-      message: `Hi! Your reading list looks great. Would love to connect and share book recommendations!`,
-      context: null
-    };
+    const suggested = getSuggestedFriends('user-me', usersData);
+    setSearchResults(query.trim() ? suggested.filter((u) => u.name.toLowerCase().includes(query.toLowerCase())) : suggested.slice(0, 10));
   };
 
   const handleSendRequest = (friendId, userName) => {
     const currentUser = getUserData();
-    const targetUser = usersData.find(u => u.id === friendId);
-    
-    if (targetUser) {
-      const { message, context, ...extraData } = getContextualMessage(targetUser, currentUser);
-      const result = sendFriendRequest(friendId, message, context, extraData);
-      
-      if (result.success) {
-        alert(`Friend request sent to ${userName}!`);
-        handleSearch(searchQuery);
-      } else {
-        alert(result.error);
-      }
+    const targetUser = usersData.find((u) => u.id === friendId);
+    if (!targetUser) return;
+    const { message, context, ...extraData } = getContextualMessage(targetUser, currentUser);
+    const result = sendFriendRequest(friendId, message, context, extraData);
+    if (result.success) {
+      setNotice({ tone: 'success', text: `Friend request sent to ${userName}.` });
+      handleSearch(searchQuery);
+    } else {
+      setNotice({ tone: 'error', text: result.error });
     }
   };
 
   const handleRemoveFriend = (friendId, friendName) => {
-    if (window.confirm(`Are you sure you want to remove ${friendName} from your friends? This action cannot be undone.`)) {
+    if (window.confirm(`Remove ${friendName} from your friends? This cannot be undone.`)) {
       const result = removeFriend(friendId);
       if (result.success) {
         loadFriends();
         setSelectedFriend(null);
-        alert(`You have removed ${friendName} from your friends.`);
+        setNotice({ tone: 'info', text: `You removed ${friendName} from your friends.` });
       } else {
-        alert('Failed to remove friend. Please try again.');
+        setNotice({ tone: 'error', text: 'The friend could not be removed. Please try again.' });
       }
     }
   };
 
-  const handleSelectFriend = (friend) => {
-    setSelectedFriend(friend);
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Introduction */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl p-8 text-white">
-        <h2 className="text-2xl font-bold mb-4">Connect with Friends</h2>
-        <p className="mb-4 text-white/90">
-          See what your friends are reading, share book ratings, and discover which book clubs they've joined.
-        </p>
-        <ul className="space-y-2">
-          <li className="flex items-start">
-            <span className="mr-2">•</span>
-            <span>View friends' libraries and reading history</span>
-          </li>
-          <li className="flex items-start">
-            <span className="mr-2">•</span>
-            <span>See their book ratings and reviews</span>
-          </li>
-          <li className="flex items-start">
-            <span className="mr-2">•</span>
-            <span>Find which book clubs they're in</span>
-          </li>
-          <li className="flex items-start">
-            <span className="mr-2">•</span>
-            <span>Get personalized recommendations</span>
-          </li>
-        </ul>
-      </div>
-
-      {/* Friend Requests */}
-      <FriendRequestManager onUpdate={loadFriends} />
-
-      {/* Friends of Friends */}
-      {friendsOfFriends.length > 0 && (
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl shadow-md p-6 border border-indigo-200">
-          <div className="flex items-center space-x-2 mb-4">
-            <Users className="w-5 h-5 text-indigo-600" />
-            <h3 className="text-lg font-bold text-gray-900">Friends of Friends</h3>
-            <span className="bg-indigo-100 text-indigo-700 text-sm font-semibold px-2 py-1 rounded-full">
-              Discover
-            </span>
-          </div>
-          <p className="text-gray-600 mb-4">
-            People you might know through your friends. Expand your reading circle!
+    <div className="grid gap-14 pt-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-16">
+      <div className="min-w-0 space-y-16">
+        {notice && (
+          <p
+            role="status"
+            className={`flex items-start justify-between gap-3 rounded-lg border px-4 py-3 text-[0.9375rem] ${
+              notice.tone === 'error' ? 'border-danger/30 bg-danger-wash text-danger' : notice.tone === 'success' ? 'border-success/30 bg-success-wash text-success' : 'border-line bg-surface text-ink-2'
+            }`}
+          >
+            <span>{notice.text}</span>
+            <button type="button" onClick={() => setNotice(null)} className="-my-1 -mr-2 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-black/5" aria-label="Dismiss message">
+              <X className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            </button>
           </p>
+        )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {friendsOfFriends.map((user) => (
-              <div
-                key={user.id}
-                className="bg-white rounded-lg p-4 border border-gray-200 hover:border-indigo-300 transition-colors"
-              >
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0">
-                    {user.avatar ? (
-                      <img 
-                        src={user.avatar} 
-                        alt={user.name} 
-                        className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center shadow-sm">
-                        <span className="text-white font-semibold">
-                          {user.name.split(' ').map(n => n[0]).join('')}
-                        </span>
+        {/* Your friends */}
+        <section aria-labelledby="friends-title">
+          <h2 id="friends-title" className="t-h2 text-ink">Your friends <span className="text-ink-3 tabular">{friends.length}</span></h2>
+
+          {friends.length === 0 ? (
+            <EmptyState className="mt-5" title="No friends yet" description="Search for people below and send them a request." />
+          ) : (
+            <ul className="mt-5 divide-y divide-line border-y border-line">
+              {friends.map((friend) => {
+                const book = friend.currentlyReading ? booksData.find((b) => b.id === friend.currentlyReading) : null;
+                const rating = book && friend.ratings?.[friend.currentlyReading];
+                const progress = friend.currentProgress;
+                return (
+                  <li key={friend.id} className="py-5">
+                    <div className="grid grid-cols-[3.5rem_minmax(0,1fr)] gap-4 md:grid-cols-[3.5rem_minmax(0,1fr)_minmax(0,1.2fr)] md:gap-6">
+                      <Avatar src={friend.avatar} name={friend.name} size="lg" />
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-semibold text-ink">{friend.name}</h3>
+                          {friend.isPremium && <Badge size="sm" variant="outline">Premium</Badge>}
+                        </div>
+                        <p className="mt-0.5 text-[0.8125rem] text-ink-3 tabular">
+                          {friend.library.length} books · {friend.joinedClubs.length} clubs · {Object.keys(friend.ratings || {}).length} ratings
+                        </p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <Link to={`/friend/${friend.id}/library`} className="inline-flex h-9 items-center rounded-full bg-ink px-4 text-sm font-medium text-paper hover:bg-gray-800">Library</Link>
+                          <button type="button" onClick={() => setSelectedFriend(friend)} className="inline-flex h-9 items-center rounded-full border border-line-strong px-4 text-sm font-medium text-ink hover:bg-surface">Profile</button>
+                          <button type="button" onClick={() => handleRemoveFriend(friend.id, friend.name)} className="inline-flex h-9 items-center rounded-full px-3 text-sm font-medium text-danger hover:bg-danger-wash">Remove</button>
+                        </div>
                       </div>
-                    )}
-                  </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className="font-semibold text-gray-900">{user.name}</h4>
-                      {user.isPremium && (
-                        <Crown className="w-4 h-4 text-yellow-500" />
-                      )}
-                    </div>
-
-                    <p className="text-sm text-gray-600 mb-2">
-                      {user.library.length} books • {user.joinedClubs.length} clubs
-                    </p>
-
-                    {user.mutualFriends > 0 && (
-                      <p className="text-xs text-indigo-600 mb-2">
-                        <Users className="w-3 h-3 inline mr-1" />
-                        {user.mutualFriends} mutual friend{user.mutualFriends !== 1 ? 's' : ''}
-                        {user.mutualFriendList.length > 0 && (
-                          <span>: {user.mutualFriendList.join(', ')}</span>
+                      <div className="col-span-2 min-w-0 md:col-span-1">
+                        {book ? (
+                          <div className="flex gap-3">
+                            <Link to={`/book/${book.id}`} className="w-11 shrink-0 rounded-sm" aria-label={`${book.title} details`}>
+                              <Cover src={book.cover} title={book.title} shadow={false} />
+                            </Link>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-[0.8125rem] text-ink-3">Listening to</p>
+                              <Link to={`/book/${book.id}`} className="t-title-book text-[0.9375rem] text-ink line-clamp-1 hover:underline underline-offset-4">{book.title}</Link>
+                              {progress > 0 ? (
+                                <div className="mt-1.5 flex items-center gap-2">
+                                  <Waveform seed={`${friend.id}-${book.id}`} bars={32} height={14} progress={progress / 100} className="h-3.5 w-28 text-ink" label={`${progress}% listened`} />
+                                  <span className="text-[0.8125rem] text-ink-3 tabular">{progress < 100 ? `${progress}%` : 'Finished'}</span>
+                                </div>
+                              ) : (
+                                <p className="mt-1 text-[0.8125rem] text-ink-3">Progress not shared</p>
+                              )}
+                              {rating ? <Rating value={rating} size="sm" className="mt-1.5" /> : null}
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-[0.8125rem] text-ink-3 md:pt-1">Not listening to anything right now</p>
                         )}
-                      </p>
-                    )}
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
 
-                    <button
-                      onClick={() => handleSendRequest(user.id, user.name)}
-                      disabled={isUserBlocked(user.id)}
-                      className="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors text-sm flex items-center justify-center space-x-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <UserPlus className="w-4 h-4" />
-                      <span>Add Friend</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-4">
-            <Link
-              to="/social"
-              className="text-indigo-600 hover:text-indigo-700 font-semibold text-sm"
-            >
-              Explore more connections →
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* Search Bar */}
-      <div className="bg-white rounded-xl shadow-md p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Find Friends</h3>
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input
-            type="text"
-            placeholder="Search by name..."
+        {/* Find friends */}
+        <section aria-labelledby="find-title">
+          <h2 id="find-title" className="t-h2 text-ink">Find friends</h2>
+          <p className="mt-1 text-[0.9375rem] text-ink-2">See friends&rsquo; libraries and ratings, which clubs they are in, and get picks from them.</p>
+          <Input
+            containerClassName="mt-5 max-w-lg"
+            label="Search by name"
+            type="search"
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+            onFocus={() => { if (!searchQuery && searchResults.length === 0) handleSearch(''); }}
+            placeholder="For example, Maya"
+            leftIcon={<Search className="h-4 w-4" strokeWidth={1.75} />}
+            fullWidth
           />
-        </div>
-
-        {/* Search Results */}
-        {searchResults.length > 0 && (
-          <div className="mt-4 space-y-2">
-            {searchResults.map((user) => (
-              <div
-                key={user.id}
-                className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-purple-600 transition-colors"
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="relative">
-                    {user.avatar ? (
-                      <img 
-                        src={user.avatar} 
-                        alt={user.name} 
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center">
-                        <span className="text-white font-semibold">
-                          {user.name.split(' ').map(n => n[0]).join('')}
-                        </span>
-                      </div>
-                    )}
-                    {user.isPremium && (
-                      <div className="absolute -bottom-1 -right-1 bg-audible-gold rounded-full p-0.5">
-                        <Crown className="w-3 h-3 text-white" />
-                      </div>
-                    )}
+          {searchResults.length > 0 ? (
+            <ul className="mt-4 divide-y divide-line border-y border-line">
+              {searchResults.map((user) => (
+                <li key={user.id} className="flex items-center gap-3 py-3">
+                  <Avatar src={user.avatar} name={user.name} size="md" />
+                  <div className="min-w-0 flex-1">
+                    <p className="flex items-center gap-2 font-medium text-ink">
+                      <span className="truncate">{user.name}</span>
+                      {user.isPremium && <Badge size="sm" variant="outline">Premium</Badge>}
+                    </p>
+                    <p className="text-[0.8125rem] text-ink-3 tabular">{user.library.length} books</p>
                   </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">{user.name}</p>
-                    <p className="text-sm text-gray-600">{user.library.length} books</p>
-                  </div>
-                </div>
-                {!isUserBlocked(user.id) ? (
-                  <button
-                    onClick={() => handleSendRequest(user.id, user.name)}
-                    className="bg-purple-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-purple-700 transition-colors flex items-center space-x-1"
-                  >
-                    <Send className="w-4 h-4" />
-                    <span>Send Request</span>
-                  </button>
-                ) : (
-                  <span className="text-xs text-red-600 font-semibold">Blocked</span>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Friends List */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h3 className="text-2xl font-bold text-gray-900">
-            Your Friends ({friends.length})
-          </h3>
-        </div>
-        
-        {friends.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-md p-12 text-center">
-            <Users className="w-20 h-20 mx-auto text-gray-400 mb-4" />
-            <h4 className="text-xl font-bold text-gray-900 mb-2">
-              No friends yet
-            </h4>
-            <p className="text-gray-600 mb-6">
-              Search for friends above to connect with them
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {friends.map((friend) => {
-              const currentBook = friend.currentlyReading 
-                ? booksData.find(b => b.id === friend.currentlyReading)
-                : null;
-              const currentRating = currentBook && friend.ratings[friend.currentlyReading]
-                ? friend.ratings[friend.currentlyReading]
-                : null;
-
-              return (
-                <div
-                  key={friend.id}
-                  className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all border border-gray-100 overflow-hidden group"
-                >
-                  {/* Friend Header */}
-                  <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4 text-white">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <div className="relative">
-                        {friend.avatar ? (
-                          <img 
-                            src={friend.avatar} 
-                            alt={friend.name} 
-                            className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm"
-                          />
-                        ) : (
-                          <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white">
-                            <span className="text-white font-bold text-lg">
-                              {friend.name.split(' ').map(n => n[0]).join('')}
-                            </span>
-                          </div>
-                        )}
-                        {friend.isPremium && (
-                          <div className="absolute -bottom-1 -right-1 bg-audible-gold rounded-full p-1">
-                            <Crown className="w-4 h-4 text-white" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-bold text-lg">{friend.name}</h4>
-                        {friend.isPremium && (
-                          <span className="text-xs text-white/80">Premium Member</span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Quick Stats */}
-                    <div className="flex items-center justify-around text-center text-xs bg-white/10 rounded-lg py-2">
-                      <div>
-                        <p className="font-bold text-lg">{friend.library.length}</p>
-                        <p className="text-white/70">Books</p>
-                      </div>
-                      <div className="w-px h-8 bg-white/20"></div>
-                      <div>
-                        <p className="font-bold text-lg">{friend.joinedClubs.length}</p>
-                        <p className="text-white/70">Clubs</p>
-                      </div>
-                      <div className="w-px h-8 bg-white/20"></div>
-                      <div>
-                        <p className="font-bold text-lg">{Object.keys(friend.ratings).length}</p>
-                        <p className="text-white/70">Ratings</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Currently Reading Section */}
-                  <div className="p-4">
-                    {currentBook ? (
-                      <div>
-                        <Link
-                          to={`/book/${currentBook.id}`}
-                          className="block group/book"
-                        >
-                          <div className="flex space-x-3 mb-4">
-                            <img
-                              src={currentBook.cover}
-                              alt={currentBook.title}
-                              className="w-16 h-24 object-cover rounded shadow-md group-hover/book:scale-105 transition-transform"
-                            />
-                            <div className="flex-1 min-w-0">
-                              <h6 className="font-bold text-sm text-gray-900 group-hover/book:text-audible-orange transition-colors line-clamp-2 mb-1">
-                                {currentBook.title}
-                              </h6>
-                              <p className="text-xs text-gray-600 mb-2">{currentBook.author}</p>
-                              {currentRating && (
-                                <div className="flex items-center space-x-1 bg-yellow-50 px-2 py-1 rounded-full w-fit">
-                                  <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                                  <span className="text-xs font-bold text-gray-900">{currentRating}/5</span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </Link>
-
-                        {/* Enhanced Progress Display */}
-                        {friend.currentProgress !== undefined && friend.currentProgress > 0 ? (
-                          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-3 border border-green-200">
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                                  <span className="text-white text-sm font-bold">{friend.currentProgress}%</span>
-                                </div>
-                                <div>
-                                  <p className="text-xs font-semibold text-gray-700">Reading Progress</p>
-                                  <p className="text-xs text-gray-600">
-                                    {friend.currentProgress < 100
-                                      ? `${100 - friend.currentProgress}% remaining`
-                                      : 'Completed!'
-                                    }
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                <p className="text-lg font-bold text-green-600">{friend.currentProgress}%</p>
-                                <p className="text-xs text-gray-500">complete</p>
-                              </div>
-                            </div>
-
-                            {/* Large Progress Bar */}
-                            <div className="w-full bg-gray-200 rounded-full h-3 mb-2 overflow-hidden">
-                              <div
-                                className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500 ease-out shadow-sm"
-                                style={{ width: `${friend.currentProgress}%` }}
-                              />
-                            </div>
-
-                            {/* Progress Milestones */}
-                            <div className="flex justify-between text-xs text-gray-500">
-                              <span>0%</span>
-                              <span className={friend.currentProgress >= 25 ? 'text-green-600 font-semibold' : ''}>25%</span>
-                              <span className={friend.currentProgress >= 50 ? 'text-green-600 font-semibold' : ''}>50%</span>
-                              <span className={friend.currentProgress >= 75 ? 'text-green-600 font-semibold' : ''}>75%</span>
-                              <span className={friend.currentProgress >= 100 ? 'text-green-600 font-semibold' : ''}>100%</span>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                            <div className="flex items-center gap-2">
-                              <BookOpen className="w-5 h-5 text-gray-400" />
-                              <span className="text-sm text-gray-600">Reading progress not shared</span>
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="flex items-center justify-center mt-3">
-                          <Link
-                            to={`/book/${currentBook.id}`}
-                            className="text-xs text-audible-orange hover:text-audible-orange-dark font-semibold"
-                          >
-                            View Book Details →
-                          </Link>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center py-6">
-                        <BookOpen className="w-12 h-12 mx-auto text-gray-300 mb-2" />
-                        <p className="text-sm text-gray-500">Not currently listening</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Actions */}
-                  <div className="border-t border-gray-100 p-4 bg-gray-50 flex space-x-2">
-                    <Link
-                      to={`/friend/${friend.id}/library`}
-                      className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition-colors text-sm text-center"
-                    >
-                      View Library
-                    </Link>
-                    <button
-                      onClick={() => handleSelectFriend(friend)}
-                      className="flex-1 bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-semibold hover:bg-blue-200 transition-colors text-sm"
-                    >
-                      Profile
-                    </button>
-                    <button
-                      onClick={() => handleRemoveFriend(friend.id, friend.name)}
-                      className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-semibold hover:from-red-600 hover:to-red-700 transition-all text-sm shadow-md hover:shadow-lg"
-                    >
-                      Remove Friend
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* Friend Detail Modal */}
-      {selectedFriend && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setSelectedFriend(null)}>
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="p-6">
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex items-center space-x-3">
-                <div className="relative">
-                  {selectedFriend.avatar ? (
-                    <img 
-                      src={selectedFriend.avatar} 
-                      alt={selectedFriend.name} 
-                      className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md"
-                    />
+                  {!isUserBlocked(user.id) ? (
+                    <Button size="sm" variant="secondary" onClick={() => handleSendRequest(user.id, user.name)} leftIcon={<Send className="h-3.5 w-3.5" strokeWidth={1.75} />}>
+                      Send request
+                    </Button>
                   ) : (
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center border-2 border-white shadow-md">
-                      <span className="text-white font-bold text-xl">
-                        {selectedFriend.name.split(' ').map(n => n[0]).join('')}
-                      </span>
-                    </div>
+                    <span className="text-[0.8125rem] font-medium text-danger">Blocked</span>
                   )}
-                  {selectedFriend.isPremium && (
-                    <div className="absolute -bottom-1 -right-1 bg-audible-gold rounded-full p-1">
-                      <Crown className="w-4 h-4 text-white" />
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900">{selectedFriend.name}</h3>
-                  {selectedFriend.isPremium && (
-                    <span className="text-sm text-audible-gold font-semibold">Premium Member</span>
-                  )}
-                </div>
-              </div>
-              <button
-                onClick={() => handleRemoveFriend(selectedFriend.id, selectedFriend.name)}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors text-sm"
-              >
-                Remove Friend
-              </button>
-            </div>
+                </li>
+              ))}
+            </ul>
+          ) : searchQuery.trim() ? (
+            <p className="mt-4 text-[0.9375rem] text-ink-2">Nobody new matches &ldquo;{searchQuery}&rdquo;.</p>
+          ) : null}
+        </section>
+      </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 mb-6 pb-6 border-b border-gray-200">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-gray-900">{selectedFriend.library.length}</p>
-                <p className="text-xs text-gray-600">Books</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-gray-900">{selectedFriend.joinedClubs.length}</p>
-                <p className="text-xs text-gray-600">Clubs</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-gray-900">{selectedFriend.credits}</p>
-                <p className="text-xs text-gray-600">Credits</p>
-              </div>
-            </div>
+      <aside className="min-w-0 space-y-14">
+        <FriendRequestManager onUpdate={loadFriends} />
 
-            {/* Book Clubs */}
-            {selectedFriend.joinedClubs.length > 0 && (
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Book Clubs</h4>
-                <div className="space-y-2">
-                  {clubsData
-                    .filter(club => selectedFriend.joinedClubs.includes(club.id))
-                    .map((club) => (
-                      <div key={club.id} className="p-3 bg-purple-50 rounded-lg">
-                        <p className="font-semibold text-gray-900 text-sm">{club.name}</p>
-                        <p className="text-xs text-gray-600">by {club.host}</p>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
+        {friendsOfFriends.length > 0 && (
+          <section aria-labelledby="fof-title">
+            <h2 id="fof-title" className="t-h3 text-ink">Friends of friends</h2>
+            <p className="mt-1 text-sm text-ink-2">People you may know through your friends.</p>
+            <ul className="mt-3 divide-y divide-line border-y border-line">
+              {friendsOfFriends.map((user) => (
+                <li key={user.id} className="flex items-center gap-3 py-3">
+                  <Avatar src={user.avatar} name={user.name} size="md" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium text-ink">{user.name}</p>
+                    <p className="text-[0.8125rem] text-ink-3 line-clamp-1 tabular">
+                      {user.mutualFriends > 0
+                        ? `${user.mutualFriends} mutual${user.mutualFriendList?.length ? `: ${user.mutualFriendList.join(', ')}` : ''}`
+                        : `${user.library.length} books · ${user.joinedClubs.length} clubs`}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleSendRequest(user.id, user.name)}
+                    disabled={isUserBlocked(user.id)}
+                    className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line-strong text-ink hover:bg-surface disabled:opacity-45"
+                    aria-label={`Add ${user.name} as a friend`}
+                  >
+                    <UserPlus className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <Link to="/social" className="mt-3 inline-flex min-h-11 items-center text-sm font-medium text-ink underline decoration-1 underline-offset-4 hover:decoration-2">
+              More people on Social
+            </Link>
+          </section>
+        )}
+      </aside>
 
-            {/* Reading Progress & History */}
-            {selectedFriend.currentlyReading && selectedFriend.privacySettings?.shareProgress && (
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Currently Listening</h4>
-                {(() => {
-                  const currentBook = booksData.find(b => b.id === selectedFriend.currentlyReading);
-                  if (!currentBook) return null;
-
-                  const progress = selectedFriend.currentProgress || 0;
-                  const totalDuration = currentBook.durationMinutes || 600; // fallback
-                  const currentPosition = Math.round((progress / 100) * totalDuration);
-                  const remainingTime = totalDuration - currentPosition;
-                  const estimatedCompletion = new Date(now + (remainingTime * 60 * 1000));
-
-                  return (
-                    <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-purple-200">
-                      <p className="font-semibold text-gray-900 text-sm mb-2">{currentBook.title}</p>
-                      <p className="text-xs text-gray-600 mb-3">by {currentBook.author}</p>
-
-                      <div className="space-y-3">
-                        {/* Progress Bar */}
-                        <div>
-                          <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
-                            <span>Progress</span>
-                            <span className="font-semibold">{progress}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div
-                              className="bg-purple-600 h-2 rounded-full transition-all"
-                              style={{ width: `${progress}%` }}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Time Information */}
-                        <div className="grid grid-cols-2 gap-4 text-xs">
-                          <div>
-                            <div className="text-gray-600">Current Position</div>
-                            <div className="font-semibold text-gray-900">
-                              {Math.floor(currentPosition / 60)}h {currentPosition % 60}m
-                            </div>
-                          </div>
-                          <div>
-                            <div className="text-gray-600">Time Remaining</div>
-                            <div className="font-semibold text-gray-900">
-                              {Math.floor(remainingTime / 60)}h {remainingTime % 60}m
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Listening Speed & Estimated Completion */}
-                        <div className="flex items-center justify-between text-xs text-gray-600 pt-2 border-t border-purple-200">
-                          <div className="flex items-center space-x-1">
-                            <Gauge className="w-3 h-3" />
-                            <span>{selectedFriend.listeningSpeed || 1.0}x speed</span>
-                          </div>
-                          <div>
-                            <span>Finishes: {estimatedCompletion.toLocaleDateString()}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-            )}
-
-            {/* Recently Completed Books */}
-            {selectedFriend.privacySettings?.shareHistory && (
-              <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-4">Recently Completed</h4>
-                <div className="space-y-3">
-                  {Object.keys(selectedFriend.ratings)
-                    .slice(0, 3)
-                    .map((bookId) => {
-                      const book = booksData.find(b => b.id === bookId);
-                      if (!book) return null;
-
-                      const completionTime = selectedFriend.completionTimes?.[bookId] ||
-                        Math.floor((book.durationMinutes || 600) / (selectedFriend.listeningSpeed || 1.0));
-                      const daysAgo = (Number.parseInt(bookId, 10) || bookId.length) % 30 + 1; // Mock data, stable per book
-
-                      return (
-                        <Link
-                          key={bookId}
-                          to={`/book/${bookId}`}
-                          className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
-                        >
-                          <img
-                            src={book.cover}
-                            alt={book.title}
-                            className="w-12 h-16 object-cover rounded shadow-sm group-hover:scale-105 transition-transform"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-gray-900 group-hover:text-audible-orange transition-colors line-clamp-1 mb-1">
-                              {book.title}
-                            </p>
-                            <p className="text-xs text-gray-600 mb-1">{book.author}</p>
-                            <p className="text-xs text-gray-500">
-                              Completed {daysAgo} days ago • {Math.floor(completionTime / 60)}h {completionTime % 60}m
-                            </p>
-                          </div>
-                          <div className="flex items-center space-x-1 bg-yellow-50 px-2 py-1 rounded-full">
-                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm font-bold text-gray-900">
-                              {selectedFriend.ratings[bookId]}
-                            </span>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                </div>
-              </div>
-            )}
-
-            {/* Close Button */}
-            <div className="flex justify-end pt-4 border-t border-gray-200">
-              <button
-                onClick={() => setSelectedFriend(null)}
-                className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-              >
-                Close
-              </button>
-            </div>
-            </div>
-          </div>
-        </div>
+      {selectedFriend && (
+        <FriendProfileDialog friend={selectedFriend} onClose={() => setSelectedFriend(null)} onRemove={() => handleRemoveFriend(selectedFriend.id, selectedFriend.name)} />
       )}
     </div>
   );
 }
 
+function FriendProfileDialog({ friend, onClose, onRemove }) {
+  const closeRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => { onCloseRef.current = onClose; });
+  useEffect(() => {
+    const opener = document.activeElement;
+    closeRef.current?.focus();
+    const onKey = (e) => { if (e.key === 'Escape') onCloseRef.current(); };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      opener?.focus?.();
+    };
+  }, []);
+
+  // Mock "days ago" for the completed list, stable per book
+  const daysAgo = (bookId) => (Number.parseInt(bookId, 10) || bookId.length) % 30 + 1;
+
+  const current = friend.currentlyReading && friend.privacySettings?.shareProgress ? booksData.find((b) => b.id === friend.currentlyReading) : null;
+  const progress = friend.currentProgress || 0;
+  const total = current?.durationMinutes || 600;
+  const position = Math.round((progress / 100) * total);
+  const remaining = total - position;
+  const [finishes] = useState(() => new Date(Date.now() + remaining * 60000));
+  const clubs = clubsData.filter((club) => friend.joinedClubs.includes(club.id));
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/50 sm:items-center sm:p-4" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div role="dialog" aria-modal="true" aria-labelledby="friend-dialog-title" className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl bg-surface shadow-lg sm:rounded-2xl">
+        <div className="p-5 sm:p-7">
+          <div className="flex items-start gap-4">
+            <Avatar src={friend.avatar} name={friend.name} size="lg" />
+            <div className="min-w-0 flex-1">
+              <h2 id="friend-dialog-title" className="t-h2 text-ink">{friend.name}</h2>
+              {friend.isPremium && <p className="mt-0.5 text-sm text-ink-2">Premium member</p>}
+            </div>
+            <button ref={closeRef} type="button" onClick={onClose} className="-mr-2 -mt-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-2 hover:bg-surface-sunk hover:text-ink" aria-label="Close">
+              <X className="h-5 w-5" strokeWidth={1.75} />
+            </button>
+          </div>
+
+          <dl className="mt-6 grid grid-cols-3 gap-4 border-y border-line py-5">
+            {[['books', friend.library.length], ['clubs', friend.joinedClubs.length], ['credits', friend.credits]].map(([l, v]) => (
+              <div key={l} className="flex flex-col-reverse">
+                <dt className="mt-1 text-[0.8125rem] text-ink-3">{l}</dt>
+                <dd className="font-serif text-3xl font-medium text-ink tabular">{v ?? 0}</dd>
+              </div>
+            ))}
+          </dl>
+
+          {current && (
+            <section className="mt-6" aria-labelledby="fd-current">
+              <h3 id="fd-current" className="text-sm font-semibold text-ink-2">Listening now</h3>
+              <div className="mt-3 grid grid-cols-[3.5rem_minmax(0,1fr)] gap-4">
+                <Cover src={current.cover} title={current.title} shadow={false} />
+                <div className="min-w-0">
+                  <p className="t-title-book text-lg text-ink">{current.title}</p>
+                  <p className="text-[0.8125rem] text-ink-3">by {current.author}</p>
+                  <Waveform seed={`${friend.id}-${current.id}`} bars={56} height={20} progress={progress / 100} className="mt-3 h-5 w-full text-ink" label={`${progress}% listened`} />
+                  <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-[0.8125rem] sm:grid-cols-4">
+                    <div><dt className="text-ink-3">Progress</dt><dd className="font-medium text-ink tabular">{progress}%</dd></div>
+                    <div><dt className="text-ink-3">Position</dt><dd className="font-medium text-ink tabular">{hm(position)}</dd></div>
+                    <div><dt className="text-ink-3">Left</dt><dd className="font-medium text-ink tabular">{hm(remaining)}</dd></div>
+                    <div><dt className="text-ink-3">Finishes</dt><dd className="font-medium text-ink tabular">{finishes.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</dd></div>
+                  </dl>
+                  <p className="mt-2 flex items-center gap-1.5 text-[0.8125rem] text-ink-3 tabular">
+                    <Gauge className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" /> {friend.listeningSpeed || 1.0}x speed
+                  </p>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {clubs.length > 0 && (
+            <section className="mt-6" aria-labelledby="fd-clubs">
+              <h3 id="fd-clubs" className="text-sm font-semibold text-ink-2">Book clubs</h3>
+              <ul className="mt-2 divide-y divide-line border-y border-line">
+                {clubs.map((club) => (
+                  <li key={club.id}>
+                    <Link to={`/club/${club.id}`} className="flex items-baseline justify-between gap-4 py-3 hover:underline underline-offset-4">
+                      <span className="font-medium text-ink">{club.name}</span>
+                      <span className="shrink-0 text-[0.8125rem] text-ink-3">{club.host}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {friend.privacySettings?.shareHistory && Object.keys(friend.ratings || {}).length > 0 && (
+            <section className="mt-6" aria-labelledby="fd-done">
+              <h3 id="fd-done" className="text-sm font-semibold text-ink-2">Recently finished</h3>
+              <ul className="mt-2 divide-y divide-line border-y border-line">
+                {Object.keys(friend.ratings).slice(0, 3).map((bookId) => {
+                  const book = booksData.find((b) => b.id === bookId);
+                  if (!book) return null;
+                  const time = friend.completionTimes?.[bookId] || Math.floor((book.durationMinutes || 600) / (friend.listeningSpeed || 1.0));
+                  return (
+                    <li key={bookId}>
+                      <Link to={`/book/${bookId}`} className="group flex items-center gap-3 py-3">
+                        <span className="w-9 shrink-0"><Cover src={book.cover} title={book.title} shadow={false} /></span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block t-title-book text-ink line-clamp-1 group-hover:underline underline-offset-4">{book.title}</span>
+                          <span className="block text-[0.8125rem] text-ink-3 tabular">{book.author} · finished {daysAgo(bookId)} days ago in {hm(time)}</span>
+                        </span>
+                        <Rating value={friend.ratings[bookId]} size="sm" showValue />
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )}
+
+          <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+            <Button variant="ghost" onClick={onRemove} className="!text-danger hover:!bg-danger-wash">Remove friend</Button>
+            <div className="flex gap-3">
+              <Link to={`/friend/${friend.id}/library`} className="inline-flex h-11 flex-1 items-center justify-center rounded-full border border-line-strong px-5 text-[0.9375rem] font-medium text-ink hover:bg-paper sm:flex-none">
+                Library
+              </Link>
+              <Button variant="primary" onClick={onClose} className="flex-1 sm:flex-none">Close</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

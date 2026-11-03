@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Play } from 'lucide-react';
+import { motion as Motion, useReducedMotion } from 'framer-motion';
 import { ACTIVITIES } from '../../utils/idleGame';
-import { PIXEL_SPRITES, SPRITE_COLORS } from '../../data/pixelSprites';
+import { PIXEL_SPRITES } from '../../data/pixelSprites';
 
 /**
- * CharacterVisuals - Renders animated pixel art sprites
- * Uses code-defined sprite data (arrays of color strings) to render retro graphics
+ * CharacterVisuals: the listener, drawn as a 10 x 10 pixel sprite in
+ * highlighter on the night surface. Two frames at 2 fps while a book plays,
+ * still when paused (and always still under reduced motion).
  */
+const sentence = (s = '') => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+
 const CharacterVisuals = ({ activity, isPlaying }) => {
   const [frame, setFrame] = useState(0);
-  
+  const reduceMotion = useReducedMotion();
+
   // Sprite animation loop
   useEffect(() => {
     if (!isPlaying) return;
@@ -24,118 +27,39 @@ const CharacterVisuals = ({ activity, isPlaying }) => {
 
   const currentActivity = ACTIVITIES[activity];
   const spriteData = PIXEL_SPRITES[activity] || PIXEL_SPRITES.meditate;
-  // Paused characters rest on the first frame
-  const currentFrame = spriteData[isPlaying ? frame : 0];
-  const pixelColor = SPRITE_COLORS[activity] || '#A78BFA';
-
-  // Helper to render the pixel grid
-  const renderPixelGrid = () => {
-    return (
-      <div className="grid grid-cols-10 gap-0.5 w-40 h-40 bg-black/20 p-2 rounded-lg backdrop-blur-sm border-4 border-white/20">
-        {currentFrame.map((row, rowIndex) => (
-          row.split('').map((pixel, colIndex) => {
-            const isPixel = pixel !== '.';
-            return (
-              <div
-                key={`${rowIndex}-${colIndex}`}
-                className="w-full h-full rounded-sm transition-colors duration-200"
-                style={{
-                  backgroundColor: isPixel ? pixelColor : 'transparent',
-                  opacity: isPixel ? 1 : 0,
-                  boxShadow: isPixel ? `0 0 4px ${pixelColor}` : 'none'
-                }}
-              />
-            );
-          })
-        ))}
-      </div>
-    );
-  };
+  // Paused characters (and reduced motion) rest on the first frame
+  const currentFrame = spriteData[isPlaying && !reduceMotion ? frame : 0];
 
   return (
-    <div className="relative flex items-center justify-center py-8">
-      {/* Background glow effect */}
-      <motion.div
-        className={`absolute inset-0 rounded-full bg-gradient-to-br ${currentActivity?.color || 'from-gray-400 to-gray-600'} opacity-20 blur-3xl`}
-        animate={{
-          scale: isPlaying ? [1, 1.2, 1] : 1,
-          opacity: isPlaying ? [0.2, 0.3, 0.2] : 0.2
-        }}
-        transition={{
-          duration: 3,
-          repeat: isPlaying ? Infinity : 0,
-          ease: 'easeInOut'
-        }}
-      />
-
-      {/* Character container */}
-      <motion.div
-        className="relative z-10"
-        animate={{
-          y: isPlaying ? [0, -5, 0] : 0
-        }}
-        transition={{
-          duration: isPlaying ? 4 : 0,
-          repeat: isPlaying ? Infinity : 0,
-          ease: 'easeInOut'
-        }}
+    <div className="flex items-center gap-5 sm:gap-8">
+      <div
+        className={`grid h-28 w-28 shrink-0 grid-cols-10 gap-[2px] rounded-lg bg-night p-2.5 ring-1 ring-[#3A3D45] transition-opacity duration-200 sm:h-36 sm:w-36 ${isPlaying ? 'opacity-100' : 'opacity-70'}`}
+        role="img"
+        aria-label={`Your listener, ${currentActivity?.name?.toLowerCase() || 'resting'}`}
       >
-        {/* Render the pixel sprite */}
-        {renderPixelGrid()}
-
-        {/* Active indicator */}
-        {isPlaying && (
-          <motion.div
-            className="absolute -top-4 -right-4 w-12 h-12 bg-green-500 rounded-none border-4 border-white flex items-center justify-center shadow-lg"
-            animate={{ 
-              y: [0, -5, 0]
-            }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            <Play className="w-6 h-6 text-white fill-white" />
-          </motion.div>
-        )}
-
-        {/* Retro Particles */}
-        {isPlaying && (
-          <>
-            <motion.div
-              className="absolute w-4 h-4 bg-yellow-400 border-2 border-white"
-              style={{ top: '0%', right: '0%' }}
-              animate={{
-                y: [0, -40],
-                opacity: [1, 0],
-                rotate: [0, 90]
-              }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+        {currentFrame.map((row, rowIndex) => (
+          row.split('').map((pixel, colIndex) => (
+            <span
+              key={`${rowIndex}-${colIndex}`}
+              className={`block h-full w-full rounded-[1px] ${pixel !== '.' ? (isPlaying ? 'bg-hl' : 'bg-ink-on-night-2') : ''}`}
             />
-            <motion.div
-              className="absolute w-3 h-3 bg-white border border-white/50"
-              style={{ top: '20%', left: '-10%' }}
-              animate={{
-                y: [0, -30],
-                opacity: [0.8, 0],
-                rotate: [0, -90]
-              }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: "linear", delay: 0.5 }}
-            />
-          </>
-        )}
-      </motion.div>
+          ))
+        ))}
+      </div>
 
-      {/* Activity name and XP rate */}
-      <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 text-center w-full">
-        <motion.p
-          className="text-xl font-bold text-white drop-shadow-lg font-mono tracking-wide"
+      <div className="min-w-0">
+        <p className="text-[0.8125rem] font-medium text-ink-on-night-2">{isPlaying ? 'Now doing' : 'Resting on'}</p>
+        <Motion.p
           key={activity}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          className="mt-1 font-serif text-2xl font-medium leading-tight sm:text-3xl"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
         >
-          {currentActivity?.name.toUpperCase() || 'RESTING'}
-        </motion.p>
-        <p className="text-sm text-white/80 drop-shadow font-mono">
-          +{currentActivity?.xpPerMinute || 0} XP/MIN
+          {sentence(currentActivity?.name) || 'Resting'}
+        </Motion.p>
+        <p className="mt-1 text-[0.9375rem] text-ink-on-night-2 tabular">
+          +{currentActivity?.xpPerMinute || 0} XP a minute
         </p>
       </div>
     </div>

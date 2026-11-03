@@ -1,148 +1,101 @@
-import { Calendar, Clock, Users, TrendingUp } from 'lucide-react';
+import PropTypes from 'prop-types';
 
-export default function MeetingsSummary({ club, showDetailed = false }) {
+/**
+ * MeetingsSummary: how often a club meets and when it meets next.
+ * Detailed: a section title, the two numbers that matter, the next meeting and
+ * (optionally) the meetings after it. Compact: two lines for a club row.
+ */
+
+const longDate = (d) => d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+const shortDate = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+
+const relativeDays = (date) => {
+  const days = Math.ceil((date - new Date()) / 86400000);
+  if (Number.isNaN(days)) return null;
+  if (days === 0) return 'Today';
+  if (days === 1) return 'Tomorrow';
+  if (days > 1) return `In ${days} days`;
+  if (days === -1) return 'Yesterday';
+  return `${Math.abs(days)} days ago`;
+};
+
+export default function MeetingsSummary({ club, showDetailed = false, showNext = true, showList = true, headingId }) {
   if (!club) return null;
 
-  const nextEvent = club.events?.[0];
   const upcomingEvents = club.events || [];
+  const nextEvent = upcomingEvents[0];
   const nextEventDate = nextEvent ? new Date(nextEvent.date) : null;
-  const daysUntilNext = nextEventDate ? Math.ceil((nextEventDate - new Date()) / (1000 * 60 * 60 * 24)) : null;
+  const nextValid = nextEventDate && !Number.isNaN(nextEventDate.getTime());
+  const when = nextValid ? relativeDays(nextEventDate) : null;
 
   if (showDetailed) {
     return (
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-blue-900 flex items-center">
-            <Calendar className="w-6 h-6 mr-2" />
-            Meeting Schedule
-          </h3>
-          <div className="bg-blue-100 px-3 py-1 rounded-full">
-            <span className="text-sm font-bold text-blue-700">
-              {club.meetingsPerMonth} meetings/month
-            </span>
+      <div>
+        <h2 id={headingId} className="t-h2 text-ink">Meetings</h2>
+        <dl className="mt-5 flex flex-wrap gap-x-12 gap-y-5">
+          <div className="flex flex-col-reverse">
+            <dt className="mt-1 text-[0.8125rem] text-ink-3">meetings a month</dt>
+            <dd className="font-serif text-4xl font-medium leading-none text-ink tabular">{club.meetingsPerMonth ?? 0}</dd>
           </div>
-        </div>
-
-        {/* Next Meeting */}
-        {nextEvent && (
-          <div className="bg-white rounded-lg p-4 mb-4 border border-blue-200">
-            <div className="flex items-start space-x-3">
-              <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <Calendar className="w-6 h-6 text-white" />
-              </div>
-              <div className="flex-1">
-                <h4 className="text-lg font-bold text-gray-900 mb-1">Next Meeting</h4>
-                <p className="text-gray-800 font-semibold mb-2">{nextEvent.title}</p>
-                <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
-                  <span className="flex items-center">
-                    <Clock className="w-4 h-4 mr-1" />
-                    {nextEventDate.toLocaleDateString('en-US', {
-                      weekday: 'long',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: 'numeric',
-                      minute: '2-digit'
-                    })}
-                  </span>
-                  {daysUntilNext !== null && (
-                    <span className={`font-semibold ${daysUntilNext <= 7 ? 'text-orange-600' : 'text-gray-600'}`}>
-                      {daysUntilNext === 0 ? 'Today!' : `${daysUntilNext} days away`}
-                    </span>
-                  )}
-                </div>
-                <p className="text-sm text-gray-700">{nextEvent.description}</p>
-                {nextEvent.rsvpCount && (
-                  <div className="flex items-center mt-2 text-sm text-gray-600">
-                    <Users className="w-4 h-4 mr-1" />
-                    <span>{nextEvent.rsvpCount.toLocaleString()} attending</span>
-                  </div>
-                )}
-              </div>
+          <div className="flex flex-col-reverse">
+            <dt className="mt-1 text-[0.8125rem] text-ink-3">{upcomingEvents.length === 1 ? 'scheduled event' : 'scheduled events'}</dt>
+            <dd className="font-serif text-4xl font-medium leading-none text-ink tabular">{upcomingEvents.length}</dd>
+          </div>
+          {!showNext && nextValid && (
+            <div className="flex flex-col-reverse">
+              <dt className="mt-1 text-[0.8125rem] text-ink-3">{nextEventDate < new Date() ? 'last meeting' : 'next meeting'}, {shortDate(nextEventDate)}</dt>
+              <dd className="font-serif text-4xl font-medium leading-none text-ink tabular">{when}</dd>
             </div>
+          )}
+        </dl>
+
+        {showNext && nextEvent && (
+          <div className="mt-6 rounded-lg border border-line bg-surface p-5">
+            <p className="text-[0.8125rem] font-medium text-ink-3">Next meeting{when ? `, ${when.toLowerCase()}` : ''}</p>
+            <h3 className="mt-1 t-h3 text-ink">{nextEvent.title}</h3>
+            {nextValid && <p className="mt-1 text-sm text-ink-2 tabular">{longDate(nextEventDate)}</p>}
+            {nextEvent.description && <p className="mt-3 max-w-[62ch] text-[0.9375rem] text-ink-2">{nextEvent.description}</p>}
+            {nextEvent.rsvpCount ? <p className="mt-3 text-[0.8125rem] text-ink-3 tabular">{nextEvent.rsvpCount.toLocaleString()} attending</p> : null}
           </div>
         )}
 
-        {/* Meeting Frequency & Stats */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white rounded-lg p-4 border border-blue-200">
-            <div className="flex items-center space-x-2 mb-2">
-              <TrendingUp className="w-5 h-5 text-blue-600" />
-              <span className="text-sm font-semibold text-gray-900">Frequency</span>
-            </div>
-            <p className="text-2xl font-bold text-blue-600">{club.meetingsPerMonth}</p>
-            <p className="text-xs text-gray-600">meetings per month</p>
-          </div>
-
-          <div className="bg-white rounded-lg p-4 border border-blue-200">
-            <div className="flex items-center space-x-2 mb-2">
-              <Calendar className="w-5 h-5 text-green-600" />
-              <span className="text-sm font-semibold text-gray-900">Upcoming</span>
-            </div>
-            <p className="text-2xl font-bold text-green-600">{upcomingEvents.length}</p>
-            <p className="text-xs text-gray-600">scheduled events</p>
-          </div>
-        </div>
-
-        {/* Upcoming Events List */}
-        {upcomingEvents.length > 1 && (
-          <div className="mt-4">
-            <h5 className="text-sm font-semibold text-gray-900 mb-3">More Upcoming Events</h5>
-            <div className="space-y-2">
-              {upcomingEvents.slice(1, 4).map((event, index) => (
-                <div key={event.id} className="flex items-center space-x-3 bg-white rounded-lg p-3 border border-gray-200">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-xs font-bold text-blue-600">{index + 2}</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{event.title}</p>
-                    <p className="text-xs text-gray-600">
-                      {new Date(event.date).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit'
-                      })}
-                    </p>
-                  </div>
-                </div>
+        {showList && upcomingEvents.length > 1 && (
+          <div className="mt-6">
+            <h3 className="text-sm font-semibold text-ink-2">After that</h3>
+            <ol className="mt-2 divide-y divide-line border-y border-line">
+              {upcomingEvents.slice(1, 4).map((event) => (
+                <li key={event.id} className="flex items-baseline justify-between gap-4 py-3">
+                  <span className="min-w-0 truncate text-[0.9375rem] font-medium text-ink">{event.title}</span>
+                  <span className="shrink-0 text-[0.8125rem] text-ink-3 tabular">{shortDate(new Date(event.date))}</span>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
         )}
       </div>
     );
   }
 
-  // Compact version for cards
+  // Compact version for club rows and cards
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border border-blue-200">
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-xs font-semibold text-blue-900 flex items-center">
-          <Calendar className="w-3 h-3 mr-1" />
-          Meetings
-        </p>
-        <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded-full">
-          {club.meetingsPerMonth} per month
-        </span>
-      </div>
-      {nextEvent && (
-        <div className="space-y-1">
-          <p className="text-xs font-semibold text-blue-800">Next: {nextEvent.title}</p>
-          <p className="text-xs text-blue-700">
-            {nextEventDate.toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: '2-digit'
-            })}
-          </p>
-        </div>
-      )}
-      {upcomingEvents.length > 0 && (
-        <p className="text-xs text-blue-800 mt-1">
-          {upcomingEvents.length} upcoming event{upcomingEvents.length !== 1 ? 's' : ''}
+    <div className="text-[0.8125rem] text-ink-2">
+      <p>
+        <span className="font-medium text-ink tabular">{club.meetingsPerMonth ?? 0} meetings a month</span>
+        {upcomingEvents.length > 0 && <span className="tabular">, {upcomingEvents.length} upcoming</span>}
+      </p>
+      {nextEvent && nextValid && (
+        <p className="mt-0.5 line-clamp-1">
+          Next: {nextEvent.title}, <span className="tabular">{shortDate(nextEventDate)}</span>
         </p>
       )}
     </div>
   );
 }
+
+MeetingsSummary.propTypes = {
+  club: PropTypes.object,
+  showDetailed: PropTypes.bool,
+  showNext: PropTypes.bool,
+  showList: PropTypes.bool,
+  headingId: PropTypes.string,
+};

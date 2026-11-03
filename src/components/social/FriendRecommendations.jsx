@@ -1,31 +1,36 @@
 import { useMemo, useState } from 'react';
-import { Users, ThumbsUp } from 'lucide-react';
+import { ThumbsUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Card, Badge, Rating } from '../ui';
 import PropTypes from 'prop-types';
+import { Avatar, Rating } from '../ui';
 import users from '../../data/users.json';
 import books from '../../data/books.json';
 import { getFriends } from '../../utils/localStorage';
 
-// Stable pseudo-random number per (user, book) so ratings don't change on re-render.
-const seeded = (...parts) => {
-  let h = 0;
-  for (const ch of parts.join(':')) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  return (h % 1000) / 1000;
+/**
+ * FriendRecommendations: the user's friends who have this book, each with a
+ * short note. A ruled list, no card. Values derived from the friend and book
+ * ids, so they hold still between renders.
+ */
+const seeded = (str) => {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0) / 4294967295;
 };
 
 const generateComment = (user, book) => {
+  const genre = book.genre.toLowerCase();
   const comments = [
-    `Amazing ${book.genre.toLowerCase()} story! Couldn't stop listening.`,
-    `The narrator really brings this one to life. Highly recommend!`,
-    `One of the best ${book.genre.toLowerCase()} books I've listened to this year.`,
-    `Fantastic world-building and character development.`,
-    `This book kept me hooked from start to finish!`,
-    `Perfect for fans of ${book.genre.toLowerCase()}. You won't be disappointed.`,
-    `The plot twists in this one are incredible!`,
-    `Been recommending this to everyone. A must-listen!`,
+    `A ${genre} story I could not stop listening to.`,
+    'The narrator really brings this one to life.',
+    `One of the best ${genre} books I have listened to this year.`,
+    'Fantastic world-building and characters you care about.',
+    'It kept me hooked from start to finish.',
+    `Made for fans of ${genre}. You will not be disappointed.`,
+    'The turns in the plot are very well done.',
+    'I keep recommending this to everyone.',
   ];
-  return comments[Math.floor(seeded(user.id, book.id, 'comment') * comments.length)];
+  return comments[Math.floor(seeded(`${user.id}-${book.id}-c`) * comments.length)];
 };
 
 const FriendRecommendations = ({ bookId, limit = 5 }) => {
@@ -33,20 +38,20 @@ const FriendRecommendations = ({ bookId, limit = 5 }) => {
   const [liked, setLiked] = useState({});
 
   const allRecommendations = useMemo(() => {
-    const currentBook = books.find(b => b.id === bookId);
+    const currentBook = books.find((b) => b.id === bookId);
     if (!currentBook) return [];
     const friendIds = getFriends();
 
-    // Friends who own or are listening to this book
+    // The user's friends who own or are listening to this book
     return users
-      .filter(user => friendIds.includes(user.id))
-      .filter(user => user.library?.includes(bookId) || user.currentlyReading === bookId)
-      .map(user => ({
+      .filter((user) => friendIds.includes(user.id))
+      .filter((user) => user.library?.includes(bookId) || user.currentlyReading === bookId)
+      .map((user) => ({
         ...user,
-        rating: Number(user.ratings?.[bookId] ?? 4.0 + seeded(user.id, bookId, 'rating')).toFixed(1),
-        likes: Math.floor(seeded(user.id, bookId, 'likes') * 20) + 5,
+        rating: Number(user.ratings?.[bookId] ?? 4.0 + seeded(`${user.id}-${bookId}-r`)).toFixed(1),
         comment: generateComment(user, currentBook),
-        daysAgo: Math.floor(seeded(user.id, bookId, 'days') * 14) + 1,
+        daysAgo: Math.floor(seeded(`${user.id}-${bookId}-d`) * 14) + 1,
+        likes: Math.floor(seeded(`${user.id}-${bookId}-l`) * 20) + 5,
       }));
   }, [bookId]);
   const recommendations = showAll ? allRecommendations : allRecommendations.slice(0, limit);
@@ -54,77 +59,64 @@ const FriendRecommendations = ({ bookId, limit = 5 }) => {
   if (recommendations.length === 0) {
     return null;
   }
-  
+
   return (
-    <Card className="p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Users className="w-5 h-5 text-echo-orange" />
-        <h3 className="text-lg font-semibold text-echo-text-primary">
-          Friends Who Love This
-        </h3>
-        <Badge variant="primary" size="sm">{recommendations.length}</Badge>
-      </div>
-      
-      <div className="space-y-4">
-        {recommendations.map((friend) => (
-          <div key={friend.id} className="flex gap-3">
-            {/* Avatar */}
-            <div className="flex-shrink-0">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-echo-orange to-echo-orange-light flex items-center justify-center text-white font-semibold">
-                {friend.name.charAt(0)}
-              </div>
-            </div>
-            
-            {/* Content */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between gap-2 mb-1">
-                <div className="min-w-0">
-                  <Link 
-                    to={`/friend/${friend.id}/library`}
-                    className="font-medium text-echo-text-primary hover:text-echo-orange transition-colors"
-                  >
-                    {friend.name}
-                  </Link>
-                  <p className="text-xs text-echo-text-tertiary">
-                    Your friend
+    <section aria-labelledby={`recs-${bookId}`}>
+      <h2 id={`recs-${bookId}`} className="t-h2 text-ink">Friends who love this</h2>
+      <p className="mt-1 text-[0.9375rem] text-ink-2">
+        <span className="tabular">{allRecommendations.length}</span> of your friends {allRecommendations.length === 1 ? 'has' : 'have'} this book.
+      </p>
+
+      <ul className="mt-5 divide-y divide-line border-y border-line">
+        {recommendations.map((friend) => {
+          const likes = friend.likes + (liked[friend.id] ? 1 : 0);
+          return (
+            <li key={friend.id} className="flex gap-3 py-4">
+              <Avatar src={friend.avatar} name={friend.name} size="md" />
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                  <p className="text-[0.9375rem]">
+                    <Link
+                      to={`/friend/${friend.id}/library`}
+                      className="font-semibold text-ink hover:underline underline-offset-4"
+                    >
+                      {friend.name}
+                    </Link>
+                    <span className="ml-2 text-[0.8125rem] text-ink-3">Your friend</span>
                   </p>
+                  <Rating value={parseFloat(friend.rating)} size="sm" showValue />
                 </div>
-                <div className="flex items-center gap-1 flex-shrink-0">
-                  <Rating value={parseFloat(friend.rating)} size="sm" showValue={false} />
-                  <span className="text-sm font-medium text-echo-text-secondary">
-                    {friend.rating}
-                  </span>
+                <p className="mt-1 text-[0.9375rem] text-ink-2">{friend.comment}</p>
+                <div className="mt-1 flex items-center gap-1 text-[0.8125rem] text-ink-3">
+                  <span className="mr-2 tabular">{friend.daysAgo}d ago</span>
+                  <button
+                    type="button"
+                    onClick={() => setLiked((p) => ({ ...p, [friend.id]: !p[friend.id] }))}
+                    aria-pressed={Boolean(liked[friend.id])}
+                    // The visible count is part of the name, so voice users can say what they see
+                    aria-label={`${likes} likes, like ${friend.name}'s review`}
+                    className={`inline-flex h-9 items-center gap-1.5 rounded-full px-2.5 hover:bg-surface-sunk hover:text-ink ${liked[friend.id] ? 'text-ink' : ''}`}
+                  >
+                    <ThumbsUp className={`h-3.5 w-3.5 ${liked[friend.id] ? 'fill-ink' : ''}`} strokeWidth={1.75} aria-hidden="true" />
+                    <span className="tabular">{likes}</span>
+                  </button>
                 </div>
               </div>
-              
-              <p className="text-sm text-echo-text-secondary mb-2 line-clamp-2">
-                {friend.comment}
-              </p>
-              
-              <div className="flex items-center gap-4 text-xs text-echo-text-tertiary">
-                <span>{friend.daysAgo}d ago</span>
-                <button
-                  onClick={() => setLiked(prev => ({ ...prev, [friend.id]: !prev[friend.id] }))}
-                  aria-pressed={Boolean(liked[friend.id])}
-                  // The visible count is part of the name, so voice users can say what they see
-                  aria-label={`${friend.likes + (liked[friend.id] ? 1 : 0)} likes, like ${friend.name}'s review`}
-                  className={`flex items-center gap-1 hover:text-echo-orange transition-colors ${liked[friend.id] ? 'text-echo-orange' : ''}`}
-                >
-                  <ThumbsUp className="w-3 h-3" />
-                  <span>{friend.likes + (liked[friend.id] ? 1 : 0)}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-      
+            </li>
+          );
+        })}
+      </ul>
+
       {!showAll && allRecommendations.length > limit && (
-        <button onClick={() => setShowAll(true)} className="mt-4 w-full text-sm text-echo-orange hover:text-echo-orange-dark font-medium transition-colors">
+        <button
+          type="button"
+          onClick={() => setShowAll(true)}
+          className="mt-4 h-9 text-sm font-medium text-ink hover:underline underline-offset-4"
+        >
           View all {allRecommendations.length} friend reviews
         </button>
       )}
-    </Card>
+    </section>
   );
 };
 

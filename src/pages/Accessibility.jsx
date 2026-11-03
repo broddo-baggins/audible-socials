@@ -1,347 +1,155 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, Button } from '../components/ui';
-import { Accessibility, Volume2, Eye, Keyboard, Smartphone, Headphones, Users, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Volume2, Eye, Keyboard, Smartphone, Check, ArrowRight } from 'lucide-react';
+import { PageHeader } from '../components/ui';
 
-const scrollToSection = (id) => {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
+/**
+ * Accessibility: a statement, then what is supported (a two-by-two list),
+ * the player in detail (ruled rows), our commitments and where to get help.
+ */
+const accessibilityFeatures = [
+  { title: 'Screen reader support', description: 'Full compatibility with popular screen readers including JAWS, NVDA, VoiceOver and TalkBack.', icon: Volume2, details: ['Proper ARIA labels and landmarks', 'Semantic HTML structure', 'Keyboard navigation support', 'Dynamic content announcements'] },
+  { title: 'Visual accessibility', description: 'Options for people with visual impairments or colour vision deficiencies.', icon: Eye, details: ['High contrast mode available', 'Adjustable text sizes', 'Colour-blind friendly colour schemes', 'Screen magnification support'] },
+  { title: 'Keyboard navigation', description: 'Complete functionality through the keyboard alone, following WCAG 2.1 guidelines.', icon: Keyboard, details: ['All interactive elements keyboard accessible', 'Logical tab order', 'Keyboard shortcuts for common actions', 'Focus indicators always visible'] },
+  { title: 'Mobile accessibility', description: 'Built for every mobile device, with assistive technology support.', icon: Smartphone, details: ['Touch target sizes meet minimum requirements', 'Gesture alternatives available', 'Voice control compatibility', 'Switch control support'] },
+];
 
-const AccessibilityPage = () => {
-  const navigate = useNavigate();
+const audioFeatures = [
+  { title: 'Playback controls', description: 'Audio player controls designed with accessibility in mind.', features: ['Large, clearly labeled buttons', 'Playback speed adjustment (0.5x to 3.0x)', 'Sleep timer functionality', 'Bookmark and skip features', 'Resume playback from last position'] },
+  { title: 'Audio quality options', description: 'Quality settings to suit different needs and preferences.', features: ['Standard quality (64 kbps)', 'High quality (128 kbps)', 'Enhanced quality (256 kbps)', 'Offline download capability', 'Background playback support'] },
+  { title: 'Content navigation', description: 'Easy movement through audio with accessible controls.', features: ['Chapter navigation', 'Time-based seeking', 'Progress indicators', 'Content summaries available', 'Search within titles'] },
+];
 
-  const accessibilityFeatures = [
-    {
-      title: 'Screen Reader Support',
-      description: 'Full compatibility with popular screen readers including JAWS, NVDA, VoiceOver, and TalkBack.',
-      icon: Volume2,
-      details: [
-        'Proper ARIA labels and landmarks',
-        'Semantic HTML structure',
-        'Keyboard navigation support',
-        'Dynamic content announcements',
-      ],
-    },
-    {
-      title: 'Visual Accessibility',
-      description: 'Multiple options for users with visual impairments or color vision deficiencies.',
-      icon: Eye,
-      details: [
-        'High contrast mode available',
-        'Adjustable text sizes',
-        'Color-blind friendly color schemes',
-        'Screen magnification support',
-      ],
-    },
-    {
-      title: 'Keyboard Navigation',
-      description: 'Complete functionality accessible through keyboard alone, following WCAG 2.1 guidelines.',
-      icon: Keyboard,
-      details: [
-        'All interactive elements keyboard accessible',
-        'Logical tab order',
-        'Keyboard shortcuts for common actions',
-        'Focus indicators always visible',
-      ],
-    },
-    {
-      title: 'Mobile Accessibility',
-      description: 'Optimized experience across all mobile devices with assistive technology support.',
-      icon: Smartphone,
-      details: [
-        'Touch target sizes meet minimum requirements',
-        'Gesture alternatives available',
-        'Voice control compatibility',
-        'Switch control support',
-      ],
-    },
-  ];
+const commitments = [
+  { title: 'WCAG 2.1 AA compliance', description: 'We strive to meet or exceed WCAG 2.1 AA guidelines across all our digital platforms.' },
+  { title: 'Continuous improvement', description: 'Regular accessibility audits and user testing to find and remove barriers.' },
+  { title: 'Inclusive design', description: 'Accessibility considered in every new feature and design decision.' },
+  { title: 'User feedback', description: 'We actively seek and act on feedback from people with disabilities.' },
+];
 
-  const audioFeatures = [
-    {
-      title: 'Playback Controls',
-      description: 'Comprehensive audio player controls designed with accessibility in mind.',
-      features: [
-        'Large, clearly labeled buttons',
-        'Playback speed adjustment (0.5x to 3.0x)',
-        'Sleep timer functionality',
-        'Bookmark and skip features',
-        'Resume playback from last position',
-      ],
-    },
-    {
-      title: 'Audio Quality Options',
-      description: 'Multiple audio quality settings to accommodate different needs and preferences.',
-      features: [
-        'Standard quality (64 kbps)',
-        'High quality (128 kbps)',
-        'Enhanced quality (256 kbps)',
-        'Offline download capability',
-        'Background playback support',
-      ],
-    },
-    {
-      title: 'Content Navigation',
-      description: 'Easy navigation through audio content with accessible controls.',
-      features: [
-        'Chapter navigation',
-        'Time-based seeking',
-        'Progress indicators',
-        'Content summaries available',
-        'Search within titles',
-      ],
-    },
-  ];
+const resources = [
+  { title: 'Accessibility settings', description: 'How to set up Listenable for your needs.', to: '/settings' },
+  { title: 'Supported assistive technologies', description: 'The assistive technologies Listenable works with.', to: '#accessibility-features' },
+  { title: 'Keyboard shortcuts', description: 'A complete guide to keyboard navigation and shortcuts.', to: '#player' },
+  { title: 'Contact the accessibility team', description: 'Get in touch with our accessibility support team.', to: '/contact' },
+];
 
-  const commitments = [
-    {
-      title: 'WCAG 2.1 AA Compliance',
-      description: 'We strive to meet or exceed WCAG 2.1 AA guidelines across all our digital platforms.',
-    },
-    {
-      title: 'Continuous Improvement',
-      description: 'Regular accessibility audits and user testing to identify and address barriers.',
-    },
-    {
-      title: 'Inclusive Design',
-      description: 'Accessibility considerations built into all new features and design decisions.',
-    },
-    {
-      title: 'User Feedback',
-      description: 'We actively seek and incorporate feedback from users with disabilities.',
-    },
-  ];
+const CheckList = ({ items }) => (
+  <ul className="space-y-2">
+    {items.map((item) => (
+      <li key={item} className="flex items-start gap-2.5 text-[0.9375rem] text-ink-2">
+        <Check className="mt-1 h-4 w-4 shrink-0 text-ink" strokeWidth={2} aria-hidden="true" />
+        <span>{item}</span>
+      </li>
+    ))}
+  </ul>
+);
 
-  const resources = [
-    {
-      title: 'Accessibility Settings',
-      description: 'Learn how to customize your Audible experience for accessibility.',
-      link: '/settings',
-    },
-    {
-      title: 'Supported Assistive Technologies',
-      description: 'List of assistive technologies compatible with Audible.',
-      link: '#accessibility-features',
-    },
-    {
-      title: 'Keyboard Shortcuts',
-      description: 'Complete guide to keyboard navigation and shortcuts.',
-      link: '#accessibility-features',
-    },
-    {
-      title: 'Contact Accessibility Team',
-      description: 'Get in touch with our dedicated accessibility support team.',
-      link: '/contact',
-    },
-  ];
+const AccessibilityPage = () => (
+  <div className="page pb-20">
+    <PageHeader
+      title="Accessibility at Listenable"
+      description="We are committed to making audio accessible to everyone. The platform is designed so that people with disabilities can use all of it."
+    />
 
-  // Resource links are either app routes or sections of this page
-  const openResource = (link) => {
-    if (link.startsWith('#')) scrollToSection(link.slice(1));
-    else navigate(link);
-  };
+    {/* Statement */}
+    <section aria-labelledby="mission" className="grid gap-6 border-t border-line pt-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,2.2fr)] lg:gap-12">
+      <h2 id="mission" className="t-h2 text-ink">Our accessibility mission</h2>
+      <p className="font-serif text-[1.25rem] leading-[1.55] text-ink md:text-[1.5rem]">
+        We believe stories have the power to connect, inspire and transform lives. That is why everyone, regardless of
+        ability, should be able to reach our library of audiobooks, podcasts and original content. Accessibility is not
+        a feature for us; it is a basic part of serving every listener.
+      </p>
+    </section>
 
-  return (
-    <div className="min-h-screen bg-audible-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-audible-orange/10 mb-6 mx-auto">
-            <Accessibility className="w-10 h-10 text-audible-orange" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-audible-text-primary mb-6">
-            Accessibility at Audible
-          </h1>
-          <p className="text-xl text-audible-text-secondary max-w-4xl mx-auto leading-relaxed">
-            We're committed to making audio entertainment accessible to everyone. Our platform is designed
-            with accessibility in mind, ensuring that people with disabilities can fully enjoy our service.
-          </p>
-        </div>
-
-        {/* Mission Statement */}
-        <div className="mb-16">
-          <Card padding="xl" className="bg-gradient-to-r from-audible-orange to-audible-orange/80 text-white">
-            <div className="text-center">
-              <h2 className="text-3xl font-bold mb-6">
-                Our Accessibility Mission
-              </h2>
-              <p className="text-lg leading-relaxed max-w-4xl mx-auto">
-                At Audible, we believe that stories have the power to connect, inspire, and transform lives.
-                That's why we're dedicated to ensuring that everyone, regardless of ability, can access our
-                vast library of audiobooks, podcasts, and original content. Accessibility isn't just a feature
-                for us—it's a fundamental part of our commitment to serving all listeners.
-              </p>
+    {/* Features */}
+    <section id="accessibility-features" aria-labelledby="features-title" className="mt-16 scroll-mt-24 md:mt-20">
+      <h2 id="features-title" className="t-h2 text-ink">Accessibility features</h2>
+      <p className="mt-2 text-ink-2">Support across all platforms and devices.</p>
+      <div className="mt-8 grid gap-x-12 gap-y-10 md:grid-cols-2">
+        {accessibilityFeatures.map((f) => {
+          const Icon = f.icon;
+          return (
+            <div key={f.title} className="border-t border-ink pt-5">
+              <div className="flex items-center gap-2.5">
+                <Icon className="h-5 w-5 text-ink" strokeWidth={1.75} aria-hidden="true" />
+                <h3 className="t-h3 text-ink">{f.title}</h3>
+              </div>
+              <p className="mt-2 mb-4 text-ink-2">{f.description}</p>
+              <CheckList items={f.details} />
             </div>
-          </Card>
-        </div>
-
-        {/* Accessibility Features */}
-        <div id="accessibility-features" className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-audible-text-primary mb-4">
-              Accessibility Features
-            </h2>
-            <p className="text-lg text-audible-text-secondary">
-              Comprehensive accessibility support across all platforms and devices
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {accessibilityFeatures.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <Card key={index} padding="lg">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="w-12 h-12 rounded-full bg-audible-orange/10 flex items-center justify-center">
-                        <Icon className="w-6 h-6 text-audible-orange" />
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-audible-text-primary mb-2">
-                        {feature.title}
-                      </h3>
-                      <p className="text-audible-text-secondary mb-4">
-                        {feature.description}
-                      </p>
-                      <ul className="space-y-2">
-                        {feature.details.map((detail, detailIndex) => (
-                          <li key={detailIndex} className="flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                            <span className="text-sm text-audible-text-secondary">
-                              {detail}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Audio Experience Features */}
-        <div className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-audible-text-primary mb-4">
-              Audio Experience Features
-            </h2>
-            <p className="text-lg text-audible-text-secondary">
-              Specialized features designed for accessible audio listening
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {audioFeatures.map((section, index) => (
-              <Card key={index} padding="lg">
-                <h3 className="text-xl font-bold text-audible-text-primary mb-3">
-                  {section.title}
-                </h3>
-                <p className="text-audible-text-secondary mb-4">
-                  {section.description}
-                </p>
-                <ul className="space-y-2">
-                  {section.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-audible-text-secondary">
-                        {feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Our Commitments */}
-        <div className="mb-16">
-          <Card padding="xl" className="bg-audible-gray-50">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-audible-text-primary mb-4">
-                Our Commitments
-              </h2>
-              <p className="text-lg text-audible-text-secondary">
-                How we ensure accessibility remains at the core of everything we do
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              {commitments.map((commitment, index) => (
-                <div key={index} className="text-center">
-                  <h3 className="text-xl font-bold text-audible-text-primary mb-2">
-                    {commitment.title}
-                  </h3>
-                  <p className="text-audible-text-secondary">
-                    {commitment.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </div>
-
-        {/* Resources & Support */}
-        <div id="accessibility-resources" className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-audible-text-primary mb-4">
-              Resources & Support
-            </h2>
-            <p className="text-lg text-audible-text-secondary">
-              Additional resources to help you get the most out of Audible
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {resources.map((resource, index) => (
-              <Card key={index} padding="lg" className="text-center hover:shadow-md transition-shadow">
-                <h3 className="font-bold text-audible-text-primary mb-2">
-                  {resource.title}
-                </h3>
-                <p className="text-sm text-audible-text-secondary mb-4">
-                  {resource.description}
-                </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => openResource(resource.link)}
-                  aria-label={`Learn more: ${resource.title}`}
-                >
-                  Learn More
-                </Button>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Contact CTA */}
-        <div className="text-center">
-          <Card padding="xl" className="bg-gradient-to-r from-audible-orange to-audible-orange/80 text-white">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/10 mb-6 mx-auto">
-              <Users className="w-8 h-8 text-white" />
-            </div>
-            <h2 className="text-3xl font-bold mb-4">
-              Need Help with Accessibility?
-            </h2>
-            <p className="text-lg mb-8 opacity-90">
-              Our dedicated accessibility team is here to help you have the best possible experience with Audible.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="secondary" size="lg" onClick={() => navigate('/contact')}>
-                Contact Accessibility Team
-              </Button>
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-audible-orange" onClick={() => scrollToSection('accessibility-resources')}>
-                Accessibility Resources
-              </Button>
-            </div>
-          </Card>
-        </div>
+          );
+        })}
       </div>
-    </div>
-  );
-};
+    </section>
+
+    {/* Player */}
+    <section id="player" aria-labelledby="player-title" className="mt-16 scroll-mt-24 rounded-2xl border border-line bg-surface p-6 md:mt-20 md:p-10">
+      <h2 id="player-title" className="t-h2 text-ink">Audio experience features</h2>
+      <p className="mt-2 text-ink-2">Features made for accessible listening.</p>
+      <ul className="mt-6 divide-y divide-line border-t border-line">
+        {audioFeatures.map((s) => (
+          <li key={s.title} className="grid gap-4 py-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] md:gap-10">
+            <div>
+              <h3 className="t-h3 text-ink">{s.title}</h3>
+              <p className="mt-1 text-ink-2">{s.description}</p>
+            </div>
+            <CheckList items={s.features} />
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    {/* Commitments */}
+    <section aria-labelledby="commitments" className="mt-16 md:mt-20">
+      <h2 id="commitments" className="t-h2 text-ink">Our commitments</h2>
+      <p className="mt-2 text-ink-2">How accessibility stays at the centre of what we do.</p>
+      <ol className="mt-6 grid border-t border-line md:grid-cols-2 md:gap-x-12">
+        {commitments.map((c, i) => (
+          <li key={c.title} className="grid grid-cols-[2.5rem_minmax(0,1fr)] border-b border-line py-5">
+            <span className="font-serif text-lg text-ink-3 tabular" aria-hidden="true">{i + 1}</span>
+            <div>
+              <h3 className="font-semibold text-ink">{c.title}</h3>
+              <p className="mt-1 text-ink-2">{c.description}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    {/* Resources and help */}
+    <section id="accessibility-resources" aria-labelledby="resources" className="mt-16 grid scroll-mt-24 gap-10 md:mt-20 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:gap-16">
+      <div>
+        <h2 id="resources" className="t-h2 text-ink">Resources and support</h2>
+        <ul className="mt-5 divide-y divide-line border-y border-line">
+          {resources.map((r) => {
+            const content = (
+              <>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-semibold text-ink group-hover:underline underline-offset-4">{r.title}</span>
+                  <span className="block text-[0.9375rem] text-ink-2">{r.description}</span>
+                </span>
+                <ArrowRight className="h-4 w-4 shrink-0 text-ink-2" strokeWidth={1.75} aria-hidden="true" />
+              </>
+            );
+            const cls = 'group flex items-center gap-4 py-4';
+            return (
+              <li key={r.title}>
+                {r.to.startsWith('#') ? <a href={r.to} className={cls}>{content}</a> : <Link to={r.to} className={cls}>{content}</Link>}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      <aside aria-labelledby="need-help" className="self-start rounded-2xl bg-surface-sunk p-6 md:p-8">
+        <h2 id="need-help" className="t-h2 text-ink">Need help with accessibility?</h2>
+        <p className="mt-2 text-ink-2">Our accessibility team is here to help you get the most from Listenable.</p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link to="/contact" className="inline-flex h-11 items-center rounded-full bg-ink px-5 text-[0.9375rem] font-medium text-paper hover:bg-gray-800">Contact the team</Link>
+          <Link to="/faq" className="inline-flex h-11 items-center rounded-full border border-line-strong px-5 text-[0.9375rem] font-medium text-ink hover:bg-surface">Read the FAQ</Link>
+        </div>
+      </aside>
+    </section>
+  </div>
+);
 
 export default AccessibilityPage;

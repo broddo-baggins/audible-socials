@@ -1,74 +1,27 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Play, Pause, Trophy, Star, Clock, Award, Zap, Lock, Ear, Sofa, Fish, Landmark, Compass, Globe, Library, Target, Sparkles, Castle, Scroll, Hourglass, Sprout, Mountain, Circle, Shield, Flame, Palette, Hammer, Cat, Footprints, Scissors, BookOpen, Glasses, Coins, Briefcase, DollarSign, TrendingUp, ShoppingBag, Crown, Hand, Heart, Moon, Sun, ChefHat } from 'lucide-react';
+import { ArrowLeft, Lock } from 'lucide-react';
 import IdleGame from '../components/idle/IdleGame';
-import { Card, Button } from '../components/ui';
+import { AchievementIcon } from '../components/idle/IdleAchievements';
+import { PageHeader, Button } from '../components/ui';
 import { getIdleGameState, ACHIEVEMENTS } from '../utils/idleGame';
 
-// Icon mapping for achievements
-const ACHIEVEMENT_ICON_MAP = {
-  'Ear': Ear,
-  'Sofa': Sofa,
-  'Star': Star,
-  'Fish': Fish,
-  'Landmark': Landmark,
-  'Compass': Compass,
-  'Globe': Globe,
-  'Library': Library,
-  'Target': Target,
-  'Sparkles': Sparkles,
-  'Castle': Castle,
-  'Scroll': Scroll,
-  'Hourglass': Hourglass,
-  'Sprout': Sprout,
-  'Mountain': Mountain,
-  'Circle': Circle,
-  'Shield': Shield,
-  'Flame': Flame,
-  'Palette': Palette,
-  'Hammer': Hammer,
-  'Cat': Cat,
-  'Footprints': Footprints,
-  'Scissors': Scissors,
-  'Candle': Flame,
-  'Tree': Sprout,
-  'BookOpen': BookOpen,
-  'Glasses': Glasses,
-  'Coins': Coins,
-  'Pig': Coins,
-  'Briefcase': Briefcase,
-  'DollarSign': DollarSign,
-  'TrendingUp': TrendingUp,
-  'ShoppingBag': ShoppingBag,
-  'Trophy': Trophy,
-  'Crown': Crown,
-  'Hand': Hand,
-  'Heart': Heart,
-  'Moon': Moon,
-  'Sun': Sun,
-  'ChefHat': ChefHat
-};
+// Achievement names arrive in capitals and some descriptions shout; set both in plain sentence case.
+const sentence = (s = '') => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+const plainCopy = (s = '') => s.replace(/!+/g, '.').replace(/\.\./g, '.');
 
-// Achievement Icon Component - using Lucide icons
-const AchievementIcon = ({ icon, unlocked = true }) => {
-  if (!unlocked) {
-    return <Lock className="w-6 h-6 text-gray-400" />;
-  }
+const HOW_IT_WORKS = [
+  'Start playing any audiobook from your library.',
+  'Your listener gains experience and levels up while it plays.',
+  'Levels unlock new activities, like cooking, crafting and gardening.',
+  'Listening milestones earn achievements.',
+];
 
-  // Render Lucide icon if available, otherwise show text
-  const IconComponent = ACHIEVEMENT_ICON_MAP[icon];
-  if (IconComponent) {
-    return <IconComponent className="w-6 h-6 text-purple-500" />;
-  }
-
-  return (
-    <div className="w-6 h-6 flex items-center justify-center text-purple-500 text-sm font-bold">
-      {icon?.charAt(0) || '?'}
-    </div>
-  );
-};
-
+/**
+ * IdleGamePage: a calm companion for listening. The game panel is on night
+ * (it is a "now playing" surface); everything around it is on paper: what
+ * you have earned, your numbers and how it works.
+ */
 const IdleGamePage = () => {
   const [gameState, setGameState] = useState(getIdleGameState());
   const [isPlaying] = useState(false);
@@ -116,282 +69,162 @@ const IdleGamePage = () => {
     !gameState.achievements.includes(achievement.id)
   );
 
+  const activityStats = [
+    { label: 'Meditating', value: gameState.activityStats?.meditate },
+    { label: 'Cooking', value: gameState.activityStats?.cook },
+    { label: 'Crafting', value: gameState.activityStats?.craft },
+    { label: 'With the cat', value: gameState.activityStats?.play_with_cat },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link
-                to="/"
-                aria-label="Back to home"
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-              >
-                <ArrowLeft className="w-6 h-6" />
-              </Link>
-              <div>
-                <h1 className="text-3xl font-bold">Idle Listener</h1>
-                <p className="text-white/80">Your audiobook-powered idle game</p>
-              </div>
-            </div>
+    <div className="page pb-16">
+      <PageHeader
+        kicker={
+          <Link to="/" className="-ml-1 inline-flex items-center gap-1.5 rounded-full px-1 py-1 normal-case tracking-normal text-sm font-medium text-ink-2 hover:text-ink">
+            <ArrowLeft className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" /> Home
+          </Link>
+        }
+        title="Idle listener"
+        description="A small companion that keeps busy while you listen. Every minute of a book earns experience, unlocks activities and saves focus points for upgrades."
+      />
 
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-2xl font-bold text-yellow-300">
-                  Level {gameState.level}
-                </div>
-                <div className="text-sm text-white/70">
-                  {gameState.experience.toLocaleString()} XP
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-14">
+        {/* Main game area */}
+        <div className="min-w-0 space-y-12">
+          <IdleGame isPlaying={isPlaying} />
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Game Area */}
-          <div className="lg:col-span-2">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
+          {/* Start listening */}
+          <section aria-labelledby="idle-start" className="grid gap-6 border-t border-line pt-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+            <div>
+              <h2 id="idle-start" className="t-h2 text-ink">Listen to earn experience</h2>
+              <p className="mt-2 max-w-[56ch] text-[0.9375rem] text-ink-2">
+                Play any audiobook to start earning experience and unlocking activities. Nothing grows while the book is paused.
+              </p>
+              <ol className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-2">
+                <li><span className="font-semibold text-ink">1</span> Play audio</li>
+                <li><span className="font-semibold text-ink">2</span> Gain XP as you listen</li>
+                <li><span className="font-semibold text-ink">3</span> Unlock new activities</li>
+              </ol>
+            </div>
+            <Link
+              to="/library"
+              className="inline-flex h-11 items-center justify-self-start rounded-full bg-ink px-5 text-[0.9375rem] font-medium text-paper hover:bg-gray-800"
             >
-              <IdleGame isPlaying={isPlaying} />
-            </motion.div>
+              Browse your library
+            </Link>
+          </section>
 
-            {/* Quick Start Listening */}
-            <Card className="p-6 bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    Start Listening to Gain XP!
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    Play any audiobook to begin earning experience and unlocking activities.
-                  </p>
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <div className="flex items-center gap-1">
-                      <Play className="w-4 h-4 text-green-500" />
-                      <span>Play audio</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Zap className="w-4 h-4 text-yellow-500" />
-                      <span>Gain XP automatically</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Trophy className="w-4 h-4 text-purple-500" />
-                      <span>Unlock new activities</span>
-                    </div>
-                  </div>
-                </div>
-                <Link
-                  to="/library"
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center gap-2"
-                >
-                  <Play className="w-5 h-5" />
-                  Browse Library
-                </Link>
+          {/* Development: Offline Progress Simulator */}
+          {import.meta.env.DEV && (
+            <section aria-labelledby="idle-dev" className="rounded-lg border border-dashed border-line-strong p-5">
+              <h2 id="idle-dev" className="t-h3 text-ink">Development tools</h2>
+              <p className="mt-1 text-sm text-ink-2">Test how progress builds up while you are away.</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Button size="sm" variant="outline" onClick={() => simulateOfflineProgress(5)}>+5 min away</Button>
+                <Button size="sm" variant="outline" onClick={() => simulateOfflineProgress(30)}>+30 min away</Button>
+                <Button size="sm" variant="outline" onClick={() => simulateOfflineProgress(120)}>+2 h away</Button>
+                <Button size="sm" variant="outline" onClick={() => simulateOfflineProgress(1440)}>+24 h away</Button>
               </div>
-            </Card>
-
-            {/* Development: Offline Progress Simulator */}
-            {import.meta.env.DEV && (
-              <Card className="p-4 bg-yellow-50 border-2 border-yellow-200">
-                <h4 className="font-bold text-gray-900 mb-2">🧪 Development Tools</h4>
-                <p className="text-sm text-gray-600 mb-3">Test offline progress accumulation:</p>
-                <div className="flex gap-2 flex-wrap">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => simulateOfflineProgress(5)}
-                  >
-                    +5 min offline
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => simulateOfflineProgress(30)}
-                  >
-                    +30 min offline
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => simulateOfflineProgress(120)}
-                  >
-                    +2h offline
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => simulateOfflineProgress(1440)}
-                  >
-                    +24h offline
-                  </Button>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">
-                  Switch tabs/minimize browser, then click a button to test offline progress.
-                </p>
-              </Card>
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Achievements */}
-            <Card className="p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Award className="w-5 h-5 text-yellow-500" />
-                <h3 className="text-lg font-bold text-gray-900">Achievements</h3>
-                <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded-full">
-                  {unlockedAchievements.length}/{achievementsArray.length}
-                </span>
-              </div>
-
-                <div className="space-y-3 max-h-96 overflow-y-auto" tabIndex={0} role="region" aria-label="Achievements">
-                {/* Unlocked Achievements */}
-                {unlockedAchievements.map((achievement, index) => (
-                  <motion.div
-                    key={achievement.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="flex items-center gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
-                  >
-                    <AchievementIcon icon={achievement.icon} unlocked={true} />
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-gray-900">{achievement.name}</h4>
-                      <p className="text-sm text-gray-600">{achievement.description}</p>
-                      {achievement.reward && (
-                        <p className="text-xs text-green-600 mt-1">
-                          Reward: +{achievement.reward.amount} {achievement.reward.type.toUpperCase()}
-                        </p>
-                      )}
-                    </div>
-                    <div className="text-yellow-500">
-                      <Trophy className="w-5 h-5" />
-                    </div>
-                  </motion.div>
-                ))}
-
-                {/* Locked Achievements */}
-                {lockedAchievements.slice(0, 5).map((achievement, index) => (
-                  <motion.div
-                    key={achievement.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: (unlockedAchievements.length + index) * 0.1 }}
-                    className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg opacity-60"
-                  >
-                    <AchievementIcon icon={achievement.icon} unlocked={false} />
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-gray-500">{achievement.name}</h4>
-                      <p className="text-sm text-gray-400">{achievement.description}</p>
-                    </div>
-                    <div className="text-gray-400">
-                      <Lock className="w-5 h-5" />
-                    </div>
-                  </motion.div>
-                ))}
-
-                {lockedAchievements.length > 5 && (
-                  <p className="text-center text-sm text-gray-500 py-2">
-                    +{lockedAchievements.length - 5} more achievements to unlock
-                  </p>
-                )}
-              </div>
-            </Card>
-
-            {/* Stats */}
-            <Card className="p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Star className="w-5 h-5 text-blue-500" />
-                Game Stats
-              </h3>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Total Listening Time</span>
-                  <span className="font-semibold text-blue-600">
-                    {Math.floor(gameState.totalMinutesListened / 60)}h {gameState.totalMinutesListened % 60}m
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Activities Unlocked</span>
-                  <span className="font-semibold text-green-600">
-                    {gameState.unlockedActivities.length}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Current Activity</span>
-                  <span className="font-semibold text-purple-600">
-                    {gameState.currentActivity.replace('_', ' ')}
-                  </span>
-                </div>
-
-                <hr className="my-3" />
-
-                <h4 className="font-semibold text-gray-900 mb-2">Activity Stats</h4>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="text-center p-2 bg-blue-50 rounded">
-                    <div className="font-bold text-blue-600">{Math.floor(gameState.activityStats?.meditate || 0)}</div>
-                    <div className="text-gray-600">Meditate (min)</div>
-                  </div>
-                  <div className="text-center p-2 bg-green-50 rounded">
-                    <div className="font-bold text-green-600">{Math.floor(gameState.activityStats?.cook || 0)}</div>
-                    <div className="text-gray-600">Cook (min)</div>
-                  </div>
-                  <div className="text-center p-2 bg-purple-50 rounded">
-                    <div className="font-bold text-purple-600">{Math.floor(gameState.activityStats?.craft || 0)}</div>
-                    <div className="text-gray-600">Craft (min)</div>
-                  </div>
-                  <div className="text-center p-2 bg-pink-50 rounded">
-                    <div className="font-bold text-pink-600">{Math.floor(gameState.activityStats?.play_with_cat || 0)}</div>
-                    <div className="text-gray-600">Cat Time (min)</div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            {/* How It Works */}
-            <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
-              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-blue-500" />
-                How It Works
-              </h3>
-
-              <div className="space-y-3 text-sm text-gray-700">
-                <div className="flex items-start gap-2">
-                  <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">1</div>
-                  <p>Start playing any audiobook from your library</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">2</div>
-                  <p>Your character automatically gains XP and levels up</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">3</div>
-                  <p>Unlock new activities like cooking, crafting, and gardening</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold mt-0.5">4</div>
-                  <p>Earn achievements for listening milestones</p>
-                </div>
-              </div>
-
-              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-sm text-yellow-800">
-                  <strong>Pro Tip:</strong> Earn Focus Points while listening, then spend them in the shop to buy upgrades that multiply your XP gains!
-                </p>
-              </div>
-            </Card>
-          </div>
+              <p className="mt-3 text-[0.8125rem] text-ink-3">Switch tabs or minimise the browser, then pick a button.</p>
+            </section>
+          )}
         </div>
+
+        {/* Sidebar */}
+        <aside className="min-w-0 space-y-12">
+          {/* Achievements */}
+          <section aria-labelledby="idle-achievements">
+            <div className="flex items-baseline justify-between gap-4">
+              <h2 id="idle-achievements" className="t-h2 text-ink">Achievements</h2>
+              <span className="t-meta">{unlockedAchievements.length} of {achievementsArray.length}</span>
+            </div>
+
+            <ul className="mt-4 max-h-[28rem] divide-y divide-line overflow-y-auto border-y border-line" tabIndex={0} aria-label="Achievements, earned first">
+              {unlockedAchievements.map((achievement) => (
+                <li key={achievement.id} className="flex items-start gap-3 py-3.5">
+                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-hl text-ink">
+                    <AchievementIcon icon={achievement.icon} unlocked className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-ink">{sentence(achievement.name)}</h3>
+                    <p className="text-sm text-ink-2">{plainCopy(achievement.description)}</p>
+                    {achievement.reward && (
+                      <p className="mt-1 text-[0.8125rem] text-ink-3 tabular">
+                        Reward +{achievement.reward.amount} {achievement.reward.type.toUpperCase()}
+                      </p>
+                    )}
+                  </div>
+                </li>
+              ))}
+
+              {lockedAchievements.slice(0, 5).map((achievement) => (
+                <li key={achievement.id} className="flex items-start gap-3 py-3.5">
+                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-dashed border-line-strong text-ink-3">
+                    <Lock className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-medium text-ink-2">
+                      {sentence(achievement.name)}
+                      <span className="sr-only">, not earned yet</span>
+                    </h3>
+                    <p className="text-sm text-ink-3">{plainCopy(achievement.description)}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            {lockedAchievements.length > 5 && (
+              <p className="mt-3 text-[0.8125rem] text-ink-3">{lockedAchievements.length - 5} more to unlock. See them all in the game panel.</p>
+            )}
+          </section>
+
+          {/* Stats */}
+          <section aria-labelledby="idle-stats">
+            <h2 id="idle-stats" className="t-h2 text-ink">Your numbers</h2>
+            <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-6">
+              <div className="col-span-2">
+                <dt className="t-meta">Total listening time</dt>
+                <dd className="mt-1 font-serif text-4xl font-medium tabular text-ink">
+                  {Math.floor(gameState.totalMinutesListened / 60)}<span className="text-2xl">h</span> {gameState.totalMinutesListened % 60}<span className="text-2xl">m</span>
+                </dd>
+              </div>
+              <div>
+                <dt className="t-meta">Activities unlocked</dt>
+                <dd className="mt-1 font-serif text-3xl font-medium tabular text-ink">{gameState.unlockedActivities.length}</dd>
+              </div>
+              <div>
+                <dt className="t-meta">Current activity</dt>
+                <dd className="mt-1.5 text-lg font-semibold text-ink">{sentence(gameState.currentActivity.replace(/_/g, ' '))}</dd>
+              </div>
+            </dl>
+
+            <h3 className="mt-8 text-sm font-semibold text-ink-2">Minutes per activity</h3>
+            <dl className="mt-3 divide-y divide-line border-y border-line">
+              {activityStats.map((s) => (
+                <div key={s.label} className="flex items-baseline justify-between py-2.5">
+                  <dt className="text-[0.9375rem] text-ink-2">{s.label}</dt>
+                  <dd className="text-[0.9375rem] font-semibold tabular text-ink">{Math.floor(s.value || 0)} min</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+
+          {/* How it works */}
+          <section aria-labelledby="idle-how">
+            <h2 id="idle-how" className="t-h2 text-ink">How it works</h2>
+            <ol className="mt-5 space-y-3">
+              {HOW_IT_WORKS.map((step, i) => (
+                <li key={step} className="flex items-start gap-3 text-[0.9375rem] text-ink-2">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-line-strong text-xs font-semibold text-ink tabular">{i + 1}</span>
+                  <span className="pt-0.5">{step}</span>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-6 rounded-lg bg-hl-wash px-4 py-3 text-sm text-ink">
+              <span className="font-semibold">Tip.</span> You earn focus points while you listen. Spend them in the upgrade shop on things that multiply your XP.
+            </p>
+          </section>
+        </aside>
       </div>
     </div>
   );

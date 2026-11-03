@@ -1,53 +1,37 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 
 /**
- * FloatingText - Displays floating animated text notifications
- * Used for XP gains, Focus Points, achievements, etc.
+ * FloatingText: small receipts for what you just earned (XP, focus points,
+ * an upgrade, a level). Ink pills that rise a little and fade; experience
+ * gains carry the highlighter. Decorative copies of state the panel already shows.
  */
-const FloatingText = ({ items }) => {
-  const getColorByType = (type) => {
-    switch (type) {
-      case 'xp':
-        return 'text-yellow-400';
-      case 'fp':
-        return 'text-blue-400';
-      case 'upgrade':
-        return 'text-green-400';
-      case 'achievement':
-        return 'text-purple-400';
-      case 'level':
-        return 'text-orange-400';
-      case 'info':
-        return 'text-cyan-400';
-      default:
-        return 'text-white';
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 pointer-events-none z-50">
-      <AnimatePresence>
-        {items.map((item) => (
-          <motion.div
-            key={item.id}
-            initial={{ opacity: 0, y: 0, scale: 0.5 }}
-            animate={{ opacity: [0, 1, 1, 0], y: -80, scale: [0.5, 1.3, 1.2, 1] }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.5, ease: 'easeOut' }}
-            className={`absolute font-bold text-xl ${getColorByType(item.type)} drop-shadow-lg`}
-            style={{ 
-              left: `${item.x}px`, 
-              top: `${item.y}px`,
-              textShadow: '0 0 10px rgba(0,0,0,0.8)'
-            }}
-          >
-            {item.text}
-          </motion.div>
-        ))}
-      </AnimatePresence>
-    </div>
-  );
+const STYLES = {
+  xp: 'bg-hl text-ink',
+  level: 'bg-hl text-ink',
+  fp: 'bg-ink text-paper',
+  upgrade: 'bg-ink text-paper',
+  achievement: 'bg-ink text-paper',
+  info: 'bg-surface text-ink border border-line',
 };
 
-export default FloatingText;
+const FloatingText = ({ items }) => (
+  <div className="pointer-events-none fixed inset-0 z-50" aria-hidden="true">
+    <AnimatePresence>
+      {items.map((item) => (
+        <Motion.div
+          key={item.id}
+          initial={{ opacity: 0, y: 0 }}
+          animate={{ opacity: [0, 1, 1, 0], y: -48 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+          className={`absolute whitespace-nowrap rounded-full px-3 py-1 text-sm font-semibold tabular shadow-md ${STYLES[item.type] || STYLES.info}`}
+          style={{ left: `${item.x}px`, top: `${item.y}px` }}
+        >
+          {item.text}
+        </Motion.div>
+      ))}
+    </AnimatePresence>
+  </div>
+);
 
+export default FloatingText;

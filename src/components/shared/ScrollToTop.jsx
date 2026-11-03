@@ -1,16 +1,7 @@
 /**
- * ScrollToTop Component - Floating Scroll Button
- *
- * A floating action button that appears when the user scrolls down the page,
- * providing quick navigation back to the top. Features smooth scrolling animation
- * and responsive positioning.
- *
- * Features:
- * - Appears after scrolling 300px down
- * - Smooth scroll-to-top animation
- * - Responsive positioning (bottom-right corner)
- * - Hover effects and accessibility
- * - Auto-hides when at top of page
+ * ScrollToTop: a small outlined button that appears once the reader is
+ * 300 px down. Visibility comes from an IntersectionObserver on a sentinel,
+ * not a scroll listener. Sits above the assistant launcher.
  */
 
 import { useState, useEffect } from 'react';
@@ -19,44 +10,36 @@ import { ArrowUp } from 'lucide-react';
 const ScrollToTop = () => {
   const [isVisible, setIsVisible] = useState(false);
 
-  // Show button when page is scrolled down
   useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener('scroll', toggleVisibility);
-
-    return () => {
-      window.removeEventListener('scroll', toggleVisibility);
-    };
+    if (typeof IntersectionObserver === 'undefined') return undefined;
+    const sentinel = document.createElement('div');
+    sentinel.setAttribute('aria-hidden', 'true');
+    sentinel.style.cssText = 'position:absolute;top:300px;left:0;width:1px;height:1px;pointer-events:none;';
+    document.body.appendChild(sentinel);
+    const io = new IntersectionObserver(([entry]) => {
+      setIsVisible(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+    });
+    io.observe(sentinel);
+    return () => { io.disconnect(); sentinel.remove(); };
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
   };
 
+  if (!isVisible) return null;
+
   return (
-    <>
-      {isVisible && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-24 md:bottom-8 right-4 md:right-8 z-50 p-3 bg-audible-orange text-white rounded-full shadow-lg hover:bg-audible-orange-dark transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-audible-orange focus:ring-offset-2"
-          aria-label="Scroll to top"
-        >
-          <ArrowUp className="w-6 h-6" />
-        </button>
-      )}
-    </>
+    <button
+      type="button"
+      onClick={scrollToTop}
+      className="fixed bottom-40 right-4 z-50 inline-flex h-11 w-11 items-center justify-center rounded-full border border-line-strong bg-surface text-ink shadow-sm hover:bg-paper md:right-6"
+      aria-label="Back to top"
+    >
+      <ArrowUp className="h-5 w-5" strokeWidth={1.75} />
+    </button>
   );
 };
 
 export default ScrollToTop;
-

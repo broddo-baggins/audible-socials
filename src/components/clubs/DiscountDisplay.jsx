@@ -1,170 +1,105 @@
-import { DollarSign, Gift, BookOpen, Crown } from 'lucide-react';
+import PropTypes from 'prop-types';
+import { Check } from 'lucide-react';
 
-export default function DiscountDisplay({ club, ownsBook }) {
+/**
+ * DiscountDisplay: what a member saves, as a list with the value set large on
+ * the right. The book-ownership rule sits above it, the members-only events below.
+ */
+
+const money = (d) => (d.type === 'percentage' ? `${d.value}%` : `$${d.value}`);
+
+export default function DiscountDisplay({ club, ownsBook, showOwnership = true }) {
   if (!club?.discounts) return null;
 
   const { discounts, memberBenefits } = club;
+  const rows = [
+    discounts.monthlyBook && {
+      key: 'monthly',
+      title: 'Monthly book discount',
+      text: discounts.monthlyBook.description,
+      value: `$${discounts.monthlyBook.maxSavings}`,
+      unit: `saved a month (${money(discounts.monthlyBook)} off)`,
+    },
+    discounts.membershipBonus && {
+      key: 'bonus',
+      title: 'Welcome bonus',
+      text: discounts.membershipBonus.description,
+      value: `+${discounts.membershipBonus.value}`,
+      unit: 'credits',
+    },
+    discounts.loyaltyDiscount && {
+      key: 'loyalty',
+      title: 'Loyalty reward',
+      text: discounts.loyaltyDiscount.description,
+      value: money(discounts.loyaltyDiscount),
+      unit: 'extra savings',
+    },
+  ].filter(Boolean);
 
   return (
-    <div className="space-y-4">
-      {/* Book Ownership Requirement */}
-      {memberBenefits?.bookOwnershipRequired && (
-        <div className={`p-4 rounded-lg border-2 ${
-          ownsBook
-            ? 'bg-green-50 border-green-200'
-            : 'bg-orange-50 border-orange-200'
-        }`}>
-          <div className="flex items-start space-x-3">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-              ownsBook ? 'bg-green-500' : 'bg-orange-500'
-            }`}>
-              <BookOpen className="w-5 h-5 text-white" />
-            </div>
-            <div className="flex-1">
-              <h4 className={`text-lg font-bold ${ownsBook ? 'text-green-900' : 'text-orange-900'}`}>
-                {ownsBook ? '✓ Book Owned' : 'Book Required to Join'}
-              </h4>
-              <p className={`text-sm ${ownsBook ? 'text-green-700' : 'text-orange-700'}`}>
-                {ownsBook
-                  ? 'You own this month\'s book and can participate in all club activities!'
-                  : 'You must own this month\'s featured book to join the club and attend events.'
-                }
-              </p>
-              {!ownsBook && (
-                <div className="mt-2 text-xs text-orange-600">
-                  Each month features a different book - new members get access to the current month's selection
-                </div>
-              )}
-            </div>
+    <div className="space-y-10">
+      {showOwnership && memberBenefits?.bookOwnershipRequired && (
+        <div className={`flex items-start gap-3 rounded-lg border p-4 ${ownsBook ? 'border-success/30 bg-success-wash' : 'border-line bg-surface'}`}>
+          {ownsBook && <Check className="mt-0.5 h-5 w-5 shrink-0 text-success" strokeWidth={2} aria-hidden="true" />}
+          <div>
+            <h3 className={`font-semibold ${ownsBook ? 'text-success' : 'text-ink'}`}>{ownsBook ? 'You own this month’s book' : 'This month’s book is required to join'}</h3>
+            <p className="mt-0.5 text-sm text-ink-2">
+              {ownsBook
+                ? 'You can take part in every club activity.'
+                : 'Own the featured book to join the club and come to events. Each month has a different book, and new members start with the current pick.'}
+            </p>
           </div>
         </div>
       )}
 
-      {/* Discounts Section */}
-      <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
-        <div className="flex items-center space-x-2 mb-4">
-          <DollarSign className="w-6 h-6 text-green-600" />
-          <h3 className="text-xl font-bold text-green-900">Club Member Discounts</h3>
+      {rows.length > 0 && (
+        <div>
+          <h2 className="t-h2 text-ink">Member savings</h2>
+          <ul className="mt-5 divide-y divide-line border-y border-line">
+            {rows.map((r) => (
+              <li key={r.key} className="flex items-center justify-between gap-6 py-4">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-ink">{r.title}</h3>
+                  <p className="mt-0.5 text-sm text-ink-2">{r.text}</p>
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="font-serif text-3xl font-medium leading-none text-ink tabular">{r.value}</p>
+                  <p className="mt-1 text-[0.8125rem] text-ink-3">{r.unit}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          {discounts.monthlyBook?.maxSavings ? (
+            <p className="mt-3 text-sm text-ink-2">
+              Join this month and save <span className="font-semibold text-ink tabular">${discounts.monthlyBook.maxSavings}</span> on the featured book.
+            </p>
+          ) : null}
         </div>
+      )}
 
-        <div className="space-y-3">
-          {/* Monthly Book Discount */}
-          {discounts.monthlyBook && (
-            <div className="bg-white rounded-lg p-4 border border-green-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">
-                      {discounts.monthlyBook.type === 'percentage' ? `${discounts.monthlyBook.value}%` : `$${discounts.monthlyBook.value}`}
-                    </span>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900">Monthly Book Discount</h4>
-                    <p className="text-sm text-gray-600">{discounts.monthlyBook.description}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-green-600">
-                    Save ${discounts.monthlyBook.maxSavings}
-                  </div>
-                  <div className="text-xs text-gray-500">per month</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Membership Bonus */}
-          {discounts.membershipBonus && (
-            <div className="bg-white rounded-lg p-4 border border-blue-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-                    <Gift className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900">Welcome Bonus</h4>
-                    <p className="text-sm text-gray-600">{discounts.membershipBonus.description}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-600">
-                    +{discounts.membershipBonus.value}
-                  </div>
-                  <div className="text-xs text-gray-500">credits</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Loyalty Discount */}
-          {discounts.loyaltyDiscount && (
-            <div className="bg-white rounded-lg p-4 border border-purple-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
-                    <Crown className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900">Loyalty Reward</h4>
-                    <p className="text-sm text-gray-600">{discounts.loyaltyDiscount.description}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-purple-600">
-                    {discounts.loyaltyDiscount.type === 'percentage' ? `${discounts.loyaltyDiscount.value}%` : `$${discounts.loyaltyDiscount.value}`}
-                  </div>
-                  <div className="text-xs text-gray-500">extra savings</div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-4 p-3 bg-green-100 rounded-lg border border-green-300">
-          <p className="text-sm text-green-800 text-center font-semibold">
-            Join this month and save ${discounts.monthlyBook?.maxSavings || 0} on the featured book!
-          </p>
-        </div>
-      </div>
-
-      {/* Exclusive Events Highlight */}
       {memberBenefits?.exclusiveEvents && (
-        <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200">
-          <div className="flex items-center space-x-2 mb-4">
-            <Crown className="w-6 h-6 text-purple-600" />
-            <h3 className="text-xl font-bold text-purple-900">Exclusive Member Events</h3>
-          </div>
-          <div className="space-y-3">
-            <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                <span className="text-white font-bold text-sm">Q</span>
+        <div>
+          <h2 className="t-h2 text-ink">Members-only events</h2>
+          <dl className="mt-5 grid gap-6 sm:grid-cols-3">
+            {[
+              ['Author and narrator Q&A', 'Live sessions where you ask the people who made the book.'],
+              ['Host conversations', 'Discussions and insight from the club’s host.'],
+              ['Early book access', 'Next month’s pick before general release.'],
+            ].map(([t, d]) => (
+              <div key={t} className="border-t-2 border-ink pt-3">
+                <dt className="font-semibold text-ink">{t}</dt>
+                <dd className="mt-1 text-sm text-ink-2">{d}</dd>
               </div>
-              <div>
-                <h4 className="font-semibold text-purple-900">Author & Narrator Q&A Sessions</h4>
-                <p className="text-sm text-purple-700">Live interactive sessions where you can ask questions directly to creators</p>
-              </div>
-            </div>
-            <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                <span className="text-white font-bold text-sm">H</span>
-              </div>
-              <div>
-                <h4 className="font-semibold text-purple-900">Host Conversations</h4>
-                <p className="text-sm text-purple-700">Exclusive discussions and insights from celebrity hosts</p>
-              </div>
-            </div>
-            <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                <span className="text-white font-bold text-sm">B</span>
-              </div>
-              <div>
-                <h4 className="font-semibold text-purple-900">Early Book Access</h4>
-                <p className="text-sm text-purple-700">Get the next month's book selection before general release</p>
-              </div>
-            </div>
-          </div>
+            ))}
+          </dl>
         </div>
       )}
     </div>
   );
 }
+
+DiscountDisplay.propTypes = {
+  club: PropTypes.object,
+  ownsBook: PropTypes.bool,
+  showOwnership: PropTypes.bool,
+};
