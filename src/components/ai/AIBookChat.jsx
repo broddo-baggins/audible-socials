@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, BookOpen, AlertTriangle, Sparkles, RotateCcw, Eye, EyeOff, AlertCircle, ChevronDown, X } from 'lucide-react';
+import { Send, BookOpen, AlertTriangle, RotateCcw, Eye, EyeOff, AlertCircle, ChevronDown, X, Wifi, WifiOff } from 'lucide-react';
+import Waveform from '../ui/Waveform';
 import { getAIBookResponse } from '../../utils/aiBookChat';
 import { getAIBookAnswer } from '../../utils/grokAPI';
 import { FEATURES } from '../../config/api';
-import { getAllBooks, getBookByTitle, detectBookMentions, getBookContextForAI } from '../../utils/bookContext';
+import { getAllBooks, detectBookMentions } from '../../utils/bookContext';
 import { getFromLocalStorage } from '../../utils/localStorage';
 
 /**
@@ -15,13 +16,13 @@ import { getFromLocalStorage } from '../../utils/localStorage';
  * - Users can explicitly request spoilers
  * - Tracks reading progress to avoid spoilers
  */
-const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
+const AIBookChat = ({ contextBook, playbackState, compact: _compact = false }) => {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
       content: contextBook 
-        ? `Hi! I'm here to help you with "${contextBook.title}". Ask me about the plot, characters, or clarify something you just heard! 🎧`
-        : 'Hi! I can help you explore books in your library. Ask me about characters, themes, or what happens next. I\'ll avoid spoilers unless you specifically ask for them! 📚',
+        ? `I can help with "${contextBook.title}". Ask about the plot, the characters, or something you just heard.`
+        : 'I can help you explore the books in your library. Ask about characters, themes or what happens next. I avoid spoilers unless you ask for them.',
       timestamp: new Date(),
     },
   ]);
@@ -58,7 +59,7 @@ const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
     setBookSearch('');
     setMessages([{
       role: 'assistant',
-      content: `Let's discuss "${book.title}" by ${book.author}! Ask me anything about this ${book.genre} audiobook. I'll keep it spoiler-free unless you toggle spoilers on! 📚`,
+      content: `Let's talk about "${book.title}" by ${book.author}. Ask anything about this ${book.genre} audiobook. I keep it spoiler-free unless you turn spoilers on.`,
       timestamp: new Date(),
     }]);
   };
@@ -145,7 +146,7 @@ const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
       // Add error message to chat
       const errorMessage = {
         role: 'assistant',
-        content: '⚠️ Sorry, I encountered an error processing your question. This might be a temporary issue. Please try again, or toggle to offline mode.',
+        content: 'Sorry, something went wrong with that question. It may be temporary. Try again, or switch to offline mode.',
         isError: true,
         timestamp: new Date(),
       };
@@ -172,76 +173,84 @@ const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
       {
         role: 'assistant',
         content: currentBook 
-          ? `Let's discuss "${currentBook.title}" by ${currentBook.author}! Ask me anything about this ${currentBook.genre} audiobook. I'll keep it spoiler-free unless you toggle spoilers on! 📚`
-          : 'Chat reset! Ask me anything about books. I\'ll keep it spoiler-free unless you tell me otherwise! 📚',
+          ? `Let's talk about "${currentBook.title}" by ${currentBook.author}. Ask anything about this ${currentBook.genre} audiobook. I keep it spoiler-free unless you turn spoilers on.`
+          : 'Chat cleared. Ask anything about books. I keep it spoiler-free unless you tell me otherwise.',
         timestamp: new Date(),
       },
     ]);
     setAllowSpoilers(false);
   };
 
+  const control = (on) => `inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-[0.8125rem] font-medium ${on ? 'bg-ink text-paper' : 'border border-line-strong text-ink hover:bg-surface-sunk'}`;
+
   return (
-    <div className="flex flex-col h-[500px]">
+    <div className="flex h-[500px] flex-col bg-surface">
       {/* Book Selection & Controls */}
-      <div className="p-3 bg-audible-gray-50 border-b border-audible-gray-200">
+      <div className="border-b border-line p-3">
         {/* Book Selector */}
-        <div className="mb-2 relative">
-          <button
-            onClick={() => !contextBook && setShowBookSelector(!showBookSelector)}
-            className={`w-full flex items-center justify-between px-3 py-2 bg-white border border-audible-gray-300 rounded-lg text-sm ${!contextBook ? 'hover:border-purple-600' : 'cursor-default'} transition-colors`}
-          >
-            {currentBook ? (
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <BookOpen className="w-4 h-4 text-purple-600 flex-shrink-0" />
-                <span className="truncate text-audible-text-primary">
-                  {currentBook.title}
-                </span>
-                {!contextBook && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCurrentBook(null);
-                    handleReset();
-                  }}
-                  className="ml-auto p-1 hover:bg-audible-gray-100 rounded transition-colors flex-shrink-0"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-                )}
-              </div>
-            ) : (
-              <>
-                <span className="text-audible-text-secondary text-xs">Select a book to discuss...</span>
-                <ChevronDown className="w-4 h-4 text-audible-text-tertiary" />
-              </>
+        <div className="relative mb-2">
+          <div className="flex items-center gap-1 rounded-lg border border-line-strong bg-surface">
+            <button
+              type="button"
+              onClick={() => !contextBook && setShowBookSelector(!showBookSelector)}
+              aria-expanded={contextBook ? undefined : showBookSelector}
+              aria-haspopup={contextBook ? undefined : 'listbox'}
+              disabled={Boolean(contextBook)}
+              className="flex min-h-10 min-w-0 flex-1 items-center gap-2 rounded-lg px-3 text-left text-sm disabled:cursor-default"
+            >
+              {currentBook ? (
+                <>
+                  <BookOpen className="h-4 w-4 shrink-0 text-ink-2" strokeWidth={1.75} aria-hidden="true" />
+                  <span className="t-title-book truncate text-ink">{currentBook.title}</span>
+                </>
+              ) : (
+                <>
+                  <span className="flex-1 text-ink-2">Choose a book to talk about</span>
+                  <ChevronDown className="h-4 w-4 text-ink-3" strokeWidth={1.75} aria-hidden="true" />
+                </>
+              )}
+            </button>
+            {currentBook && !contextBook && (
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentBook(null);
+                  handleReset();
+                }}
+                className="mr-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-2 hover:bg-surface-sunk hover:text-ink"
+                aria-label="Clear the chosen book"
+              >
+                <X className="h-3.5 w-3.5" strokeWidth={1.75} />
+              </button>
             )}
-          </button>
+          </div>
 
           {/* Book Dropdown */}
           {showBookSelector && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-audible-gray-300 rounded-lg shadow-lg z-10 max-h-64 overflow-hidden flex flex-col">
-              <div className="p-2 border-b border-audible-gray-200">
+            <div className="absolute left-0 right-0 top-full z-10 mt-1 flex max-h-64 flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-lg">
+              <div className="border-b border-line p-2">
+                <label htmlFor="ai-chat-book-search" className="sr-only">Search books</label>
                 <input
+                  id="ai-chat-book-search"
                   type="text"
                   value={bookSearch}
                   onChange={(e) => setBookSearch(e.target.value)}
-                  placeholder="Search books..."
-                  className="w-full px-2 py-1 text-xs border border-audible-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-purple-600"
+                  placeholder="Search books"
+                  className="h-9 w-full rounded-md border border-line-strong bg-surface px-2.5 text-sm text-ink"
                 />
               </div>
-              <div className="overflow-y-auto">
+              <div className="overflow-y-auto" role="listbox" aria-label="Books">
                 {filteredBooks.map(book => (
                   <button
                     key={book.id}
+                    type="button"
+                    role="option"
+                    aria-selected={currentBook?.id === book.id}
                     onClick={() => handleBookSelect(book)}
-                    className="w-full text-left px-3 py-2 hover:bg-audible-gray-50 transition-colors border-b border-audible-gray-100 last:border-0"
+                    className="w-full border-b border-line px-3 py-2 text-left last:border-0 hover:bg-surface-sunk"
                   >
-                    <div className="text-xs font-medium text-audible-text-primary truncate">
-                      {book.title}
-                    </div>
-                    <div className="text-xs text-audible-text-secondary truncate">
-                      {book.author} · {book.genre}
-                    </div>
+                    <span className="t-title-book block truncate text-sm text-ink">{book.title}</span>
+                    <span className="block truncate text-xs text-ink-2">{book.author} · {book.genre}</span>
                   </button>
                 ))}
               </div>
@@ -253,118 +262,95 @@ const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={() => setAllowSpoilers(!allowSpoilers)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                allowSpoilers
-                  ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                  : 'bg-green-100 text-green-700 hover:bg-green-200'
-              }`}
+              aria-pressed={allowSpoilers}
+              className={control(allowSpoilers)}
             >
-              {allowSpoilers ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-              {allowSpoilers ? 'Spoilers OK' : 'No Spoilers'}
+              {allowSpoilers ? <EyeOff className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" /> : <Eye className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />}
+              {allowSpoilers ? 'Spoilers on' : 'No spoilers'}
             </button>
             <button
+              type="button"
               onClick={() => setUseRealAI(!useRealAI)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                useRealAI
-                  ? 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              title={useRealAI ? 'Using Grok AI' : 'Using Offline Mode'}
+              aria-pressed={useRealAI}
+              className={control(useRealAI)}
+              title={useRealAI ? 'Using Grok AI' : 'Using offline mode'}
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              {useRealAI ? <Wifi className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" /> : <WifiOff className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />}
               {useRealAI ? 'Live AI' : 'Offline'}
             </button>
           </div>
           <button
+            type="button"
             onClick={handleReset}
-            className="p-1.5 hover:bg-audible-gray-200 rounded-lg transition-colors"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-ink-2 hover:bg-surface-sunk hover:text-ink"
             aria-label="Reset chat"
           >
-            <RotateCcw className="w-3.5 h-3.5 text-audible-text-secondary" />
+            <RotateCcw className="h-4 w-4" strokeWidth={1.75} />
           </button>
         </div>
-        
+
         {error && (
-          <div className="flex items-center gap-2 px-2 py-1.5 mt-2 bg-red-50 border border-red-200 rounded text-xs text-red-700">
-            <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+          <p role="alert" className="mt-2 flex items-start gap-2 rounded-md bg-danger-wash px-3 py-2 text-[0.8125rem] text-danger">
+            <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
             <span>{error}</span>
-          </div>
+          </p>
         )}
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 space-y-4 overflow-y-auto p-4" aria-live="polite">
         {messages.map((message, index) => (
-          <div key={index}>
+          <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div
-              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`max-w-[85%] rounded-2xl px-4 py-2.5 ${
+                message.role === 'user'
+                  ? 'rounded-br-md bg-ink text-paper'
+                  : `rounded-bl-md ${message.isError ? 'bg-danger-wash text-ink' : 'bg-surface-sunk text-ink'}`
+              }`}
             >
-              <div
-                className={`max-w-[85%] rounded-2xl px-4 py-2.5 ${
-                  message.role === 'user'
-                    ? 'bg-gradient-to-br from-purple-600 to-blue-600 text-white'
-                    : 'bg-audible-gray-100 text-audible-text-primary'
-                }`}
-              >
-                {message.role === 'assistant' && (
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-                    <span className="text-xs font-semibold text-purple-600">AI Assistant</span>
-                  </div>
-                )}
-                
-                {message.hasSpoilerWarning && (
-                  <div className="mb-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-2">
-                    <AlertTriangle className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-xs text-yellow-800">
-                      This response may contain spoilers based on your request.
-                    </span>
-                  </div>
-                )}
+              {message.role === 'assistant' && (
+                <p className="mb-1 text-xs font-semibold text-ink-2">Book companion</p>
+              )}
 
-                <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+              {message.hasSpoilerWarning && (
+                <p className="mb-2 flex items-start gap-2 rounded-md bg-hl-soft px-2.5 py-2 text-xs text-ink">
+                  <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                  <span>This answer may contain spoilers, as you asked.</span>
+                </p>
+              )}
 
-                {message.suggestedQuestions && (
-                  <div className="mt-3 pt-3 border-t border-audible-gray-200 space-y-1.5">
-                    <p className="text-xs font-semibold text-audible-text-secondary mb-2">
-                      You might also ask:
-                    </p>
-                    {message.suggestedQuestions.map((question, i) => (
-                      <button
-                        key={i}
-                        onClick={() => handleSuggestedQuestion(question)}
-                        className="block w-full text-left text-xs px-2 py-1.5 bg-white hover:bg-audible-gray-50 border border-audible-gray-200 rounded text-audible-text-secondary hover:text-audible-orange transition-colors"
-                      >
-                        {question}
-                      </button>
-                    ))}
-                  </div>
-                )}
+              <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
 
-                <div
-                  className={`text-xs mt-1.5 ${
-                    message.role === 'user' ? 'text-white/70' : 'text-audible-text-tertiary'
-                  }`}
-                >
-                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {message.suggestedQuestions && (
+                <div className="mt-3 space-y-1.5 border-t border-line pt-3">
+                  <p className="mb-1 text-xs font-semibold text-ink-2">You might also ask</p>
+                  {message.suggestedQuestions.map((question, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => handleSuggestedQuestion(question)}
+                      className="block w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-left text-xs text-ink-2 hover:border-line-strong hover:text-ink"
+                    >
+                      {question}
+                    </button>
+                  ))}
                 </div>
-              </div>
+              )}
+
+              <p className={`mt-1.5 text-xs tabular ${message.role === 'user' ? 'text-ink-on-night-2' : 'text-ink-3'}`}>
+                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </p>
             </div>
           </div>
         ))}
 
         {loading && (
           <div className="flex justify-start">
-            <div className="max-w-[85%] rounded-2xl px-4 py-3 bg-audible-gray-100">
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                </div>
-                <span className="text-xs text-audible-text-tertiary">AI is thinking...</span>
-              </div>
+            <div className="flex items-center gap-3 rounded-2xl rounded-bl-md bg-surface-sunk px-4 py-3" role="status">
+              <Waveform seed="thinking" bars={12} height={14} className="h-3.5 w-14 text-ink-3" />
+              <span className="text-xs text-ink-2">Thinking</span>
             </div>
           </div>
         )}
@@ -373,30 +359,33 @@ const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
       </div>
 
       {/* Input */}
-      <div className="p-3 border-t border-audible-gray-200 bg-white">
+      <div className="border-t border-line bg-surface p-3">
         <div className="flex gap-2">
+          <label htmlFor="ai-chat-input" className="sr-only">Ask about a book</label>
           <input
+            id="ai-chat-input"
             ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask about any book..."
-            className="flex-1 px-4 py-2.5 text-sm border border-audible-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            placeholder="Ask about any book"
+            className="h-11 flex-1 rounded-full border border-line-strong bg-surface px-4 text-sm text-ink focus:border-ink focus:shadow-[0_0_0_3px_var(--hl)] focus:outline-none"
             disabled={loading}
           />
           <button
+            type="button"
             onClick={handleSend}
             disabled={!input.trim() || loading}
-            className="px-4 py-2.5 bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink text-paper hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-45"
             aria-label="Send message"
           >
-            <Send className="w-4 h-4" />
+            <Send className="h-4 w-4" strokeWidth={1.75} />
           </button>
         </div>
 
         {/* Quick Actions */}
-        <div className="flex flex-wrap gap-1.5 mt-2">
+        <div className="mt-2 flex flex-wrap gap-1.5">
           {(currentBook ? [
             `What's "${currentBook.title}" about?`,
             `Is "${currentBook.title}" worth listening to?`,
@@ -408,8 +397,9 @@ const AIBookChat = ({ contextBook, playbackState, compact = false }) => {
           ]).map((suggestion) => (
             <button
               key={suggestion}
+              type="button"
               onClick={() => handleSuggestedQuestion(suggestion)}
-              className="text-xs px-2.5 py-1 bg-audible-gray-100 hover:bg-audible-gray-200 text-audible-text-secondary rounded-full transition-colors"
+              className="inline-flex min-h-8 items-center rounded-full border border-line px-3 text-xs text-ink-2 hover:border-line-strong hover:text-ink"
             >
               {suggestion}
             </button>

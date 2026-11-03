@@ -147,6 +147,7 @@ VirtualGrid.propTypes = {
  * useVirtualScroll Hook
  * Custom hook for implementing virtual scrolling
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const useVirtualScroll = (options) => {
   const {
     itemCount,
@@ -231,14 +232,15 @@ export const InfiniteScroll = ({
         <div key={index}>{renderItem(item, index)}</div>
       ))}
       {(loading || isLoadingMore) && (
-        <div className="flex justify-center py-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="space-y-3 py-4" role="status" aria-label="Loading more">
+          <div className="shimmer h-4 w-3/4 rounded-sm" aria-hidden="true" />
+          <div className="shimmer h-4 w-1/2 rounded-sm" aria-hidden="true" />
         </div>
       )}
       {!hasMore && items.length > 0 && (
-        <div className="text-center py-4 text-gray-500">
-          No more items to load
-        </div>
+        <p className="border-t border-line py-4 text-[0.8125rem] text-ink-3">
+          That is everything.
+        </p>
       )}
     </div>
   );

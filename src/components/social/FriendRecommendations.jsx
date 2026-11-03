@@ -1,44 +1,71 @@
 import { useState, useEffect } from 'react';
-import { Users, ThumbsUp, MessageCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Card, Badge, Rating } from '../ui';
+import { ThumbsUp, MessageCircle } from 'lucide-react';
 import PropTypes from 'prop-types';
+import { Avatar, Rating, Skeleton } from '../ui';
+
+/**
+ * FriendRecommendations: listeners with the same taste who are on this book now,
+ * each with a short note. A ruled list, no card. Values derived from the
+ * listener and book ids, so they hold still between renders.
+ */
+const seeded = (str) => {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0) / 4294967295;
+};
+
+const generateComment = (user, book) => {
+  const genre = book.genre.toLowerCase();
+  const comments = [
+    `A ${genre} story I could not stop listening to.`,
+    'The narrator really brings this one to life.',
+    `One of the best ${genre} books I have listened to this year.`,
+    'Fantastic world-building and characters you care about.',
+    'It kept me hooked from start to finish.',
+    `Made for fans of ${genre}. You will not be disappointed.`,
+    'The turns in the plot are very well done.',
+    'I keep recommending this to everyone.',
+  ];
+  return comments[Math.floor(seeded(`${user.id}-${book.id}-c`) * comments.length)];
+};
 
 const FriendRecommendations = ({ bookId, limit = 5 }) => {
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+  const [liked, setLiked] = useState({});
+
   useEffect(() => {
     const loadRecommendations = async () => {
       try {
         // Load mock users and books
         const usersResponse = await fetch('/src/data/mockUsers.json');
         const users = await usersResponse.json();
-        
+
         const booksResponse = await fetch('/src/data/books.json');
         const books = await booksResponse.json();
-        
+
         // Find the current book
-        const currentBook = books.find(b => b.id === bookId);
-        
+        const currentBook = books.find((b) => b.id === bookId);
+
         if (!currentBook) {
           setRecommendations([]);
           setLoading(false);
           return;
         }
-        
+
         // Simulate friend recommendations based on genre preferences
         const friendRecs = users
-          .filter(user => user.favoriteGenres.includes(currentBook.genre))
-          .filter(user => user.currentlyReading.includes(bookId))
+          .filter((user) => user.favoriteGenres.includes(currentBook.genre))
+          .filter((user) => user.currentlyReading.includes(bookId))
           .slice(0, limit)
-          .map(user => ({
+          .map((user) => ({
             ...user,
-            rating: (4.0 + Math.random() * 1).toFixed(1),
+            rating: (4.0 + seeded(`${user.id}-${bookId}-r`) * 1).toFixed(1),
             comment: generateComment(user, currentBook),
-            daysAgo: Math.floor(Math.random() * 14) + 1,
+            daysAgo: Math.floor(seeded(`${user.id}-${bookId}-d`) * 14) + 1,
+            likes: Math.floor(seeded(`${user.id}-${bookId}-l`) * 20) + 5,
           }));
-        
+
         setRecommendations(friendRecs);
       } catch (error) {
         console.error('Failed to load recommendations:', error);
@@ -47,107 +74,76 @@ const FriendRecommendations = ({ bookId, limit = 5 }) => {
         setLoading(false);
       }
     };
-    
+
     loadRecommendations();
   }, [bookId, limit]);
-  
-  const generateComment = (user, book) => {
-    const comments = [
-      `Amazing ${book.genre.toLowerCase()} story! Couldn't stop listening.`,
-      `The narrator really brings this one to life. Highly recommend!`,
-      `One of the best ${book.genre.toLowerCase()} books I've listened to this year.`,
-      `Fantastic world-building and character development.`,
-      `This book kept me hooked from start to finish!`,
-      `Perfect for fans of ${book.genre.toLowerCase()}. You won't be disappointed.`,
-      `The plot twists in this one are incredible!`,
-      `Been recommending this to everyone. A must-listen!`,
-    ];
-    return comments[Math.floor(Math.random() * comments.length)];
-  };
-  
+
   if (loading) {
     return (
-      <Card className="p-4">
-        <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-echo-beige rounded w-1/3" />
-          <div className="h-12 bg-echo-beige rounded" />
-        </div>
-      </Card>
-    );
-  }
-  
-  if (recommendations.length === 0) {
-    return null;
-  }
-  
-  return (
-    <Card className="p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Users className="w-5 h-5 text-echo-orange" />
-        <h3 className="text-lg font-semibold text-echo-text-primary">
-          Friends Who Love This
-        </h3>
-        <Badge variant="primary" size="sm">{recommendations.length}</Badge>
-      </div>
-      
-      <div className="space-y-4">
-        {recommendations.map((friend) => (
-          <div key={friend.id} className="flex gap-3">
-            {/* Avatar */}
-            <div className="flex-shrink-0">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-echo-orange to-echo-orange-light flex items-center justify-center text-white font-semibold">
-                {friend.name.charAt(0)}
-              </div>
-            </div>
-            
-            {/* Content */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between gap-2 mb-1">
-                <div className="min-w-0">
-                  <Link 
-                    to={`/profile/${friend.id}`}
-                    className="font-medium text-echo-text-primary hover:text-echo-orange transition-colors"
-                  >
-                    {friend.name}
-                  </Link>
-                  <p className="text-xs text-echo-text-tertiary">
-                    @{friend.username}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1 flex-shrink-0">
-                  <Rating value={parseFloat(friend.rating)} size="sm" showValue={false} />
-                  <span className="text-sm font-medium text-echo-text-secondary">
-                    {friend.rating}
-                  </span>
-                </div>
-              </div>
-              
-              <p className="text-sm text-echo-text-secondary mb-2 line-clamp-2">
-                {friend.comment}
-              </p>
-              
-              <div className="flex items-center gap-4 text-xs text-echo-text-tertiary">
-                <span>{friend.daysAgo}d ago</span>
-                <button className="flex items-center gap-1 hover:text-echo-orange transition-colors">
-                  <ThumbsUp className="w-3 h-3" />
-                  <span>{Math.floor(Math.random() * 20) + 5}</span>
-                </button>
-                <button className="flex items-center gap-1 hover:text-echo-orange transition-colors">
-                  <MessageCircle className="w-3 h-3" />
-                  <span>Reply</span>
-                </button>
-              </div>
-            </div>
+      <div className="space-y-4" aria-hidden="true">
+        <Skeleton variant="title" width="1/2" />
+        {[0, 1].map((i) => (
+          <div key={i} className="flex gap-3">
+            <Skeleton variant="avatar" className="h-10 w-10" />
+            <div className="flex-1 space-y-2"><Skeleton width="1/3" /><Skeleton width="3/4" /></div>
           </div>
         ))}
       </div>
-      
+    );
+  }
+
+  if (recommendations.length === 0) {
+    return null;
+  }
+
+  return (
+    <section aria-labelledby={`recs-${bookId}`}>
+      <h2 id={`recs-${bookId}`} className="t-h2 text-ink">Listeners who love this</h2>
+      <p className="mt-1 text-[0.9375rem] text-ink-2">
+        <span className="tabular">{recommendations.length}</span> people with your taste are listening now.
+      </p>
+
+      <ul className="mt-5 divide-y divide-line border-y border-line">
+        {recommendations.map((friend) => (
+          <li key={friend.id} className="flex gap-3 py-4">
+            <Avatar src={friend.avatar} name={friend.name} size="md" />
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                <p className="text-[0.9375rem]">
+                  <span className="font-semibold text-ink">{friend.name}</span>
+                  <span className="ml-2 text-[0.8125rem] text-ink-3">@{friend.username}</span>
+                </p>
+                <Rating value={parseFloat(friend.rating)} size="sm" showValue />
+              </div>
+              <p className="mt-1 text-[0.9375rem] text-ink-2">{friend.comment}</p>
+              <div className="mt-1 flex items-center gap-1 text-[0.8125rem] text-ink-3">
+                <span className="mr-2 tabular">{friend.daysAgo}d ago</span>
+                <button
+                  type="button"
+                  onClick={() => setLiked((p) => ({ ...p, [friend.id]: !p[friend.id] }))}
+                  aria-pressed={Boolean(liked[friend.id])}
+                  aria-label={`Helpful, ${friend.likes + (liked[friend.id] ? 1 : 0)} votes`}
+                  className={`inline-flex h-9 items-center gap-1.5 rounded-full px-2.5 hover:bg-surface-sunk hover:text-ink ${liked[friend.id] ? 'text-ink' : ''}`}
+                >
+                  <ThumbsUp className={`h-3.5 w-3.5 ${liked[friend.id] ? 'fill-ink' : ''}`} strokeWidth={1.75} aria-hidden="true" />
+                  <span className="tabular">{friend.likes + (liked[friend.id] ? 1 : 0)}</span>
+                </button>
+                <button type="button" className="inline-flex h-9 items-center gap-1.5 rounded-full px-2.5 hover:bg-surface-sunk hover:text-ink">
+                  <MessageCircle className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />
+                  Reply
+                </button>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+
       {recommendations.length >= limit && (
-        <button className="mt-4 w-full text-sm text-echo-orange hover:text-echo-orange-dark font-medium transition-colors">
-          View all {recommendations.length + 5} friend reviews
+        <button type="button" className="mt-4 h-9 text-sm font-medium text-ink hover:underline underline-offset-4">
+          View all {recommendations.length + 5} reviews
         </button>
       )}
-    </Card>
+    </section>
   );
 };
 

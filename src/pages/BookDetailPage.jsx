@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion as Motion } from 'framer-motion';
-import { Play, Plus, Check, Star, Clock, Users, Share2, Heart, Crown } from 'lucide-react';
+import { Play, Plus, Heart, Share2, Check } from 'lucide-react';
 import booksData from '../data/books.json';
 import clubsData from '../data/clubs.json';
 import usersData from '../data/users.json';
 import { getUserData, addToLibrary, spendCredit, rateBook, setCurrentlyReading, getFriends } from '../utils/localStorage';
 import { fetchGoogleImagesCover } from '../utils/googleImages';
 import FriendRatingsOnBook from '../components/social/FriendRatingsOnBook';
+import { Avatar, Badge, Button, Cover, Rating, Skeleton, Waveform } from '../components/ui';
 
+/**
+ * BookDetailPage: the credits-and-clubs version of a book page (not routed).
+ * Same composition as BookDetail: cover and waveform left, the flap right,
+ * then the summary, friends, clubs and your own rating.
+ */
 export default function BookDetailPage() {
   const { bookId } = useParams();
   const [book, setBook] = useState(null);
@@ -18,18 +23,20 @@ export default function BookDetailPage() {
   const [coverUrl, setCoverUrl] = useState(null);
   const [showRating, setShowRating] = useState(false);
   const [friendsReading, setFriendsReading] = useState([]);
+  const [wished, setWished] = useState(false);
+  const [notice, setNotice] = useState('');
 
   useEffect(() => {
-    const foundBook = booksData.find(b => b.id === bookId);
+    const foundBook = booksData.find((b) => b.id === bookId);
     setBook(foundBook);
 
     if (foundBook) {
       // Load cover
       fetchGoogleImagesCover(foundBook.id, foundBook.coverQuery, foundBook.genre)
-        .then(cover => setCoverUrl(cover));
+        .then((cover) => setCoverUrl(cover));
 
       // Find related clubs
-      const clubs = clubsData.filter(club => foundBook.clubs?.includes(club.id));
+      const clubs = clubsData.filter((club) => foundBook.clubs?.includes(club.id));
       setRelatedClubs(clubs);
 
       // Get user data
@@ -39,9 +46,7 @@ export default function BookDetailPage() {
 
       // Find friends reading this book
       const friendIds = getFriends();
-      const friends = usersData.filter(u => 
-        friendIds.includes(u.id) && u.library.includes(bookId)
-      );
+      const friends = usersData.filter((u) => friendIds.includes(u.id) && u.library.includes(bookId));
       setFriendsReading(friends);
     }
   }, [bookId]);
@@ -52,18 +57,18 @@ export default function BookDetailPage() {
       addToLibrary(bookId);
       setInLibrary(true);
       setUserData(getUserData());
-    } else {
-      alert('You need credits to add this book to your library');
+      setNotice(`Added with 1 credit. ${result.remaining} left.`);
+      return true;
     }
+    setNotice('You need a credit to add this book to your library.');
+    return false;
   };
 
   const handleStartListening = () => {
-    if (!inLibrary) {
-      handleAddToLibrary();
-    }
+    if (!inLibrary && !handleAddToLibrary()) return;
     setCurrentlyReading(bookId);
     // In a real app, this would navigate to the player
-    alert('Starting audiobook...');
+    setNotice('Starting the audiobook.');
   };
 
   const handleRateBook = (rating) => {
@@ -72,306 +77,181 @@ export default function BookDetailPage() {
     setShowRating(false);
   };
 
-  if (!book) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  if (book === undefined) {
+    return (
+      <div className="page py-16">
+        <h1 className="t-h1 text-ink">We can&rsquo;t find that book</h1>
+        <Link to="/browse" className="link mt-4 inline-block">Browse the catalogue</Link>
+      </div>
+    );
   }
 
-  const userRating = userData?.ratings[bookId];
+  if (!book) {
+    return (
+      <div className="page grid gap-10 py-12 md:grid-cols-[13rem_minmax(0,1fr)]" aria-hidden="true">
+        <Skeleton variant="bookCover" className="w-44 md:w-full" />
+        <div className="space-y-4"><Skeleton variant="title" width="3/4" /><Skeleton width="1/2" /><Skeleton count={3} /></div>
+      </div>
+    );
+  }
+
+  const userRating = userData?.ratings?.[bookId];
   const isCurrentlyReading = userData?.currentlyReading === bookId;
-  const clubDiscount = relatedClubs.length > 0 && userData?.joinedClubs.some(id => relatedClubs.map(c => c.id).includes(id));
+  const clubDiscount = relatedClubs.length > 0 && userData?.joinedClubs?.some((id) => relatedClubs.map((c) => c.id).includes(id));
+  const released = new Date(book.releaseDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  const iconButton = 'inline-flex h-12 w-12 items-center justify-center rounded-full border border-line-strong text-ink hover:bg-surface';
 
   return (
-    <div className="min-h-screen bg-audible-cream">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-gray-50 to-white text-gray-900 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="grid md:grid-cols-2 gap-8 items-start">
-            {/* Book Cover */}
-            <Motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex justify-center md:justify-start"
-            >
-              <div className="relative">
-                <img
-                  src={coverUrl || 'https://via.placeholder.com/400x600'}
-                  alt={book.title}
-                  className="w-64 md:w-80 rounded-lg shadow-2xl"
-                />
-                {isCurrentlyReading && (
-                  <div className="absolute top-4 left-4 bg-audible-orange text-white px-3 py-2 rounded-full text-sm font-semibold flex items-center">
-                    <Clock className="w-4 h-4 mr-2" />
-                    Currently Reading
-                  </div>
-                )}
-              </div>
-            </Motion.div>
-
-            {/* Book Info */}
-            <Motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="space-y-4"
-            >
-              <div>
-                <span className="text-audible-orange font-semibold text-sm">{book.genre}</span>
-                <h1 className="text-4xl md:text-5xl font-bold mt-2 mb-3 font-serif text-gray-900">{book.title}</h1>
-                <p className="text-xl text-gray-700">By {book.author}</p>
-                <p className="text-gray-600">Narrated by {book.narrator}</p>
-              </div>
-
-              {/* Rating */}
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
-                  <span className="text-2xl font-bold text-gray-900">{book.rating}</span>
-                  <span className="text-gray-600">({book.ratingsCount.toLocaleString()} ratings)</span>
-                </div>
-              </div>
-
-              {/* Duration */}
-              <div className="flex items-center space-x-2 text-gray-600">
-                <Clock className="w-5 h-5" />
-                <span>{book.duration}</span>
-              </div>
-
-              {/* Credits Info */}
-              <div className="bg-gray-100 rounded-lg p-4 border border-gray-200">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-gray-700">Price:</span>
-                  <div className="flex items-center space-x-2">
-                    {clubDiscount && (
-                      <span className="text-gray-500 line-through">${book.price}</span>
-                    )}
-                    <span className="text-2xl font-bold text-audible-orange">
-                      1 Credit{clubDiscount && ' (2-for-1)'}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Your credits:</span>
-                  <span className="font-semibold text-gray-900">{userData?.credits} available</span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                {inLibrary ? (
-                  <>
-                    <button
-                      onClick={handleStartListening}
-                      className="flex-1 bg-audible-orange text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-audible-orange-dark transition-colors flex items-center justify-center space-x-2"
-                    >
-                      <Play className="w-6 h-6" />
-                      <span>{isCurrentlyReading ? 'Continue' : 'Start'} Listening</span>
-                    </button>
-                    <button className="px-6 py-4 bg-gray-200 text-gray-700 rounded-full font-semibold hover:bg-gray-300 transition-colors">
-                      <Share2 className="w-5 h-5" />
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={handleAddToLibrary}
-                      disabled={userData?.credits === 0}
-                      className="flex-1 bg-audible-orange text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-audible-orange-dark transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                    >
-                      <Plus className="w-6 h-6" />
-                      <span>Add to Library (1 Credit)</span>
-                    </button>
-                    <button className="px-6 py-4 bg-gray-200 text-gray-700 rounded-full font-semibold hover:bg-gray-300 transition-colors">
-                      <Heart className="w-5 h-5" />
-                    </button>
-                  </>
-                )}
-              </div>
-
-              {/* Extended Preview for Club Members */}
-              {relatedClubs.length > 0 && userData?.joinedClubs.some(id => relatedClubs.map(c => c.id).includes(id)) && (
-                <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                  <p className="text-sm font-semibold mb-2 flex items-center text-purple-700">
-                    <Crown className="w-4 h-4 mr-2 text-audible-gold" />
-                    Book Club Member Benefit
-                  </p>
-                  <p className="text-sm text-gray-700">
-                    Get 30 minutes of extended preview (vs 5 minutes)
-                  </p>
-                </div>
-              )}
-            </Motion.div>
-          </div>
+    <div className="page pb-16">
+      <div className="grid gap-8 pt-8 md:grid-cols-[13rem_minmax(0,1fr)] md:gap-10 md:pt-12 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-16">
+        <div className="w-44 sm:w-52 md:w-auto md:sticky md:top-24 md:self-start">
+          <Cover src={book.cover || coverUrl} title={book.title} author={book.author} loading="eager" />
+          <Waveform seed={book.id} bars={44} height={28} className="mt-5 h-7 w-full text-ink-3" />
+          {isCurrentlyReading && <Badge variant="highlight" className="mt-4">Currently listening</Badge>}
         </div>
-      </section>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Left Column - Description */}
-          <div className="md:col-span-2 space-y-8">
-            {/* Publisher's Summary */}
-            <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Publisher's Summary</h2>
-              <p className="text-gray-700 leading-relaxed">{book.description}</p>
-            </section>
+        <div className="min-w-0">
+          <Link to="/browse" className="text-[0.8125rem] text-ink-3 hover:text-ink hover:underline underline-offset-4">{book.genre}</Link>
+          <h1 className="mt-2 t-title-book text-ink text-[clamp(2rem,1.4rem+2.4vw,3.25rem)] leading-[1.08]">{book.title}</h1>
+          <p className="mt-3 text-lg text-ink-2">By <span className="font-medium text-ink">{book.author}</span></p>
+          <p className="mt-0.5 text-[0.9375rem] text-ink-3">Read by {book.narrator}</p>
 
-            {/* Friend Ratings */}
-            <FriendRatingsOnBook bookId={bookId} />
+          <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <Rating value={book.rating} size="lg" />
+            <span className="text-[0.9375rem] text-ink-3 tabular">{book.ratingsCount.toLocaleString()} ratings</span>
+            <span className="text-[0.9375rem] text-ink-3 tabular">· {book.duration}</span>
+          </div>
 
-            {/* Related Book Clubs */}
-            {relatedClubs.length > 0 && (
-              <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Book Clubs Reading This</h2>
-                <div className="space-y-4">
-                  {relatedClubs.map((club) => (
-                    <Link
-                      key={club.id}
-                      to={`/club/${club.id}`}
-                      className="block p-4 border-2 border-audible-gray rounded-lg hover:border-audible-orange hover:bg-audible-dark-light transition-all"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="flex items-center space-x-2 mb-1">
-                            <h3 className="font-bold text-white">{club.name}</h3>
-                            {club.isPremium && (
-                              <span className="bg-audible-gold text-white text-xs font-semibold px-2 py-0.5 rounded-full flex items-center">
-                                <Crown className="w-3 h-3 mr-1" />
-                                Premium
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-sm text-gray-400">Hosted by {club.host}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-audible-orange font-semibold text-sm">
-                            {club.daysRemaining} days left
-                          </p>
-                          <p className="text-gray-500 text-xs">{club.memberCount.toLocaleString()} members</p>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </section>
+          {/* Price and credits */}
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-lg bg-surface-sunk px-5 py-4">
+            <div>
+              <p className="font-semibold text-ink">
+                {clubDiscount && <span className="mr-2 font-normal text-ink-3 line-through tabular">${book.price}</span>}
+                1 credit{clubDiscount && ', 2 for 1 with your club'}
+              </p>
+              <p className="text-sm text-ink-2 tabular">You have {userData?.credits} {userData?.credits === 1 ? 'credit' : 'credits'}</p>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            {inLibrary ? (
+              <>
+                <Button variant="highlight" size="lg" onClick={handleStartListening} leftIcon={<Play className="h-4 w-4" fill="currentColor" strokeWidth={0} />}>
+                  {isCurrentlyReading ? 'Continue listening' : 'Start listening'}
+                </Button>
+                <button type="button" className={iconButton} aria-label="Share this book"><Share2 className="h-5 w-5" strokeWidth={1.75} /></button>
+              </>
+            ) : (
+              <>
+                <Button variant="highlight" size="lg" onClick={handleAddToLibrary} disabled={userData?.credits === 0} leftIcon={<Plus className="h-4 w-4" strokeWidth={2} />}>
+                  Add for 1 credit
+                </Button>
+                <button type="button" onClick={() => setWished((v) => !v)} aria-pressed={wished} className={iconButton} aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}>
+                  <Heart className={`h-5 w-5 ${wished ? 'fill-ink' : ''}`} strokeWidth={1.75} />
+                </button>
+              </>
             )}
+          </div>
+          <p className="mt-3 min-h-5 text-sm text-ink-2" role="status" aria-live="polite">{notice}</p>
 
-            {/* User Rating */}
+          {/* Club benefit */}
+          {clubDiscount && (
+            <div className="mt-4 rounded-lg border border-line bg-hl-wash px-5 py-4">
+              <p className="text-sm font-semibold text-ink">Book club member benefit</p>
+              <p className="mt-0.5 text-sm text-ink-2">A 30 minute preview instead of 5 minutes.</p>
+            </div>
+          )}
+
+          <section aria-labelledby="summary-title" className="mt-12">
+            <h2 id="summary-title" className="t-h2 text-ink">Publisher&rsquo;s summary</h2>
+            <p className="mt-4 max-w-[68ch] text-[1.0625rem] leading-relaxed text-ink-2">{book.description}</p>
+          </section>
+
+          <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-4 border-y border-line py-5 sm:grid-cols-3">
+            <div><dt className="text-[0.8125rem] text-ink-3">Released</dt><dd className="mt-0.5 font-medium text-ink">{released}</dd></div>
+            <div><dt className="text-[0.8125rem] text-ink-3">Length</dt><dd className="mt-0.5 font-medium text-ink tabular">{book.duration}</dd></div>
+            <div><dt className="text-[0.8125rem] text-ink-3">Genre</dt><dd className="mt-0.5 font-medium text-ink">{book.genre}</dd></div>
+          </dl>
+
+          {/* Your rating */}
+          {inLibrary && (
+            <section aria-labelledby="your-rating-title" className="mt-12">
+              <h2 id="your-rating-title" className="t-h2 text-ink">Your rating</h2>
+              <div className="mt-4 flex flex-wrap items-center gap-4">
+                {userRating && !showRating ? (
+                  <>
+                    <Rating value={userRating} size="xl" />
+                    <button type="button" onClick={() => setShowRating(true)} className="h-10 text-[0.9375rem] font-medium text-ink underline underline-offset-4 decoration-1 hover:decoration-2">
+                      Change rating
+                    </button>
+                  </>
+                ) : showRating ? (
+                  <Rating value={userRating || 0} size="xl" interactive onChange={handleRateBook} showValue={false} />
+                ) : (
+                  <Button variant="secondary" onClick={() => setShowRating(true)}>Rate this book</Button>
+                )}
+              </div>
+            </section>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-16 grid gap-12 border-t border-line pt-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-16">
+        <div className="space-y-12">
+          <FriendRatingsOnBook bookId={bookId} />
+
+          {friendsReading.length > 0 && (
+            <section aria-labelledby="friends-reading-title">
+              <h2 id="friends-reading-title" className="t-h2 text-ink">Friends with this book</h2>
+              <ul className="mt-5 divide-y divide-line border-y border-line">
+                {friendsReading.map((friend) => (
+                  <li key={friend.id} className="flex items-center gap-3 py-3.5">
+                    <Avatar src={friend.avatar} name={friend.name} size="md" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[0.9375rem] font-semibold text-ink">
+                        {friend.name}
+                        {friend.isPremium && <span className="ml-2 text-xs font-medium text-ink-3">Premium</span>}
+                      </p>
+                    </div>
+                    {friend.ratings[bookId] && <Rating value={friend.ratings[bookId]} size="sm" />}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
+
+        {relatedClubs.length > 0 && (
+          <section aria-labelledby="related-clubs-title" className="self-start rounded-2xl border border-line bg-surface p-5 md:p-7">
+            <h2 id="related-clubs-title" className="t-h2 text-ink">Clubs reading this</h2>
+            <ul className="mt-5 divide-y divide-line border-t border-line">
+              {relatedClubs.map((club) => (
+                <li key={club.id}>
+                  <Link to={`/club/${club.id}`} className="group flex items-start justify-between gap-4 py-4">
+                    <div className="min-w-0">
+                      <p className="flex flex-wrap items-center gap-2 font-semibold text-ink group-hover:underline underline-offset-4">
+                        {club.name}
+                        {club.isPremium && <Badge variant="outline" size="sm">Premium</Badge>}
+                      </p>
+                      <p className="mt-0.5 text-[0.8125rem] text-ink-2">Hosted by {club.host}</p>
+                    </div>
+                    <div className="shrink-0 text-right text-[0.8125rem] tabular">
+                      <p className="font-medium text-ink">{club.daysRemaining} days left</p>
+                      <p className="text-ink-3">{club.memberCount.toLocaleString()} members</p>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
             {inLibrary && (
-              <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Rating</h2>
-                {userRating ? (
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-1">
-                      {[1, 2, 3, 4, 5].map((rating) => (
-                        <Star
-                          key={rating}
-                          className={`w-8 h-8 ${
-                            rating <= userRating
-                              ? 'fill-yellow-400 text-yellow-400'
-                              : 'text-gray-300'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <button
-                      onClick={() => setShowRating(true)}
-                      className="text-audible-orange font-semibold hover:text-audible-orange-dark"
-                    >
-                      Change Rating
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    {showRating ? (
-                      <div className="flex items-center space-x-2">
-                        {[1, 2, 3, 4, 5].map((rating) => (
-                          <button
-                            key={rating}
-                            onClick={() => handleRateBook(rating)}
-                            className="transition-transform hover:scale-110"
-                          >
-                            <Star className="w-10 h-10 text-gray-300 hover:text-yellow-400 hover:fill-yellow-400" />
-                          </button>
-                        ))}
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => setShowRating(true)}
-                        className="bg-audible-orange text-white px-6 py-3 rounded-full font-semibold hover:bg-audible-orange-dark transition-colors"
-                      >
-                        Rate This Book
-                      </button>
-                    )}
-                  </div>
-                )}
-              </section>
+              <p className="mt-4 inline-flex items-center gap-1.5 text-sm text-success">
+                <Check className="h-4 w-4" strokeWidth={2} aria-hidden="true" /> In your library
+              </p>
             )}
-          </div>
-
-          {/* Right Column - Social */}
-          <div className="space-y-6">
-            {/* Friends Reading This */}
-            {friendsReading.length > 0 && (
-              <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h3 className="font-bold text-gray-900 mb-4 flex items-center">
-                  <Users className="w-5 h-5 mr-2 text-audible-orange" />
-                  Friends Reading This
-                </h3>
-                <div className="space-y-3">
-                  {friendsReading.map((friend) => (
-                    <div key={friend.id} className="flex items-center space-x-3">
-                      <div className="relative">
-                        <div className="w-10 h-10 bg-gradient-to-br from-audible-orange to-audible-orange-dark rounded-full flex items-center justify-center">
-                          <span className="text-white font-semibold text-sm">
-                            {friend.name.split(' ').map(n => n[0]).join('')}
-                          </span>
-                        </div>
-                        {friend.isPremium && (
-                          <div className="absolute -bottom-1 -right-1 bg-audible-gold rounded-full p-0.5">
-                            <Crown className="w-3 h-3 text-white" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-900 text-sm">{friend.name}</p>
-                        {friend.ratings[bookId] && (
-                          <div className="flex items-center space-x-1">
-                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                            <span className="text-xs text-gray-600">{friend.ratings[bookId]}/5</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Book Details */}
-            <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h3 className="font-bold text-gray-900 mb-4">Details</h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Release Date</span>
-                  <span className="font-semibold text-gray-900">
-                    {new Date(book.releaseDate).toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric'
-                    })}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Duration</span>
-                  <span className="font-semibold text-gray-900">{book.duration}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Genre</span>
-                  <span className="font-semibold text-gray-900">{book.genre}</span>
-                </div>
-              </div>
-            </section>
-          </div>
-        </div>
+          </section>
+        )}
       </div>
     </div>
   );

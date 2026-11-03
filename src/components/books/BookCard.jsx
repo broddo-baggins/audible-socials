@@ -45,9 +45,9 @@ const BookCard = ({ book, showProgress = false, size = 'md', className = '' }) =
           <Link to={`/book/${id}`} className="hover:underline underline-offset-4 decoration-1" tabIndex={-1}>{title}</Link>
         </h3>
         <p className={`${s.meta} mt-0.5 text-ink-2 line-clamp-1`}>{author}</p>
-        <div className={`${s.meta} mt-1.5 flex items-center gap-2 text-ink-3`}>
+        <div className={`${s.meta} mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-ink-3`}>
           {rating ? <Rating value={rating} size="sm" showValue={false} /> : null}
-          {duration && <span className="tabular">{duration}</span>}
+          {duration && <span className="tabular whitespace-nowrap">{duration}</span>}
         </div>
       </div>
     </article>

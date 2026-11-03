@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Filter, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState, useId } from 'react';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
+import { Filter, ChevronDown, ChevronUp, Star } from 'lucide-react';
 import PropTypes from 'prop-types';
 
 /**
@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
  */
 const AdvancedFilters = ({ onFilterChange, initialFilters = {} }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const panelId = useId();
   const [filters, setFilters] = useState({
     genres: [],
     rating: null,
@@ -29,13 +30,13 @@ const AdvancedFilters = ({ onFilterChange, initialFilters = {} }) => {
 
   const durations = [
     { label: 'Under 5 hours', value: '0-5' },
-    { label: '5-10 hours', value: '5-10' },
-    { label: '10-20 hours', value: '10-20' },
+    { label: '5 to 10 hours', value: '5-10' },
+    { label: '10 to 20 hours', value: '10-20' },
     { label: 'Over 20 hours', value: '20+' }
   ];
 
   const languages = [
-    { label: 'All Languages', value: 'all' },
+    { label: 'All languages', value: 'all' },
     { label: 'English', value: 'en' },
     { label: 'Spanish', value: 'es' },
     { label: 'French', value: 'fr' },
@@ -45,14 +46,14 @@ const AdvancedFilters = ({ onFilterChange, initialFilters = {} }) => {
 
   const sortOptions = [
     { label: 'Relevance', value: 'relevance' },
-    { label: 'Rating (High to Low)', value: 'rating-desc' },
-    { label: 'Rating (Low to High)', value: 'rating-asc' },
-    { label: 'Release Date (Newest)', value: 'date-desc' },
-    { label: 'Release Date (Oldest)', value: 'date-asc' },
-    { label: 'Title (A-Z)', value: 'title-asc' },
-    { label: 'Title (Z-A)', value: 'title-desc' },
-    { label: 'Duration (Shortest)', value: 'duration-asc' },
-    { label: 'Duration (Longest)', value: 'duration-desc' }
+    { label: 'Rating, high to low', value: 'rating-desc' },
+    { label: 'Rating, low to high', value: 'rating-asc' },
+    { label: 'Newest first', value: 'date-desc' },
+    { label: 'Oldest first', value: 'date-asc' },
+    { label: 'Title, A to Z', value: 'title-asc' },
+    { label: 'Title, Z to A', value: 'title-desc' },
+    { label: 'Shortest first', value: 'duration-asc' },
+    { label: 'Longest first', value: 'duration-desc' }
   ];
 
   const handleGenreToggle = (genre) => {
@@ -94,53 +95,62 @@ const AdvancedFilters = ({ onFilterChange, initialFilters = {} }) => {
     filters.status !== 'all'
   ].filter(Boolean).length;
 
+  const label = 'block text-sm font-semibold text-ink mb-2';
+  const field = 'w-full h-11 px-3.5 rounded-lg border border-line-strong bg-surface text-ink';
+  const pill = (on) => `inline-flex h-9 items-center rounded-full px-3.5 text-sm font-medium ${on ? 'bg-hl text-ink' : 'border border-line-strong text-ink hover:bg-surface-sunk'}`;
+
   return (
     <div className="relative">
       {/* Filter Toggle Button */}
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        className="inline-flex h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-5 text-[0.9375rem] font-medium text-ink hover:bg-paper"
         aria-expanded={isOpen}
-        aria-label="Toggle filters"
+        aria-controls={panelId}
       >
-        <Filter className="w-5 h-5" />
+        <Filter className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
         <span>Filters</span>
         {activeFilterCount > 0 && (
-          <span className="bg-blue-500 text-white text-xs rounded-full px-2 py-0.5 font-semibold">
+          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1.5 text-xs font-semibold text-paper tabular">
             {activeFilterCount}
           </span>
         )}
-        {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        {isOpen ? <ChevronUp className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" /> : <ChevronDown className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />}
       </button>
 
       {/* Filter Panel */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
+          <Motion.div
+            id={panelId}
+            initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 mt-2 w-96 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-xl z-50 max-h-[600px] overflow-y-auto"
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.16 }}
+            className="absolute left-0 top-full z-50 mt-2 max-h-[600px] w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-lg border border-line bg-surface shadow-lg"
           >
-            <div className="p-4 space-y-4">
+            <div className="space-y-5 p-5">
               {/* Header */}
-              <div className="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="font-semibold text-lg">Advanced Filters</h3>
+              <div className="flex items-center justify-between border-b border-line pb-3">
+                <h3 className="t-h3 text-ink">Filters</h3>
                 <button
+                  type="button"
                   onClick={clearFilters}
-                  className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                  className="h-9 text-sm font-medium text-ink underline underline-offset-4 decoration-1 hover:decoration-2"
                 >
-                  Clear All
+                  Clear all
                 </button>
               </div>
 
               {/* Sort By */}
               <div>
-                <label className="block text-sm font-medium mb-2">Sort By</label>
+                <label htmlFor={`${panelId}-sort`} className={label}>Sort by</label>
                 <select
+                  id={`${panelId}-sort`}
                   value={filters.sortBy}
                   onChange={(e) => updateFilters({ sortBy: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                  className={field}
                 >
                   {sortOptions.map(option => (
                     <option key={option.value} value={option.value}>
@@ -151,72 +161,71 @@ const AdvancedFilters = ({ onFilterChange, initialFilters = {} }) => {
               </div>
 
               {/* Genres */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Genres</label>
+              <fieldset>
+                <legend className={label}>Genres</legend>
                 <div className="flex flex-wrap gap-2">
                   {genres.map(genre => (
                     <button
                       key={genre}
+                      type="button"
+                      aria-pressed={filters.genres.includes(genre)}
                       onClick={() => handleGenreToggle(genre)}
-                      className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                        filters.genres.includes(genre)
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
-                      }`}
+                      className={pill(filters.genres.includes(genre))}
                     >
                       {genre}
                     </button>
                   ))}
                 </div>
-              </div>
+              </fieldset>
 
               {/* Rating */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Minimum Rating</label>
+              <fieldset>
+                <legend className={label}>Minimum rating</legend>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map(rating => (
                     <button
                       key={rating}
+                      type="button"
+                      aria-pressed={filters.rating === rating}
+                      aria-label={`${rating} stars and up`}
                       onClick={() => updateFilters({ rating: filters.rating === rating ? null : rating })}
-                      className={`flex-1 py-2 rounded-lg text-sm transition-colors ${
-                        filters.rating === rating
-                          ? 'bg-yellow-500 text-white'
-                          : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
-                      }`}
+                      className={`${pill(filters.rating === rating)} flex-1 justify-center gap-1 px-0`}
                     >
-                      {rating}★
+                      <span className="tabular">{rating}</span>
+                      <Star className={`h-3.5 w-3.5 ${filters.rating === rating ? 'fill-ink' : ''}`} strokeWidth={1.75} aria-hidden="true" />
                     </button>
                   ))}
                 </div>
-              </div>
+              </fieldset>
 
               {/* Duration */}
-              <div>
-                <label className="block text-sm font-medium mb-2">Duration</label>
-                <div className="space-y-2">
+              <fieldset>
+                <legend className={label}>Length</legend>
+                <div className="space-y-1">
                   {durations.map(duration => (
-                    <label key={duration.value} className="flex items-center gap-2 cursor-pointer">
+                    <label key={duration.value} className="flex min-h-9 cursor-pointer items-center gap-3 text-[0.9375rem] text-ink-2">
                       <input
                         type="radio"
-                        name="duration"
+                        name={`${panelId}-duration`}
                         value={duration.value}
                         checked={filters.duration === duration.value}
                         onChange={(e) => updateFilters({ duration: e.target.value })}
-                        className="w-4 h-4"
+                        className="h-4 w-4 accent-ink"
                       />
-                      <span className="text-sm">{duration.label}</span>
+                      <span>{duration.label}</span>
                     </label>
                   ))}
                 </div>
-              </div>
+              </fieldset>
 
               {/* Language */}
               <div>
-                <label className="block text-sm font-medium mb-2">Language</label>
+                <label htmlFor={`${panelId}-lang`} className={label}>Language</label>
                 <select
+                  id={`${panelId}-lang`}
                   value={filters.language}
                   onChange={(e) => updateFilters({ language: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                  className={field}
                 >
                   {languages.map(lang => (
                     <option key={lang.value} value={lang.value}>
@@ -228,39 +237,42 @@ const AdvancedFilters = ({ onFilterChange, initialFilters = {} }) => {
 
               {/* Release Year */}
               <div>
-                <label className="block text-sm font-medium mb-2">Release Year</label>
+                <label htmlFor={`${panelId}-year`} className={label}>Release year</label>
                 <input
+                  id={`${panelId}-year`}
                   type="number"
                   min="1900"
                   max={new Date().getFullYear()}
                   value={filters.releaseYear || ''}
                   onChange={(e) => updateFilters({ releaseYear: e.target.value ? parseInt(e.target.value) : null })}
-                  placeholder="e.g., 2023"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                  placeholder="For example, 2023"
+                  className={field}
                 />
               </div>
 
               {/* Narrator */}
               <div>
-                <label className="block text-sm font-medium mb-2">Narrator</label>
+                <label htmlFor={`${panelId}-narrator`} className={label}>Narrator</label>
                 <input
+                  id={`${panelId}-narrator`}
                   type="text"
                   value={filters.narrator}
                   onChange={(e) => updateFilters({ narrator: e.target.value })}
-                  placeholder="Search by narrator name"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                  placeholder="Narrator name"
+                  className={field}
                 />
               </div>
 
               {/* Apply Button */}
               <button
+                type="button"
                 onClick={() => setIsOpen(false)}
-                className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                className="inline-flex h-11 w-full items-center justify-center rounded-full bg-ink text-[0.9375rem] font-medium text-paper hover:bg-gray-800"
               >
-                Apply Filters
+                Apply filters
               </button>
             </div>
-          </motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
     </div>
