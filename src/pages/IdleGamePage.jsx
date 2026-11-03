@@ -197,7 +197,7 @@ const IdleGamePage = () => {
             </Card>
 
             {/* Development: Offline Progress Simulator */}
-            {process.env.NODE_ENV === 'development' && (
+            {import.meta.env.DEV && (
               <Card className="p-4 bg-yellow-50 border-2 border-yellow-200">
                 <h4 className="font-bold text-gray-900 mb-2">🧪 Development Tools</h4>
                 <p className="text-sm text-gray-600 mb-3">Test offline progress accumulation:</p>

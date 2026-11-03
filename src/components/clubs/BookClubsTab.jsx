@@ -33,9 +33,6 @@ export default function BookClubsTab() {
     // Add to joined clubs
     const updatedJoined = [...joinedClubs, newClub];
     setJoinedClubs(updatedJoined);
-
-    // Close modal
-    setShowCreateModal(false);
   };
 
   const maxClubs = userData?.isPremium ? 3 : 2;

@@ -2,6 +2,20 @@ import { useMemo } from 'react';
 import { BarChart2, Clock, Book, TrendingUp, Award, Headphones } from 'lucide-react';
 import PropTypes from 'prop-types';
 
+const StatCard = ({ icon: Icon, label, value, color }) => (
+  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+    <div className="flex items-center gap-4">
+      <div className={`p-3 rounded-lg ${color}`}>
+        <Icon className="w-6 h-6 text-white" />
+      </div>
+      <div>
+        <p className="text-sm text-gray-600 dark:text-gray-400">{label}</p>
+        <p className="text-2xl font-bold">{value}</p>
+      </div>
+    </div>
+  </div>
+);
+
 /**
  * AnalyticsDashboard Component
  * Displays reading statistics and analytics
@@ -37,20 +51,6 @@ const AnalyticsDashboard = ({ userData, readingHistory = [] }) => {
       }).length
     };
   }, [readingHistory]);
-
-  const StatCard = ({ icon: Icon, label, value, color }) => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
-      <div className="flex items-center gap-4">
-        <div className={`p-3 rounded-lg ${color}`}>
-          <Icon className="w-6 h-6 text-white" />
-        </div>
-        <div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">{label}</p>
-          <p className="text-2xl font-bold">{value}</p>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="space-y-6">
