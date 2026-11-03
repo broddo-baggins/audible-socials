@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Youtube } from './SocialIcons';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
