@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Grok (xAI) proxy - Vercel serverless function
  *

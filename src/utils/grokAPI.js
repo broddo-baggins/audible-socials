@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Grok API Integration
  * 
@@ -45,7 +46,7 @@ export const callGrokAPI = async (messages, options = {}) => {
     }
 
     if (!response.ok) {
-      const error = new Error(`Grok API Error: ${response.status} - ${data.error || 'Unknown error'}`);
+      const error = /** @type {Error & { status?: number }} */ (new Error(`Grok API Error: ${response.status} - ${data.error || 'Unknown error'}`));
       error.status = response.status;
       throw error;
     }

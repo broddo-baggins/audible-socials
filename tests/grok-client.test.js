@@ -1,3 +1,4 @@
+// @ts-check
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { callGrokAPI, callGrokAPIWithRetry } from '../src/utils/grokAPI.js';
@@ -12,7 +13,9 @@ test('returns the proxy content on success', async () => {
 
 test('degrades to mock replies when no key or no model is available', async (t) => {
   t.mock.method(console, 'warn', () => {});
-  for (const [status, body] of [[503, { error: 'not_configured' }], [502, { error: 'upstream_unavailable' }], [404, {}]]) {
+  /** @type {Array<[number, { error?: string }]>} */
+  const cases = [[503, { error: 'not_configured' }], [502, { error: 'upstream_unavailable' }], [404, {}]];
+  for (const [status, body] of cases) {
     globalThis.fetch = reply(status, body);
     const text = await callGrokAPI(messages);
     assert.match(text, /recommend/i, `${status} ${body.error}`);

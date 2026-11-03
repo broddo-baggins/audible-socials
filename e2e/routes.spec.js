@@ -1,3 +1,4 @@
+// @ts-check
 import { test, expect, expectAccessible, freshStart } from './fixtures.js';
 
 // Every route declared in src/App.jsx, with a real id where the route takes one.

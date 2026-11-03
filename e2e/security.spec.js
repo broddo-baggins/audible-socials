@@ -1,3 +1,4 @@
+// @ts-check
 import { test, expect, freshStart } from './fixtures.js';
 
 // vite preview serves the headers from vercel.json (see vite.config.js), so
@@ -33,7 +34,7 @@ test.describe('security headers', () => {
     await page.exposeFunction('reportCsp', (v) => violations.push(v));
     await page.addInitScript(() => {
       document.addEventListener('securitypolicyviolation', (e) =>
-        window.reportCsp(`${e.violatedDirective} ${e.blockedURI}`));
+        /** @type {any} */ (window).reportCsp(`${e.violatedDirective} ${e.blockedURI}`));
     });
     for (const path of ['/', '/book/1', '/club/1', '/battles', '/profile']) {
       await freshStart(page, path);

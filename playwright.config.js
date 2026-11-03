@@ -1,3 +1,4 @@
+// @ts-check
 import { defineConfig, devices } from '@playwright/test';
 
 // E2E runs against the production build served by `vite preview`, which also

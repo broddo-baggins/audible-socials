@@ -1,3 +1,4 @@
+// @ts-check
 import { test, expect, expectAccessible, freshStart, grokReply } from './fixtures.js';
 
 // The AI assistant talks to /api/grok. The guard fixture answers that route
@@ -42,11 +43,13 @@ test.describe('AI recommendations', () => {
     await expect(page).toHaveURL(/\/book\/\d+$/);
   });
 
-  for (const [name, reply] of [
+  /** @type {Array<[string, { status: number, contentType: string, body: string }]>} */
+  const fallbackCases = [
     ['server key not configured', json(503, { error: 'not_configured' })],
     ['no Grok model available', json(502, { error: 'upstream_unavailable', status: 404 })],
     ['plain-text mock reply', grokReply('I would recommend something great!')],
-  ]) {
+  ];
+  for (const [name, reply] of fallbackCases) {
     test(`falls back to local picks when ${name}`, async ({ page, guard }) => {
       guard.allow(/http 50[23]: POST .*\/api\/grok/);
       await page.route('**/api/grok', (route) => route.fulfill(reply));

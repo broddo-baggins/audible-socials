@@ -1,3 +1,4 @@
+// @ts-check
 import { test as base, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
@@ -24,7 +25,12 @@ const guards = new WeakMap();
  * HTTP >= 400 response. Each test fails if any were recorded, unless the test
  * whitelists them with guard.allow(regex).
  */
-export const test = base.extend({
+/** @typedef {{ problems: string[], allow: (re: RegExp) => void, clear: () => void }} Guard */
+/** @typedef {import('@playwright/test').PlaywrightTestArgs & import('@playwright/test').PlaywrightTestOptions & { guard: Guard }} TestArgs */
+/** @typedef {import('@playwright/test').PlaywrightWorkerArgs & import('@playwright/test').PlaywrightWorkerOptions} WorkerArgs */
+
+/** @type {import('@playwright/test').TestType<TestArgs, WorkerArgs>} */
+export const test = base.extend(/** @type {any} */ ({
   guard: [
     async ({ page }, use, testInfo) => {
       const problems = [];
@@ -76,7 +82,7 @@ export const test = base.extend({
     },
     { auto: true },
   ],
-});
+}));
 
 /** Run axe on the current page: no critical or serious violations. */
 export const expectAccessible = async (page, { exclude = [] } = {}) => {

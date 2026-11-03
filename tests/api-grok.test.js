@@ -1,3 +1,4 @@
+// @ts-check
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { handleGrokRequest, LIMITS, resolveModels, extractText } from '../api/grok.js';
@@ -106,6 +107,7 @@ test('does not try fallbacks on auth or rate-limit errors', async (t) => {
 });
 
 test('rejects bad requests without calling xAI', async () => {
+  /** @type {Array<[string, Request, number]>} */
   const cases = [
     ['GET', req(null, {}, 'GET'), 405],
     ['cross origin', req(ok, { origin: 'https://evil.example' }), 403],
