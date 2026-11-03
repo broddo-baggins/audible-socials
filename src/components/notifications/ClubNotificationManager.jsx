@@ -177,13 +177,14 @@ ClubNotificationManager.propTypes = {
 export const NotificationBell = ({ count, onClick }) => {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className="relative p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-      aria-label={`Notifications ${count > 0 ? `(${count} unread)` : ''}`}
+      className="relative inline-flex h-11 w-11 items-center justify-center rounded-full text-ink-2 transition-colors hover:bg-surface-sunk hover:text-ink"
+      aria-label={count > 0 ? `Notifications, ${count} unread` : 'Notifications'}
     >
-      <Bell className="w-6 h-6" />
+      <Bell className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
       {count > 0 && (
-        <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+        <span className="absolute right-1 top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-hl px-1 text-[0.6875rem] font-semibold text-ink ring-2 ring-paper tabular" aria-hidden="true">
           {count > 9 ? '9+' : count}
         </span>
       )}
@@ -209,7 +210,7 @@ export const NotificationIcon = ({ type }) => {
   };
 
   const Icon = icons[type] || Bell;
-  return <Icon className="w-5 h-5" />;
+  return <Icon className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />;
 };
 
 NotificationIcon.propTypes = {
