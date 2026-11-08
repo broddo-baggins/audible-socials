@@ -43,7 +43,7 @@ const AIAssistant = () => {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-24 right-4 z-50 inline-flex h-12 items-center gap-2 rounded-full bg-ink pl-4 pr-5 text-[0.9375rem] font-medium text-paper shadow-md hover:bg-gray-800 md:right-6"
+          className="assistant-launcher fixed bottom-24 right-4 z-50 inline-flex h-12 items-center gap-2 rounded-full bg-ink pl-4 pr-5 text-[0.9375rem] font-medium text-paper shadow-md hover:bg-gray-800 md:right-6"
           aria-label="Ask about a book: open the reading assistant"
         >
           <MessageSquare className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />

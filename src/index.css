@@ -369,6 +369,9 @@
   .glass-effect { background: rgb(31 33 39 / 0.96); }
   .glass-effect-dark { background: var(--night); }
 
+  /* The assistant launcher steps aside while any modal dialog (menu sheet, notifications) is open */
+  body:has([role="dialog"][aria-modal="true"]) .assistant-launcher { display: none; }
+
   .safe-top { padding-top: env(safe-area-inset-top); }
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
