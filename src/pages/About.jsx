@@ -28,7 +28,7 @@ const About = () => (
     />
 
     <p className="rounded-lg border border-line bg-surface-sunk px-4 py-3 text-[0.9375rem] text-ink-2">
-      <span className="font-semibold text-ink">Educational mock project.</span> Not affiliated with Audible or Amazon.
+      <span className="font-semibold text-ink">Concept demo with sample data.</span> Not affiliated with Audible or Amazon.
     </p>
 
     {/* Mission as a lead paragraph */}

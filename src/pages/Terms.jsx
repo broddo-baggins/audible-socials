@@ -87,7 +87,7 @@ const sections = [
     'Emergency maintenance may occur without prior notice.',
   ] },
   { title: 'Limitation of Liability', content: [
-    'This is an educational mock project with no actual liability (not a real service).',
+    'This is a concept demo with sample data and no actual liability (not a real service).',
     'We are not liable for indirect, incidental, or consequential damages.',
     'Service is provided "as is" without warranties of any kind.',
     'Your sole remedy for dissatisfaction is to discontinue use of the service.',

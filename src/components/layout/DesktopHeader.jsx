@@ -12,6 +12,7 @@ import { Search, Bell, ChevronDown, User, Settings, HelpCircle, LogOut, Menu, X,
 import { getUserData, signOut } from '../../utils/localStorage';
 import { getUnreadCount } from '../../utils/notifications';
 import NotificationCenter from '../notifications/NotificationCenter';
+import ConceptBadge from '../ui/ConceptBadge';
 import Logo from '../ui/Logo';
 
 const primaryNav = [
@@ -76,6 +77,25 @@ const DesktopHeader = () => {
     document.addEventListener('keydown', onKey);
     return () => { document.removeEventListener('mousedown', onDown); document.removeEventListener('keydown', onKey); };
   }, []);
+
+  // While the menu sheet is open: lock page scroll and keep Tab inside it
+  const sheetRef = useRef(null);
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onTab = (event) => {
+      if (event.key !== 'Tab' || !sheetRef.current) return;
+      const items = sheetRef.current.querySelectorAll('a[href], button:not(:disabled)');
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', onTab);
+    return () => { document.body.style.overflow = previous; document.removeEventListener('keydown', onTab); };
+  }, [menuOpen]);
 
   // Close the sheet and the account menu on navigation (adjusting state during render)
   const [lastPath, setLastPath] = useState(location.pathname);
@@ -204,7 +224,7 @@ const DesktopHeader = () => {
       </nav>
 
       {menuOpen && (
-        <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+        <div ref={sheetRef} className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
           <button type="button" className="absolute inset-0 bg-ink/40" onClick={() => setMenuOpen(false)} aria-label="Close menu" />
           <div className="absolute right-0 top-0 flex h-full w-[min(88vw,360px)] flex-col bg-paper shadow-md">
             <div className="flex h-16 items-center justify-between border-b border-line px-5">
@@ -233,6 +253,7 @@ const DesktopHeader = () => {
             </div>
             <div className="border-t border-line px-5 py-4 text-sm text-ink-2">
               <span className="font-semibold text-ink tabular">{user.credits}</span> credit{user.credits === 1 ? '' : 's'} to spend
+              <ConceptBadge className="mt-3" />
             </div>
           </div>
         </div>

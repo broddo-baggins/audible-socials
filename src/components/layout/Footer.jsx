@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Logo from '../ui/Logo';
+import ConceptBadge from '../ui/ConceptBadge';
 
 /**
  * Footer: the site map on paper, with the project's disclaimer stated once and plainly.
@@ -50,6 +51,7 @@ const Footer = () => (
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,3fr)]">
         <div className="max-w-xs">
           <Logo />
+          <ConceptBadge className="mt-4" />
           <p className="mt-4 text-sm text-ink-2">
             Audiobooks are better with company. Listen along with friends, join a club, and argue about the ending.
           </p>
@@ -71,7 +73,7 @@ const Footer = () => (
       </div>
       <div className="mt-12 flex flex-col gap-4 border-t border-line pt-6 md:flex-row md:items-center md:justify-between">
         <p className="text-[0.8125rem] text-ink-3">
-          &copy; {new Date().getFullYear()} Listenable. An educational mock project, not affiliated with or endorsed by Audible or Amazon.
+          &copy; {new Date().getFullYear()} Listenable. A concept demo with sample data, not affiliated with or endorsed by Audible or Amazon.
         </p>
         <ul className="flex flex-wrap gap-x-5 gap-y-2">
           {socialLinks.map((s) => (

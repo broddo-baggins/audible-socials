@@ -6,6 +6,7 @@ import { Rating, Avatar, Cover, Waveform } from '../components/ui';
 import booksData from '../data/books.json';
 import usersData from '../data/users.json';
 import clubsData from '../data/clubs.json';
+import ConceptBadge from '../components/ui/ConceptBadge';
 
 /**
  * Home: what you are listening to, who you are listening with, then the shelves.
@@ -65,10 +66,10 @@ const Home = () => {
     <div className="pb-8">
       {/* The project's disclaimer, stated once and plainly */}
       <div className="border-b border-line bg-surface-sunk">
-        <p className="page py-2.5 text-[0.8125rem] text-ink-2">
-          <span className="font-semibold text-ink">Educational mock project.</span>{' '}
-          A study of how social features shorten the &ldquo;time to next book&rdquo; in audiobook apps, with AI features added. Not affiliated with or endorsed by Audible or Amazon.
-        </p>
+        <div className="page flex flex-col gap-2 py-2.5 text-[0.8125rem] text-ink-2 sm:flex-row sm:items-center sm:gap-4">
+          <ConceptBadge className="self-start" />
+          <p>A study of how social features shorten the &ldquo;time to next book&rdquo; in audiobook apps. Not affiliated with or endorsed by Audible or Amazon.</p>
+        </div>
       </div>
 
       <div className="page space-y-16 pt-6 md:space-y-20 md:pt-10">

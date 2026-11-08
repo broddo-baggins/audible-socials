@@ -36,8 +36,8 @@ const HeroBanner = ({ book, progress = null, eyebrow = 'Now playing' }) => {
   const left = minutesLeft(book, progress);
 
   return (
-    <section className="on-night relative overflow-hidden rounded-2xl bg-night text-ink-on-night" aria-labelledby="hero-title">
-      <div className="relative grid gap-6 p-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-8 md:p-8 lg:p-10">
+    <section className="on-night relative flex flex-col overflow-hidden rounded-2xl bg-night text-ink-on-night" aria-labelledby="hero-title">
+      <div className="relative grid flex-1 gap-6 p-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-8 md:p-8 lg:p-10">
         <Link to={`/book/${book.id}`} className="w-32 sm:w-40 lg:w-48 rounded-sm" aria-label={`${book.title} details`}>
           <Cover src={book.cover} title={book.title} author={book.author} loading="eager" />
         </Link>

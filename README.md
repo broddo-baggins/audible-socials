@@ -2,11 +2,11 @@
 
 > **Status**: 🟢 Production Ready | **Build**: ✅ Passing | **Version**: 2.3.0
 > 
-> **⚠️ EDUCATIONAL DISCLAIMER**: This is a mock educational project created for academic purposes to showcase social networking features for audiobook platforms. This project is not affiliated with, endorsed by, or connected to Audible or Amazon. Created to demonstrate how **social features + AI** can reduce "**Time To Next Book**" metrics in audiobook service funnels.
+> **Concept demo with sample data.** Not affiliated with, endorsed by, or connected to Audible or Amazon. It explores how **social features + AI** can reduce the "**Time To Next Book**" in an audiobook service.
 
 ## 📖 What Is This Project?
 
-**Listenable Socials** is a fully-functional social audiobook platform demonstrating how **social networking** and **AI features** can revolutionize digital content consumption. Built as an educational showcase, it explores the intersection of:
+**Listenable Socials** is a fully-functional social audiobook platform demonstrating how **social networking** and **AI features** can revolutionize digital content consumption. Built as a concept showcase, it explores the intersection of:
 
 - 🤝 **Social Networks** - Friend systems, book clubs, shared experiences
 - 🤖 **Artificial Intelligence** - Grok-powered recommendations and Q&A
@@ -66,7 +66,7 @@ This platform demonstrates how combining social features with AI can reduce "Tim
   - Aware of current playback position (chapter & time)
   - Instant answers about what you just heard
   - Seamless integration without leaving the player
-- **Live/Offline Mode**: Toggle between real AI and offline mock responses
+- **Live/Offline Mode**: Toggle between real AI and offline sample responses
 - **Floating AI Widget**: Accessible from any page in the app
 
 **See [Grok API Integration Guide](./GROK_API_INTEGRATION.md) for complete details.**
@@ -173,7 +173,7 @@ Listening Time → XP Generation → Level Up → Unlock Rewards
 - **Animations**: Framer Motion
 - **Icons**: Lucide React
 - **State Management**: localStorage (client-side)
-- **Data**: Mock JSON files
+- **Data**: sample JSON files
 - **Deployment**: Vercel
 
 ##  Installation
@@ -215,7 +215,7 @@ echo "GROK_API_KEY=xai-your_actual_key_here" > .env.local
 **⚠️ Important Notes:**
 - API keys can expire - if you get authentication errors, generate a new key
 - Never commit `.env` files to version control
-- The application gracefully falls back to intelligent mock responses if no valid key is provided
+- The application gracefully falls back to built-in sample responses if no valid key is provided
 
 **🔧 Testing Your API Key:**
 ```bash
@@ -298,7 +298,7 @@ While getting the API key sorted, your application provides:
 - **⚡ Fast Responses** - No API delays
 - **🔄 Always Available** - Works offline
 
-**The AI features are fully functional with intelligent mock responses!** 🎉
+**The AI features are fully functional with built-in sample responses!** 🎉
 
 ## ️ Project Structure
 
@@ -318,7 +318,7 @@ listenable-socials/
 │   │   ├── ai/              # AI assistant components
 │   │   └── shared/          # Shared components
 │   ├── pages/               # Main page components
-│   ├── data/                # Mock data (books, clubs, users)
+│   ├── data/                # Sample data (books, clubs, users)
 │   ├── utils/               # Utility functions
 │   │   ├── localStorage.js  # ENHANCED: Private club persistence
 │   │   ├── grokAPI.js       # Grok API integration
@@ -338,7 +338,7 @@ listenable-socials/
 The app includes:
 - **400+ books** with focus on Sci-Fi (Three Body Problem trilogy, Dune, The Expanse) and LitRPG (Dungeon Crawler Carl series, Azarinth Healer)
 - **5 celebrity book clubs** (Reese, Oprah, Emma Watson, Jenna Bush Hager, SJP)
-- **50+ mock users** with realistic profiles and reading histories
+- **50+ sample users** with realistic profiles and reading histories
 - **Complete metadata**: Ratings, reviews, progress tracking, achievements
 - **Social data**: Friend connections, club memberships, activity feeds
 

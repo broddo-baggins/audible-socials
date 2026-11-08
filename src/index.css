@@ -63,6 +63,10 @@
   --success: #2D6A39;        /* 5.8:1 */
   --success-wash: #EEF5EF;
 
+  /* Neutral ramp steps that cannot be derived from the semantic tokens */
+  --g-50: #F7F7F4; --g-200: #E6E6E1; --g-400: #5E626B; --g-600: #4D5058; --g-800: #2A2C32; --g-950: #0F1013;
+  --scroll-thumb: #C9CAC3;
+
   /* Space (4 pt base) */
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px;
   --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px;
@@ -90,7 +94,7 @@
   font-family: var(--font-sans);
   line-height: 1.5;
   font-weight: 400;
-  color-scheme: light;
+  color-scheme: light dark;
   color: var(--ink);
   background-color: var(--paper);
   font-synthesis: none;
@@ -132,23 +136,23 @@
   --color-success-wash: var(--success-wash);
 
   --color-white: var(--surface);
-  --color-black: #0F1013;
+  --color-black: var(--g-950);
 
   /* Neutral ramp: every grey family resolves here */
-  --color-gray-50: #F7F7F4;  --color-gray-100: var(--paper); --color-gray-200: #E6E6E1;
-  --color-gray-300: var(--line); --color-gray-400: #5E626B; --color-gray-500: var(--ink-3);
-  --color-gray-600: #4D5058; --color-gray-700: var(--ink-2); --color-gray-800: #2A2C32;
-  --color-gray-900: var(--ink); --color-gray-950: #0F1013;
-  --color-slate-50: #F7F7F4; --color-slate-100: var(--paper); --color-slate-200: #E6E6E1;
-  --color-slate-300: var(--line); --color-slate-400: #5E626B; --color-slate-500: var(--ink-3);
-  --color-slate-600: #4D5058; --color-slate-700: var(--ink-2); --color-slate-800: #2A2C32;
-  --color-slate-900: var(--ink); --color-slate-950: #0F1013;
+  --color-gray-50: var(--g-50);  --color-gray-100: var(--paper); --color-gray-200: var(--g-200);
+  --color-gray-300: var(--line); --color-gray-400: var(--g-400); --color-gray-500: var(--ink-3);
+  --color-gray-600: var(--g-600); --color-gray-700: var(--ink-2); --color-gray-800: var(--g-800);
+  --color-gray-900: var(--ink); --color-gray-950: var(--g-950);
+  --color-slate-50: var(--g-50); --color-slate-100: var(--paper); --color-slate-200: var(--g-200);
+  --color-slate-300: var(--line); --color-slate-400: var(--g-400); --color-slate-500: var(--ink-3);
+  --color-slate-600: var(--g-600); --color-slate-700: var(--ink-2); --color-slate-800: var(--g-800);
+  --color-slate-900: var(--ink); --color-slate-950: var(--g-950);
 
   /* Hue families folded onto the highlighter (50-400) and ink (500-950) */
   --accent-50: var(--hl-wash); --accent-100: var(--hl-wash); --accent-200: var(--hl-soft);
   --accent-300: var(--hl); --accent-400: var(--hl); --accent-500: var(--ink-2);
-  --accent-600: #2A2C32; --accent-700: var(--ink); --accent-800: var(--ink); --accent-900: var(--ink);
-  --accent-950: #0F1013;
+  --accent-600: var(--g-800); --accent-700: var(--ink); --accent-800: var(--ink); --accent-900: var(--ink);
+  --accent-950: var(--g-950);
   --color-purple-50: var(--accent-50); --color-purple-100: var(--accent-100); --color-purple-200: var(--accent-200); --color-purple-300: var(--accent-300); --color-purple-400: var(--accent-400); --color-purple-500: var(--accent-500); --color-purple-600: var(--accent-600); --color-purple-700: var(--accent-700); --color-purple-800: var(--accent-800); --color-purple-900: var(--accent-900); --color-purple-950: var(--accent-950);
   --color-pink-50: var(--accent-50); --color-pink-100: var(--accent-100); --color-pink-200: var(--accent-200); --color-pink-300: var(--accent-300); --color-pink-400: var(--accent-400); --color-pink-500: var(--accent-500); --color-pink-600: var(--accent-600); --color-pink-700: var(--accent-700); --color-pink-800: var(--accent-800); --color-pink-900: var(--accent-900); --color-pink-950: var(--accent-950);
   --color-blue-50: var(--accent-50); --color-blue-100: var(--accent-100); --color-blue-200: var(--accent-200); --color-blue-300: var(--accent-300); --color-blue-400: var(--accent-400); --color-blue-500: var(--accent-500); --color-blue-600: var(--accent-600); --color-blue-700: var(--accent-700); --color-blue-800: var(--accent-800); --color-blue-900: var(--accent-900); --color-blue-950: var(--accent-950);
@@ -171,7 +175,7 @@
 
   /* Legacy audible-* names, mapped onto the system (they never rendered before) */
   --color-audible-orange: var(--ink);
-  --color-audible-orange-dark: #2A2C32;
+  --color-audible-orange-dark: var(--g-800);
   --color-audible-orange-light: var(--ink-2);
   --color-audible-white: var(--paper);
   --color-audible-cream: var(--paper);
@@ -180,9 +184,9 @@
   --color-audible-text-secondary: var(--ink-2);
   --color-audible-text-tertiary: var(--ink-3);
   --color-audible-gray: var(--line);
-  --color-audible-gray-50: #F7F7F4; --color-audible-gray-100: var(--paper); --color-audible-gray-200: var(--line);
-  --color-audible-gray-300: var(--line); --color-audible-gray-400: #5E626B; --color-audible-gray-500: var(--ink-3);
-  --color-audible-gray-600: #4D5058; --color-audible-gray-700: var(--ink-2); --color-audible-gray-800: #2A2C32;
+  --color-audible-gray-50: var(--g-50); --color-audible-gray-100: var(--paper); --color-audible-gray-200: var(--line);
+  --color-audible-gray-300: var(--line); --color-audible-gray-400: var(--g-400); --color-audible-gray-500: var(--ink-3);
+  --color-audible-gray-600: var(--g-600); --color-audible-gray-700: var(--ink-2); --color-audible-gray-800: var(--g-800);
   --color-audible-gray-900: var(--ink);
   --color-audible-blue-500: var(--ink-2); --color-audible-blue-600: var(--ink);
   --color-audible-dark-light: var(--night-raised);
@@ -190,7 +194,7 @@
   --color-audible-original: var(--ink); --color-audible-podcast: var(--ink-2);
 
   /* Legacy echo-* names (the player and older components) */
-  --color-echo-orange: var(--ink); --color-echo-orange-dark: #2A2C32; --color-echo-orange-light: var(--ink-2);
+  --color-echo-orange: var(--ink); --color-echo-orange-dark: var(--g-800); --color-echo-orange-light: var(--ink-2);
   --color-echo-text-primary: var(--ink); --color-echo-text-secondary: var(--ink-2); --color-echo-text-tertiary: var(--ink-3);
   --color-echo-text-disabled: var(--ink-3); --color-echo-bg-tertiary: var(--surface-sunk);
   --color-echo-beige: var(--surface-sunk); --color-echo-beige-dark: var(--line); --color-echo-cream: var(--paper);
@@ -233,6 +237,43 @@
     from { opacity: 0; }
     to { opacity: 1; }
   }
+}
+
+/*
+ * Dark theme: follows the system. Same roles, inverted ground: a near-black paper,
+ * a lifted slab for the player (still the lightest dark surface), the highlighter
+ * unchanged. Washes become dim olive so ink text keeps its contrast.
+ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0E0F12;
+    --surface: #17181D;
+    --surface-sunk: #1F2127;
+    --night: #1D1F26;
+    --night-raised: #292C34;
+    --ink: #EDEDE8;            /* 16:1 on paper */
+    --ink-2: #BDC0C8;          /* 10:1 */
+    --ink-3: #9A9EA7;          /* 6.9:1 */
+    --ink-on-night: #F2F2EE;
+    --ink-on-night-2: #AEB2BA;
+    --line: #2B2D35;
+    --line-strong: #6E727B;    /* 3.9:1 on paper */
+    --hl-soft: #3A4012;
+    --hl-wash: #23270D;
+    --danger: #FF8B84;         /* 8:1 */
+    --danger-wash: #2B1514;
+    --success: #7FD18F;        /* 10:1 */
+    --success-wash: #14261A;
+    --g-50: #1A1B20; --g-200: #2B2D35; --g-400: #A0A4AD; --g-600: #B3B7BF; --g-800: #D5D7DC; --g-950: #F2F2EE;
+    --scroll-thumb: #3A3D45;
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-2: 0 2px 6px rgb(0 0 0 / 0.35), 0 8px 24px rgb(0 0 0 / 0.35);
+    --shadow-cover: 0 1px 1px rgb(0 0 0 / 0.5), 0 6px 16px -6px rgb(0 0 0 / 0.7);
+  }
+  /* The highlighter fill keeps dark ink whatever the theme */
+  .bg-hl, .bg-hl *, .bg-ink-on-night, .bg-ink-on-night * { color: #17181C; }
+  .bg-ink-on-night:hover { background-color: #FFFFFF; }
+  .bg-hl .text-ink-3 { color: #43464E; }
 }
 
 @layer base {
@@ -332,7 +373,7 @@
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
   .shimmer {
-    background: linear-gradient(90deg, var(--surface-sunk) 0%, #F1F1EC 40%, var(--surface-sunk) 80%);
+    background: linear-gradient(90deg, var(--surface-sunk) 0%, var(--surface) 40%, var(--surface-sunk) 80%);
     background-size: 1200px 100%;
     animation: shimmer 1.6s linear infinite;
   }
@@ -356,5 +397,5 @@
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #C9CAC3; border-radius: 999px; border: 2px solid var(--paper); }
+::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 999px; border: 2px solid var(--paper); }
 ::-webkit-scrollbar-thumb:hover { background: var(--line-strong); }
